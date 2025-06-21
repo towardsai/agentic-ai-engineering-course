@@ -170,6 +170,9 @@ cython_debug/
 # VSCode / Cursor
 .vscode/
 
+# Obsidian
+.obsidian/
+
 # Ruff stuff:
 .ruff_cache/
 
@@ -178,3 +181,17 @@ cython_debug/
 
 # MacOS
 .DS_Store
+
+# Brown Agent
+.debug/
+agent_graph.png
+article_outline.md
+article_stage_1.md
+article_stage_1.metadata.json
+article_stage_2.md
+article_stage_2.metadata.json
+article_stage_3.md
+article_stage_3.metadata.json
+reflection_scores.md
+sources.md
+style_guideline.md
