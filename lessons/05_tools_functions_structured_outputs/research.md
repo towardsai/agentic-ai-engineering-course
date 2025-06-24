@@ -8042,6 +8042,8 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
 
 ## Code
 
+### Notebook with all the code examples that will be used during the article
+
 {
  "cells": [
   {
@@ -8069,10 +8071,8 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
+   "cell_type": "markdown",
    "metadata": {},
-   "outputs": [],
    "source": [
     "!pip install -q google-generativeai pydantic python-dotenv"
    ]
@@ -8096,7 +8096,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 65,
    "metadata": {},
    "outputs": [
     {
@@ -8144,7 +8144,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 66,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -8155,7 +8155,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 2. Part 1: Using Tools (Function Calling)\n",
+    "## 2. Implementing tool calls from scratch\n",
     "\n",
     "LLMs are trained on text and can't perform actions in the real world on their own. **Tools** (or **Function Calling**) are the mechanism we use to bridge this gap. We provide the LLM with a list of available tools, and it can decide which one to use and with what arguments to fulfill a user's request.\n",
     "\n",
@@ -8178,7 +8178,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 67,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -8232,71 +8232,31 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
     "            \"channel\": channel_id,\n",
     "            \"message_preview\": f\"{message[:50]}...\",\n",
     "        }\n",
-    "    )"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### Running the Tool Use Loop\n",
+    "    )\n",
     "\n",
-    "Now, let's create a scenario where we ask the agent to perform a multi-step task: find a report and then communicate its findings."
+    "\n",
+    "def calculate_sum(a: int, b: int) -> int:\n",
+    "    \"\"\"\n",
+    "    Calculates the sum of two numbers.\n",
+    "\n",
+    "    Args:\n",
+    "        a (int): The first number.\n",
+    "        b (int): The second number.\n",
+    "\n",
+    "    Returns:\n",
+    "        int: The sum of the two numbers.\n",
+    "\n",
+    "    \"\"\"\n",
+    "    \n",
+    "    return a + b"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 27,
+   "execution_count": 68,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "User Prompt: Please find the Q3 earnings report on Google Drive and send a summary of it to the #finance channel on Discord.\n",
-      "\n",
-      "Model's first response: id=None args={'query': 'Q3 earnings report'} name='search_google_drive'\n",
-      "---> Searching Google Drive for: 'Q3 earnings report'\n",
-      "\n",
-      "Sending tool result back to model: {\"files\": [{\"name\": \"Q3_Earnings_Report_2024.pdf\", \"id\": \"file12345\", \"summary\": \"The Q3 earnings report shows a 20% increase in revenue and a 15% growth in user engagement, beating expectations.\"}]}\n",
-      "\n",
-      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'channel_id': '#finance', 'message': 'Q3 Earnings Report Summary: Revenue increased by 20%, user engagement grew by 15%, beating expectations. File ID: file12345'}, name='send_discord_message') function_response=None text=None\n",
-      "---> Sending message to Discord channel '#finance': 'Q3 Earnings Report Summary: Revenue increased by 20%, user engagement grew by 15%, beating expectations. File ID: file12345'\n",
-      "\n",
-      "Sending tool result back to model: {\"status\": \"success\", \"channel\": \"#finance\", \"message_preview\": \"Q3 Earnings Report Summary: Revenue increased by 2...\"}\n",
-      "\n",
-      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'message': 'Q3 Earnings Report Summary: Revenue increased by 20%, user engagement grew by 15%, beating expectations. File ID: file12345', 'channel_id': '#general'}, name='send_discord_message') function_response=None text=None\n",
-      "---> Sending message to Discord channel '#general': 'Q3 Earnings Report Summary: Revenue increased by 20%, user engagement grew by 15%, beating expectations. File ID: file12345'\n",
-      "\n",
-      "Sending tool result back to model: {\"status\": \"success\", \"channel\": \"#general\", \"message_preview\": \"Q3 Earnings Report Summary: Revenue increased by 2...\"}\n"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.\n"
-     ]
-    },
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "\n",
-      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'message': 'Q3 Earnings Report Summary: Revenue increased by 20%, user engagement grew by 15%, beating expectations. Google Drive File ID: file12345', 'channel_id': '#finance'}, name='send_discord_message') function_response=None text=None\n",
-      "\n",
-      "--- Final Agent Response ---\n",
-      "None\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
-    "from google.genai import types\n",
-    "\n",
-    "# The user's request that requires tool use\n",
-    "prompt = \"Please find the Q3 earnings report on Google Drive and send a summary of it to the #finance channel on Discord.\"\n",
-    "\n",
-    "# Define the function declarations explicitly\n",
     "search_google_drive_declaration = {\n",
     "    \"name\": \"search_google_drive\",\n",
     "    \"description\": \"Searches for a file on Google Drive and returns its content or a summary.\",\n",
@@ -8331,6 +8291,471 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
     "    },\n",
     "}\n",
     "\n",
+    "calculate_sum_declaration = {\n",
+    "    \"name\": \"calculate_sum\",\n",
+    "    \"description\": \"Calculates the sum of two numbers.\",\n",
+    "    \"parameters\": {\n",
+    "        \"type\": \"object\",\n",
+    "        \"properties\": {\n",
+    "            \"a\": {\n",
+    "                \"type\": \"number\",\n",
+    "                \"description\": \"The first number.\",\n",
+    "            },\n",
+    "            \"b\": {\n",
+    "                \"type\": \"number\",\n",
+    "                \"description\": \"The second number.\",\n",
+    "            },\n",
+    "        },\n",
+    "        \"required\": [\"a\", \"b\"],\n",
+    "    },\n",
+    "}\n",
+    "\n",
+    "TOOLS = {\n",
+    "    \"search_google_drive\": {\n",
+    "        \"handler\": search_google_drive,\n",
+    "        \"declaration\": search_google_drive_declaration,\n",
+    "    },\n",
+    "    \"send_discord_message\": {\n",
+    "        \"handler\": send_discord_message,\n",
+    "        \"declaration\": send_discord_message_declaration,\n",
+    "    },\n",
+    "    \"calculate_sum\": {\n",
+    "        \"handler\": calculate_sum,\n",
+    "        \"declaration\": calculate_sum_declaration,\n",
+    "    },\n",
+    "}\n",
+    "TOOLS_BY_NAME = {tool_name: tool[\"handler\"] for tool_name, tool in TOOLS.items()}\n",
+    "TOOLS_SCHEMA = [tool[\"declaration\"] for tool in TOOLS.values()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'search_google_drive': <function __main__.search_google_drive(query: str) -> str>,\n",
+       " 'send_discord_message': <function __main__.send_discord_message(channel_id: str, message: str) -> str>,\n",
+       " 'calculate_sum': <function __main__.calculate_sum(a: int, b: int) -> int>}"
+      ]
+     },
+     "execution_count": 69,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "TOOLS_BY_NAME"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[{'name': 'search_google_drive',\n",
+       "  'description': 'Searches for a file on Google Drive and returns its content or a summary.',\n",
+       "  'parameters': {'type': 'object',\n",
+       "   'properties': {'query': {'type': 'string',\n",
+       "     'description': \"The search query to find the file, e.g., 'Q3 earnings report'.\"}},\n",
+       "   'required': ['query']}},\n",
+       " {'name': 'send_discord_message',\n",
+       "  'description': 'Sends a message to a specific Discord channel.',\n",
+       "  'parameters': {'type': 'object',\n",
+       "   'properties': {'channel_id': {'type': 'string',\n",
+       "     'description': \"The ID of the channel to send the message to, e.g., '#finance'.\"},\n",
+       "    'message': {'type': 'string',\n",
+       "     'description': 'The content of the message to send.'}},\n",
+       "   'required': ['channel_id', 'message']}},\n",
+       " {'name': 'calculate_sum',\n",
+       "  'description': 'Calculates the sum of two numbers.',\n",
+       "  'parameters': {'type': 'object',\n",
+       "   'properties': {'a': {'type': 'number', 'description': 'The first number.'},\n",
+       "    'b': {'type': 'number', 'description': 'The second number.'}},\n",
+       "   'required': ['a', 'b']}}]"
+      ]
+     },
+     "execution_count": 70,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "TOOLS_SCHEMA"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "SYSTEM_PROMPT = \"\"\"\n",
+    "You are a helpful assistant that can use tools to help the user. \n",
+    "\n",
+    "In case you need to use a tool from the provided list of tools, output the tool name and the arguments in the following format:\n",
+    "TOOL_CALL: {{\"name\": \"tool_name\", \"args\": {{\"arg1\": \"value1\", \"arg2\": \"value2\"}}}}\n",
+    "\n",
+    "If you need to use a tool call, OUTPUT ONLY THE TOOL CALL, such as:\n",
+    "<output>\n",
+    "```tool_call\n",
+    "{{\"name\": \"tool_name\", \"args\": {{\"arg1\": \"value1\", \"arg2\": \"value2\"}}}}\n",
+    "```\n",
+    "</output>\n",
+    "\n",
+    "If there is no need to use a tool, just output the response directly.\n",
+    "\n",
+    "<tool_definitions>\n",
+    "{tools}\n",
+    "</tool_definitions>\n",
+    "\"\"\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'```tool_call\\n{\"name\": \"search_google_drive\", \"args\": {\"query\": \"Q3 earnings report\"}}\\n```'"
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "USER_PROMPT = \"\"\"\n",
+    "Please find the Q3 earnings report on Google Drive and send a summary of it to \n",
+    "the #finance channel on Discord.\n",
+    "\"\"\"\n",
+    "\n",
+    "messages = [\n",
+    "    SYSTEM_PROMPT.format(tools=str(TOOLS)),\n",
+    "    USER_PROMPT\n",
+    "]\n",
+    "\n",
+    "response = client.models.generate_content(\n",
+    "    model=\"gemini-2.0-flash\",\n",
+    "    contents=messages,\n",
+    ")\n",
+    "response.text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'{\"name\": \"search_google_drive\", \"args\": {\"query\": \"Q3 earnings report\"}}'"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def extract_tool_call(response_text: str) -> str:\n",
+    "    \"\"\"\n",
+    "    Extracts the tool call from the response text.\n",
+    "    \"\"\"\n",
+    "    return response_text.split(\"```tool_call\")[1].split(\"```\")[0].strip()\n",
+    "\n",
+    "tool_call_str = extract_tool_call(response.text)\n",
+    "tool_call_str"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'name': 'search_google_drive', 'args': {'query': 'Q3 earnings report'}}"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tool_call = json.loads(tool_call_str)\n",
+    "tool_call"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<function __main__.search_google_drive(query: str) -> str>"
+      ]
+     },
+     "execution_count": 75,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tool_handler = TOOLS_BY_NAME[tool_call[\"name\"]]\n",
+    "tool_handler"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "---> Searching Google Drive for: 'Q3 earnings report'\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'{\"files\": [{\"name\": \"Q3_Earnings_Report_2024.pdf\", \"id\": \"file12345\", \"summary\": \"The Q3 earnings report shows a 20% increase in revenue and a 15% growth in user engagement, beating expectations.\"}]}'"
+      ]
+     },
+     "execution_count": 76,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tool_handler(**tool_call[\"args\"])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Implementing tool calls with Gemini"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "User Prompt: \n",
+      "Please find the Q3 earnings report on Google Drive and send a summary of it to \n",
+      "the #finance channel on Discord.\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "from google.genai import types\n",
+    "\n",
+    "tools = [\n",
+    "    types.Tool(\n",
+    "        function_declarations=[\n",
+    "            types.FunctionDeclaration(**search_google_drive_declaration),\n",
+    "            types.FunctionDeclaration(**send_discord_message_declaration),\n",
+    "        ]\n",
+    "    )\n",
+    "]\n",
+    "config = types.GenerateContentConfig(\n",
+    "    tools=tools,\n",
+    "    tool_config=types.ToolConfig(\n",
+    "        function_calling_config=types.FunctionCallingConfig(mode=\"ANY\")\n",
+    "    ),\n",
+    ")\n",
+    "\n",
+    "# 1. First call to the model\n",
+    "print(f\"User Prompt: {USER_PROMPT}\")\n",
+    "response = client.models.generate_content(\n",
+    "    model=\"gemini-2.0-flash\",\n",
+    "    contents=USER_PROMPT,\n",
+    "    config=config,\n",
+    ")\n",
+    "response_message = response.candidates[0].content.parts[0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Part(video_metadata=None, thought=None, inline_data=None, file_data=None, thought_signature=None, code_execution_result=None, executable_code=None, function_call=FunctionCall(id=None, args={'query': 'Q3 earnings report'}, name='search_google_drive'), function_response=None, text=None)"
+      ]
+     },
+     "execution_count": 78,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "response_message"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "FunctionCall(id=None, args={'query': 'Q3 earnings report'}, name='search_google_drive')"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "response_message.function_call"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<function __main__.search_google_drive(query: str) -> str>"
+      ]
+     },
+     "execution_count": 80,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tool_handler = TOOLS_BY_NAME[response_message.function_call.name]\n",
+    "tool_handler"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "---> Searching Google Drive for: 'Q3 earnings report'\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'{\"files\": [{\"name\": \"Q3_Earnings_Report_2024.pdf\", \"id\": \"file12345\", \"summary\": \"The Q3 earnings report shows a 20% increase in revenue and a 15% growth in user engagement, beating expectations.\"}]}'"
+      ]
+     },
+     "execution_count": 81,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "tool_handler(**response_message.function_call.args)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3.1 Implementing tool calls with Gemini: Running tools in a loop\n",
+    "\n",
+    "Now, let's create a scenario where we ask the agent to perform a multi-step task: find a report and then communicate its findings."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "User Prompt: \n",
+      "You are a helpful assistant that can use tools to help the user.\n",
+      "\n",
+      "\n",
+      "<tool_definitions>\n",
+      "{TOOLS}\n",
+      "</tool_definitions>\n",
+      "\n",
+      "<user_prompt>\n",
+      "{prompt}\n",
+      "</user_prompt>\n",
+      "\n",
+      "\n",
+      "Model's first response: id=None args={'query': 'Q3 earnings report'} name='search_google_drive'\n",
+      "---> Searching Google Drive for: 'Q3 earnings report'\n",
+      "\n",
+      "Sending tool result back to model: {\"files\": [{\"name\": \"Q3_Earnings_Report_2024.pdf\", \"id\": \"file12345\", \"summary\": \"The Q3 earnings report shows a 20% increase in revenue and a 15% growth in user engagement, beating expectations.\"}]}\n",
+      "\n",
+      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'channel_id': '#finance', 'message': 'Q3 Earnings Report: Revenue increased by 20%, user engagement grew by 15%, exceeding expectations. বিস্তারিত জানতে: file12345'}, name='send_discord_message') function_response=None text=None\n",
+      "---> Sending message to Discord channel '#finance': 'Q3 Earnings Report: Revenue increased by 20%, user engagement grew by 15%, exceeding expectations. বিস্তারিত জানতে: file12345'\n",
+      "\n",
+      "Sending tool result back to model: {\"status\": \"success\", \"channel\": \"#finance\", \"message_preview\": \"Q3 Earnings Report: Revenue increased by 20%, user...\"}\n",
+      "\n",
+      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'message': 'Q3 Earnings Report: Revenue increased by 20%, user engagement grew by 15%, exceeding expectations. See file file12345 for details.', 'channel_id': '#finance'}, name='send_discord_message') function_response=None text=None\n",
+      "---> Sending message to Discord channel '#finance': 'Q3 Earnings Report: Revenue increased by 20%, user engagement grew by 15%, exceeding expectations. See file file12345 for details.'\n",
+      "\n",
+      "Sending tool result back to model: {\"status\": \"success\", \"channel\": \"#finance\", \"message_preview\": \"Q3 Earnings Report: Revenue increased by 20%, user...\"}\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Model's next response: video_metadata=None thought=None inline_data=None file_data=None thought_signature=None code_execution_result=None executable_code=None function_call=FunctionCall(id=None, args={'message': 'Q3 Earnings Report: Revenue increased by 20%, user engagement grew by 15%, exceeding expectations. More details: file12345', 'channel_id': '#finance'}, name='send_discord_message') function_response=None text=None\n",
+      "\n",
+      "--- Final Agent Response ---\n",
+      "None\n"
+     ]
+    }
+   ],
+   "source": [
+    "# TODO: Rewrite this to show how we can run tool calls in a loop until no \n",
+    "# other function calls are needed.\n",
+    "\n",
+    "\n",
     "# Create a lookup for the actual Python functions\n",
     "tool_functions = {\n",
     "    func.__name__: func for func in [search_google_drive, send_discord_message]\n",
@@ -8355,7 +8780,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
     "print(f\"User Prompt: {prompt}\")\n",
     "response = client.models.generate_content(\n",
     "    model=\"gemini-2.0-flash\",\n",
-    "    contents=prompt,\n",
+    "    contents=USER_PROMPT,\n",
     "    config=config,\n",
     ")\n",
     "response_message = response.candidates[0].content.parts[0]\n",
@@ -8411,7 +8836,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 3. Part 2: Structured Outputs with JSON\n",
+    "## 5. Implementing structured outputs from scratch using JSON\n",
     "\n",
     "Sometimes, you don't need the LLM to take an action, but you need its output in a specific, machine-readable format. Forcing the output to be JSON is a common way to achieve this.\n",
     "\n",
@@ -8431,7 +8856,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 30,
+   "execution_count": 83,
    "metadata": {},
    "outputs": [
     {
@@ -8440,13 +8865,13 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
      "text": [
       "--- Raw LLM Output ---\n",
       "{\n",
-      "  \"summary\": \"This article discusses the rise of AI agents and their ability to perform complex tasks using Large Language Models (LLMs). It covers the ReAct framework, tool use, and long-term planning challenges, suggesting a significant impact on the future of software development.\",\n",
-      "  \"tags\": [\"AI\", \"agents\", \"LLMs\", \"autonomous agents\", \"software development\"],\n",
-      "  \"keywords\": [\"ReAct framework\", \"tool use\", \"long-term planning\", \"artificial intelligence\", \"large language models\"]\n",
+      "  \"summary\": \"The article discusses the advancements in AI, focusing on autonomous agents and their ability to perform complex tasks using LLMs. Key topics include the ReAct framework, tool use, and long-term planning.\",\n",
+      "  \"tags\": [\"AI\", \"autonomous agents\", \"LLMs\", \"ReAct framework\", \"tool use\", \"long-term planning\"],\n",
+      "  \"keywords\": [\"AI agents\", \"Large Language Models\", \"autonomous agents\", \"ReAct\", \"tool use\", \"planning\"]\n",
       "}\n",
       "\n",
       "--- Parsed JSON Object ---\n",
-      "{'summary': 'This article discusses the rise of AI agents and their ability to perform complex tasks using Large Language Models (LLMs). It covers the ReAct framework, tool use, and long-term planning challenges, suggesting a significant impact on the future of software development.', 'tags': ['AI', 'agents', 'LLMs', 'autonomous agents', 'software development'], 'keywords': ['ReAct framework', 'tool use', 'long-term planning', 'artificial intelligence', 'large language models']}\n"
+      "{'summary': 'The article discusses the advancements in AI, focusing on autonomous agents and their ability to perform complex tasks using LLMs. Key topics include the ReAct framework, tool use, and long-term planning.', 'tags': ['AI', 'autonomous agents', 'LLMs', 'ReAct framework', 'tool use', 'long-term planning'], 'keywords': ['AI agents', 'Large Language Models', 'autonomous agents', 'ReAct', 'tool use', 'planning']}\n"
      ]
     }
    ],
@@ -8493,7 +8918,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 4. Part 3: Structured Outputs with Pydantic\n",
+    "## 6. Implementing structured outputs from scratch using Pydantic\n",
     "\n",
     "While prompting for JSON is effective, it can be fragile. A more robust and modern approach is to use **Pydantic**. Pydantic allows you to define data structures as Python classes. This gives you:\n",
     "\n",
@@ -8506,7 +8931,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 31,
+   "execution_count": 84,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -8533,7 +8958,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 32,
+   "execution_count": 85,
    "metadata": {},
    "outputs": [
     {
@@ -8542,24 +8967,27 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
      "text": [
       "--- Raw LLM Output ---\n",
       "{\n",
-      "  \"summary\": \"The article discusses the rise of AI agents, focusing on autonomous agents and the use of Large Language Models (LLMs) for complex tasks. Key aspects include the ReAct framework, tool use, and long-term planning challenges.\",\n",
+      "  \"summary\": \"This article explores the advancements in AI agents, particularly focusing on autonomous agents powered by Large Language Models. It covers topics like the ReAct framework, tool use, and long-term planning challenges, suggesting a significant impact on the future of software development.\",\n",
       "  \"tags\": [\n",
       "    \"AI Agents\",\n",
       "    \"Large Language Models\",\n",
       "    \"Autonomous Systems\",\n",
-      "    \"Artificial Intelligence\"\n",
+      "    \"Software Development\",\n",
+      "    \"ReAct Framework\"\n",
       "  ],\n",
       "  \"keywords\": [\n",
+      "    \"AI\",\n",
       "    \"LLMs\",\n",
-      "    \"ReAct framework\",\n",
+      "    \"ReAct\",\n",
       "    \"tool use\",\n",
       "    \"long-term planning\",\n",
-      "    \"autonomous agents\"\n",
+      "    \"autonomous agents\",\n",
+      "    \"software development\"\n",
       "  ]\n",
       "}\n",
       "\n",
       "--- Pydantic Validated Object ---\n",
-      "summary='The article discusses the rise of AI agents, focusing on autonomous agents and the use of Large Language Models (LLMs) for complex tasks. Key aspects include the ReAct framework, tool use, and long-term planning challenges.' tags=['AI Agents', 'Large Language Models', 'Autonomous Systems', 'Artificial Intelligence'] keywords=['LLMs', 'ReAct framework', 'tool use', 'long-term planning', 'autonomous agents']\n",
+      "summary='This article explores the advancements in AI agents, particularly focusing on autonomous agents powered by Large Language Models. It covers topics like the ReAct framework, tool use, and long-term planning challenges, suggesting a significant impact on the future of software development.' tags=['AI Agents', 'Large Language Models', 'Autonomous Systems', 'Software Development', 'ReAct Framework'] keywords=['AI', 'LLMs', 'ReAct', 'tool use', 'long-term planning', 'autonomous agents', 'software development']\n",
       "\n",
       "Validation successful!\n"
      ]
@@ -8612,7 +9040,7 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
   },
   {
    "cell_type": "code",
-   "execution_count": 35,
+   "execution_count": 86,
    "metadata": {},
    "outputs": [
     {
@@ -8620,12 +9048,12 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
      "output_type": "stream",
      "text": [
       "--- Function Call from LLM ---\n",
-      "id=None args={'summary': 'The article discusses advancements in AI, focusing on autonomous agents and how LLMs are moving beyond text generation to perform complex tasks.', 'tags': ['AI', 'Autonomous Agents', 'LLMs'], 'keywords': ['AI Agents', 'Large Language Models', 'ReAct framework', 'tool use', 'long-term planning']} name='extract_metadata'\n",
+      "id=None args={'keywords': ['AI Agents', 'Large Language Models', 'ReAct framework', 'tool use', 'long-term planning'], 'summary': 'Recent advancements in AI have led to the rise of autonomous agents capable of complex tasks, moving beyond simple text generation.', 'tags': ['AI', 'Autonomous Agents', 'LLMs']} name='extract_metadata'\n",
       "\n",
       "--- Pydantic Validated Object ---\n",
-      "summary='The article discusses advancements in AI, focusing on autonomous agents and how LLMs are moving beyond text generation to perform complex tasks.' tags=['AI', 'Autonomous Agents', 'LLMs'] keywords=['AI Agents', 'Large Language Models', 'ReAct framework', 'tool use', 'long-term planning']\n",
+      "summary='Recent advancements in AI have led to the rise of autonomous agents capable of complex tasks, moving beyond simple text generation.' tags=['AI', 'Autonomous Agents', 'LLMs'] keywords=['AI Agents', 'Large Language Models', 'ReAct framework', 'tool use', 'long-term planning']\n",
       "\n",
-      "Summary: The article discusses advancements in AI, focusing on autonomous agents and how LLMs are moving beyond text generation to perform complex tasks.\n",
+      "Summary: Recent advancements in AI have led to the rise of autonomous agents capable of complex tasks, moving beyond simple text generation.\n",
       "Tags: ['AI', 'Autonomous Agents', 'LLMs']\n"
      ]
     }
@@ -8687,29 +9115,28 @@ https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-buildi
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Method 3: Using a Pydantic Model as direct Output"
+    "## 7. Implementing structured ouputs using Gemini and Pydantic"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 38,
+   "execution_count": 87,
    "metadata": {},
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "DocumentMetadata(summary='This article examines the progress of AI agents, particularly their ability to handle complex tasks using Large Language Models. It highlights the ReAct framework, the significance of utilizing tools, and the difficulties associated with long-term planning in AI.', tags=['AI Agents', 'Large Language Models', 'Autonomous Systems', 'Software Development'], keywords=['AI', 'LLMs', 'ReAct framework', 'tool use', 'long-term planning'])"
+       "DocumentMetadata(summary='This article examines the progress in AI, specifically regarding autonomous agents and their ability to handle complex tasks using Large Language Models. It highlights tool use, the ReAct framework, and long-term planning challenges.', tags=['AI', 'Autonomous Agents', 'Large Language Models', 'Software Development'], keywords=['AI Agents', 'LLMs', 'ReAct framework', 'tool use', 'long-term planning'])"
       ]
      },
-     "execution_count": 38,
+     "execution_count": 87,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
     "config = types.GenerateContentConfig(\n",
-    "    response_mime_type=\"application/json\",\n",
-    "    response_schema=DocumentMetadata\n",
+    "    response_mime_type=\"application/json\", response_schema=DocumentMetadata\n",
     ")\n",
     "\n",
     "prompt = f\"\"\"\n",

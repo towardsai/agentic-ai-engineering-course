@@ -1,9 +1,0 @@
-{
-    "num_chars": 26989,
-    "num_words": 3471,
-    "num_sections": 5,
-    "seo": {
-        "title": "LLM Agents: Tools & Structured Outputs",
-        "description": "Unlock the power of LLM agents! Learn how tools enable action & structured outputs ensure reliable data extraction. Master Function Calling & build robust AI applications."
-    }
-}
