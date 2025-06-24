@@ -1,5 +1,9 @@
 {
-    "num_chars": 26091,
-    "num_words": 3581,
-    "num_sections": 8
+    "num_chars": 25406,
+    "num_words": 3403,
+    "num_sections": 8,
+    "seo": {
+        "title": "AI Agents: Tools & Structured Outputs",
+        "description": "Cut through the AI agent hype! Learn to build robust LLM agents with essential tools & structured outputs. Master Gemini API, Pydantic, and real-world agentic systems."
+    }
 }
