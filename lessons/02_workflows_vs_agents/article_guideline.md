@@ -4,7 +4,15 @@
 - **Why I think it’s valuable:** For an AI Engineer, choosing the right architectural approach—workflow or agent—is a critical early decision that impacts complexity, flexibility, and suitability for the AI project or product. Understanding this distinction, along with the mechanics of cutting-edge agents, provides both a conceptual framework and a practical inspiration and intuition for designing sophisticated AI solutions.
 - **Who is the intended audience:** Engineers learning for the first time about the specifics of LLM workflows, AI agents and how they are different.
 - **Article length:** 3000 words (equal to a 15-minute read for someone who reads 200 words per minute)
+
+
 ## Outline
+
+1. Defining the Spectrum: LLM Workflows vs. Agentic Systems
+2. Choosing Your Path: Use Cases and Considerations
+3. State-of-the-Art Agent Examples (2025) - A Closer Look
+4. Deconstructing Advanced Agent Mechanisms
+5. Common Patterns and Enduring Challenges in Agent Design**
 
 ### Section 1: Defining the Spectrum: LLM Workflows vs. Agentic Systems
 
@@ -32,6 +40,8 @@
 	- Examples: Open-ended research and synthesis, dynamic problem-solving (e.g., debugging code, complex customer support), interactive task completion in unfamiliar environments, and creative content generation requiring iterative refinement (where the structure isn't well defined and needs more human feedback).
 	- Strengths: Adaptability to new situations, flexibility to handle ambiguity and complexity as the steps are dynamically decided and potential for emergent solutions.
 - **Hybrid Approaches:** Most real-world systems might blend elements of both. Thus, in reality, we have a spectrum, a gradient between LLM Workflows and Agentic Systems, where a system adopts what's best from both worlds depending on its use cases.
+- Highlight that when building an application you usually have an "autonomy slider" where you decide how much control you have to give to the user. As you go more manual you usually use an LLM workflow together with a human that verifies intermediate steps. As you go more automatic you give more control to the agent with less human in the loop steps. Use the Cursor (CMD+K, CMD+L, CMD+I) and Perplexity (search, research, deep research) examples from the "Andrej Karpathy: Software Is Changing (Again)" resource.
+- The ultimate goal is to speed up the AI generation <-> Human verification loop, which is often done through good workflows/agentic architecture and well designed UI/UX platforms (e.g., Cursor for coding).
 - Attach an image showing the gradient between the two worlds. 
 - **Section length:** 600 words
 
@@ -92,4 +102,5 @@
 [Real Agents vs. Workflows: The Truth Behind AI 'Agents'](https://www.youtube.com/watch?v=kQxr-uOxw2o&t=1s)
 [Exploring the difference between agents and workflows](https://decodingml.substack.com/p/llmops-for-production-agentic-rag)
 [Building Production-Ready RAG Applications: Jerry Liu](https://www.youtube.com/watch?v=TRjq7t2Ms5I)
+[Andrej Karpathy: Software Is Changing (Again)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
 
