@@ -59,5 +59,16 @@
 -  **Section length:** 200 words (without counting the code)
 
 
-## References
+## Article code
 
+Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
+
+- [Notebook 1](https://github.com/towardsai/course-ai-agents/blob/main/lessons/05_structured_outputs/notebook.ipynb)
+
+## Golden Sources
+
+- [Gemini API Structured Output](https://ai.google.dev/gemini-api/docs/structured-output)
+- [Structured Outputs with Pydantic & OpenAI Function Calling](https://www.youtube.com/watch?v=NGEZsqEUpC0)
+- [A Practical Guide on Structuring LLM Outputs with Pydantic](https://developer-service.blog/a-practical-guide-on-structuring-llm-outputs-with-pydantic/)
+- [Steering Large Language Models with Pydantic](https://pydantic.dev/articles/llm-intro)
+- [How to return structured data from a model](https://python.langchain.com/docs/how_to/structured_output/)

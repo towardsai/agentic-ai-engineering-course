@@ -183,6 +183,7 @@ cython_debug/
 .DS_Store
 
 # Brown Agent
+.brown
 .debug/
 agent_graph.png
 article_outline.md
@@ -195,3 +196,6 @@ article_stage_3.metadata.json
 reflection_scores.md
 sources.md
 style_guideline.md
+
+# Nova Agent
+.nova
