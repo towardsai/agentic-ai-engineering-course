@@ -36,7 +36,7 @@
 - Explain how to force the LLM to output data structures in JSON format through prompt engineering and how to parse them to transform them into Python dictionaries that can be used within the code.
 - Give a quick note that it is good practice to wrap specific context elements with XML tags for easy parsing.
 - Also, specify that instead of JSON, which can be verbose, we can also use YAML or XML to make the generated outputs use fewer tokens.
-- Give step-by-step examples from section `2. Implementing structured outputs from scratch using JSON` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
+- Give step-by-step examples from section `2. Implementing structured outputs from scratch using JSON` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration. 
 -  **Section length:** 400 words (without counting the code)
 
 
@@ -45,7 +45,8 @@
 - Rewrite the section from above using Pydantic schemas to model the structured outputs.
 - Explain that Pydantic objects are the go-to method for modeling structured outputs as they offer field and type checking out-of-the-box. This approach bypasses the ambiguity of Python dictionaries. 
 - Show how we can directly leverage the schema from the Pydantic model to guide the model to output the right data structure. Highlight that similar techniques are used internally by Gemini or OpenAI.
-- As a side note, explain that Pydantic objects are the de facto method for modeling domain objects in Python, acting as the perfect bridge between the LLM and Python worlds.
+- Other popular options are Python's TypeDicts and DataClass classes. But due to Pydantic out-of-the-box validation mechanisms Pydantic is the most popular and powerful. 
+- Explain that Pydantic objects are the de facto method for modeling domain objects in Python, acting as the perfect bridge between the LLM and Python worlds.
 - Give step-by-step examples from section `3. Implementing structured outputs from scratch using Pydantic` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
 -  **Section length:** 300 words (without counting the code)
 
@@ -72,3 +73,8 @@ Links to code that will be used to support the article. Always prioritize this c
 - [A Practical Guide on Structuring LLM Outputs with Pydantic](https://developer-service.blog/a-practical-guide-on-structuring-llm-outputs-with-pydantic/)
 - [Steering Large Language Models with Pydantic](https://pydantic.dev/articles/llm-intro)
 - [How to return structured data from a model](https://python.langchain.com/docs/how_to/structured_output/)
+
+
+## Other Sources
+
+- [YAML vs. JSON: Which Is More Efficient for Language Models?](https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df)
