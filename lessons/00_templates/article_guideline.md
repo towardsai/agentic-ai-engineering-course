@@ -32,30 +32,36 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Section 1: ...
 
-...
+- ...
+- Give step-by-step examples from section `1. _`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
+-  **Section length:** _ words
 
 ## Section 2: ...
 
-...
+- ...
+- Give step-by-step examples from section `2. _`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
+-  **Section length:** _ words
 
 ## Section 3: ...
 
-...
+- ...
+- Give step-by-step examples from section `3. _`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
+-  **Section length:** _ words
 
 ## Article Code
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook 1](...)
+1. [Notebook 1](...)
 
 ## Golden Sources
 
-- [Golden Source 1](...)
-- [Golden Source 2](...)
-- [Golden Source 3](...)
-- [Golden Source 4](...)
-- [Golden Source 5](...)
+1. [Golden Source 1](...)
+2. [Golden Source 2](...)
+3. [Golden Source 3](...)
+4. [Golden Source 4](...)
+5. [Golden Source 5](...)
 
 ## Other Sources
 
-- [Source 1](...)
+1. [Source 1](...)
