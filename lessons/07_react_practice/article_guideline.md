@@ -91,6 +91,7 @@
   - Explain the main loop structure with turn-based iteration
   - Detail the scratchpad mechanism for maintaining conversation history
   - Show how the loop terminates with final answers or timeout
+  - Provide a mermaid diagram illustrating the ReAct control loop architecture, showing the complete cycle: User Query → Initialize Scratchpad → Thought Generation → Action Decision → Tool Execution (if needed) → Observation → Update Scratchpad → Loop Back or Terminate.
 - **State Management Deep Dive:**
   - How the scratchpad accumulates the conversation history
   - The format for logging thoughts, actions, and observations
@@ -115,11 +116,11 @@
 
 Links to code that will be used to support the article. Always prioritize this code over every other source code: 
 
-- [Notebook code for the lesson](notebook.ipynb)
+- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/07_react_practice/notebook.ipynb)
 
 ## Golden Sources
 
-- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/pdf/2210.03629)
 - [ReAct Agent - IBM](https://www.ibm.com/think/topics/react-agent)
 - [AI Agent Planning - IBM](https://www.ibm.com/think/topics/ai-agent-planning)
 - [Building effective agents - Anthropic](https://www.anthropic.com/engineering/building-effective-agents)
@@ -127,6 +128,6 @@ Links to code that will be used to support the article. Always prioritize this c
 
 ## Other Sources
 
-- [From LLM Reasoning to Autonomous AI Agents - ArXiv](https://arxiv.org/abs/2504.19678)
+- [From LLM Reasoning to Autonomous AI Agents - ArXiv](https://arxiv.org/pdf/2504.19678)
 - [Building ReAct Agents from Scratch using Gemini - Medium](https://medium.com/google-cloud/building-react-agents-from-scratch-a-hands-on-guide-using-gemini-ffe4621d90ae)
 - [AI Agent Orchestration - IBM](https://www.ibm.com/think/topics/ai-agent-orchestration)

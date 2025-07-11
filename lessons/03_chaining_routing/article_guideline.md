@@ -37,6 +37,8 @@ List the benefits of chaining:
 
 Show how the previous FAQ generation example can be split into a 3-step chain: Generate Questions → Answer Questions → Find Sources. Demonstrate how this sequential approach produces more consistent and traceable results. You'll find the code of this section below in these guidelines. Comment also the outputs of the code cells if relevant, they are in the code below as well between cells.
 
+- Provide a mermaid diagram illustrating the sequential FAQ generation pipeline, showing the flow from input content through the three stages: Generate Questions → Answer Questions → Find Sources, with arrows indicating data flow between steps.
+
 Discuss considerations for each step: e.g., prompt clarity, handling potential API errors.
 
 List the downsides:
@@ -78,6 +80,8 @@ You'll find the code of this section below in these guidelines. Comment also the
   - If intent is "Billing Inquiry," use prompt_billing.
 - Include example Python code snippets for the conditional routing and subsequent calls.
 
+- Provide a mermaid diagram illustrating the routing workflow, showing user input → intent classification → conditional branching to different specialized handlers (Technical Support, Billing Inquiry, General Question) → final responses.
+
 Discuss challenges: Ensuring robust classification, handling ambiguous or out-of-scope intents, designing effective prompts for each branch.
 
 ## Section 5: Orchestrator-Worker
@@ -99,7 +103,7 @@ When copying the code from below, try to keep the code cells the same, without s
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook code for the lesson](notebook.ipynb)
+- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/03_chaining_routing/notebook.ipynb)
 
 ## Golden Sources
 

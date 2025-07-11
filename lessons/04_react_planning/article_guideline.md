@@ -33,11 +33,13 @@
     - Explain the core idea: LLM iteratively generates a Thought (reasoning about the current state and next step) followed by an Action (what to do, e.g., use a tool or provide a final answer). After the action is executed, an Observation (result of the action) is fed back to the LLM to inform the next Thought-Action pair.
     - Illustrate the Thought -> Action -> Observation loop.
     - Conceptual Value: Makes the agent's "internal monologue" explicit, aids interpretability, helps the LLM stay on track for complex tasks, and provides a natural way to integrate tool use.
+    - Provide a mermaid diagram illustrating the ReAct loop, showing the cyclical flow: User Query → Thought (reasoning) → Action (tool use/final answer) → Observation (results) → back to Thought, with decision points for continuing the loop or providing final answer.
 - **Plan-and-Execute (or Plan-and-Solve):**
     - Explain the core idea:
         1. **Planning Phase:** The LLM first generates a complete, step-by-step plan to achieve the given goal.
         2. **Execution Phase:** The agent (or another LLM, or code) then executes each step of the plan, potentially with refinements.
     - Conceptual Value: Useful for tasks where a high-level strategy can be determined upfront. Provides a structured approach.
+    - Provide a mermaid diagram illustrating the Plan-and-Execute workflow, showing the two distinct phases: User Query → Planning Phase (generate complete plan) → Execution Phase (execute each step sequentially with potential refinements) → Final Result.
 - Discuss why these explicit patterns remain valuable:
     - Even if modern models "internalize" similar processes through extensive instruction fine-tuning, understanding these patterns helps in:
         - Designing effective prompts for complex reasoning tasks.
@@ -65,7 +67,7 @@
 - [AI Agent Orchestration - IBM](https://www.ibm.com/think/topics/ai-agent-orchestration)
 - [ReAct Agent - IBM](https://www.ibm.com/think/topics/react-agent)
 - [Building effective agents - Anthropic](https://www.anthropic.com/engineering/building-effective-agents)
-- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/pdf/2210.03629)
 
 ## Other Sources
 
