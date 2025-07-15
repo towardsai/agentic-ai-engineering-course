@@ -4,7 +4,7 @@
 
 - **Why I think it's valuable**: For an AI Engineer in 2025, understanding the current landscape, their specific role within it, and the trajectory of AI development towards autonomous agents is very important. This knowledge helps focus learning efforts on high-impact skills, navigating the rapidly evolving toolchain, and preparing for building the next generation of AI-powered applications. This article lays the foundational understanding for the entire course.
 
-- **Who the intended audience is**: Software engineers, ML engineers, and developers aiming to specialize in AI Engineering. It's ideal for those looking to move beyond basic LLM API calls and build sophisticated, autonomous AI applications capable of complex reasoning, planning, and task execution. Participants should be interested in hands-on development with Python, OpenAI models, and frameworks like LangGraph to create integrated, production-considerate agentic systems.
+- **Who the intended audience is**: Software engineers, ML engineers, and developers aiming to specialize in AI Engineering. It's ideal for those looking to move beyond basic LLM API calls and build sophisticated, autonomous AI applications capable of complex reasoning, planning, and task execution. Participants should be interested in hands-on development with Python, OpenAI models, Gemini models and frameworks like LangGraph to create integrated, production-considerate agentic systems.
 
 - **Expected length of the article in words**: 2000-2500 words (approximately 8-10 minutes of reading time)
 

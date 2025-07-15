@@ -772,7 +772,6 @@ name = "lessons"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "google-ai-generativelanguage" },
     { name = "google-genai" },
     { name = "ipykernel" },
     { name = "langchain" },
@@ -787,7 +786,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "google-ai-generativelanguage", specifier = ">=0.6.18" },
     { name = "google-genai", specifier = ">=1.21.1" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "langchain", specifier = ">=0.3.26" },
