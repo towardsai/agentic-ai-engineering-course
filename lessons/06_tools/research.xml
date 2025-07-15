@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?</summary>
-
-### Source [1]: https://openai.github.io/openai-agents-python/ref/function_schema/
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [1]: https://openai.github.io/openai-agents-python/ref/function_schema/
 
 Query: How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?
 
@@ -21,11 +20,8 @@ This approach guarantees that large-language-model agents not only request but a
 
 -----
 
------
-
------
-
-### Source [2]: https://python.useinstructor.com/concepts/models/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [2]: https://python.useinstructor.com/concepts/models/
 
 Query: How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?
 
@@ -39,11 +35,8 @@ This workflow ensures that LLM outputs are **structured, validated, and tightly 
 
 -----
 
------
-
------
-
-### Source [3]: https://huggingface.co/docs/hugs/en/guides/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [3]: https://huggingface.co/docs/hugs/en/guides/function-calling
 
 Query: How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?
 
@@ -57,11 +50,8 @@ This method enables applications to convert LLM output into **API calls, computa
 
 -----
 
------
-
------
-
-### Source [4]: https://datasciencesouth.com/blog/openai-functions/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [4]: https://datasciencesouth.com/blog/openai-functions/
 
 Query: How can Pydantic models be leveraged as function-calling schemas for large-language-model agents to guarantee valid, on-demand structured outputs?
 
@@ -75,14 +65,13 @@ This approach provides **reliable data extraction**, allowing developers to move
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?</summary>
-
-### Source [14]: https://python.langchain.com/docs/concepts/tools/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [14]: https://python.langchain.com/docs/concepts/tools/
 
 Query: How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?
 
@@ -111,11 +100,8 @@ These properties can be inspected directly and are structured in a way that make
 
 -----
 
------
-
------
-
-### Source [15]: https://strandsagents.com/latest/user-guide/concepts/tools/python-tools/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [15]: https://strandsagents.com/latest/user-guide/concepts/tools/python-tools/
 
 Query: How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?
 
@@ -128,11 +114,8 @@ This approach enables seamless integration, requiring minimal boilerplate from t
 
 -----
 
------
-
------
-
-### Source [16]: https://book.pythontips.com/en/latest/decorators.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [16]: https://book.pythontips.com/en/latest/decorators.html
 
 Query: How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?
 
@@ -146,11 +129,8 @@ A decorator can use this information to build metadata or schemas, such as those
 
 -----
 
------
-
------
-
-### Source [17]: https://peps.python.org/pep-0318/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [17]: https://peps.python.org/pep-0318/
 
 Query: How can a Python @tool decorator automatically extract a function’s name, docstring, and type-hints to build the JSON schema required for OpenAI or Gemini function calling?
 
@@ -158,14 +138,13 @@ Answer: PEP 318 describes the official syntax for Python decorators. Decorators 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?</summary>
-
-### Source [22]: http://www.mobihealthnews.com/news/apple-study-highlights-limitations-llms
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [22]: http://www.mobihealthnews.com/news/apple-study-highlights-limitations-llms
 
 Query: What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?
 
@@ -173,11 +152,8 @@ Answer: Apple's study highlights that **LLMs exhibit fragility in genuine logica
 
 -----
 
------
-
------
-
-### Source [23]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11756841/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [23]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11756841/
 
 Query: What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?
 
@@ -185,11 +161,8 @@ Answer: This source identifies that **LLMs like ChatGPT struggle to generate acc
 
 -----
 
------
-
------
-
-### Source [24]: https://lims.ac.uk/documents/undefined-1.pdf
+-----]]></source_block>
+        <source_block><![CDATA[### Source [24]: https://lims.ac.uk/documents/undefined-1.pdf
 
 Query: What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?
 
@@ -197,11 +170,8 @@ Answer: According to this analysis, **LLMs can verbally simulate elementary logi
 
 -----
 
------
-
------
-
-### Source [25]: https://direct.mit.edu/opmi/article/doi/10.1162/opmi_a_00160/124234/The-Limitations-of-Large-Language-Models-for
+-----]]></source_block>
+        <source_block><![CDATA[### Source [25]: https://direct.mit.edu/opmi/article/doi/10.1162/opmi_a_00160/124234/The-Limitations-of-Large-Language-Models-for
 
 Query: What specific limitations of large language models (e.g., lack of real-time knowledge, inability to execute code, and finite context windows) are most often cited by researchers as the reasons agents need external tools?
 
@@ -209,14 +179,13 @@ Answer: This article explains that **LLMs' reliance on text-based training data 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?</summary>
-
-### Source [38]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [38]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
 
 Query: In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?
 
@@ -224,11 +193,8 @@ Answer: The **Google Gemini function-calling interface** operates by allowing de
 
 -----
 
------
-
------
-
-### Source [39]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [39]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
 
 Query: In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?
 
@@ -236,11 +202,8 @@ Answer: Google Gemini's function-calling interface requires **function declarati
 
 -----
 
------
-
------
-
-### Source [40]: https://ai.google.dev/gemini-api/docs/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [40]: https://ai.google.dev/gemini-api/docs/function-calling
 
 Query: In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?
 
@@ -248,11 +211,8 @@ Answer: With the Gemini API, function calling is handled by first **defining fun
 
 -----
 
------
-
------
-
-### Source [41]: https://firebase.google.com/docs/ai-logic/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [41]: https://firebase.google.com/docs/ai-logic/function-calling
 
 Query: In what ways does Google Gemini’s native function-calling interface differ from OpenAI’s, and what advantages do schema-based tool definitions (versus prompt-engineered approaches) offer for production-level tool calls?
 
@@ -260,14 +220,13 @@ Answer: Gemini's function calling is designed around the use of **tools**, which
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?</summary>
-
-### Source [46]: https://huggingface.co/docs/smolagents/en/tutorials/secure_code_execution
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [46]: https://huggingface.co/docs/smolagents/en/tutorials/secure_code_execution
 
 Query: How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?
 
@@ -288,11 +247,8 @@ A sample Dockerfile is provided to illustrate setting up a restricted environmen
 
 -----
 
------
-
------
-
-### Source [47]: https://dida.do/blog/setting-up-a-secure-python-sandbox-for-llm-agents
+-----]]></source_block>
+        <source_block><![CDATA[### Source [47]: https://dida.do/blog/setting-up-a-secure-python-sandbox-for-llm-agents
 
 Query: How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?
 
@@ -306,11 +262,8 @@ The blog emphasizes the importance of creating **safe execution environments** w
 
 -----
 
------
-
------
-
-### Source [48]: https://checkmarx.com/zero-post/glass-sandbox-complexity-of-python-sandboxing/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [48]: https://checkmarx.com/zero-post/glass-sandbox-complexity-of-python-sandboxing/
 
 Query: How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?
 
@@ -323,11 +276,8 @@ Answer: The article warns that **Python’s object system and language features 
 
 -----
 
------
-
------
-
-### Source [49]: https://healeycodes.com/running-untrusted-python-code
+-----]]></source_block>
+        <source_block><![CDATA[### Source [49]: https://healeycodes.com/running-untrusted-python-code
 
 Query: How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?
 
@@ -342,11 +292,8 @@ Key points:
 
 -----
 
------
-
------
-
-### Source [50]: https://wiki.python.org/moin/Asking%20for%20Help/How%20can%20I%20run%20an%20untrusted%20Python%20script%20safely%20(i.e.%20Sandbox)
+-----]]></source_block>
+        <source_block><![CDATA[### Source [50]: https://wiki.python.org/moin/Asking%20for%20Help/How%20can%20I%20run%20an%20untrusted%20Python%20script%20safely%20(i.e.%20Sandbox)
 
 Query: How do engineers securely sandbox Python (or other) code execution when exposing a “code interpreter” tool to an LLM agent, and what industry best-practice guidelines are recommended to mitigate security risks?
 
@@ -354,14 +301,13 @@ Answer: The official Python wiki suggests using **Jython** (Python implemented i
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?</summary>
-
-### Source [59]: https://blog.gdeltproject.org/llm-infinite-loops-failure-modes-the-current-state-of-llm-entity-extraction/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [59]: https://blog.gdeltproject.org/llm-infinite-loops-failure-modes-the-current-state-of-llm-entity-extraction/
 
 Query: What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?
 
@@ -369,11 +315,8 @@ Answer: This source discusses **LLM infinite loops and failure modes** during en
 
 -----
 
------
-
------
-
-### Source [60]: https://arxiv.org/html/2406.08731v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [60]: https://arxiv.org/html/2406.08731v1
 
 Query: What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?
 
@@ -388,11 +331,8 @@ The study emphasizes that failures often occur at the level of entire code block
 
 -----
 
------
-
------
-
-### Source [61]: https://www.prompthub.us/blog/using-llms-for-code-generation-a-guide-to-improving-accuracy-and-addressing-common-issues
+-----]]></source_block>
+        <source_block><![CDATA[### Source [61]: https://www.prompthub.us/blog/using-llms-for-code-generation-a-guide-to-improving-accuracy-and-addressing-common-issues
 
 Query: What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?
 
@@ -407,11 +347,8 @@ The guide notes that **all LLMs** (regardless of size) struggle with complex log
 
 -----
 
------
-
------
-
-### Source [62]: https://arxiv.org/html/2407.20859v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [62]: https://arxiv.org/html/2407.20859v1
 
 Query: What documented failure modes occur when LLM agents run tool calls in open-ended loops, and how do reasoning patterns like ReAct or Plan-and-Execute mitigate issues such as infinite cycles, escalating costs, or error propagation?
 
@@ -421,17 +358,14 @@ Regarding mitigation, the study finds that **reasoning frameworks like ReAct** (
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>Breaking Agents: Compromising Autonomous LLM Agents Through Malfunction Amplification</summary>
-
-# Breaking Agents: Compromising Autonomous LLM Agents Through Malfunction Amplification
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[Breaking Agents: Compromising Autonomous LLM Agents Through Malfunction Amplification]]></title>
+      <content><![CDATA[# Breaking Agents: Compromising Autonomous LLM Agents Through Malfunction Amplification
 
 Boyang Zhang1   Yicong Tan1   Yun Shen2   Ahmed Salem3   Michael Backes1
 
@@ -1194,14 +1128,11 @@ We hope our discoveries can facilitate future works on improving the robustness 
 - \[48\] Shuyan Zhou, Frank F. Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Yonatan Bisk, Daniel Fried, Uri Alon, and Graham Neubig. WebArena: A Realistic Web Environment for Building Autonomous Agents. CoRR abs/2307.13854, 2023.
 - \[49\] Kaijie Zhu, Jindong Wang, Jiaheng Zhou, Zichen Wang, Hao Chen, Yidong Wang, Linyi Yang, Wei Ye, Neil Zhenqiang Gong, Yue Zhang, and Xing Xie. PromptBench: Towards Evaluating the Robustness of Large Language Models on Adversarial Prompts. CoRR abs/2306.04528, 2023.
 - \[50\] Terry Yue Zhuo, Yujin Huang, Chunyang Chen, and Zhenchang Xing. Red teaming ChatGPT via Jailbreaking: Bias, Robustness, Reliability and Toxicity. CoRR abs/2301.12867, 2023.
-- \[51\] Andy Zou, Zifan Wang, J. Zico Kolter, and Matt Fredrikson. Universal and Transferable Adversarial Attacks on Aligned Language Models. CoRR abs/2307.15043, 2023.
-
-</details>
-
-<details>
-<summary>Function Calling</summary>
-
-# Function Calling
+- \[51\] Andy Zou, Zifan Wang, J. Zico Kolter, and Matt Fredrikson. Universal and Transferable Adversarial Attacks on Aligned Language Models. CoRR abs/2307.15043, 2023.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Function Calling]]></title>
+      <content><![CDATA[# Function Calling
 
 Function calling is a powerful capability that enables Large Language Models (LLMs) to interact with your code and external systems in a structured way. Instead of just generating text responses, LLMs can understand when to call specific functions and provide the necessary parameters to execute real-world actions.
 
@@ -1425,14 +1356,11 @@ print(res)
 
 Never expose sensitive operations directly through function calls. Always implement proper validation and authorization checks.
 
-For more information about basic inference capabilities, see our [Inference Guide](https://huggingface.co/docs/hugs/en/guides/inference).
-
-</details>
-
-<details>
-<summary>`Function schema`</summary>
-
-# `Function schema`
+For more information about basic inference capabilities, see our [Inference Guide](https://huggingface.co/docs/hugs/en/guides/inference).]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[`Function schema`]]></title>
+      <content><![CDATA[# `Function schema`
 
 ### FuncSchema`dataclass`
 
@@ -1871,14 +1799,11 @@ def function_schema(
         takes_context=takes_context,
         strict_json_schema=strict_json_schema,
     )
-```
-
-</details>
-
-<details>
-<summary>Overview</summary>
-
-## Overview
+```]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Overview]]></title>
+      <content><![CDATA[## Overview
 
 The **tool** abstraction in LangChain associates a Python **function** with a **schema** that defines the function's **name**, **description** and **expected arguments**.
 
@@ -2064,21 +1989,16 @@ toolkit = ExampleToolkit(...)
 # Get list of tools
 tools = toolkit.get_tools()
 ```
-
-</details>
-
-
-## Code Sources
-
-_No code sources found._
-
-
-## YouTube Video Transcripts
-
-<details>
-<summary>Hello everybody, welcome to the Neural Maze. So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we're going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.</summary>
-
-Hello everybody, welcome to the Neural Maze. So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we're going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.
+]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <message>No code sources found.</message>
+  </code_sources>
+  <youtube_video_transcripts>
+    <youtube_transcript>
+      <title><![CDATA[Hello everybody, welcome to the Neural Maze. So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we're going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.]]></title>
+      <content><![CDATA[Hello everybody, welcome to the Neural Maze. So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we're going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.
 
 [00:28] What I mean by this is that you have probably used in the past tools in LangChain, in LlamaIndex, or in CrewAI. And the thing is that in today's video, I'm not going to teach you how to use these tools in specific frameworks. I'm just going to teach you how these tools work under the hood. And I think that's really insightful because if we really understand how things work under the hood, I think it's much easier for us to learn how to apply them in the proper way.
 
@@ -2110,24 +2030,17 @@ Hello everybody, welcome to the Neural Maze. So in today's video we are going to
 
 [23:51] And this is everything for today. I'm working on the next videos of this series, the video about the planning pattern and the video about the multi-agent pattern. I think you are also going to to enjoy uh those ones. And but yeah, this is everything for today. I hope you have enjoyed the video. Subscribe to the channel if you haven't and if you like the content. Click the like button if you've you have enjoyed this video. And I'll see you in the next video.
 
-[24:25] [outro music]
-
-</details>
-
-<details>
-<summary>So what is tool calling? Tool calling is a powerful technique where you make the LLM context aware of real-time data such as databases or APIs. Typically, you use tool calling via a chat interface. So you would have your client application in one hand and then the LLM on the other side. From your client application, you would send a set of messages together with a tool definition to the LLM. [00:30] So you would have your messages here together with your list of tools. The LLM will look at both your message and the list of tools, and it's going to recommend a tool you should call. From your client application, you should call this tool and then supply the answer back to the LLM. So this tool response will be interpreted by the LLM, [01:00] and this will either tell you the next tool to call or it will give you the final answer. In your application, you're responsible for creating the tool definition. So this tool definition includes a couple of things such as the name of every tool. It also includes a description for the tool. So this is where you can give additional information about how to use the tool or when to use it. It also includes the input parameters needed to make a tool call. And the tools can be anything. So the tools could be APIs or databases. [01:30] But it could also be code that you interpret via a code interpreter. So let's look at an example. Assume you want to find the weather in Miami. You might ask the LLM about the temperature in Miami. You also provide a list of tools, and one of these tools is the weather API. The LLM will look at both your question, which is what is the temperature in Miami, [02:00] it will also look at the weather API and then based on the tool definition for the weather API, it's going to tell you how to call the weather tool. So in here, it's going to create a tool that you can use right here on this side where you call the API to collect the weather information. You would then supply the weather information back to the LLM. So let's say it would be 71°. The LLM will look at the tool response and then give the final answer, which might be something in the trend of the weather in Miami is pretty nice, it's 71°. [02:30] This has some downsides. So when you do traditional tool calling where you have an LLM and a client application, you could see the LLM hallucinate. Sometimes the LLM can also make up incorrect tool calls. That's why I also want to look at embedded tool calling. We just looked at traditional tool calling. But traditional tool calling has its flaws. As I mentioned, the LLM could hallucinate or create incorrect tool calls. That's why you also want to take embedded tool calling into account. [03:00] With embedded tool calling, you use a library or framework to interact with the LLM and your tool definitions. The library would be somewhere between your application and the large language model. In the library, you would do the tool definition, but you will also execute the tool calls. So let's draw a line between these sections here. So the library will contain your tool definition. It will also contain the tool execution. [03:30] So when you send a message from your application to the large language model, it will go through the library. So your message could still be, what is the temperature in Miami? The library will then append the tool definition and send your message together with the tools to the LLM. So this will be your message plus your list of tools. [04:00] Instead of sending the tool to call to the application or the user, it will be sent to the library, which will then do the tool execution. And this way, the library will provide you with the final answer, which could be it's 71° in Miami. When you use embedded tool calling, the LLM will no longer hallucinate as the library to help you with the tool calling or the embedded tool calling is going to take care of the tool execution and will retry the tool calls in case it's needed. [04:30] In this video, we looked at both traditional tool calling and also embedded tool calling, where especially embedded tool calling will help you to prevent hallucination or help you with the execution of tools, which could be APIs, databases, or code.</summary>
-
-So what is tool calling? Tool calling is a powerful technique where you make the LLM context aware of real-time data such as databases or APIs. Typically, you use tool calling via a chat interface. So you would have your client application in one hand and then the LLM on the other side. From your client application, you would send a set of messages together with a tool definition to the LLM. [00:30] So you would have your messages here together with your list of tools. The LLM will look at both your message and the list of tools, and it's going to recommend a tool you should call. From your client application, you should call this tool and then supply the answer back to the LLM. So this tool response will be interpreted by the LLM, [01:00] and this will either tell you the next tool to call or it will give you the final answer. In your application, you're responsible for creating the tool definition. So this tool definition includes a couple of things such as the name of every tool. It also includes a description for the tool. So this is where you can give additional information about how to use the tool or when to use it. It also includes the input parameters needed to make a tool call. And the tools can be anything. So the tools could be APIs or databases. [01:30] But it could also be code that you interpret via a code interpreter. So let's look at an example. Assume you want to find the weather in Miami. You might ask the LLM about the temperature in Miami. You also provide a list of tools, and one of these tools is the weather API. The LLM will look at both your question, which is what is the temperature in Miami, [02:00] it will also look at the weather API and then based on the tool definition for the weather API, it's going to tell you how to call the weather tool. So in here, it's going to create a tool that you can use right here on this side where you call the API to collect the weather information. You would then supply the weather information back to the LLM. So let's say it would be 71°. The LLM will look at the tool response and then give the final answer, which might be something in the trend of the weather in Miami is pretty nice, it's 71°. [02:30] This has some downsides. So when you do traditional tool calling where you have an LLM and a client application, you could see the LLM hallucinate. Sometimes the LLM can also make up incorrect tool calls. That's why I also want to look at embedded tool calling. We just looked at traditional tool calling. But traditional tool calling has its flaws. As I mentioned, the LLM could hallucinate or create incorrect tool calls. That's why you also want to take embedded tool calling into account. [03:00] With embedded tool calling, you use a library or framework to interact with the LLM and your tool definitions. The library would be somewhere between your application and the large language model. In the library, you would do the tool definition, but you will also execute the tool calls. So let's draw a line between these sections here. So the library will contain your tool definition. It will also contain the tool execution. [03:30] So when you send a message from your application to the large language model, it will go through the library. So your message could still be, what is the temperature in Miami? The library will then append the tool definition and send your message together with the tools to the LLM. So this will be your message plus your list of tools. [04:00] Instead of sending the tool to call to the application or the user, it will be sent to the library, which will then do the tool execution. And this way, the library will provide you with the final answer, which could be it's 71° in Miami. When you use embedded tool calling, the LLM will no longer hallucinate as the library to help you with the tool calling or the embedded tool calling is going to take care of the tool execution and will retry the tool calls in case it's needed. [04:30] In this video, we looked at both traditional tool calling and also embedded tool calling, where especially embedded tool calling will help you to prevent hallucination or help you with the execution of tools, which could be APIs, databases, or code.
-
-</details>
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>agentic-design-patterns-part-3-tool-use</summary>
-
-Tool Use, in which an LLM is given functions it can request to call for gathering information, taking action, or manipulating data, is a key design pattern of [AI agentic workflows](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S). You may be familiar with LLM-based systems that can perform a web search or execute code. Indeed, some large, consumer-facing LLMs already incorporate these features. But Tool Use goes well beyond these examples.
+[24:25] [outro music]]]></content>
+    </youtube_transcript>
+    <youtube_transcript>
+      <title><![CDATA[So what is tool calling? Tool calling is a powerful technique where you make the LLM context aware of real-time data such as databases or APIs. Typically, you use tool calling via a chat interface. So you would have your client application in one hand and then the LLM on the other side. From your client application, you would send a set of messages together with a tool definition to the LLM. [00:30] So you would have your messages here together with your list of tools. The LLM will look at both your message and the list of tools, and it's going to recommend a tool you should call. From your client application, you should call this tool and then supply the answer back to the LLM. So this tool response will be interpreted by the LLM, [01:00] and this will either tell you the next tool to call or it will give you the final answer. In your application, you're responsible for creating the tool definition. So this tool definition includes a couple of things such as the name of every tool. It also includes a description for the tool. So this is where you can give additional information about how to use the tool or when to use it. It also includes the input parameters needed to make a tool call. And the tools can be anything. So the tools could be APIs or databases. [01:30] But it could also be code that you interpret via a code interpreter. So let's look at an example. Assume you want to find the weather in Miami. You might ask the LLM about the temperature in Miami. You also provide a list of tools, and one of these tools is the weather API. The LLM will look at both your question, which is what is the temperature in Miami, [02:00] it will also look at the weather API and then based on the tool definition for the weather API, it's going to tell you how to call the weather tool. So in here, it's going to create a tool that you can use right here on this side where you call the API to collect the weather information. You would then supply the weather information back to the LLM. So let's say it would be 71°. The LLM will look at the tool response and then give the final answer, which might be something in the trend of the weather in Miami is pretty nice, it's 71°. [02:30] This has some downsides. So when you do traditional tool calling where you have an LLM and a client application, you could see the LLM hallucinate. Sometimes the LLM can also make up incorrect tool calls. That's why I also want to look at embedded tool calling. We just looked at traditional tool calling. But traditional tool calling has its flaws. As I mentioned, the LLM could hallucinate or create incorrect tool calls. That's why you also want to take embedded tool calling into account. [03:00] With embedded tool calling, you use a library or framework to interact with the LLM and your tool definitions. The library would be somewhere between your application and the large language model. In the library, you would do the tool definition, but you will also execute the tool calls. So let's draw a line between these sections here. So the library will contain your tool definition. It will also contain the tool execution. [03:30] So when you send a message from your application to the large language model, it will go through the library. So your message could still be, what is the temperature in Miami? The library will then append the tool definition and send your message together with the tools to the LLM. So this will be your message plus your list of tools. [04:00] Instead of sending the tool to call to the application or the user, it will be sent to the library, which will then do the tool execution. And this way, the library will provide you with the final answer, which could be it's 71° in Miami. When you use embedded tool calling, the LLM will no longer hallucinate as the library to help you with the tool calling or the embedded tool calling is going to take care of the tool execution and will retry the tool calls in case it's needed. [04:30] In this video, we looked at both traditional tool calling and also embedded tool calling, where especially embedded tool calling will help you to prevent hallucination or help you with the execution of tools, which could be APIs, databases, or code.]]></title>
+      <content><![CDATA[So what is tool calling? Tool calling is a powerful technique where you make the LLM context aware of real-time data such as databases or APIs. Typically, you use tool calling via a chat interface. So you would have your client application in one hand and then the LLM on the other side. From your client application, you would send a set of messages together with a tool definition to the LLM. [00:30] So you would have your messages here together with your list of tools. The LLM will look at both your message and the list of tools, and it's going to recommend a tool you should call. From your client application, you should call this tool and then supply the answer back to the LLM. So this tool response will be interpreted by the LLM, [01:00] and this will either tell you the next tool to call or it will give you the final answer. In your application, you're responsible for creating the tool definition. So this tool definition includes a couple of things such as the name of every tool. It also includes a description for the tool. So this is where you can give additional information about how to use the tool or when to use it. It also includes the input parameters needed to make a tool call. And the tools can be anything. So the tools could be APIs or databases. [01:30] But it could also be code that you interpret via a code interpreter. So let's look at an example. Assume you want to find the weather in Miami. You might ask the LLM about the temperature in Miami. You also provide a list of tools, and one of these tools is the weather API. The LLM will look at both your question, which is what is the temperature in Miami, [02:00] it will also look at the weather API and then based on the tool definition for the weather API, it's going to tell you how to call the weather tool. So in here, it's going to create a tool that you can use right here on this side where you call the API to collect the weather information. You would then supply the weather information back to the LLM. So let's say it would be 71°. The LLM will look at the tool response and then give the final answer, which might be something in the trend of the weather in Miami is pretty nice, it's 71°. [02:30] This has some downsides. So when you do traditional tool calling where you have an LLM and a client application, you could see the LLM hallucinate. Sometimes the LLM can also make up incorrect tool calls. That's why I also want to look at embedded tool calling. We just looked at traditional tool calling. But traditional tool calling has its flaws. As I mentioned, the LLM could hallucinate or create incorrect tool calls. That's why you also want to take embedded tool calling into account. [03:00] With embedded tool calling, you use a library or framework to interact with the LLM and your tool definitions. The library would be somewhere between your application and the large language model. In the library, you would do the tool definition, but you will also execute the tool calls. So let's draw a line between these sections here. So the library will contain your tool definition. It will also contain the tool execution. [03:30] So when you send a message from your application to the large language model, it will go through the library. So your message could still be, what is the temperature in Miami? The library will then append the tool definition and send your message together with the tools to the LLM. So this will be your message plus your list of tools. [04:00] Instead of sending the tool to call to the application or the user, it will be sent to the library, which will then do the tool execution. And this way, the library will provide you with the final answer, which could be it's 71° in Miami. When you use embedded tool calling, the LLM will no longer hallucinate as the library to help you with the tool calling or the embedded tool calling is going to take care of the tool execution and will retry the tool calls in case it's needed. [04:30] In this video, we looked at both traditional tool calling and also embedded tool calling, where especially embedded tool calling will help you to prevent hallucination or help you with the execution of tools, which could be APIs, databases, or code.]]></content>
+    </youtube_transcript>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[agentic-design-patterns-part-3-tool-use]]></title>
+      <content><![CDATA[Tool Use, in which an LLM is given functions it can request to call for gathering information, taking action, or manipulating data, is a key design pattern of [AI agentic workflows](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S). You may be familiar with LLM-based systems that can perform a web search or execute code. Indeed, some large, consumer-facing LLMs already incorporate these features. But Tool Use goes well beyond these examples.
 
 If you prompt an online LLM-based chat system, “What is the best coffee maker according to reviewers?”, it might decide to carry out a web search and download one or more web pages to gain context. Early on, LLM developers realized that relying only on a pre-trained transformer to generate output tokens is limiting, and that giving an LLM a tool for web search lets it do much more. With such a tool, an LLM is either fine-tuned or prompted (perhaps with few-shot prompting) to generate a special string like _{tool: web-search, query: "coffee maker reviews"}_ to request calling a search engine. (The exact format of the string depends on the implementation.) A post-processing step then looks for strings like these, calls the web search function with the relevant parameters when it finds one, and passes the result back to the LLM as additional input context for further processing.
 
@@ -2143,14 +2056,11 @@ If you’re interested in learning more about Tool Use, I recommend:
 - “ [MM-REACT: Prompting ChatGPT for Multimodal Reasoning and Action](https://arxiv.org/abs/2303.11381?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S),” Yang et al. (2023)
 - “ [Efficient Tool Use with Chain-of-Abstraction Reasoning](https://arxiv.org/abs/2401.17464?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S),” Gao et al. (2024)
 
-Both Tool Use and Reflection, which I described in last week’s [letter](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S), are design patterns that I can get to work fairly reliably on my applications — both are capabilities well worth learning about. In future letters, I’ll describe the Planning and Multi-agent collaboration design patterns. They allow AI agents to do much more but are less mature, less predictable — albeit very exciting — technologies.
-
-</details>
-
-<details>
-<summary>building-ai-agents-from-scratch-part-1-tool-use</summary>
-
-# Building AI Agents from scratch - Part 1: Tool use
+Both Tool Use and Reflection, which I described in last week’s [letter](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S), are design patterns that I can get to work fairly reliably on my applications — both are capabilities well worth learning about. In future letters, I’ll describe the Planning and Multi-agent collaboration design patterns. They allow AI agents to do much more but are less mature, less predictable — albeit very exciting — technologies.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[building-ai-agents-from-scratch-part-1-tool-use]]></title>
+      <content><![CDATA[# Building AI Agents from scratch - Part 1: Tool use
 
 ### Let's implement AI Agent from scratch without using any framework. Today we implement the tool use capability.
 
@@ -2960,14 +2870,11 @@ As expected! First query uses the tool, while the second does not.
 
 - How to wrap python functions to be provided as tools to the Agent.
 - How to craft a system prompt that uses the tool definitions in planning the execution.
-- How to implement the agent that executes on the plan.
-
-</details>
-
-<details>
-<summary>function-calling-openai-api</summary>
-
-# Function calling
+- How to implement the agent that executes on the plan.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[function-calling-openai-api]]></title>
+      <content><![CDATA[# Function calling
 
 Enable models to fetch data and take actions.
 
@@ -4108,14 +4015,11 @@ When the model has finished calling the functions an event of type `response.fun
 | --- | --- |
 | `response_id` | The id of the response that the function call belongs to |
 | `output_index` | The index of the output item in the response. This respresents the individual function calls in the response. |
-| `item` | The function call item that includes a `name`, `arguments` and `id` field. |
-
-</details>
-
-<details>
-<summary>function-calling-with-the-gemini-api-google-ai-for-developer</summary>
-
-# Function calling with the Gemini API
+| `item` | The function call item that includes a `name`, `arguments` and `id` field. |]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[function-calling-with-the-gemini-api-google-ai-for-developer]]></title>
+      <content><![CDATA[# Function calling with the Gemini API
 
 Function calling lets you connect models to external tools and APIs.
 Instead of generating text responses, the model determines when to call specific
@@ -5346,14 +5250,11 @@ tasks into smaller, more focused function sets.
 - Only a [subset of the OpenAPI\
 schema](https://ai.google.dev/api/caching#FunctionDeclaration) is supported.
 - Supported parameter types in Python are limited.
-- Automatic function calling is a Python SDK feature only.
-
-</details>
-
-<details>
-<summary>react-vs-plan-and-execute-a-practical-comparison-of-llm-agen</summary>
-
-When building LLM Agent systems, choosing the right reasoning pattern is crucial. This article provides an in-depth comparison of two mainstream Agent reasoning patterns: ReAct (Reasoning and Acting) and Plan-and-Execute, helping you make informed technical decisions through practical cases.
+- Automatic function calling is a Python SDK feature only.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[react-vs-plan-and-execute-a-practical-comparison-of-llm-agen]]></title>
+      <content><![CDATA[When building LLM Agent systems, choosing the right reasoning pattern is crucial. This article provides an in-depth comparison of two mainstream Agent reasoning patterns: ReAct (Reasoning and Acting) and Plan-and-Execute, helping you make informed technical decisions through practical cases.
 
 ## Key Takeaways
 
@@ -5626,12 +5527,11 @@ def analyze_with_plan_execute():
 ## Conclusion
 
 Both ReAct and Plan-and-Execute have their strengths, and the choice between them should consider task characteristics, performance requirements, and cost constraints. In practical applications, you can flexibly choose or even combine both patterns to achieve optimal results.
-
-</details>
-
-<details>
-<summary>scraping-failed</summary>
-
-⚠️ Error scraping https://arxiv.org/pdf/2401.17464v3: Request Timeout: Failed to scrape URL as the request timed out. Request timed out - No additional error details provided.
-
-</details>
+]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[scraping-failed]]></title>
+      <content><![CDATA[⚠️ Error scraping https://arxiv.org/pdf/2401.17464v3: Request Timeout: Failed to scrape URL as the request timed out. Request timed out - No additional error details provided.]]></content>
+    </additional_source>
+  </additional_sources>
+</research>

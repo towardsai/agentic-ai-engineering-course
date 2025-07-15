@@ -3,7 +3,7 @@
 - **What I'm planning to share:** In this article we will talk about structured outputs. We'll introduce **Structured Outputs** as a way to achieve reliable, controlled and formatted data extraction, ensuring type and data quality checks. Common structured output types are JSON, XML, YAML, which can further be translated into Python dictionaries, lists, classes or most commonly Pydantic models. This approach makes manipulating LLM outputs much easier as it serves as the bridge between the LLM (software 3.0) and Python (software 1.0) worlds. First we will implement structured outputs from scratch, then show how to do it directly with a popular API such as Gemini. Ultimately, we will discuss pros and cons between implementing from scratch versus using the LLM API directly.
 - **Why I think it's valuable:** For an AI Engineer, it's critical to understand how to implement the bridge between the LLM and Python worlds, which is usually done through structured outputs. Structured outputs are easy to parse, manipulate programmatically, interpret, monitor, and debug. Most importantly, when using Pydantic, they add out-of-the-box data quality checks which are critical in Python and especially in the LLM world.
 - **Who the intended audience is:** Aspiring AI Engineers learning for the first time about LLM structured outputs.
-- **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 1500 words (7-10 minutes reading time)
+- **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 2000 words (8-10 minutes reading time)
 
 
 ## Outline
@@ -27,7 +27,7 @@
     - Data and type validation.
     - Can be used as an alternative to function calling when the goal is just data extraction, not necessarily an action.
 - Generate a mermaid diagram to support the ideas from the section.
--  **Section length:** 400 words (without counting the mermaid diagram)
+-  **Section length:** 550 words (without counting the mermaid diagram)
 
 
 ## Section 2: Implementing structured outputs from scratch using JSON
@@ -37,7 +37,7 @@
 - Give a quick note that it is good practice to wrap specific context elements with XML tags for easy parsing.
 - Also, specify that instead of JSON, which can be verbose, we can also use YAML or XML to make the generated outputs use fewer tokens.
 - Give step-by-step examples from section `2. Implementing structured outputs from scratch using JSON` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration. 
--  **Section length:** 400 words (without counting the code)
+-  **Section length:** 500 words (without counting the code)
 
 
 ## Section 3: Implementing structured outputs from scratch using Pydantic
@@ -48,7 +48,7 @@
 - Other popular options are Python's TypeDicts and DataClass classes. But due to Pydantic out-of-the-box validation mechanisms Pydantic is the most popular and powerful. 
 - Explain that Pydantic objects are the de facto method for modeling domain objects in Python, acting as the perfect bridge between the LLM and Python worlds.
 - Give step-by-step examples from section `3. Implementing structured outputs from scratch using Pydantic` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
--  **Section length:** 300 words (without counting the code)
+-  **Section length:** 450 words (without counting the code)
 
 
 ## Section 4: Implementing structured outputs using Gemini and Pydantic
@@ -57,14 +57,14 @@
 - Discuss pros and cons between implementing from scratch versus using the LLM API directly, such as how using the native structured outputs from the LLM API is more accurate and cheaper to use.
 - As a more industry-level example, explain how we can directly configure the Gemini API to output Pydantic objects.
 - Give step-by-step examples from section `4. Implementing structured outputs using Gemini and Pydantic` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
--  **Section length:** 200 words (without counting the code)
+-  **Section length:** 300 words (without counting the code)
 
 
 ## Article code
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook 1](https://github.com/towardsai/course-ai-agents/blob/main/lessons/05_structured_outputs/notebook.ipynb)
+- [Notebook 1](notebook.ipynb)
 
 ## Golden Sources
 

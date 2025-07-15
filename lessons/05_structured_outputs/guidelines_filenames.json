@@ -1,0 +1,14 @@
+{
+  "github_urls": [],
+  "youtube_videos_urls": [
+    "https://www.youtube.com/watch?v=NGEZsqEUpC0"
+  ],
+  "other_urls": [
+    "https://ai.google.dev/gemini-api/docs/structured-output",
+    "https://platform.openai.com/docs/guides/structured-outputs",
+    "https://pydantic.dev/articles/llm-intro",
+    "https://python.langchain.com/docs/how_to/structured_output/",
+    "https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df"
+  ],
+  "local_files": []
+}

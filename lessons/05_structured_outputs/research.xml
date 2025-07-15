@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>What are the most frequent failure modes and best-practice prompting techniques for getting large language models to emit strictly valid JSON (or other structured formats) without hallucinations?</summary>
-
-### Source [2]: https://faktion.com/blog/guided-text-generation-with-large-language-models/
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[What are the most frequent failure modes and best-practice prompting techniques for getting large language models to emit strictly valid JSON (or other structured formats) without hallucinations?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [2]: https://faktion.com/blog/guided-text-generation-with-large-language-models/
 
 Query: What are the most frequent failure modes and best-practice prompting techniques for getting large language models to emit strictly valid JSON (or other structured formats) without hallucinations?
 
@@ -26,11 +25,8 @@ The source highlights that while function calling offers the highest reliability
 
 -----
 
------
-
------
-
-### Source [3]: https://arxiv.org/html/2408.11061v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [3]: https://arxiv.org/html/2408.11061v1
 
 Query: What are the most frequent failure modes and best-practice prompting techniques for getting large language models to emit strictly valid JSON (or other structured formats) without hallucinations?
 
@@ -52,14 +48,13 @@ The study suggests that strict format adherence in zero-shot settings is non-tri
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How does Pydantic generate JSON Schema definitions and perform runtime type- and value-validation, and what examples exist of integrating this with LLM outputs in Python?</summary>
-
-### Source [5]: https://docs.pydantic.dev/latest/api/json_schema/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How does Pydantic generate JSON Schema definitions and perform runtime type- and value-validation, and what examples exist of integrating this with LLM outputs in Python?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [5]: https://docs.pydantic.dev/latest/api/json_schema/
 
 Query: How does Pydantic generate JSON Schema definitions and perform runtime type- and value-validation, and what examples exist of integrating this with LLM outputs in Python?
 
@@ -67,11 +62,8 @@ Answer: Pydantic provides a class for generating **JSON Schemas** from models, w
 
 -----
 
------
-
------
-
-### Source [6]: https://docs.pydantic.dev/1.10/usage/schema/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [6]: https://docs.pydantic.dev/1.10/usage/schema/
 
 Query: How does Pydantic generate JSON Schema definitions and perform runtime type- and value-validation, and what examples exist of integrating this with LLM outputs in Python?
 
@@ -79,11 +71,8 @@ Answer: Pydantic models **automatically create JSON Schemas** that describe thei
 
 -----
 
------
-
------
-
-### Source [7]: https://docs.pydantic.dev/latest/concepts/json_schema/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [7]: https://docs.pydantic.dev/latest/concepts/json_schema/
 
 Query: How does Pydantic generate JSON Schema definitions and perform runtime type- and value-validation, and what examples exist of integrating this with LLM outputs in Python?
 
@@ -91,14 +80,13 @@ Answer: Pydantic supports **automatic creation and customization** of JSON schem
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What capabilities, configuration options, and current limitations are documented for Google Gemini’s responseSchema-based structured output compared with manual prompt-based JSON generation?</summary>
-
-### Source [9]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What capabilities, configuration options, and current limitations are documented for Google Gemini’s responseSchema-based structured output compared with manual prompt-based JSON generation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [9]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output
 
 Query: What capabilities, configuration options, and current limitations are documented for Google Gemini’s responseSchema-based structured output compared with manual prompt-based JSON generation?
 
@@ -115,11 +103,8 @@ The schema ensures that the model’s response is returned in a predictable, str
 
 -----
 
------
-
------
-
-### Source [10]: https://firebase.google.com/docs/ai-logic/generate-structured-output
+-----]]></source_block>
+        <source_block><![CDATA[### Source [10]: https://firebase.google.com/docs/ai-logic/generate-structured-output
 
 Query: What capabilities, configuration options, and current limitations are documented for Google Gemini’s responseSchema-based structured output compared with manual prompt-based JSON generation?
 
@@ -135,11 +120,8 @@ The major advantage over manual prompt-based JSON generation is that you no long
 
 -----
 
------
-
------
-
-### Source [11]: https://ai.google.dev/api/generate-content
+-----]]></source_block>
+        <source_block><![CDATA[### Source [11]: https://ai.google.dev/api/generate-content
 
 Query: What capabilities, configuration options, and current limitations are documented for Google Gemini’s responseSchema-based structured output compared with manual prompt-based JSON generation?
 
@@ -159,14 +141,13 @@ This stands in contrast to manual prompt-based methods, where you would have to 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Have any benchmark studies measured token counts, latency, or cost differences when requesting identical data in JSON versus YAML versus XML from LLMs?</summary>
-
-### Source [12]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Have any benchmark studies measured token counts, latency, or cost differences when requesting identical data in JSON versus YAML versus XML from LLMs?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [12]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
 
 Query: Have any benchmark studies measured token counts, latency, or cost differences when requesting identical data in JSON versus YAML versus XML from LLMs?
 
@@ -174,11 +155,8 @@ Answer: This source presents an **empirical study comparing JSON and YAML effici
 
 -----
 
------
-
------
-
-### Source [15]: https://arxiv.org/html/2408.02442v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [15]: https://arxiv.org/html/2408.02442v1
 
 Query: Have any benchmark studies measured token counts, latency, or cost differences when requesting identical data in JSON versus YAML versus XML from LLMs?
 
@@ -193,14 +171,13 @@ While the full latency and cost breakdowns are not explicitly detailed in the ex
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>In production AI pipelines (e.g., entity extraction for knowledge graphs or GraphRAG systems), how are structured outputs from LLMs parsed and used downstream, and what reliability or monitoring practices are recommended?</summary>
-
-### Source [16]: https://www.instill-ai.com/blog/llm-structured-outputs
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[In production AI pipelines (e.g., entity extraction for knowledge graphs or GraphRAG systems), how are structured outputs from LLMs parsed and used downstream, and what reliability or monitoring practices are recommended?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [16]: https://www.instill-ai.com/blog/llm-structured-outputs
 
 Query: In production AI pipelines (e.g., entity extraction for knowledge graphs or GraphRAG systems), how are structured outputs from LLMs parsed and used downstream, and what reliability or monitoring practices are recommended?
 
@@ -215,11 +192,8 @@ This separation addresses the typical failures of single-step approaches, where 
 
 -----
 
------
-
------
-
-### Source [18]: https://haystack.deepset.ai/tutorials/28_structured_output_with_loop
+-----]]></source_block>
+        <source_block><![CDATA[### Source [18]: https://haystack.deepset.ai/tutorials/28_structured_output_with_loop
 
 Query: In production AI pipelines (e.g., entity extraction for knowledge graphs or GraphRAG systems), how are structured outputs from LLMs parsed and used downstream, and what reliability or monitoring practices are recommended?
 
@@ -237,11 +211,8 @@ Answer: The Haystack tutorial demonstrates using **loop-based auto-correction** 
 
 -----
 
------
-
------
-
-### Source [19]: https://www.youtube.com/watch?v=zuXW0Hwpme4
+-----]]></source_block>
+        <source_block><![CDATA[### Source [19]: https://www.youtube.com/watch?v=zuXW0Hwpme4
 
 Query: In production AI pipelines (e.g., entity extraction for knowledge graphs or GraphRAG systems), how are structured outputs from LLMs parsed and used downstream, and what reliability or monitoring practices are recommended?
 
@@ -253,14 +224,13 @@ Answer: The workflow involves using LLMs with explicit prompts to generate struc
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most common pitfalls and effective prompt-engineering patterns for getting large language models (e.g., GPT-4, Llama-3) to emit strictly valid JSON when no native schema enforcement is available?</summary>
-
-### Source [21]: https://community.openai.com/t/best-practices-to-help-gpt-understand-heavily-nested-json-data-and-analyse-such-data/922339
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common pitfalls and effective prompt-engineering patterns for getting large language models (e.g., GPT-4, Llama-3) to emit strictly valid JSON when no native schema enforcement is available?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [21]: https://community.openai.com/t/best-practices-to-help-gpt-understand-heavily-nested-json-data-and-analyse-such-data/922339
 
 Query: What are the most common pitfalls and effective prompt-engineering patterns for getting large language models (e.g., GPT-4, Llama-3) to emit strictly valid JSON when no native schema enforcement is available?
 
@@ -279,11 +249,8 @@ Models are not inherently magical at JSON handling—they rely heavily on the cl
 
 -----
 
------
-
------
-
-### Source [22]: https://www.vellum.ai/blog/llama-3-70b-vs-gpt-4-comparison-analysis
+-----]]></source_block>
+        <source_block><![CDATA[### Source [22]: https://www.vellum.ai/blog/llama-3-70b-vs-gpt-4-comparison-analysis
 
 Query: What are the most common pitfalls and effective prompt-engineering patterns for getting large language models (e.g., GPT-4, Llama-3) to emit strictly valid JSON when no native schema enforcement is available?
 
@@ -301,11 +268,8 @@ The importance of clear, explicit instructions is emphasized for both models to 
 
 -----
 
------
-
------
-
-### Source [24]: https://community.openai.com/t/how-to-get-100-valid-json-answers/554379
+-----]]></source_block>
+        <source_block><![CDATA[### Source [24]: https://community.openai.com/t/how-to-get-100-valid-json-answers/554379
 
 Query: What are the most common pitfalls and effective prompt-engineering patterns for getting large language models (e.g., GPT-4, Llama-3) to emit strictly valid JSON when no native schema enforcement is available?
 
@@ -318,14 +282,13 @@ Answer: This thread addresses challenges and best practices for obtaining 100% v
 **Pitfalls**:
 - Relying solely on prompt design cannot guarantee 100% valid JSON in all cases, as model outputs are inherently probabilistic and may deviate from strict requirements[4].
 
------
-
-</details>
-
-<details>
-<summary>How does Google Gemini’s responseSchema structured-output feature perform in real-world use cases, and what published examples or case studies document its accuracy, cost impact, and current limitations compared with prompt-only JSON generation?</summary>
-
-### Source [27]: https://cloud.google.com/vertex-ai/generative-ai/docs/maas/capabilities/structured-output
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How does Google Gemini’s responseSchema structured-output feature perform in real-world use cases, and what published examples or case studies document its accuracy, cost impact, and current limitations compared with prompt-only JSON generation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [27]: https://cloud.google.com/vertex-ai/generative-ai/docs/maas/capabilities/structured-output
 
 Query: How does Google Gemini’s responseSchema structured-output feature perform in real-world use cases, and what published examples or case studies document its accuracy, cost impact, and current limitations compared with prompt-only JSON generation?
 
@@ -339,14 +302,13 @@ Answer: According to Google Cloud Vertex AI documentation, structured outputs en
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?</summary>
-
-### Source [34]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [34]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
 
 Query: In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?
 
@@ -354,11 +316,8 @@ Answer: **Pydantic models are used in production Python systems to parse and val
 
 -----
 
------
-
------
-
-### Source [35]: https://pydantic.dev/articles/llm-validation
+-----]]></source_block>
+        <source_block><![CDATA[### Source [35]: https://pydantic.dev/articles/llm-validation
 
 Query: In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?
 
@@ -366,11 +325,8 @@ Answer: **Pydantic introduces advanced validation mechanisms that go beyond simp
 
 -----
 
------
-
------
-
-### Source [36]: https://www.leocon.dev/blog/2024/11/from-chaos-to-control-mastering-llm-outputs-with-langchain-and-pydantic/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [36]: https://www.leocon.dev/blog/2024/11/from-chaos-to-control-mastering-llm-outputs-with-langchain-and-pydantic/
 
 Query: In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?
 
@@ -378,11 +334,8 @@ Answer: **Combining Pydantic with frameworks like LangChain allows developers to
 
 -----
 
------
-
------
-
-### Source [37]: https://www.youtube.com/watch?v=gjxZ4AGRMLk
+-----]]></source_block>
+        <source_block><![CDATA[### Source [37]: https://www.youtube.com/watch?v=gjxZ4AGRMLk
 
 Query: In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?
 
@@ -390,25 +343,21 @@ Answer: **Pydantic is described as a core data validation and settings managemen
 
 -----
 
------
-
------
-
-### Source [38]: https://pydantic.dev/articles/llm-intro
+-----]]></source_block>
+        <source_block><![CDATA[### Source [38]: https://pydantic.dev/articles/llm-intro
 
 Query: In production Python systems, how are Pydantic models used to parse and validate LLM outputs, and what advantages over plain dictionaries, dataclasses, or TypedDicts have engineers reported?
 
 Answer: **Pydantic's use in validating structured outputs from LLMs is highlighted as a way to write more reliable code.** By defining schemas for LLM outputs using Pydantic models, developers can ensure that only responses matching the specified structure are accepted, reducing the risk of errors from malformed or unexpected data. This approach enables developers to "steer" LLMs towards producing outputs that are not only syntactically correct but also semantically valid for the application context—a process that is much harder, if not impossible, with plain dictionaries, dataclasses, or TypedDicts, which lack runtime schema enforcement and comprehensive error handling[5].
 -----
 
------
-
-</details>
-
-<details>
-<summary>What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?</summary>
-
-### Source [43]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [43]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
 
 Query: What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?
 
@@ -418,11 +367,8 @@ Additionally, the source notes that **YAML can be more cost/time-efficient for l
 
 The source also touches on a potential drawback: JSON's strictness can sometimes lead to type ambiguities (e.g., numbers printed as strings), but this can be mitigated with schemas or post-parsing type conversion. Overall, the use of structured formats like JSON and YAML enhances parsing reliability, simplifies integration, and—in the case of YAML—supports richer metadata for debugging and observability.
 
------
-
------
-
-### Source [44]: https://celerdata.com/glossary/yaml-json-and-xml-a-practical-guide-to-choosing-the-right-format
+-----]]></source_block>
+        <source_block><![CDATA[### Source [44]: https://celerdata.com/glossary/yaml-json-and-xml-a-practical-guide-to-choosing-the-right-format
 
 Query: What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?
 
@@ -432,11 +378,8 @@ Answer: This guide systematically compares JSON, YAML, and XML, emphasizing how 
 
 **XML** is described as the most verbose and resource-intensive to parse, especially with namespaces and schemas, but its explicit tagging can improve machine clarity at the expense of human readability. The guide concludes that the choice among these formats should consider the balance between machine efficiency (JSON), human clarity (YAML), and legacy system requirements (XML). For LLM integration, structured outputs like JSON and YAML provide clear benefits in parsing reliability, system maintainability, and ease of extension—each excelling in different aspects of the production lifecycle.
 
------
-
------
-
-### Source [45]: https://www.snaplogic.com/blog/json-vs-yaml-whats-the-difference-and-which-one-is-right-for-your-enterprise
+-----]]></source_block>
+        <source_block><![CDATA[### Source [45]: https://www.snaplogic.com/blog/json-vs-yaml-whats-the-difference-and-which-one-is-right-for-your-enterprise
 
 Query: What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?
 
@@ -446,11 +389,8 @@ Answer: This source underscores that **JSON and YAML both offer significant adva
 
 The source notes that YAML's flexibility comes at the cost of slower parsing, but its versatility makes it ideal for configuration-heavy or multi-data-type scenarios common in LLM integration. Ultimately, both JSON and YAML provide robust, machine-readable outputs that are easier to parse, monitor, and debug than free-text, with the choice depending on the specific needs of the production environment.
 
------
-
------
-
-### Source [46]: https://arxiv.org/html/2408.02442v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [46]: https://arxiv.org/html/2408.02442v1
 
 Query: What benefits do software engineers and researchers cite for using structured outputs (JSON, XML, YAML) over free-text when integrating LLMs into production systems, especially regarding parsing ease, observability, and debugging?
 
@@ -460,14 +400,13 @@ The study also compares natural-language-to-format conversion with unrestricted 
 
 In summary, structured outputs like JSON and YAML are favored in production for their parsing reliability, ease of integration, and enhanced observability, but their design must be carefully considered to avoid unintended impacts on model reasoning and output quality.
 
------
-
-</details>
-
-<details>
-<summary>What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?</summary>
-
-### Source [47]: https://www.promptfoo.dev/docs/guides/evaluate-json/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [47]: https://www.promptfoo.dev/docs/guides/evaluate-json/
 
 Query: What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?
 
@@ -482,11 +421,8 @@ This approach is recommended for reliably evaluating and enforcing JSON structur
 
 -----
 
------
-
------
-
-### Source [48]: https://python.plainenglish.io/generating-perfectly-structured-json-using-llms-all-the-time-13b7eb504240
+-----]]></source_block>
+        <source_block><![CDATA[### Source [48]: https://python.plainenglish.io/generating-perfectly-structured-json-using-llms-all-the-time-13b7eb504240
 
 Query: What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?
 
@@ -502,11 +438,8 @@ This method is particularly effective for Python environments and is recommended
 
 -----
 
------
-
------
-
-### Source [49]: https://modelmetry.com/blog/how-to-ensure-llm-output-adheres-to-a-json-schema
+-----]]></source_block>
+        <source_block><![CDATA[### Source [49]: https://modelmetry.com/blog/how-to-ensure-llm-output-adheres-to-a-json-schema
 
 Query: What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?
 
@@ -521,11 +454,8 @@ Answer: This article discusses strategies for ensuring LLM outputs adhere strict
 
 -----
 
------
-
------
-
-### Source [50]: https://latitude-blog.ghost.io/blog/how-json-schema-works-for-llm-data/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [50]: https://latitude-blog.ghost.io/blog/how-json-schema-works-for-llm-data/
 
 Query: What prompt-engineering patterns and open-source tools (e.g., Guardrails, Jsonformer, Outlines) are recommended for forcing LLMs to emit strictly valid JSON without native schema enforcement?
 
@@ -540,14 +470,13 @@ These practices and tools support reliable enforcement of structured JSON output
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?</summary>
-
-### Source [51]: https://python.useinstructor.com/concepts/models/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [51]: https://python.useinstructor.com/concepts/models/
 
 Query: Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?
 
@@ -577,11 +506,8 @@ This model can be directly referenced as a `response_model` in LLM calls, ensuri
 
 -----
 
------
-
------
-
-### Source [52]: https://dev.to/gaw/from-chaos-to-order-structured-json-with-pydantic-and-instructor-in-llms-m5o
+-----]]></source_block>
+        <source_block><![CDATA[### Source [52]: https://dev.to/gaw/from-chaos-to-order-structured-json-with-pydantic-and-instructor-in-llms-m5o
 
 Query: Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?
 
@@ -597,11 +523,8 @@ No explicit code for error handling and schema generation is shown, but the desc
 
 -----
 
------
-
------
-
-### Source [53]: https://www.leocon.dev/blog/2024/11/from-chaos-to-control-mastering-llm-outputs-with-langchain-and-pydantic/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [53]: https://www.leocon.dev/blog/2024/11/from-chaos-to-control-mastering-llm-outputs-with-langchain-and-pydantic/
 
 Query: Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?
 
@@ -623,11 +546,8 @@ This model is used to generate prompt instructions and to parse and validate the
 
 -----
 
------
-
------
-
-### Source [54]: https://www.projectpro.io/article/pydantic-ai/1088
+-----]]></source_block>
+        <source_block><![CDATA[### Source [54]: https://www.projectpro.io/article/pydantic-ai/1088
 
 Query: Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?
 
@@ -649,11 +569,8 @@ This structure is used to both generate the prompt and validate agent responses 
 
 -----
 
------
-
------
-
-### Source [55]: https://www.youtube.com/watch?v=QYW3ETY7UpA
+-----]]></source_block>
+        <source_block><![CDATA[### Source [55]: https://www.youtube.com/watch?v=QYW3ETY7UpA
 
 Query: Where do official docs or tutorials demonstrate converting LLM responses directly into Pydantic models, highlighting runtime validation, error handling, and schema generation?
 
@@ -668,14 +585,13 @@ This video illustrates the end-to-end process of defining a Pydantic model, usin
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Have any benchmarks or case studies compared Google Gemini’s responseSchema structured-output feature with prompt-only JSON generation in terms of validity rate, token cost, or latency?</summary>
-
-### Source [58]: https://ai.google.dev/gemini-api/docs/structured-output
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Have any benchmarks or case studies compared Google Gemini’s responseSchema structured-output feature with prompt-only JSON generation in terms of validity rate, token cost, or latency?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [58]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: Have any benchmarks or case studies compared Google Gemini’s responseSchema structured-output feature with prompt-only JSON generation in terms of validity rate, token cost, or latency?
 
@@ -685,14 +601,13 @@ The page provides code examples in Python and JavaScript that demonstrate how to
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Which empirical studies measure token counts, latency, or API-cost differences when requesting identical data from LLMs in JSON, YAML, and XML formats?</summary>
-
-### Source [61]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Which empirical studies measure token counts, latency, or API-cost differences when requesting identical data from LLMs in JSON, YAML, and XML formats?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [61]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
 
 Query: Which empirical studies measure token counts, latency, or API-cost differences when requesting identical data from LLMs in JSON, YAML, and XML formats?
 
@@ -700,17 +615,14 @@ Answer: This article documents an **empirical study** comparing **YAML and JSON*
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>The Best Way to Generate Structured Output from LLMs</summary>
-
-# The Best Way to Generate Structured Output from LLMs
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[The Best Way to Generate Structured Output from LLMs]]></title>
+      <content><![CDATA[# The Best Way to Generate Structured Output from LLMs
 
 Benchmarking LLM structured output performance with OpenAI, Instructor, Marvin, BAML, TypeChat, LangChain, and how to overcome reasoning deficiencies using a multi-step Instill Core pipeline.
 
@@ -1025,14 +937,11 @@ these challenges. By isolating the reasoning process from the structuring
 process, it allows LLMs to perform complex tasks without sacrificing accuracy or
 output quality. For businesses and developers looking to harness the full
 potential of LLMs in applications requiring structured data, this approach
-offers a reliable and cost-effective path forward.
-
-</details>
-
-<details>
-<summary>Crafting JSON Outputs For Cntrolled Text Generation</summary>
-
-# Crafting JSON Outputs For Cntrolled Text Generation
+offers a reliable and cost-effective path forward.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Crafting JSON Outputs For Cntrolled Text Generation]]></title>
+      <content><![CDATA[# Crafting JSON Outputs For Cntrolled Text Generation
 
 This post explores four key approaches to generating valid JSON from LLMs—Langchain’s Pydantic parser, Jsonformer, Outlines, and Microsoft’s Guidance. It compares each method’s strengths, limitations, and use cases, offering a practical guide for reliable, structured LLM outputs.
 
@@ -1175,14 +1084,11 @@ Guidance is a another promising LLM framework. The main contribution is a DSL fo
 
 Outlines is the most complete solution, for instance you can constraint the token generation using regex patterns or predefined vocabulary. It can produce JSON respecting a Pydantic model with no issues, providing a more sophisticated approach to JSON generation than simply plain prompt engineering. In active development this library offers the most advanced solution not only for JSON responses but a variety of other guided text generation use cases. At the moment I write this **_Outlines_** is my favorite choice and Guidance is on my radar for other use cases.
 
-Additionally, projects that are also relevant to mention in the domain are [**LMQL**](https://docs.lmql.ai/en/stable/) (Language Model Query Language) and [**guardrails**](https://github.com/ShreyaR/guardrails). Both with their own merits and limitations are worth checking.
-
-</details>
-
-<details>
-<summary>Let Me Speak Freely? A Study on the Impact of    Format Restrictions on Performance of Large Language Models</summary>
-
-# Let Me Speak Freely? A Study on the Impact of    Format Restrictions on Performance of Large Language Models
+Additionally, projects that are also relevant to mention in the domain are [**LMQL**](https://docs.lmql.ai/en/stable/) (Language Model Query Language) and [**guardrails**](https://github.com/ShreyaR/guardrails). Both with their own merits and limitations are worth checking.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Let Me Speak Freely? A Study on the Impact of    Format Restrictions on Performance of Large Language Models]]></title>
+      <content><![CDATA[# Let Me Speak Freely? A Study on the Impact of    Format Restrictions on Performance of Large Language Models
 
 Zhi Rui Tam1,  
 Cheng-Kuang Wu1,  
@@ -1599,14 +1505,11 @@ For each description slot, we create 3 variations each which results in 9 prompt
 
 If the current task requires reasoning, we include the zero shot chain-of-thought prompting : "Think step-by-step" in task description and ensures the LLM response to generate reasoning before giving the final answer.
 
-(The remainder of the appendix continues with example prompt variations and format descriptions, which can be referenced in the original document.)
-
-</details>
-
-<details>
-<summary>Meta's Llama 3 70B, the first open-source [model](https://ai.meta.com/blog/meta-llama-3/) to match GPT-4's performance, is gaining traction among companies. The perks of being open-source —lower costs and increased customizability—are accelerating this shift, significantly transforming how businesses handle their generative AI strategies.</summary>
-
-Meta's Llama 3 70B, the first open-source [model](https://ai.meta.com/blog/meta-llama-3/) to match GPT-4's performance, is gaining traction among companies. The perks of being open-source —lower costs and increased customizability—are accelerating this shift, significantly transforming how businesses handle their generative AI strategies.
+(The remainder of the appendix continues with example prompt variations and format descriptions, which can be referenced in the original document.)]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Meta's Llama 3 70B, the first open-source [model](https://ai.meta.com/blog/meta-llama-3/) to match GPT-4's performance, is gaining traction among companies. The perks of being open-source —lower costs and increased customizability—are accelerating this shift, significantly transforming how businesses handle their generative AI strategies.]]></title>
+      <content><![CDATA[Meta's Llama 3 70B, the first open-source [model](https://ai.meta.com/blog/meta-llama-3/) to match GPT-4's performance, is gaining traction among companies. The perks of being open-source —lower costs and increased customizability—are accelerating this shift, significantly transforming how businesses handle their generative AI strategies.
 
 To better understand the model's capabilities, we gathered recent data from technical reports and independent reviews, and analyzed how it performs on different tasks.
 
@@ -1912,14 +1815,11 @@ As companies start to develop more complex AI workflows, developers will look fo
 
 GPT-4 still has advantages in scenarios that need longer context or special features like image support and function calling. However, for many tasks, Llama 3 70B is catching up, and this is the worst that Llama 3 70B will ever gonna be.
 
-The gap is closing.
-
-</details>
-
-<details>
-<summary>Response Model</summary>
-
-# Response Model
+The gap is closing.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Response Model]]></title>
+      <content><![CDATA[# Response Model
 
 Defining LLM output schemas in Pydantic is done via `pydantic.BaseModel`. To learn more about models in Pydantic, check out their [documentation](https://docs.pydantic.dev/latest/concepts/models/).
 
@@ -2087,22 +1987,16 @@ print(results)
 
 ```
 
-Now we can call `execute` on our model instance after extracting it from a language model. If you want to see more examples of this checkout our post on [RAG is more than embeddings](https://python.useinstructor.com/blog/2023/09/17/rag-is-more-than-just-embedding-search/)
-
-</details>
-
-
-## Code Sources
-
-_No code sources found._
-
-
-## YouTube Video Transcripts
-
-<details>
-<summary>All right folks. In this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc. Right?</summary>
-
-All right folks. In this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc. Right?
+Now we can call `execute` on our model instance after extracting it from a language model. If you want to see more examples of this checkout our post on [RAG is more than embeddings](https://python.useinstructor.com/blog/2023/09/17/rag-is-more-than-just-embedding-search/)]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <message>No code sources found.</message>
+  </code_sources>
+  <youtube_video_transcripts>
+    <youtube_transcript>
+      <title><![CDATA[All right folks. In this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc. Right?]]></title>
+      <content><![CDATA[All right folks. In this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc. Right?
 
 [00:30] So. Um, what we're going to be talking about first is function calling. So, function calling means connecting large language models like ChatGPT to tools that perform actions in the outside world like checking the weather or searching the web. Right? And OpenAI function calling involves four simple steps. We call the model with the query and a set of functions that are defined in the functions parameter. So we explain to the model, these are the tools that are available to you.
 
@@ -2140,17 +2034,13 @@ All right folks. In this video, what we're going to be doing is we're going to b
 
 [11:28] So what I can do is I can loop over each question. So I can say for q in quiz_output.questions. So for q in and then we can print q.question as well as print q. and as well as loop over the options in that question. So for I, o in enumerate q.options.
 
-[12:14] We can print I, o, we can print the option. And then at the end, we can print the correct answer by saying correct by saying correct answer and then here we can say q.correct_answer, which actually is not q.correct_answer is q.question. q.correct_answer. Yeah, I think that's correct. Perfect. So now we get the question, we get the options and we get the correct answer. Which if you ask me, this is a pretty cool application for large language model, as well as for a structured prompting approach that leverages OpenAI function calling, Pydantic, and that's it for this video and see you in the next video.
-
-</details>
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>how-to-return-structured-data-from-a-model-langchain</summary>
-
-Prerequisites
+[12:14] We can print I, o, we can print the option. And then at the end, we can print the correct answer by saying correct by saying correct answer and then here we can say q.correct_answer, which actually is not q.correct_answer is q.question. q.correct_answer. Yeah, I think that's correct. Perfect. So now we get the question, we get the options and we get the correct answer. Which if you ask me, this is a pretty cool application for large language model, as well as for a structured prompting approach that leverages OpenAI function calling, Pydantic, and that's it for this video and see you in the next video.]]></content>
+    </youtube_transcript>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[how-to-return-structured-data-from-a-model-langchain]]></title>
+      <content><![CDATA[Prerequisites
 
 This guide assumes familiarity with the following concepts:
 
@@ -2752,14 +2642,11 @@ chain.invoke({"query": query})
 
 ```python
 [{'people': [{'name': 'Anna', 'height_in_meters': 1.8288}]}]
-```
-
-</details>
-
-<details>
-<summary>steering-large-language-models-with-pydantic-pydantic</summary>
-
-# Steering Large Language Models with Pydantic
+```]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[steering-large-language-models-with-pydantic-pydantic]]></title>
+      <content><![CDATA[# Steering Large Language Models with Pydantic
 
 In the last year, there's been a big leap in how we use advanced AI programs, especially in how we communicate with them to get specific tasks done. People are not just making chatbots; they're also using these AIs to sort information, improve their apps, and create synthetic data to train smaller task-specific models.
 
@@ -3003,14 +2890,11 @@ search("recent advancements in AI")
 
 By defining the api payload as a Pydantic model, we can leverage the `response_model` argument to instruct the model to generate the desired output. This is a powerful feature that allows us to generate structured data from any language model!
 
-In our upcoming posts, we will provide more practical examples and explore how we can leverage `Pydantic`'s validation features to ensure that the data we receive is not only valid syntactically but also semantically.
-
-</details>
-
-<details>
-<summary>structured-output-gemini-api-google-ai-for-developers</summary>
-
-# Structured output
+In our upcoming posts, we will provide more practical examples and explore how we can leverage `Pydantic`'s validation features to ensure that the data we receive is not only valid syntactically but also semantically.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[structured-output-gemini-api-google-ai-for-developers]]></title>
+      <content><![CDATA[# Structured output
 
 You can configure Gemini for structured output instead of unstructured text,
 allowing precise extraction and standardization of information for further processing.
@@ -3646,13 +3530,11 @@ using Gemini API tools:
 - [Function calling](https://ai.google.dev/gemini-api/docs/function-calling)
 - [Code execution](https://ai.google.dev/gemini-api/docs/code-execution)
 - [Grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding)
-
-</details>
-
-<details>
-<summary>structured-outputs-openai-api</summary>
-
-# Structured Outputs
+]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[structured-outputs-openai-api]]></title>
+      <content><![CDATA[# Structured Outputs
 
 Ensure responses adhere to a JSON schema.
 
@@ -4813,14 +4695,11 @@ try:
 except Exception as e:
     # Your code should handle errors here, for example a network error calling the API
     print(e)
-```
-
-</details>
-
-<details>
-<summary>yaml-vs-json-which-is-more-efficient-for-language-models-by-</summary>
-
-# YAML vs. JSON: Which Is More Efficient for Language Models?
+```]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[yaml-vs-json-which-is-more-efficient-for-language-models-by-]]></title>
+      <content><![CDATA[# YAML vs. JSON: Which Is More Efficient for Language Models?
 
 https://miro.medium.com/v2/resize:fit:700/1*2d8fldvpjiS1paVntoBPYQ.png
 
@@ -4929,6 +4808,7 @@ However, by utilizing YAML, you can define a format that accommodates the CoT wi
 
 https://miro.medium.com/v2/resize:fit:700/1*-PxoVjKFNxO7CCiGe6HwYQ.png
 
-CoT with YAML comments, GPT-3.5, CORRECT answer
-
-</details>
+CoT with YAML comments, GPT-3.5, CORRECT answer]]></content>
+    </additional_source>
+  </additional_sources>
+</research>
