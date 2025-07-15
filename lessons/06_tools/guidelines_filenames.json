@@ -1,0 +1,16 @@
+{
+  "github_urls": [],
+  "youtube_videos_urls": [
+    "https://www.youtube.com/watch?v=ApoDzZP8_ck",
+    "https://www.youtube.com/watch?v=h8gMhXYAv1k"
+  ],
+  "other_urls": [
+    "https://ai.google.dev/gemini-api/docs/function-calling",
+    "https://platform.openai.com/docs/guides/function-calling",
+    "https://arxiv.org/pdf/2401.17464v3",
+    "https://www.newsletter.swirlai.com/p/building-ai-agents-from-scratch-part",
+    "https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9",
+    "https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-3-tool-use/"
+  ],
+  "local_files": []
+}

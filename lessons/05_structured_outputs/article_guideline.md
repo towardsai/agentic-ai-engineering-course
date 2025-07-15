@@ -64,7 +64,7 @@
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook 1](https://github.com/towardsai/course-ai-agents/blob/main/lessons/05_structured_outputs/notebook.ipynb)
+- [Notebook 1](notebook.ipynb)
 
 ## Golden Sources
 

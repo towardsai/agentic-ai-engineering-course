@@ -131,7 +131,7 @@ Theoretical discussion on popular tools, such as:
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook 1](https://github.com/towardsai/course-ai-agents/blob/main/lessons/06_tools/notebook.ipynb)
+- [Notebook 1](notebook.ipynb)
 
 ## Golden Sources
 

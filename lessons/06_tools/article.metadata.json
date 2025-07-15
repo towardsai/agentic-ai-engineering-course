@@ -1,0 +1,9 @@
+{
+    "num_chars": 25674,
+    "num_words": 3266,
+    "num_sections": 7,
+    "seo": {
+        "title": "LLM Agent Tools: The Full Guide",
+        "description": "Unlock LLM potential! This guide covers agent tools, from scratch to Gemini API, enabling LLMs to act, see & think. Master tool calling, Pydantic, and avoid pitfalls for powerful AI."
+    }
+}
