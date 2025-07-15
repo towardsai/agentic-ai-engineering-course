@@ -95,16 +95,19 @@
     - tool result
     - ...
 - Explain the benefits: flexibility, adaptability, and the ability to handle complex multi-step tasks.
-- Discuss the limitations: 
+- Parallel Tool calls: Introduce the concept of parallel tool execution when tools are independent:
+    - Explain scenarios where multiple tools can be called simultaneously (e.g., fetching weather data and stock prices independently)
+    - Discuss the performance benefits: reduced latency and improved efficiency
+- Discuss the limitations of sequential tool loops: 
     - Assumes the agent needs to run a tool at each step
     - Doesn't allow for reflection or reasoning between tool calls
     - Can lead to inefficient tool usage or getting stuck in loops
     - Limited ability to plan ahead or consider multiple approaches
 - Connect these limitations to the need for more sophisticated patterns like **ReAct** (Reasoning and Acting), which we will explore in the next lesson.
 - Give step-by-step examples from section `6. Running Tools in a Loop`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
--  **Section length:** 300 words (without counting the code)
+-  **Section length:** 400 words (without counting the code)
 
-## Section 8: Popular tools used within the industry
+## Section 7: Popular tools used within the industry
 
 Theoretical discussion on popular tools, such as:
 **Knowledge & Memory Access:**
@@ -135,7 +138,7 @@ Links to code that will be used to support the article. Always prioritize this c
 - [Function calling with the Gemini API](https://ai.google.dev/gemini-api/docs/function-calling)
 - [Function calling with OpenAI's API](https://platform.openai.com/docs/guides/function-calling)
 - [Tool Calling Agent From Scratch](https://www.youtube.com/watch?v=ApoDzZP8_ck)
-- [Efficient Tool Use with Chain-of-Abstraction Reasoning](https://arxiv.org/html/2401.17464v3)
+- [Efficient Tool Use with Chain-of-Abstraction Reasoning](https://arxiv.org/pdf/2401.17464v3)
 - [Building AI Agents from scratch - Part 1: Tool use](https://www.newsletter.swirlai.com/p/building-ai-agents-from-scratch-part)
 
 ## Other Sources

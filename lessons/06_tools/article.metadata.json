@@ -1,9 +1,0 @@
-{
-    "num_chars": 34784,
-    "num_words": 4235,
-    "num_sections": 7,
-    "seo": {
-        "title": "AI Agents: Hands-On with Tools",
-        "description": "Unlock LLM power! Learn to build AI agents with tools from scratch, automate schemas, use Gemini API, extract structured data, and chain tools for real-world AI applications."
-    }
-}

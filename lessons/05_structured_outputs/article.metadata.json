@@ -1,9 +1,0 @@
-{
-    "num_chars": 19812,
-    "num_words": 2275,
-    "num_sections": 4,
-    "seo": {
-        "title": "Mastering LLM Structured Outputs",
-        "description": "Master LLM outputs for reliable AI apps! Learn to force structured JSON with Pydantic & Gemini API for robust, production-ready AI systems. Essential for AI/ML engineers."
-    }
-}
