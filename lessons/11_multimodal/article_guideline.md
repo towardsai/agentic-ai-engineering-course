@@ -1,10 +1,10 @@
 ## Global Context of the Lesson
 
-- **What I'm planning to share**: A hands-on lesson presenting the fundamentals of working with multimodal data in the context of LLMs, RAG, and context engineering—all fundamental components required to build industry-level AI agents or LLM workflows. Specifically, we will demonstrate how to work with multimodal LLMs and embedding models used for RAG. We want to blend theory with practicality. Thus, 20% of the article should explain the principles of multimodal LLMs and embedding models, while the rest will focus on practical implementation with use cases such as working with images, audio, and PDFs. As an interesting use case, we will show how to implement a simple ColPali architecture. Also, in the context of processing PDF documents, we want to explain the advantages of using multimodal techniques such as ColPali compared to older OCR-based techniques.
-- **Why I think it's valuable**: In the real world, we rarely work only with text data. Often, we have to manipulate multimodal data such as text, images, and PDFs within the same context window or integrate them using various tools that interface with the LLM. The most common tools are retrieval systems that can return different types of data based on specific queries. Thus, knowing how to manipulate multimodal data and integrate it with LLMs, RAG, and agents is a foundational skill in the industry.
-- **Who the intended audience is**: Aspiring AI Engineers who are learning for the first time about multimodal LLMs, RAG, and agents.
+- **What I'm planning to share**: A hands-on lesson presenting the fundamentals of working with multimodal data in the context of LLMs, RAG and context engineering - all fundamental components required to build industry-level AI agents or LLM workflows. Specifically, we will demonstrate how to work with multimodal LLMs, RAG systems and AI Agents. We want to blend theory with practicality. Thus, 20% of the article should explain the principles of multimodal LLMs, embedding models and RAG systems, while the rest will focus on practical implementation with use cases such as working with text, image and PDFs. In the context of building RAG systems for PDF docs, we want to explain the advantages of using multimodal techniques such as ColPali compared to older OCR-based techniques. On the hands-on side, we will show how to work with LLMs with images, PDFs, and text. Then we will build a simple multimodal text-image RAG system and then a multimodal text-image agentic RAG project. 
+- **Why I think it's valuable**: In the real world, we rarely work only with text data. Often, we have to manipulate multimodal data such as text, images, and PDFs within the same context window or integrate them using various tools that interface with the LLM. An extremely popular example is building AI agents that process rich visual PDFs that contain tables, diagrams and graphs. Thus the most common tools for multimodal AI agents are retrieval tools that can return different types of data based on specific queries. Thus, knowing how to manipulate multimodal data and integrate it with LLMs, RAG, and AI agents is a foundational skill in the industry and enterprise applications.
+- **Who the intended audience is**: Aspiring AI Engineers who are learning for the first time about multimodal LLMs, RAG, and AI agents.
 - **Theory / Practice ratio**: 20% theory / 80% practice
-- **Expected length of the article in words** (where 200-250 words ≈ 1 minute of reading time): 3300 words
+- **Expected length of the article in words** (where 200-250 words ≈ 1 minute of reading time): 3600 words
 
 
 ## Narrative Flow of the Lesson
@@ -44,16 +44,17 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - Analyzing images for customer service
     - Research assistants processing charts and diagrams
     - Object detection and classification
+- Often, processing directly the images or PDFs as visual elements, as humans see them, makes the AI system more intuitive, easier to implement and more performant
 -  **Section length:** 250 words
 
 ## Section 2: Limitations of traditional document processing
-- Quick overview of traditional document processing workflows done with OCR + Layout detection
+- Quick overview of traditional PDFdocument processing workflows done with OCR + Layout detection
 - Text extraction challenges with complex layouts
 - When traditional methods break down:
     - Advanced OCR engines struggle with handwritten text, poor scans, stylized fonts, or more complex layouts such as nested table extraction or complex multi-column layouts. *[Note: Add some report numbers on this.]*
     - The standard approach of OCR → layout detection → chunking → embedding → search works for simple documents but becomes clunky, brittle, and does not scale well across real-world data.
     - The multi-step nature of traditional document processing creates a cascade effect where errors compound at each stage. 
-- Comparison between traditional document processing and interpreting the whole image directly
+- Comparison between traditional document processing and interpreting the PDFs as images directly (similar to how humans interpret PDFs)
 -  **Section length**: 250 words
 
 ## Section 3: Foundations of multimodal LLMs
@@ -81,7 +82,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
     3. Another popular approach is to use direct URLs, which is useful in two core scenarios: public images from the internet or images stored in a company's data lake, such as AWS S3 or GCP GCS. In most enterprise scenarios, the data will be stored in some sort of bucket. Using this method, the LLM can directly download the media from the bucket instead of passing it around the network, making this the most efficient option since I/O is usually the most common bottleneck of an application.
 - Knowing how to work with all three methods is important due to different deployment scenarios. Here are the advantages of each method:
     - URL-based approaches excel in cloud-native environments where content is already distributed and accessible
-    - Base64 encoding is easier to implement, as we can store images directly in the database. It is also preferred for on-premises deployments or scenarios requiring strict data locality.
+    - Base64 encoding is easier to implement, as we can store images directly in the database.
 - When working with Gemini with images, show the following scenarios:
     - bytes / one image
     - bytes / two images
@@ -111,7 +112,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 -  **Section length**: 400 words
 
 ## Section 6: Foundations of multimodal RAG (ColPali architecture)
-- Brief introduction to ColPali, explaining that this is the modern architecture for multimodal RAG, which is the most common use of multimodal embeddings when working with AI agents
+- Brief introduction to ColPali, explaining that this is the modern architecture for multimodal RAG when working with PDF documents
 - ColPali architecture and innovations:
     - The problem it solves
     - The innovation lies in bypassing the entire OCR pipeline that typically involves text extraction, layout detection, chunking, and embedding. Instead, ColPali processes document images directly using vision-language models to understand both textual and visual content simultaneously.
@@ -126,7 +127,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - ColPali: patching and indexing documents as images using a multimodal multi-vector embedding model, where each image outputs a "bag-of-embedding" representation
     - Performance advantages over traditional methods
     - Scalability of ColPali as a reranker
-- Real-world example scenarios, mostly related to RAG, where we have to interpret and retrieve complex documents:
+- Real-world example scenarios, mostly related to RAG, where we have to interpret and retrieve complex PDF documents:
     - Financial document analysis with charts, tables, and spatial relationships
     - Technical documentation with diagrams, flowcharts, and complex visuals
     - Research files with images, videos, and diagrams
@@ -135,22 +136,22 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 7: Implementing multimodal RAG for images and text
 - A more complex coding example where we combine what we have learned into a multimodal RAG exercise.
 - Present a simple multimodal RAG example where we populate an in-memory vector database with images and query it with text questions. To keep it simple, we will use only the Gemini client to access an embedding model and keep the vector index as a simple list.
-- Since the Gemini Dev API doesn't support image embeddings, we will create a description of each image using Gemini and embed that using the embedding model. Specify that to do it properly, as long as you have a multimodal embedding model, you just have to embed the image instead of text. Everything else remains the same.
-- Provide a list of popular multimodal embedding models: Voyage, Cohere, Google Embeddings on Vertex AI (not Gemini Dev), OpenAI CLIP.
+- Since the Gemini Dev API doesn't support image embeddings, to keep it simple and avoid integrating another API or running open-source models on a GPU, we will create a description of each image using Gemini and embed that using the embedding model. Specify that to do it properly, as long as you have a multimodal embedding model, you can skip creating the image description and you embed the image directly. Everything else from the RAG system remains the same.
+- Provide a list of popular multimodal embedding models: Voyage, Cohere, Google Embeddings on Vertex AI (not Gemini Dev), OpenAI CLIP (available on Hugging Face).
 - Also highlight that this is not a complete ColPali implementation, as we do not patch the image before embedding or use the ColBERT reranker. Since running `colpali` requires a GPU, we wanted to keep the example lightweight by leveraging Gemini and focusing on how multimodal works in general.
-- Specify that the official `colpali` implementation can be found on GitHub at `illuin-tech/colpali`.
+- Specify that the official `colpali` implementation can be found on GitHub at `illuin-tech/colpali` (we can load the model from Hugging Face).
 - Give step-by-step examples from `Section 3 ("Implementing multimodal RAG for images and text")` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
--  **Section length**: 400 words (Don't count the code)
+-  **Section length**: 500 words (Don't count the code)
 
 ## Section 8: Building multimodal AI agents
 - Explain how multimodal techniques can be added to AI Agents by:
     - Adding multimodal inputs or outputs to the reasoning LLM behind the agent.
     - Leveraging multimodal retrieval tools, such as in the RAG example, which can be adapted to other modalities.
     - Leveraging other multimodal tools such as deep research or MCP servers that return or act on external resources: company PDF files, screenshots from your computer, audio files from Spotify, or videos from Zoom.
-- Create a simple ReAct Engine leveraging LangGraph's `create_react_agent()` and connecting the RAG retrieval function from Section 7 as a tool for the agent, where we ask the agent to find details about an object from our collection of images.
+- Create a simple ReAct Engine leveraging LangGraph's `create_react_agent()` and connecting the RAG retrieval function from Section 7 as a tool for the agent, which returns the top-k images based on semantic similarity between the images and a text query. As an example, we will ask the agent about the color of our kitten. 
 - *[Generate a mermaid diagram of our ReAct agent that we will implement]*
 - Give step-by-step examples from `Section 4 ("Building multimodal AI agents")` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
--  **Section length**: 400 words (Don't count the code)
+-  **Section length**: 500 words (Don't count the code)
 
 ## Article Code
 
@@ -160,12 +161,12 @@ Links to code that will be used to support the article. Always prioritize this c
 
 ## Golden Sources
 
-1. [Understanding Multimodal LLMs](https://magazine.sebastianraschka.com/)
+1. [Understanding Multimodal LLMs](https://magazine.sebastianraschka.com/p/understanding-multimodal-llms)
 2. [Vision Language Models](https://www.nvidia.com/en-us/glossary/vision-language-models/)
 3. [Multimodal Embeddings: An Introduction](https://towardsdatascience.com/multimodal-embeddings-an-introduction-5dc36975966f/)
 3. [Multimodal Embeddings: An Introduction](https://www.youtube.com/watch?v=YOvxh_ma5qE)
 4. [Multi-modal ML with OpenAI's CLIP](https://www.pinecone.io/learn/series/image-search/clip/)
-5. [ColPali: Efficient Document Retrieval with Vision Language Models](https://arxiv.org/html/2407.01449v6)
+5. [ColPali: Efficient Document Retrieval with Vision Language Models](https://arxiv.org/pdf/2407.01449v6)
 
 ## Other Sources
 
