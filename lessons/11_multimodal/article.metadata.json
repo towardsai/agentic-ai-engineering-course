@@ -1,9 +1,9 @@
 {
-    "num_chars": 43231,
-    "num_words": 5367,
-    "num_sections": 7,
+    "num_chars": 34706,
+    "num_words": 4228,
+    "num_sections": 8,
     "seo": {
-        "title": "AI Agents: See, Read, Understand",
-        "description": "Unlock AI's full potential! Learn to build AI agents that see, read, & understand images, PDFs, & more. Master multimodal LLMs, RAG, & ColPali for real-world AI applications."
+        "title": "Make Your AI See: Beyond Text",
+        "description": "Unlock your AI's full potential! Learn to build multimodal AI, LLMs, and RAG systems that see beyond text. Master image processing, embeddings, and AI agents for real-world data."
     }
 }
