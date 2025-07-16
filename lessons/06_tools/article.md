@@ -97,15 +97,15 @@ user_message = "What's the current temperature in Madrid in Celsius?"
 ```
 Our application then parses this response, extracts the tool name and arguments, and executes the function.
 ```python
-# llm_output = "<tool_code>{\"name\": \"get_current_weather\", \"arguments\": {\"location\": \"Madrid\", \"unit\": \"celsius\"}}</tool_code>"
-# tool_call_str = parse_xml(llm_output, "tool_code") 
-# tool_call = json.loads(tool_call_str)
+llm_output = "<tool_code>{\"name\": \"get_current_weather\", \"arguments\": {\"location\": \"Madrid\", \"unit\": \"celsius\"}}</tool_code>"
+tool_call_str = parse_xml(llm_output, "tool_code") 
+tool_call = json.loads(tool_call_str)
 
-# function_name = tool_call["name"]
-# args = tool_call["arguments"]
+function_name = tool_call["name"]
+args = tool_call["arguments"]
 
-# result = get_current_weather(**args)
-# print(result)
+result = get_current_weather(**args)
+print(result)
 # Output: {"location": "Madrid", "temperature": "25", "unit": "celsius"}
 ```
 Finally, we send this result back to the LLM. The model now has the context it needs to generate a natural language answer for the user. This manual approach provides a clear understanding of the underlying mechanics before we move to more automated solutions.
@@ -178,7 +178,7 @@ def get_current_weather(location: str, unit: str = "celsius"):
 Now, `get_current_weather` is a `Tool` object, and we can access its schema directly without any manual definition.
 ```python
 # weather_tool = get_current_weather
-# print(json.dumps(weather_tool.schema, indent=2))
+print(json.dumps(weather_tool.schema, indent=2))
 ```
 It outputs:
 ```json
@@ -237,31 +237,31 @@ tools = [
 ```
 Next, we create a Gemini model instance and pass our tool schemas to it. When we send a prompt, Gemini decides whether to respond with text or a `function_call` object.
 ```python
-# model = genai.GenerativeModel(
-#     model_name="gemini-1.5-flash",
-#     tools=tools
-# )
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    tools=tools
+)
 
-# chat = model.start_chat()
-# response = chat.send_message("What's the current temperature in Madrid in Celsius?")
-# function_call = response.candidates[0].content.parts[0].function_call
+chat = model.start_chat()
+response = chat.send_message("What's the current temperature in Madrid in Celsius?")
+function_call = response.candidates[0].content.parts[0].function_call
 ```
 If the model decides to use a tool, we execute it and send the result back in the next turn of the conversation. This completes the loop, allowing the LLM to incorporate the real-world information into its final response.
 ```python
-# if function_call.name == "get_current_weather":
-#     args = {key: value for key, value in function_call.args.items()}
-#     result = get_current_weather(**args)
+if function_call.name == "get_current_weather":
+    args = {key: value for key, value in function_call.args.items()}
+    result = get_current_weather(**args)
     
-#     # Send the result back to the model
-#     response = chat.send_message(
-#         part=genai.types.Part(
-#             function_response=genai.types.FunctionResponse(
-#                 name="get_current_weather",
-#                 response={"result": result}
-#             )
-#         )
-#     )
-#     print(response.text)
+    # Send the result back to the model
+    response = chat.send_message(
+        part=genai.types.Part(
+            function_response=genai.types.FunctionResponse(
+                name="get_current_weather",
+                response={"result": result}
+            )
+        )
+    )
+    print(response.text)
 ```
 This approach is far more robust and efficient than manual prompt engineering. It leverages the model provider's purpose-built infrastructure for tool use. This schema-based method is the industry standard and is used by all major LLM providers, making it a critical skill for building production-grade AI applications [9](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling), [11](https://firebase.google.com/docs/ai-logic/function-calling).
 

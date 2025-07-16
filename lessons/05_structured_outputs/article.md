@@ -24,19 +24,19 @@ If the LLM returns a value with the wrong data type or misses a required field, 
 This entire process acts as a bridge between the LLM and your application, as shown in Figure 1.
 ```mermaid
 graph TD
-    A[Unstructured User Request] --> B{Large Language Model};
-    B --> C[Unstructured LLM Output];
-    C --> D{Structuring Layer};
-    D --> E[Structured Output <br> (JSON, Pydantic Model)];
-    E --> F[Python Application Logic];
-    subgraph "Software 1.0"
+    A[Unstructured User Request] --> B[Large Language Model]
+    B --> C[Unstructured LLM Output]
+    C --> D[Structuring Layer]
+    D --> E["Structured Output<br/>(JSON, Pydantic Model)"]
+    E --> F[Python Application Logic]
+    subgraph S1 [Software 1.0]
         F
     end
-    subgraph "Software 3.0"
+    subgraph S3 [Software 3.0]
         B
         C
     end
-    subgraph "The Bridge"
+    subgraph Bridge [The Bridge]
         D
         E
     end
