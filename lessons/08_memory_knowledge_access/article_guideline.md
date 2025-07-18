@@ -2,7 +2,7 @@
 
 - **What I'm planning to share:** This article will explore the important concept of agent memory, moving beyond the limitations of standard LLM context windows. We'll differentiate between the model's static internal knowledge, short-term (context window) memory, and persistent long-term memory. The focus will be on the three types of long-term memory—semantic (facts), episodic (experiences), and procedural (skills)—and their practical implementation. We will detail how to use vector databases as the core engine for recall and frame Retrieval-Augmented Generation (RAG) as the primary architecture for knowledge access. Finally, we'll ground these concepts in reality by discussing the challenges, best practices, and the evolution of memory systems.
 - **Why I think it's valuable:** Memory is one of the defining features that elevates a simple LLM-powered application to a truly adaptive and intelligent agent. For an AI Engineer, understanding how to design and build robust memory systems is necessary. This knowledge enables the creation of agents that can maintain conversational continuity, learn from past interactions, access external and proprietary knowledge, and ultimately provide more personalized, capable, and reliable assistance.
-- **Who the intended audience is:** Aspiring AI Engineers and developers aiming to build sophisticated, stateful agents that can learn, reason, and adapt based on accumulated knowledge and experience.
+- **Who the intended audience is:** Aspiring AI Engineers and developers aiming to build sophisticated, stateful agents that can have access to facts about the world, learn, reason, and adapt based on accumulated knowledge and experience.
 - **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): ~3000 words (around 12 - 15 minutes reading time)
 
 
@@ -78,6 +78,7 @@
 -   **Section length:** 500 words
 
 ## Golden Sources
+
 - https://www.ibm.com/think/topics/ai-agent-memory
 - https://www.linkedin.com/pulse/memory-management-ai-agents-why-matters-ayesha-amjad-g63of/
 - https://developer.nvidia.com/blog/rag-101-demystifying-retrieval-augmented-generation-pipelines/
