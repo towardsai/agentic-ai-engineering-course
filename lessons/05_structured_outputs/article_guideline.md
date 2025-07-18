@@ -43,6 +43,7 @@
 
 - Rewrite the section from above using Pydantic schemas to model the structured outputs.
 - Explain that Pydantic objects are the go-to method for modeling structured outputs as they offer field and type checking out-of-the-box. This approach bypasses the ambiguity of Python dictionaries. 
+- Explain that Pydantic works hand in hand with Python's standard `typing` library, which is used to define the type from the signature of data structures, functions and classes. Using Pydantic and `typing`, we can enforce the structure (i.e., the data structure's layout) and type for even the most complex data structures.
 - Show how we can directly leverage the schema from the Pydantic model to guide the model to output the right data structure. Highlight that similar techniques are used internally by Gemini or OpenAI.
 - Other popular options are Python's TypeDicts and DataClass classes. But due to Pydantic out-of-the-box validation mechanisms Pydantic is the most popular and powerful. 
 - Explain that Pydantic objects are the de facto method for modeling domain objects in Python, acting as the perfect bridge between the LLM and Python worlds.
