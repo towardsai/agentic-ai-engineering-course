@@ -1,8 +1,8 @@
 ## Global Context
 
 - **What I'm planning to share:** This lesson transitions from theory to practice. We will build a simple ReAct agent from the ground up using Python and a standard LLM API. The focus will be on the practical implementation of the `Thought -> Action -> Observation` loop. We will write the code for the main agentic control loop, define and use simple (or mocked) tools, parse the LLM's output to determine the next step, and manage the agent's state (its "scratchpad") across turns.
-- **Why I think it's valuable:** Building an agent, even a very simple one, solidifies the conceptual understanding gained in the previous lesson. This hands-on experience is crucial for AI Engineers to grasp the core mechanics of agentic systems. It demystifies the process and provides a foundational codebase and mental model that can be extended to build more sophisticated and robust agents, making it easier to debug and customize them later.
-- **Who the intended audience is:** People learning for the first time how reasoning and planning can be implemented with LLMs.
+- **Why I think it's valuable:** Building an agent, even a very simple one, solidifies the conceptual understanding gained in the previous lessons. This hands-on experience is crucial for AI Engineers to grasp the core mechanics of agentic systems. It clarifies the process and provides a foundational codebase and mental model that can be extended to build more sophisticated and robust agents, making it easier to debug and customize them later.
+- **Who the intended audience is:** Aspiring AI engineers learning for the first time how reasoning and planning can be implemented with LLMs using the ReAct pattern.
 - **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 3000 words (15 minutes of reading time).
 
 ## Outline 
