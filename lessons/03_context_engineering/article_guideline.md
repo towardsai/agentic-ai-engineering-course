@@ -61,6 +61,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 - Analogy: `Context as the AI's "RAM"`: "LLMs are like a new kind of operating system where the model is the CPU and its context window is the RAM. Just as an operating system curates what fits into RAM, context engineering manages what information occupies the model's limited context window." - Quote by Andrej Karpathy
 - Analogy to memory: The context is a subset of the short-term working memory that is passed to the LLM. It's not the whole short-term memory, as you can keep other aspects in your working memory without using them in the prompt passed to the LLM.
 
+- Prompt engineering vs. context engineering: Context engineering will not replace prompt engineering. Instead, prompt engineering is becoming part of context engineering. You still need to learn how to write effective prompts while understanding how to incorporate the right context into the prompt without compromising the LLM.
 - Table on `Prompt Engineering` vs. `Context Engineering`. Render it in Markdown.
 | Dimension | Prompt Engineering | Context Engineering |
 |-----------|-------------------|---------------------|
