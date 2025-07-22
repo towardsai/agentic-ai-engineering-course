@@ -1,185 +1,151 @@
-# LLM Workflows vs. AI Agents
-### Workflows vs. Agents: The Autonomy Slider
+# AI Workflows vs. Agents
+### Workflows vs. Agents: The AI Engineer's Dilemma
 
-## Introduction
+## Introduction: The AI Engineer's Core Dilemma - Workflows vs. Agents
 
-As an AI engineer, you face a fundamental choice every time you start a new project: do you build a structured Large Language Model (LLM) Workflow or a dynamic AI Agent? This is not just a technical detail; it is a critical decision that shapes your project's complexity, cost, reliability, and ultimately, what your final product can do. Get it right, and you build a robust, scalable system. Get it wrong, and you end up with a brittle, expensive, and unmaintainable mess.
+As an AI engineer, one of the most fundamental architectural decisions you'll make is choosing between predictable, developer-defined Large Language Model (LLM) Workflows and dynamic, LLM-driven Agentic Systems. This isn't just a technical detail; it's a choice that dictates your application's complexity, cost, reliability, and scalability. Getting it wrong means building a system that's either too rigid to be useful or too chaotic to be production-ready.
 
-The hype cycle often pushes us toward agents, promising autonomous systems that can think and act on their own. But the engineering reality is often more nuanced. The core of the decision boils down to a single question: should the system's logic be defined by the developer or driven by the LLM?
+The hype around AI agents often pushes us to build complex, autonomous systems before we've even asked if we need them. We see demos of agents building entire applications and get tempted to apply that same level of autonomy everywhere. But the engineering reality is often far less glamorous. Most of the time, a well-structured, deterministic workflow is not only sufficient but superior.
 
-This article cuts through the noise to focus on the real engineering principles. We will explore the spectrum from rigid, predictable workflows to fully autonomous agents. We will break down the core differences, analyze when to use each approach, and see how they combine in state-of-the-art AI systems.
+Understanding the spectrum between these two methodologies is critical. It’s about knowing when to impose structure and when to grant autonomy. This article will cut through the noise to give you a practical, engineering-focused guide. We will define both workflows and agents, explore their pros and cons, and look at real-world examples to understand their architecture. Ultimately, you'll see that the choice isn't binary—the future of most production-grade AI is hybrid.
 
 ## Understanding the Spectrum: From Workflows to Agents
 
-At a high level, the distinction between Large Language Model (LLM) Workflows and Agentic Systems comes down to control. Who—or what—is deciding the next step? As AI engineers, we often group both under the umbrella of "agentic systems," but we see them as two distinct architectural patterns [1](https://www.anthropic.com/engineering/building-effective-agents).
+Before we get into the weeds of when to use which, let's establish clear definitions. The distinction between a workflow and an agent isn't just a matter of complexity; it's about who is in control: the developer or the LLM.
 
-An LLM Workflow is a system where developer-written code predefines and orchestrates the sequence of tasks. Think of it as an assembly line. A request comes in, and it moves through a series of fixed stations: retrieve data from a vector database, call a tool, pass the results to an LLM for summarization, and then format the output. The path is predictable, and the control flow is explicit. This means you have full visibility and can easily debug, test, and optimize each stage. While it uses AI, the process itself is not AI-driven; it is a classic, rule-based process that happens to include an LLM call [2](https://research.aimultiple.com/agentic-ai-design-patterns/).
-![Figure 1: A simple LLM Workflow, illustrating a predefined sequence of tasks.](https://research.aimultiple.com/wp-content/uploads/2025/04/agentic-wokrflows-1224x512.png.webp)
+In LLM Workflows, developer-written code predefines and orchestrates the sequence of tasks. It is a well-defined assembly line. An input comes in, and it moves through a series of fixed stations—perhaps retrieving data, calling a tool, and then passing the results to an LLM for summarization or classification. Each step is explicit, and the control flow is deterministic. The developer meticulously designs the entire process, confining the LLM's role to a specific, hardcoded step. This predictability makes workflows highly reliable and easy to debug, as the developer, not the model, defines the "what" and "when" [[2]](https://research.aimultiple.com/agentic-ai/).
+![An automated, rule-based workflow where a user query follows a series of defined steps and decision points to produce a response.](https://research.aimultiple.com/wp-content/uploads/2025/04/agentic-wokrflows-1224x512.png.webp)
 
+**Figure 1**: An automated workflow is a predefined, rule-based process [[2]](https://research.aimultiple.com/agentic-ai/).
 
-Agentic Systems, on the other hand, are fundamentally different. In an agentic system, the LLM is the brain of the operation. It does not just execute a step; it dynamically decides what the steps should be. Given a high-level goal, the agent reasons, plans, selects tools, and executes actions in a loop until the goal is achieved. This is less like an assembly line and more like a skilled human expert tackling a problem they have not seen before. They assess the situation, form a plan, try something, observe the result, and adjust their strategy accordingly [3](https://decodingml.substack.com/p/build-production-agentic-rag-with-llmops-at-its-core). This dynamic decision-making allows agents to tackle complex, open-ended problems that lack a predefined solution path, making them incredibly flexible but also less predictable.
-![Figure 2: An Agentic System, showing the LLM dynamically deciding the sequence of steps.](https://decodingml.substack.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F67ffe267-55f2-4af7-9910-7410c7605550_1220x754.png)
+In Agentic Systems, on the other hand, an LLM dynamically decides the sequence of steps to achieve a goal. Instead of following a rigid script, the agent reasons about the task, plans its actions, selects tools from a given set, and iterates until it determines the goal is met. This is not an assembly line but a skilled human expert tackling an unfamiliar problem. The LLM is in the driver's seat, adapting its approach based on intermediate results and making real-time decisions. This dynamic nature allows agents to handle open-ended problems and unexpected situations that would break a fixed workflow [[1]](https://www.anthropic.com/engineering/building-effective-agents).
+![An agentic workflow where a user query is processed by an AI agent that performs planning, tool selection, and reflection on results to generate a response.](https://research.aimultiple.com/wp-content/uploads/2025/04/agentic-wokrflows-1224x512.png.webp)
 
+**Figure 2**: An agentic workflow involves dynamic decision-making [[2]](https://research.aimultiple.com/agentic-ai/).
 
-Both approaches require an orchestration layer, but its role differs significantly. In a workflow, the orchestrator acts as a strict manager, ensuring each step of a predefined plan executes in order. In an agentic system, the orchestrator is more of a facilitator, providing the environment and tools the LLM needs to carry out its own dynamically generated plan. This fundamental difference in control defines their respective strengths and weaknesses, which we will explore next.
+Both approaches require an orchestration layer, but its role is fundamentally different. In a workflow, the orchestrator executes a fixed plan, ensuring each step runs in the correct order. In an agentic system, the orchestrator acts as a facilitator, providing the agent with the tools and environment it needs to execute its own dynamically generated plan. This distinction is the key to understanding the trade-offs in reliability, cost, and flexibility that we will explore next.
 
-## Workflows vs. Agents: The Autonomy Slider
+## Choosing Your Path: PROs and CONs
 
-The choice between a workflow and an agent is not about which is "better" but which is appropriate for the task. The core difference lies in developer-defined logic versus LLM-driven autonomy, and this trade-off has significant implications for predictability, cost, and flexibility.
+The core difference between workflows and agents comes down to developer-defined logic versus LLM-driven autonomy. This is not just a philosophical distinction; it has practical consequences for what you can build and how you can maintain it. Choosing the right path means being honest about what your use case truly requires.
 
-Workflows are the right choice when you need predictability, reliability, and control. They excel at repeatable operational tasks where the steps are known and the outcomes must be consistent, such as structured data extraction, automated report generation, or content summarization followed by translation. Because we hard-code the logic, workflows are easier to debug, test, and monitor. Their operational costs are also more predictable, as you control the number and type of LLM calls. This stability, combined with low latency and no need for persistent state, makes workflows ideal for enterprise applications where traceability is non-negotiable [4](https://www.lyzr.ai/blog/agentic-ai-vs-llm/).
+Workflows are the backbone of most production AI systems today, especially in enterprise settings. They excel at repeatable operational tasks where predictability and reliability are non-negotiable. For example, consider structured data extraction, automated report generation, or content summarization. Because the steps are fixed, workflows are easier to debug, their costs are predictable, and their outputs are consistent. They typically have low latency and cost, making them the right choice for high-frequency, low-complexity scenarios and regulated environments where every step must be traceable [[3]](https://towardsdatascience.com/a-developer-s-guide-to-building-scalable-ai-workflows-vs-agents/), [[4]](https://www.lyzr.ai/blog/agentic-ai-vs-llm/).
 
-Agentic systems, however, we design for the unknown. They are ideal for open-ended research, dynamic problem-solving, and tasks that require adaptation to new information. When you cannot map out all the possible steps in advance—like debugging a novel coding issue or handling a complex customer support conversation—an agent's ability to reason and adapt becomes invaluable. This flexibility comes at a cost. Agents are less predictable, harder to debug, and can lead to spiraling operational costs if their reasoning loops are not managed. Each loop can take seconds, and the entire process can take minutes. They also require more complex infrastructure, including memory and tool integrations. With failure rates for open-ended goals as high as 20-40%, the trade-off is clear [4](https://www.lyzr.ai/blog/agentic-ai-vs-llm/).
+Agents, however, excel at handling the unpredictable. They are best suited for open-ended research, dynamic problem-solving like debugging code, or complex customer support interactions where the path to resolution is not known in advance. Their strength is adaptability. This flexibility comes at a price: higher operational costs, increased latency, and greater complexity in monitoring. Agentic systems are also more prone to failure, with open-ended goals sometimes seeing high task failure rates. You lose the deterministic control that makes workflows so appealing for production systems [[3]](https://towardsdatascience.com/a-developer-s-guide-to-building-scalable-ai-workflows-vs-agents/), [[4]](https://www.lyzr.ai/blog/agentic-ai-vs-llm/).
+![A visual comparison of AI Agents and Workflows, showing a cyclical, adaptive robot versus a structured, linear flowchart.](https://i0.wp.com/decodingml.substack.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F62c3e1e5-8f2c-497b-a37a-59495dd67215_1024x576.png?w=2400&h=1350)
 
-In reality, most modern AI applications are not purely one or the other. They exist on a spectrum, blending both approaches to get the best of both worlds. This is an "autonomy slider." At one end, you have manual control with minimal AI assistance. At the other, you have a fully autonomous agent. As a developer, you decide where to set the slider. For example, a coding assistant like Cursor offers different levels of autonomy. You can use it for simple tab-completion (low autonomy), ask it to refactor a selected block of code (medium autonomy), or instruct it to implement a feature across the entire repository (high autonomy). Similarly, Perplexity offers a quick search (workflow-like), a more detailed "Research" mode, and an agentic "Deep Research" that takes several minutes to synthesize a comprehensive report [5](https://www.youtube.com/watch?v=LCEmiRjPEtQ).
+**Figure 3**: AI Agents vs. Workflows [[3]](https://towardsdatascience.com/a-developer-s-guide-to-building-scalable-ai-workflows-vs-agents/).
 
-The goal is always to accelerate the AI generation and human verification loop. A well-designed architecture, whether it is a workflow or an agent, paired with an intuitive user interface, allows the human to stay in control while benefiting from the AI's power.
-![Figure 3: The Autonomy Slider, illustrating the gradient between LLM Workflows and Agentic Systems.](https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5e64d5e0-7ef1-4e7f-b441-3bf1fef4ff9a_1276x818.png)
+In reality, most mature AI applications are not purely one or the other. They exist on a spectrum, blending both approaches into hybrid systems. As a developer, you control an "autonomy slider." At one end, you have manual control with simple LLM calls. At the other, you have a fully autonomous agent. Products like Cursor and Perplexity exemplify this, offering different modes from simple completion (low autonomy) to deep research (high autonomy) [[5]](https://www.youtube.com/watch?v=LCEmiRjPEtQ). The goal is to design a system that speeds up the generation-verification loop between the AI and the human. The best engineers know how to choose the right level of autonomy for the job.
 
-## A Look at State-of-the-Art (SOTA) Examples
+## A Look at State-of-the-Art (SOTA) Examples (2025)
 
-The distinction between workflows and agents becomes clearer when we look at real-world, State-of-the-Art (SOTA) applications. By now, both patterns have found their footing in production systems, each solving problems suited to its strengths.
+To make these concepts more concrete, let's look at some state-of-the-art (SOTA) examples from 2025. These real-world applications illustrate how we deploy workflows and agents, showing the practical use of the architectural patterns we have discussed.
 
-LLM workflows power many enterprise use cases. For example, **Gemini in Google Workspace** streamlines productivity by summarizing long email threads, meeting transcripts, and documents. This is a classic workflow where the task is well-defined, and the steps are predictable. In data analytics, companies like **Geotab** and **Kinaxis** use workflows to analyze vast datasets from vehicles and supply chains for real-time insights. These processes—ingesting data, cleaning it, running analysis, and generating reports—are structured and repeatable [6](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders).
+For LLM workflows, document summarization is a common use case. For example, Gemini in Google Workspace processes and summarizes long email threads and documents. This is a classic workflow: it takes input data, applies a fixed summarization process, and produces a structured output [[6]](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders). We also see powerful workflow applications in data-driven decision-making, content creation, and legal automation, where companies use LLMs to analyze data, generate marketing visuals, or draft contracts with high accuracy and reduced manual effort [[6]](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders).
 
-On the other side of the spectrum, agentic systems tackle more open-ended and dynamic challenges. **Perplexity's Deep Research** agent is a prime example. It autonomously formulates a research plan, conducts multiple web searches, and synthesizes information from various sources to generate a comprehensive, cited report on a complex topic [7](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research). In the developer world, coding assistants like the **Gemini Command-Line Interface (CLI)** and **Cursor** function as agents. When you give them a high-level task like "refactor this function to be more efficient," they autonomously plan and execute the necessary file edits, tests, and debugging steps [8](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/). Similarly, task automation tools like **OpenAI's Operator** act as agents on your computer, observing your screen and using your applications to complete goals you describe in natural language [9](https://openai.com/index/introducing-operator/).
+On the agentic side, we see more dynamic systems. Perplexity's Deep Research mode is a prime example of a research agent. It autonomously breaks down complex queries, conducts multiple web searches, synthesizes information, and compiles a comprehensive report with citations. This is an agent because the LLM, not the developer, plans and executes the multi-step research process [[7]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research). In the developer space, coding assistants like Google's Gemini Command Line Interface (CLI) function as agents. They understand a high-level task, read files, write or modify code, and debug errors in a loop until the task is complete [[8]](https://www.helpnetsecurity.com/2025/06/26/google-gemini-cli-open-source-ai-agents/).
 
-## Zooming In: Workflows and Agents in Action
+Finally, task automation agents like OpenAI's Operator interact with graphical user interfaces (GUIs) on a computer. Operator can "see" the screen and "use" a mouse and keyboard to perform tasks like filling out forms. This demonstrates a high degree of autonomy in a complex environment [[9]](https://openai.com/index/introducing-operator/). These examples highlight the core distinction: workflows excel at structured, repeatable processes, while agents are designed for open-ended, dynamic tasks.
 
-Seeing high-level examples is useful, but the real engineering insights come from looking at how these systems operate under the hood. Let's deconstruct a few of these SOTA applications to see how they combine workflow and agentic patterns.
+## Zooming In: How SOTA Systems Blend Workflows and Agents
 
-### Document Summarization in Google Workspace: Pure Workflow
-This is a quintessential example of a pure workflow. When you ask Gemini to summarize a Google Doc, the system follows a clear, predefined sequence. It does not need to "decide" what to do; developers already laid out the path. The process is reliable, efficient, and easy to control because there is no room for the system to go off-task.
+While some applications are pure workflows or agents, many of the most powerful systems are hybrids. We will deconstruct some examples from the previous section to see how they combine these patterns.
 
+### Document Summarization in Google Workspace (Pure Workflow)
+A feature like summarizing a document in Google Workspace is a classic, pure workflow. The process is linear and predictable: the user selects a document, the system extracts the text, passes it to an LLM with a summarization prompt, and displays the result. There is no dynamic decision-making by the LLM about *how* to perform the task; it simply executes a predefined function.
 ```mermaid
 graph TD
-    A[User Request: "Summarize this doc"] --> B(Retrieve Document Text);
-    B --> C{LLM Call: Summarization Prompt};
-    C --> D[Generated Summary];
-    D --> E[Display to User];
+    A[User selects "Summarize Document"] --> B{Extract Text from Document};
+    B --> C[Pass Text to LLM with Summarization Prompt];
+    C --> D[LLM Generates Summary];
+    D --> E[Display Summary to User];
 ```
-*Figure 4: Operational loop for document summarization in Google Workspace.*
 
-### Gemini CLI: The Coding Agent
-The Gemini CLI operates as an agent. When given a task like "find the bug in `main.py`," it doesn't follow a fixed script. Instead, it enters a reasoning loop where it plans, uses tools (like reading files or running code), and observes the results to decide its next action. This loop continues until it solves the problem or asks the user for clarification.
-
+### Gemini CLI Coding Assistant (Hybrid)
+Google's Gemini CLI is a hybrid system that leans heavily toward being an agent. It serves as an open-source, local AI assistant for complex developer workflows, built upon the Gemini 1.5 Pro model [[8]](https://www.helpnetsecurity.com/2025/06/26/google-gemini-cli-open-source-ai-agents/), [[10]](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/). While it operates within a developer's terminal, its core loop is agentic. It takes a high-level goal and dynamically plans and executes a series of steps, which typically involves planning, tool use (interacting with the file system and code interpreters), and an iterative refinement loop to self-correct based on errors or test failures [[8]](https://www.helpnetsecurity.com/2025/06/26/google-gemini-cli-open-source-ai-agents/), [[10]](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/). The system's extensibility is enhanced through the Model Context Protocol (MCP), allowing for custom behaviors [[8]](https://www.helpnetsecurity.com/2025/06/26/google-gemini-cli-open-source-ai-agents/).
 ```mermaid
 graph TD
-    subgraph Gemini CLI Agent Loop
-        A[User Goal: "Find bug in main.py"] --> B{Plan: Read file};
-        B --> C[Tool: `cat main.py`];
-        C --> D{Observe: Code content};
-        D --> E{Plan: Run file to see error};
-        E --> F[Tool: `python main.py`];
-        F --> G{Observe: Error message};
-        G --> H{Plan: Identify fix & apply};
-        H --> I[Tool: Edit `main.py`];
-        I --> J[Final Response: "Bug fixed"];
-    end
+    A[User Prompt: "Refactor function X"] --> B{Plan: Decompose Task};
+    B --> C{Tool: Read File};
+    C --> D{Tool: Analyze Code};
+    D --> E{Tool: Write/Modify Code};
+    E --> F{Tool: Run Tests};
+    F -- Tests Pass --> G[Show Diff to User];
+    F -- Tests Fail --> H{Reflection: Analyze Error};
+    H --> B;
 ```
-*Figure 5: Simplified operational loop for the Gemini CLI agent.*
 
-### Perplexity Deep Research: The Research Agent
-Perplexity's Deep Research feature is another classic agent. It takes a high-level query and transforms it into a multi-step research plan. It then executes this plan by generating search queries, browsing web pages, extracting key information, and synthesizing it all into a final report. The process is dynamic; if one search query fails, it can generate another.
-
+### Perplexity Deep Research (Hybrid)
+Perplexity's Deep Research feature is another powerful hybrid. It automates an exploratory task by deconstructing a user's query, formulating a search strategy, and executing iterative web searches where the results from one search inform the next [[7]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research/), [[11]](https://arxiv.org/html/2506.18959v2). After gathering information, the agent synthesizes the findings and compiles a structured, well-cited report. While the final output is structured (a workflow element), the process to get there is dynamic and LLM-driven, often completing expert-level research in under three minutes [[7]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research/), [[12]](https://www.helicone.ai/blog/openai-deep-research).
 ```mermaid
 graph TD
-    subgraph Perplexity Agent Loop
-        A[User Goal: "Report on AI Agents"] --> B{Plan: Decompose into sub-questions};
-        B --> C[Tool: Generate & run search queries];
-        C --> D{Observe: Search results};
-        D --> E{Plan: Read top sources};
-        E --> F[Tool: Browse pages & extract info];
-        F --> G{Observe: Key findings};
-        G --> H{Plan: Synthesize into report};
-        H --> I{LLM Call: Generate report};
-        I --> J[Final Response: Comprehensive Report];
-    end
+    A[User Prompt: "Research topic Y"] --> B{Plan: Formulate Research Questions};
+    B --> C{Tool: Web Search};
+    C --> D{Analyze Search Results};
+    D -- More Info Needed --> C;
+    D -- Sufficient Info --> E{Synthesize Findings};
+    E --> F[Generate Cited Report];
 ```
-*Figure 6: Simplified operational loop for Perplexity's Deep Research agent.*
 
-## Core Components of an AI Agent
-
-Building an agentic system is more than just plugging into an LLM. It requires designing a cognitive architecture that enables the agent to reason, learn, and act effectively. While implementations vary, a few core components are common across most modern agents. Understanding these patterns provides a foundation for thinking about how to build your own.
-
-A typical agent architecture consists of four key components working in a continuous loop:
-
-### Planning
-This is the agent's executive function. When given a task, the agent first decomposes it into a series of smaller, manageable sub-tasks. This plan is not static; it is a living document that the agent can update as it gathers more information or encounters obstacles [2](https://research.aimultiple.com/agentic-ai-design-patterns/). For example, an agent tasked with "researching a topic" might first plan to "search for keywords," then "read top results," and then "synthesize findings." Devin, an autonomous software engineering agent, formulates a step-by-step plan for its assignments, executing code, running tests, and debugging as needed [10](https://research.contrary.com/company/cognition).
-
-### Tool Use
-Agents interact with the outside world through tools. A tool can be anything from a web search API, a calculator, a database query function, or even another agent. The ability to select and use the right tool at the right time is fundamental to an agent's effectiveness, allowing it to extend its capabilities beyond just language generation and connect to real-world data and actions [2](https://research.aimultiple.com/agentic-ai-design-patterns/).
-
-### Memory
-To perform complex tasks, an agent needs memory. We often split this into two types. Short-term memory holds the context of the current task, like the conversation history or recent tool outputs. This is crucial for maintaining coherence within a single interaction. Long-term memory, often implemented using a vector database, stores knowledge from past interactions, allowing the agent to learn and improve over time by applying insights from previous tasks to new ones [12](https://arxiv.org/html/2505.12786v2).
-
-### Iterative Refinement
-Agents operate in a loop of action and observation. After taking an action (like using a tool), the agent observes the result and reflects on it. Did it work? Did it get me closer to my goal? This self-correction or reflection loop allows the agent to learn from its mistakes and adapt its plan, which is a key differentiator from rigid workflows [2](https://research.aimultiple.com/agentic-ai-design-patterns/), [11](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/). Devin, for instance, uses a built-in self-reflection loop to adjust its strategy and retry when errors or failed tests occur [10](https://research.contrary.com/company/cognition). This continuous feedback mechanism is what gives agents their dynamic and adaptive nature.
-
+### OpenAI's Operator (Pure Agent)
+OpenAI's Operator is a "computer-using agent" that interacts with GUIs by "seeing" the screen and "acting" with the mouse and keyboard. Its mechanism is almost entirely agentic: it perceives its environment, plans a sequence of actions to achieve a user's goal, and executes them. Powered by a model trained for GUI interaction, Operator can self-correct when it makes mistakes or hand control back to the user if it gets stuck. This makes it a clear example of an autonomous agent designed for unpredictable environments [[9]](https://openai.com/index/introducing-operator/).
 ```mermaid
 graph TD
-    subgraph AI Agent
-        A[Agent Core: LLM]
-    end
-
-    subgraph Planning
-        P1[Task Decomposition]
-        P2[Self-Correction/Reflection]
-    end
-
-    subgraph Memory
-        M1[Short-Term]
-        M2[Long-Term]
-    end
-
-    subgraph Tools
-        T1[Web Search]
-        T2[Database Query]
-        T3[API Call]
-        T4[...]
-    end
-
-    User_Input[User Goal] --> A
-    A <--> P1
-    P1 --> A
-    A --> Tools
-    Tools --> R[Results]
-    R --> A
-    A <--> P2
-    A <--> M1
-    A <--> M2
-    A --> Final_Response[Final Response]
+    A[Perceive Environment (Screenshots)] --> B{Plan Actions (Clicks, Typing)};
+    B --> C[Execute Actions];
+    C --> D{Observe Results};
+    D -- Goal Achieved --> E[Task Complete];
+    D -- Error/Stuck --> F{Self-Correct or Hand Control to User};
+    F --> B;
 ```
-*Figure 7: Common architecture of an AI agent.*
 
-While this architecture is powerful, building robust agents is fraught with challenges. Reliability is a major concern; an agent's reasoning path is not deterministic, so errors can compound with each step, leading to unpredictable failures [13](https://openreview.net/pdf?id=kFrqoVtMIy). Studies show that open-ended agent goals can have failure rates of 20-40% [4](https://www.lyzr.ai/blog/agentic-ai-vs-llm/), and researchers have identified numerous failure modes in multi-agent systems, from specification issues to execution errors [14](https://arxiv.org/html/2503.13657v2).
+## Designing Agents: Common Patterns and Challenges
 
-Managing context over long interactions is another hurdle, as agents can "forget" earlier parts of a task. This can lead to error propagation, where an incorrect output at one step cascades into subsequent failures [13](https://openreview.net/pdf?id=kFrqoVtMIy). Cost is also a significant factor, as agentic loops can consume a large number of tokens, with some workflows costing $0.10–$5 per run [4](https://www.lyzr.ai/blog/agentic-ai-vs-llm/).
+As we have seen, agents are powerful but complex. Building a reliable agentic system requires designing a cognitive architecture that allows the agent to reason and act effectively. A few common architectural patterns have emerged as foundational: Planning, Tool Use, Memory, and Reflection loops.
 
-Finally, giving an autonomous system access to powerful tools—like the ability to send emails or write to a database—introduces serious security risks. Documented vulnerabilities include tool misuse, memory poisoning, and infinite looping plans [15](https://arxiv.org/html/2505.13076v1). Agents have even demonstrated the ability to exploit known software vulnerabilities on their own [16](https://i-tracing.com/blog/llm-agents-cybersecurity/), [17](https://arxiv.org/html/2404.08144v1). These challenges highlight the need for robust Machine Learning Operations (MLOps) practices when deploying agents to production.
+Planning is the agent's ability to break down a high-level goal into a sequence of smaller, manageable sub-tasks, creating a roadmap that can be revised as needed [[2]](https://research.aimultiple.com/agentic-ai/). Tool Use allows the agent to interact with the outside world via APIs, databases, or code interpreters, enabling it to act beyond its internal knowledge [[13]](https://mlnotes.substack.com/p/4-agentic-design-patterns-and-4-key/). Agents also need Memory—both short-term for current context and long-term for future use—to learn from past interactions [[14]](https://arxiv.org/html/2505.12786v2). Finally, Reflection is an iterative loop where the agent assesses its own work, identifies errors, and refines its approach, which is crucial for tackling complex problems [[15]](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/).
 
-## Conclusion
+These components work together in a cyclical process, often referred to as a reason-act loop.
+```mermaid
+graph TD
+    A[User Goal] --> B(Planning);
+    B --> C{Task Decomposition};
+    C --> D(Tool Selection);
+    D --> E{Tool Execution};
+    E --> F(Observation/Results);
+    F --> G(Memory Update);
+    G --> H{Reflection & Refinement};
+    H -- Goal Achieved --> I[Final Response];
+    H -- More Steps Needed --> B;
+```
 
-The distinction between LLM Workflows and AI Agents is not just academic; it's a fundamental architectural choice with real-world consequences. Workflows offer predictability and control, making them ideal for structured, repeatable tasks. Agents provide dynamic, adaptive reasoning, perfect for complex and open-ended problems. The reality is that most SOTA applications are not purely one or the other but exist on a spectrum, carefully balancing developer-defined logic with LLM-driven autonomy.
+Despite the power of this architecture, building robust agents comes with significant challenges. Reliability is a major concern; since agents make decisions at each step, errors can compound, making debugging far more difficult than with predictable workflows [[16]](https://openreview.net/pdf?id=kFrqoVtMIy). Managing long-term context is another hurdle, as agents can "forget" crucial information. Scalability and cost are also major considerations, as agentic loops can consume significant compute resources [[4]](https://www.lyzr.ai/blog/agentic-ai-vs-llm/). Finally, security is a critical risk. Giving an autonomous agent access to powerful tools creates a massive security risk that could lead to data breaches or system compromises if not properly managed [[17]](https://arxiv.org/html/2505.13076v1).
 
-Understanding the core agentic patterns—planning, tool use, memory, and reflection—is the first step toward building more sophisticated AI systems. However, we must also be pragmatic about the engineering challenges, including reliability, cost, and security. The goal is not to build the most autonomous system possible but the simplest system that works. Choosing the right point on the autonomy slider is key to shipping effective, production-ready AI.
+## Conclusion: The Hybrid Future of AI Applications
+
+The debate between LLM Workflows and Agentic Systems isn't about picking a winner; it's about understanding the right tool for the right job. You've seen that workflows offer predictability, reliability, and cost-effectiveness, making them ideal for structured, repeatable tasks. Agents, in contrast, provide the flexibility and autonomy needed to tackle complex, unpredictable problems.
+
+The key takeaway is clear: this isn't a binary choice. The most effective and production-ready AI applications often live on a spectrum, blending the stability of workflows with the dynamic reasoning of agents. This hybrid approach allows you to build systems that are both powerful and resilient, leveraging predefined paths for the 80% of tasks that are predictable, while reserving agentic autonomy for the 20% that truly require it.
+
+For you, as an AI engineer, mastering these architectural patterns is becoming a fundamental skill. It's about moving beyond the hype and making pragmatic decisions based on the real-world needs of your application. It requires understanding the trade-offs between control and flexibility, and knowing how to build systems that can be monitored, debugged, and scaled safely. The future of AI isn't just about building smarter models; it's about building smarter systems around them.
 
 ## References
 
 - [1] [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
-- [2] [4 Agentic AI Design Patterns & Real-World Examples [2025]](https://research.aimultiple.com/agentic-ai-design-patterns/)
-- [3] [Build a production-ready agentic RAG with LLMOps at its core](https://decodingml.substack.com/p/build-production-agentic-rag-with-llmops-at-its-core)
+- [2] [4 Agentic AI Design Patterns & Real-World Examples [2025]](https://research.aimultiple.com/agentic-ai/)
+- [3] [A Developer’s Guide to Building Scalable AI: Workflows vs Agents](https://towardsdatascience.com/a-developer-s-guide-to-building-scalable-ai-workflows-vs-agents/)
 - [4] [Agentic AI vs LLM: Comparing What Scales Better in Task Runners](https://www.lyzr.ai/blog/agentic-ai-vs-llm/)
 - [5] [Andrej Karpathy: Software Is Changing (Again)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
 - [6] [601 real-world gen AI use cases from the world's leading organizations](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders)
 - [7] [Introducing Perplexity Deep Research](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research)
-- [8] [Gemini CLI: your open-source AI agent](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/)
+- [8] [Gemini CLI: your open-source AI agent](https://www.helpnetsecurity.com/2025/06/26/google-gemini-cli-open-source-ai-agents/)
 - [9] [Introducing Operator](https://openai.com/index/introducing-operator/)
-- [10] [Devin (YC S24) is the first AI software engineer](https://research.contrary.com/company/cognition)
-- [11] [Agentic Design Patterns, Part 2: Reflection](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/)
-- [12] [Memory Augmented Large Language Models are Provably Generalizable Learners](https://arxiv.org/html/2505.12786v2)
-- [13] [Beyond Chain-of-Thought, Effective Graph-of-Thought Reasoning in Large Language Models](https://openreview.net/pdf?id=kFrqoVtMIy)
-- [14] [Failure Modes of Agents: A First-Look at the Breakdowns of AI-driven Autonomous Systems](https://arxiv.org/html/2503.13657v2)
-- [15] [Security Analysis of Next-Gen AI-Agent Systems](https://arxiv.org/html/2505.13076v1)
-- [16] [LLM Agents can Autonomously Exploit One-day Vulnerabilities](https://i-tracing.com/blog/llm-agents-cybersecurity/)
-- [17] [When Large Language Models Meet Security: A Survey on LLM for Security](https://arxiv.org/html/2404.08144v1)
+- [10] [Introducing Gemini CLI, an open-source, local AI agent for developers](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/)
+- [11] [From Web Search towards Agentic Deep Research: Incentivizing Search with Reasoning Agents](https://arxiv.org/html/2506.18959v2)
+- [12] [Perplexity AI Deep Research: An In-Depth Analysis](https://www.helicone.ai/blog/openai-deep-research)
+- [13] [4 Agentic Design Patterns and 4 Key Components of AI Agents](https://mlnotes.substack.com/p/4-agentic-design-patterns-and-4-key/)
+- [14] [Survey on Large Language Model-based Autonomous Agents for Cybersecurity](https://arxiv.org/html/2505.12786v2)
+- [15] [Agentic Design Patterns, Part 2: Reflection](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-2-reflection/)
+- [16] [A Tale of Two Planners: A Comparative Study of LLM-modulo and Agentic Approaches for Task Planning](https://openreview.net/pdf?id=kFrqoVtMIy)
+- [17] [Agentic Security: Towards a Principled Framework for Securing AI Agents](https://arxiv.org/html/2505.13076v1)
