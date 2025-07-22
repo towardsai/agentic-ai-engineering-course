@@ -101,9 +101,9 @@ You are a helpful AI assistant with access to tools.
 </tool_definitions>
 
 When you need to use a tool, output ONLY the tool call in this exact format:
-```tool_call
+<tool_call>
 {{"name": "tool_name", "args": {{"param1": "value1"}}}}
-```
+</tool_call>
 """
 
 USER_PROMPT = "Can you help me find the latest quarterly report?"
@@ -113,10 +113,12 @@ messages = [TOOL_CALLING_SYSTEM_PROMPT.format(tools=str(TOOLS_SCHEMA)), USER_PRO
 # This is a placeholder for the actual API call
 # response = client.models.generate_content(model=MODEL_ID, contents=messages)
 ```
+
 When we send this to the LLM, it does not answer the user directly. Instead, it recognizes that the `search_google_drive` tool is needed and generates a structured response asking us to call it. The LLM's response would look like this:
 ```
-```tool_call
+<tool_call>
 {"name": "search_google_drive", "args": {"query": "latest quarterly report"}}
+</tool_call>
 ```
 
 ### 3. Executing the Tool in Your Application
