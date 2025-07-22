@@ -121,7 +121,7 @@
 
 Links to code that will be used to support the article. Always prioritize this code over every other source code: 
 
-- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/07_react_practice/notebook.ipynb)
+- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/08_react_practice/notebook.ipynb)
 
 ## Golden Sources
 

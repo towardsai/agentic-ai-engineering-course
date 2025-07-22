@@ -160,7 +160,7 @@ Explain the pros and cons of this pattern compared to other approaches.
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
 
-- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/03_chaining_routing/notebook.ipynb)
+- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/04_chaining_routing/notebook.ipynb)
 
 ## Golden Sources
 
