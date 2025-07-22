@@ -1,6 +1,6 @@
 ## Global Context
 
-- **What I'm planning to share:** This article introduces the foundational elements of agentic behavior: planning and reasoning. We'll discuss why LLMs inherently lack long-term memory and default planning capabilities, necessitating an "orchestrating agent" structure. We'll explore historical yet conceptually vital planning/reasoning strategies like ReAct and Plan-and-Execute, explaining their value in structuring agent thought processes, even as modern models (like o3/o4-mini) internalize some of these abilities. The article will cover how agents decompose goals and can self-correct.
+- **What I'm planning to share:** This article introduces two of the foundational ingredients of agentic behavior: planning and reasoning. We'll discuss why LLMs inherently lack default planning capabilities, necessitating an "orchestrating agent" structure. We'll explore historical yet conceptually vital planning/reasoning strategies like ReAct and Plan-and-Execute, explaining their value in structuring agent thought processes, even as modern models (like o3/o4-mini) internalize some of these abilities. The article will cover how agents decompose goals and can self-correct.
 - **Why I think it's valuable:** Understanding how to imbue LLMs with planning and reasoning capabilities is crucial for AI Engineers aiming to build autonomous agents that can tackle complex, multi-step tasks. While advanced models are increasingly capable, grasping these fundamental patterns provides a deeper insight into agent design, debugging, and the evolution of AI, allowing engineers to build more robust and intelligent systems.
 - **Who the intended audience is:** AI Engineers and developers working on autonomous agent systems who need to understand the fundamental patterns of agent planning and reasoning.
 - **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 1800-2000 words
@@ -14,15 +14,15 @@
 ## Section 1: The Agent's Mind: Why LLMs Need Orchestration for Complex Tasks
 
 - Recap: What defines an agent (building on previous lessons – dynamic, goal-oriented).
-- Identify inherent limitations of standalone LLMs for agentic behavior:
-    - **Statelessness:** Primarily next-token predictors with context window limitations; no built-in persistent memory or state tracking across multiple interactions without external management.
+- Identify inherent limitations of standalone LLMs (non-reasoning models) for agentic behavior:
+    - **Statelessness:** Primarily next-token predictors with context window limitations; no built-in persistent memory or state tracking across multiple interactions/turns without external management.
     - **Lack of Default Planning:** Do not spontaneously create and follow multi-step plans to achieve a distant goal without specific prompting strategies or an external control loop.
-    - **Implicit Reasoning:** While capable of impressive reasoning within a prompt, making this reasoning explicit and actionable for multi-step tasks requires structure.
-    - **No Innate World Interaction:** Cannot take actions (use tools, access external data) without an external framework.
-- Introduce the "Orchestrating Agent" or "Agent Core": The software component/loop that:
+    - **Implicit Reasoning:** While capable of impressive reasoning when prompted, making this reasoning actionable for multi-step complex tasks requires structure. AI Engineers provide this structure, how the LLM should reason to achieve the goal.
+    - **No Innate World Interaction:** Cannot take actions (use tools, access external data) without an external system.
+- Introduce the "Orchestrating Agent System" or "Agent Core": The software component/loop that:
     - Manages the overall goal.
     - Maintains state/memory (e.g., scratchpad, conversation history).
-    - Interacts with the LLM for reasoning, planning, and action decisions.
+    - Interacts with the LLM (the brain) for reasoning, planning, and action decisions.
     - Interfaces with tools or the external environment.
     - Facilitates the execution of tasks.
 - Briefly introduce Reasoning Models: Explain that certain LLMs (e.g., o3/o4-mini, or more generally, frontier models) are specifically trained or architected to excel at tasks requiring logical deduction, multi-step reasoning, and following complex instructions, making them suitable as the "brain" of an agent.
@@ -31,18 +31,17 @@
 
 - **ReAct (Reason + Act):**
     - Explain the core idea: LLM iteratively generates a Thought (reasoning about the current state and next step) followed by an Action (what to do, e.g., use a tool or provide a final answer). After the action is executed, an Observation (result of the action) is fed back to the LLM to inform the next Thought-Action pair.
-    - Illustrate the Thought -> Action -> Observation loop.
     - Conceptual Value: Makes the agent's "internal monologue" explicit, aids interpretability, helps the LLM stay on track for complex tasks, and provides a natural way to integrate tool use.
     - Provide a mermaid diagram illustrating the ReAct loop, showing the cyclical flow: User Query → Thought (reasoning) → Action (tool use/final answer) → Observation (results) → back to Thought, with decision points for continuing the loop or providing final answer.
 - **Plan-and-Execute (or Plan-and-Solve):**
     - Explain the core idea:
         1. **Planning Phase:** The LLM first generates a complete, step-by-step plan to achieve the given goal.
-        2. **Execution Phase:** The agent (or another LLM, or code) then executes each step of the plan, potentially with refinements.
-    - Conceptual Value: Useful for tasks where a high-level strategy can be determined upfront. Provides a structured approach.
+        2. **Execution Phase:** The agent (or another LLM, or code) then executes each step of the plan, in parallel or sequentially, depending on the task.
+    - Conceptual Value: Useful for tasks where a high-level strategy can be determined upfront. Provides a structured approach. The plan can also be refined as its being executed.
     - Provide a mermaid diagram illustrating the Plan-and-Execute workflow, showing the two distinct phases: User Query → Planning Phase (generate complete plan) → Execution Phase (execute each step sequentially with potential refinements) → Final Result.
 - Discuss why these explicit patterns remain valuable:
-    - Even if modern models "internalize" similar processes through extensive instruction fine-tuning, understanding these patterns helps in:
-        - Designing effective prompts for complex reasoning tasks.
+    - Even if modern models "internalize" similar processes through extensive post-training (reinforcement learning with tool use), understanding these patterns helps in:
+        - Designing effective prompts for complex reasoning tasks. (give reference to context engineering lesson)
         - Structuring the agent's control loop.
         - Debugging agent behavior by trying to surface the implicit reasoning steps.
         - Providing a mental model for how agents "think."
@@ -55,11 +54,16 @@
 - **Self-Correction:**
     - Explain the importance of an agent's ability to detect when an action has failed, when it's deviating from the plan, or when new information contradicts its current understanding.
     - Discuss mechanisms for self-correction:
-        - Re-prompting the LLM with error information.
+        - Re-prompting/re-trying the LLM with error information.
         - Trying a different tool or approach.
         - Re-evaluating the plan.
         - Asking for clarification (if an interactive agent).
+        - All of the above can be part of the orchestrating agent's "system prompt"
     - Connect this to the "Observation" step in ReAct, which provides the feedback necessary for correction.
+
+
+Extras:
+- Introduce a simple example that we can re-use through the lesson, react vs plan and execute.
 
 ## Golden Sources
 

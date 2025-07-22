@@ -4,7 +4,7 @@
 - **Why I think it's valuable:** Context engineering is the new fine-tuning. As fine-tuning is required less and less due to the fact that it is expensive, slow, and extremely inflexible in a world where data keeps changing, fine-tuning becomes the last resort when building AI applications. Thus, context engineering becomes a core skill for building successful AI agents or LLM workflows that juggle the short-term memory and long-term memory of AI applications to squeeze out the best performance possible.
 - **Who the intended audience is:** Aspiring AI engineers learning about context engineering and RAG for the first time, but who already have knowledge about tools, ReACT, and memory.
 - **Theory / Practice ratio:** 90% theory / 10% practice
-- **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 1600 words (~6-7 minute read)
+- **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 1800 words (~7-8 minute read)
 
 
 ## Narrative Flow of the Lesson
@@ -61,6 +61,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 - Analogy: `Context as the AI's "RAM"`: "LLMs are like a new kind of operating system where the model is the CPU and its context window is the RAM. Just as an operating system curates what fits into RAM, context engineering manages what information occupies the model's limited context window." - Quote by Andrej Karpathy
 - Analogy to memory: The context is a subset of the short-term working memory that is passed to the LLM. It's not the whole short-term memory, as you can keep other aspects in your working memory without using them in the prompt passed to the LLM.
 
+- Prompt engineering vs. context engineering: Context engineering will not replace prompt engineering. Instead, prompt engineering is becoming part of context engineering. You still need to learn how to write effective prompts while understanding how to incorporate the right context into the prompt without compromising the LLM.
 - Table on `Prompt Engineering` vs. `Context Engineering`. Render it in Markdown.
 | Dimension | Prompt Engineering | Context Engineering |
 |-----------|-------------------|---------------------|
@@ -69,7 +70,15 @@ Follow the next narrative flow when writing the end-to-end lesson:
 | State Management | Stateless function | Stateful with memory |
 | Focus | How to phrase tasks | What information to provide |
 
--  **Section length:** 200 words
+- Context engineering vs. fine-tuning: Context engineering is the new fine-tuning. In most use cases, you can go far just by leveraging context engineering techniques. As modern LLMs generalize really well, and because fine-tuning is time-consuming and costly, it should always be the last resort if nothing else works. 
+- When solving a specific problem, this is how your decision-making should look, from easy to hard:
+    1. Prompt Engineering: Does it solve my problem? Yes. Stop here
+    2. Context Engineering: Does it solve my problem? Yes. Stop here
+    3. Fine-tuning: Can you make a fine-tuning dataset? Yes. Stop here. No. Reframe the problem.
+- Mermaid diagram with the workflow from above.
+- Within this course, we will show you how to solve most of the industry use cases using only context engineering.
+
+-  **Section length:** 400 words (without the mermaid diagram)
 
 ## Section 3: What makes up the context
 (Go deeper into the advanced theory.)
