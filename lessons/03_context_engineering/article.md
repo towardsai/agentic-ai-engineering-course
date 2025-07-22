@@ -1,158 +1,219 @@
-# Context Engineering: The Missing Link to infinity LLMs
-### Beyond prompt engineering: The new frontier
+# Context Engineering: The New Frontier
+### Beyond prompt engineering for LLMs
 
 ## From Prompt to Context Engineering
 
-Let’s get one thing straight: if you’re still only talking about "prompt engineering," you’re behind the curve. In the early days of Large Language Models (LLMs), crafting the perfect prompt was the name of the game. For simple chatbots in 2022, it was enough. Then came Retrieval-Augmented Generation (RAG) in 2023, where we started feeding models domain-specific knowledge. Now, we have tool-using, memory-enabled agents that need to build relationships and maintain state over time. The single-interaction focus of prompt engineering just doesn’t cut it anymore.
+If you're building artificial intelligence (AI) applications, you’ve probably heard that prompt engineering is the key to unlocking performance. This advice is quickly becoming outdated. While essential, focusing solely on crafting the perfect prompt is like trying to win a race by only polishing the car's hood. It misses the bigger picture.
 
-As AI applications grow more complex, simply throwing more information into the prompt leads to serious issues. First, there’s context decay. Models get confused by long, messy contexts, leading to hallucinations and misguided answers. A recent study found that model correctness can start dropping significantly once the context exceeds 32,000 tokens, long before the advertised million-token limits are reached [[1]](https://www.databricks.com/blog/long-context-rag-performance-llms).
+The AI landscape has evolved rapidly. We started with simple chatbots in 2022, where a single, well-phrased question was enough. Then came Retrieval-Augmented Generation (RAG) systems in 2023, which required us to feed domain-specific knowledge into the prompt. By 2024, tool-using agents emerged, forcing us to include application programming interface (API) schemas and function calls. Now, we build memory-enabled agents that manage state and build relationships over time.
 
-Second, the context window—the model's working memory—is finite. Even with massive windows, every token adds to cost and latency. I once built a workflow where I stuffed everything into the context: research, guidelines, examples, and reviews. The result? A 30-minute run time. It was unusable. This naive approach of "context-augmented generation," or just dumping everything in, is a recipe for failure in production.
+This evolution has exposed the limits of pure prompt engineering. It optimizes for single interactions, not sustained, multi-turn conversations. As context grows, performance degrades—a problem known as context decay. The Large Language Model (LLM) gets lost in the noise, leading to hallucinations and misguided answers. Furthermore, every token adds to the cost and latency of an LLM call. The naive approach of just stuffing everything into the context window is a recipe for a slow and expensive system. I learned this the hard way on a project where my attempt to include all my research, guidelines, and examples resulted in a workflow that took 30 minutes to run.
 
-This is where context engineering comes in. It’s a shift in mindset from crafting individual prompts to architecting an AI’s entire information ecosystem. We dynamically gather and filter information from memory, databases, and tools to provide the LLM with only what’s essential for the task at hand. This makes our systems more accurate, faster, and cost-effective.
+This is where **Context Engineering** comes in. It’s the necessary evolution, a discipline focused on orchestrating the entire information ecosystem—past conversations, databases, tools, and memory—to make AI applications accurate, fast, and cost-effective. It’s about being deliberate with what you feed the model, ensuring it gets exactly what it needs, and nothing it doesn’t.
 
 ## Understanding Context Engineering
 
-So, what exactly is context engineering? The formal answer is that it is an optimization problem: finding the ideal set of functions to assemble a context that maximizes the quality of the LLM's output for a given task [[2]](https://arxiv.org/pdf/2507.13334).
+So, what is context engineering? Formally, it’s an optimization problem. You are trying to find the best way to assemble the right information at the right time to get the most accurate answer from an LLM. This involves optimizing a set of functions that retrieve, filter, and format information to maximize the LLM's output quality for a given task, all while respecting the model's context window limits [[1]](https://arxiv.org/pdf/2507.13334). In simple terms, context engineering is managing an AI's memory. It’s about deciding which pieces of short-term and long-term memory to pull into the prompt to solve a task effectively, without confusing the model.
 
-To put it simply, context engineering is about strategically filling the model’s limited context window with the right information, at the right time, and in the right format. We retrieve the necessary pieces from both short-term and long-term memory to solve a task without overwhelming the model. Andrej Karpathy offered a great analogy for this: LLMs are like a new kind of operating system, where the model acts as the CPU and its context window functions as the RAM [[3]](https://x.com/karpathy/status/1937902205765607626). Just as an operating system manages what fits into RAM, context engineering curates what occupies the model’s working memory. It is important to note that the context is a *subset* of the system's total working memory; you can hold information without passing it to the LLM on every turn.
+Andrej Karpathy provides a powerful analogy, stating that LLMs are like a new kind of operating system where the model is the central processing unit (CPU) and its context window is the random access memory (RAM). He notes, "context engineering is the art and science of filling the context window with the right information for the next step" [[2]](https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider). This highlights that the context you provide is a carefully selected subset of the AI's working memory, not the entire thing. Just as an operating system manages RAM to ensure efficient program execution, context engineering ensures the LLM receives precisely what it needs to perform optimally.
 
-This new discipline is fundamentally different from just writing good prompts. To engineer the context effectively, you first need to understand what components you can actually manipulate.
+This doesn't mean prompt engineering is dead. Instead, context engineering subsumes it. You still need to write clear instructions and craft effective prompts, but now you must also manage the dynamic information that surrounds those instructions. Prompt engineering focuses on the *how* to phrase tasks, while context engineering broadens the scope to the *what* information to provide.
 
-**Table 1: Prompt Engineering vs. Context Engineering**
-
+**Table 1**: Comparison of Prompt Engineering and Context Engineering
 | Dimension | Prompt Engineering | Context Engineering |
-| :----------------- | :------------------------------- | :---------------------------------------------------- |
-| **Scope** | Single interaction optimization | Entire information ecosystem |
-| **Complexity** | Manual string manipulation | System-level, multi-component optimization |
-| **State Management** | Primarily stateless | Inherently stateful, with explicit memory management |
-| **Focus** | How to phrase tasks | What information to provide |
+|-----------|-------------------|---------------------|
+| Scope | Single interaction optimization | Entire information ecosystem |
+| Complexity | O(1) context assembly | O(n) multi-component optimization |
+| State Management | Stateless function | Stateful with memory |
+| Focus | How to phrase tasks | What information to provide |
+
+This shift also redefines our relationship with fine-tuning. As modern LLMs become better generalists, fine-tuning—which is expensive, slow, and inflexible—should be the last resort. Fine-tuning requires significant computational resources and specialized datasets for retraining, and any update to domain knowledge necessitates retraining the model. For most use cases, context engineering is the new fine-tuning, offering a more agile and cost-effective approach that allows for real-time updates to knowledge without retraining the model [[3]](https://www.glean.com/blog/retrieval-augemented-generation-vs-fine-tuning), [[4]](https://fabrix.ai/blog/fine-tuning-or-retrieval-augmented-generation-when-dealing-with-multi-domain-datasets/). Your development workflow should follow a clear path from simple to complex.
+```mermaid
+graph TD
+    A[Start] --> B{Does Prompt Engineering Solve It?};
+    B -- Yes --> C[Stop];
+    B -- No --> D{Does Context Engineering Solve It?};
+    D -- Yes --> C;
+    D -- No --> E{Can You Create a Fine-tuning Dataset?};
+    E -- Yes --> F[Fine-tune & Stop];
+    E -- No --> G[Reframe Problem];
+```
+Most production-grade problems can be solved with robust context engineering, saving you the significant overhead of fine-tuning. Now that we understand what context engineering is, let's explore its core components.
 
 ## What Makes Up the Context
 
-The context we pass to an LLM isn't a static string; we dynamically assemble this payload for each and every interaction. Various memory systems construct this payload, each serving a distinct purpose inspired by cognitive science [[4]](https://www.nature.com/articles/s41593-023-01496-2).
-![Figure 1: A Venn diagram showing that Context Engineering encompasses RAG, Prompt Engineering, State/History, Memory, and Structured Outputs.](https://github.com/user-attachments/assets/0f1f193f-8e94-4044-a276-576bd7764fd0)
+The context you pass to an LLM is not a static block of text. Instead, we dynamically assemble different information types, each serving a distinct purpose and mapping to various forms of AI memory. We pull these components together for every single interaction.
+![A Venn diagram shows a large blue circle labeled "Context Engineering" that encompasses four smaller, overlapping circles. The smaller circles are labeled "RAG" (purple)
 
+, "Prompt Engineering" (yellow), "State / History" (pink), and "Memory" (green). A fifth, smaller circle labeled "Structured Outputs" (orange) overlaps with "Prompt Engineering" and "Memory" but is partially outside the main "Context Engineering" circle. The text "Everything is Context Engineering!" is written in the top left corner.](https://i.imgur.com/G5g2mJp.png)
+**Figure 1**: The components of context engineering, showing how different techniques overlap to form the full context [[5]](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md).
 
-Here are the core components that make up your LLM's context:
+Here are the core components:
 
-- **System Prompt**: This contains the core instructions, rules, and persona for the agent. Think of it as the agent's procedural memory, defining *how* it should behave.
+### Procedural Memory
+This includes the foundational rules of operation. The system prompt sets the agent's persona and high-level instructions. Tool schemas and structured output schemas define the functions the agent can call and the formats it must adhere to.
 
-- **Message History**: This is the recent back-and-forth of the conversation, including user inputs and the agent's internal monologue (thoughts, actions, and observations from tool use). This acts as the agent's short-term working memory.
+### Short-Term / Working Memory
+This is the most dynamic component, capturing the immediate flow of a conversation. It includes your latest input and the agent's internal monologue, often following a Reasoning and Acting (ReAct) loop: thought, action (tool call), and observation (tool result).
 
-- **User Preferences and Past Experiences**: This is the agent's episodic memory, storing specific events and user-related facts, often in a vector or graph database. It allows for personalization, like remembering your role or previous requests [[5]](https://www.ibm.com/think/topics/ai-agent-memory).
+### Episodic Memory
+This is the AI's memory of past experiences and user-specific data. It stores user preferences and historical interactions, often in a vector or graph database, allowing for personalized responses [[6]](https://ragwalla.com/blog/the-ai-memory-revolution-how-rag-powered-memory-systems-will-transform-enterprise-ai-in-2025).
 
-- **Retrieved Information**: This is the semantic memory—factual knowledge pulled from internal knowledge bases (like company documents) or external sources via real-time API calls. This is the core of RAG.
+### Semantic Memory
+This is the agent's knowledge base. It can be internal, like information retrieved from company documents via RAG, or external, like real-time data from an API call [[7]](https://techsee.com/blog/understanding-ai-memory-a-deep-dive-into-the-cognitive-layers-of-service-automation/).
 
-- **Tool and Structured Output Schemas**: These are also a form of procedural memory, defining the tools the agent can use and the format it should use for its response.
-
-This flow is cyclical and dynamic. A user query or task triggers retrieval from long-term memory sources (episodic, semantic, procedural). We combine this information with short-term working memory to create the final context for the LLM call. The LLM's response updates the working memory, and we might write key insights back to long-term memory, refining the system for future interactions.
+This entire process is a continuous cycle. Information flows from your query to the agent's memory systems, gets assembled into context for the LLM, and the resulting output updates the memory, preparing for the next turn.
+```mermaid
+graph TD
+    A[User Query] --> B(Long-Term Memory);
+    B --> C(Short-Term Working Memory);
+    C --> D(Context Assembly);
+    D --> E[LLM Call];
+    E --> F[Answer];
+    F --> C;
+    C --> B;
+```
+Understanding these components is the first step toward mastering how you can orchestrate them effectively.
 
 ## Production Implementation Challenges
 
-Building a robust context engineering pipeline is not trivial. In production, you will run into several hard problems that can degrade your agent's performance if you do not manage them properly.
+While powerful, implementing context engineering in production introduces significant technical hurdles. Simply having a large context window doesn't solve these problems; in fact, it can sometimes make them worse.
+![A line graph shows "Average Answer Correctness" on the y-axis (from 0.3 to 0.8)
+ and "Context Length" on the x-axis (from 2K to 128K). Multiple lines, each representing a different AI model (e.g., gpt-4o, claude-3-5-sonnet), generally show a trend where correctness increases up to a certain context length (around 8K-16K) and then starts to decline, illustrating the "lost in the middle" problem.](https://i.imgur.com/0uB0wI6.png)
+**Figure 2**: Model correctness often drops as context length increases, a phenomenon known as context distraction or the "lost-in-the-middle" problem [[8]](https://www.datacamp.com/blog/context-engineering).
 
-First is the **context window challenge**. Even with massive context windows, this space is a finite and expensive resource. The self-attention mechanism, central to LLMs, imposes quadratic computational and memory overhead [[2]](https://arxiv.org/pdf/2507.13334). Every token adds to cost and latency, quickly filling the context window with chat history, tool outputs, and retrieved documents, creating a hard limit on what the agent can "see."
+Here are the key challenges you'll face:
 
-This leads to **information overload**, also known as context decay or the "lost-in-the-middle" problem. Research shows that as you stuff more information into the context, models lose their ability to focus on critical details [[1]](https://www.databricks.com/blog/long-context-rag-performance-llms). Performance often falls off a cliff, leading to confused or irrelevant responses. This information loss can also trigger hallucinations, as models attempt to fill in perceived gaps [[6]](https://arxiv.org/pdf/2505.00019).
+### The Context Window Limit
+Every model has a finite context window, which is the maximum amount of information it can process simultaneously. While models with million-token windows exist, this space fills up fast with chat history, RAG documents, and tool definitions. It’s a hard constraint that forces you to be selective.
 
-Another subtle issue is **context drift**, where conflicting versions of the truth accumulate over time. For example, if the memory contains both "The user's budget is $500" and later "The user's budget is $1,000," the agent can get confused. Without a mechanism to resolve or prune outdated facts, the agent's knowledge base becomes unreliable.
+### Information Overload (Context Decay)
+More context is not always better. As the context window fills, models can get distracted by the accumulated history, leading to a drop in performance. This is the "needle in a haystack" problem, where relevant information gets lost in a sea of noise. A study found that model correctness can start to decline significantly after just 32,000 tokens, long before the theoretical limit is reached [[8]](https://www.datacamp.com/blog/context-engineering).
 
-Finally, there is **tool confusion**. We often see failure when we provide an agent with too many tools, especially with poorly written descriptions or overlapping functionalities. The Gorilla benchmark shows that nearly all models perform worse when given more than one tool [[7]](https://gorilla.cs.berkeley.edu/leaderboard.html). The agent gets paralyzed by choice or picks the wrong tool, leading to failed tasks.
+### Context Drift
+This occurs when the context accumulates conflicting information over time. For instance, the memory might contain both "the user's flight is on Tuesday" and a later update, "the user's flight was moved to Wednesday." This creates a confused state of truth that can derail the agent's reasoning.
 
-## Key Strategies for Context Optimization
+### Tool Confusion
+Providing an agent with too many tools, especially if their descriptions are vague or overlapping, can cause it to fail. The model struggles to select the correct tool for the job, leading to incorrect actions or complete paralysis. Research has shown that model performance degrades as the number of available tools increases [[8]](https://www.datacamp.com/blog/context-engineering).
 
-In the early days, most AI applications were simple RAG systems. Today, agents juggle multiple data sources, tools, and memory types, requiring a sophisticated approach to context engineering. Here are key strategies to manage the LLM context window effectively.
+## Context Optimization Strategies
 
-### Selecting the Right Context
-Selecting the right context is your first line of defense. Avoid providing all available context; instead, use RAG with reranking to retrieve only the most relevant facts. Structured outputs can also ensure the LLM breaks responses into logical parts, passing only necessary pieces downstream. This dynamic context optimization filters content and selects critical information to maximize density within the limited context window [[2]](https://arxiv.org/pdf/2507.13334).
+To manage the complexity of modern AI applications, you need deliberate strategies for optimizing the context. A common mistake is providing all available context to the LLM at every step. This not only risks hitting the context window limit but also invites performance issues like context decay. Instead, you need to be more strategic.
+
+### Advanced Retrieval and Ranking
+Do not just dump retrieved documents into the prompt. Use a re-ranking step to prioritize the most relevant chunks of information. This ensures the model sees the most critical facts first, mitigating the "lost-in-the-middle" problem and helping the LLM focus on what truly matters for the task at hand [[1]](https://arxiv.org/pdf/2507.13334).
 
 ### Context Compression
-Context compression is crucial for managing long-running conversations. As message history grows, summarize or condense it to avoid overflowing the context window, much like managing your computer's RAM. You can use an LLM to create summaries, move key facts to long-term episodic memory, or use deduplication [[8]](https://www.datacamp.com/tutorial/prompt-compression). Techniques like LLMLingua and Selective Context are effective for token reduction and maintaining response quality [[6]](https://arxiv.org/pdf/2505.00019).
-![Figure 2: Context Compression Example. Providing instructions in a single, fully-specified block is more token-efficient and clearer for the model than providing the same information in sharded, multiple turns.](https://media.datacamp.com/cms/ad_4nxep3if9fetk_gcocfoo2qoqddl3w7nss64iqgaqrya-yqkzqt8v4d4jvpwkz.png)
+As a conversation grows, the chat history can quickly consume the context window. To manage this, you can use an LLM to periodically create summaries of past interactions, preserving key facts while freeing up tokens [[9]](https://www.datacamp.com/tutorial/prompt-compression). Another technique is to move important details from short-term working memory into a long-term episodic memory store. Research shows that moderate compression can even improve LLM performance by abstracting and retaining critical information more effectively [[10]](https://arxiv.org/pdf/2505.00019).
 
-
-### Context Ordering
-LLMs pay more attention to the beginning and end of a prompt, often losing information in the middle—the "lost-in-the-middle" phenomenon [[1]](https://www.databricks.com/blog/long-context-rag-performance-llms). Place critical instructions at the start and the most recent or relevant data at the end. Reranking and temporal relevance ensure LLMs do not bury key information [[2]](https://arxiv.org/pdf/2507.13334). Dynamic context prioritization can also resolve ambiguities and maintain personalized responses by adapting to evolving user preferences [[9]](https://aclanthology.org/2025.naacl-srw.42.pdf).
+### Deliberate Ordering
+The position of information within the prompt matters. LLMs typically pay more attention to the beginning and end of the context. Place the most critical information, such as the main instruction and key data points, in these high-attention zones. For time-sensitive tasks, prioritize recent information and trim older, less relevant history.
 
 ### Isolating Context
-Isolating context involves splitting a complex problem across multiple specialized agents. Each agent maintains its own focused context window, preventing interference and improving performance. This is a core principle behind multi-agent systems [[10]](https://www.anthropic.com/engineering/built-multi-agent-research-system). This pattern allows for separation of concerns, handling memory management via vector stores and coordinating procedural actions through abstraction layers [[11]](https://www.speakeasy.com/mcp/ai-agents/architecture-patterns).
+For complex tasks, a single agent can become overwhelmed. A more effective architectural pattern is to use multiple, specialized agents. Each agent has its own isolated context window focused on a specific sub-task. They collaborate and hand off information, preventing any single agent from being overloaded and improving overall system performance [[11]](https://blog.langchain.com/context-engineering-for-agents/).
 
 ### Format Optimization
-Finally, format optimization using structures like XML or YAML makes the context more digestible for the model. This clearly delineates different information types and improves reasoning reliability. Custom context formats, like XML-style tags, optimize for token and attention efficiency, allowing flexible information packing and spreading across messages [[12]](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md).
+Use structured formats like Extensible Markup Language (XML) or YAML Ain't Markup Language (YAML) to clearly delineate different parts of the context. This helps the model distinguish between instructions, user input, retrieved documents, and tool outputs, leading to more reliable parsing and reasoning [[5]](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md).
 
-## Here is an Example
+## Context Engineering in Action: A Healthcare Use Case
 
-Context engineering is not just a theoretical concept; we apply it to build powerful AI systems in various domains. In healthcare, an AI assistant can access a patient's history, current symptoms, and relevant medical literature to suggest personalized diagnoses. In finance, an agent might integrate with a company's Customer Relationship Management (CRM) system, calendars, and financial data to make decisions based on user preferences. For project management, an AI system can access enterprise tools like CRMs, Slack, Zoom, calendars, and task managers to automatically understand project requirements and update tasks.
+Let's make this concrete with a real-world use case in healthcare. Imagine building an AI assistant to help patients with minor health concerns. Your goal is to provide safe, personalized advice based on their history and reliable medical knowledge.
 
-Let's walk through a concrete example. Imagine a user asks a healthcare assistant: `I have a headache. What can I do to stop it? I would prefer not to take any medicine.`
+Consider this user query: `I have a headache. What can I do to stop it? I would prefer not to take any medicine.`
 
-Before the LLM even sees this query, a context engineering system gets to work:
-1.  It retrieves the user's patient history, known allergies, and lifestyle habits from an **episodic memory** store, often a vector or graph database [[5]](https://www.ibm.com/think/topics/ai-agent-memory).
-2.  It queries a **semantic memory** of up-to-date medical literature for non-medicinal headache remedies [[4]](https://www.nature.com/articles/s41593-023-01496-2).
-3.  It assembles this information, along with the user's query and the conversation history, into a structured prompt.
-4.  We send the prompt to the LLM, which generates a personalized, safe, and relevant recommendation.
-5.  We log the interaction, and save any new preferences back to the user's episodic memory.
+A simple prompt-engineered chatbot might give a generic list of remedies. A context-engineered system does much more. Before the LLM even sees the query, the system performs several steps:
+1.  **Retrieves Episodic Memory:** It queries a database to get the patient's history, noting any allergies, pre-existing conditions, and personal preferences [[6]](https://ragwalla.com/blog/the-ai-memory-revolution-how-rag-powered-memory-systems-will-transform-enterprise-ai-in-2025).
+2.  **Retrieves Semantic Memory:** It consults a trusted medical knowledge base (a form of RAG) to find non-medicinal treatments for headaches that are appropriate for the patient's profile [[7]](https://techsee.com/blog/understanding-ai-memory-a-deep-dive-into-the-cognitive-layers-of-service-automation/).
+3.  **Assembles Context:** It formats this information into a structured prompt, ensuring the most critical data is placed optimally.
+4.  **Calls the LLM:** It sends the curated context to the LLM to generate a personalized, safe, and relevant recommendation.
+5.  **Updates Memory:** The system logs the interaction, potentially updating the patient's preferences for future queries [[12]](https://arxiv.org/pdf/2504.19413), [[13]](https://www.ibm.com/think/topics/ai-agent-memory).
 
-Here’s a simplified Python example showing how these components might be assembled into a complete system prompt. Notice the clear structure and ordering.
+Here’s a simplified Python snippet showing what the final system prompt might look like. Notice the clear structure and ordering of information.
 ```python
-# System prompt for a healthcare AI assistant
+def create_system_prompt(user_query, patient_history, medical_knowledge):
+    """
+    Assembles a structured prompt for the healthcare AI assistant.
+    """
+    system_prompt = f"""
+<role>
+You are a helpful and cautious AI healthcare assistant. Your goal is to provide safe, non-medicinal advice. You must not provide a diagnosis. Always advise the user to consult a doctor for serious issues.
+</role>
 
-SYSTEM_PROMPT = """
-You are a helpful and cautious AI healthcare assistant. Your goal is to provide safe, non-medicinal advice. Do not provide medical diagnoses.
+<patient_history>
+{patient_history}
+</patient_history>
 
-<INSTRUCTIONS>
-1. Analyze the user's query and the provided context.
-2. Use the patient history to understand their health profile and preferences.
-3. Use the retrieved medical knowledge to form your recommendation.
-4. If you lack sufficient information, ask clarifying questions.
-5. Always prioritize safety and advise consulting a doctor for serious issues.
-</INSTRUCTIONS>
+<retrieved_knowledge>
+{medical_knowledge}
+</retrieved_knowledge>
 
-<PATIENT_HISTORY>
-{retrieved_patient_history}
-</PATIENT_HISTORY>
-
-<MEDICAL_KNOWLEDGE>
-{retrieved_medical_articles}
-</MEDICAL_KNOWLEDGE>
-
-<CONVERSATION_HISTORY>
-{formatted_chat_history}
-</CONVERSATION_HISTORY>
-
-<USER_QUERY>
+<user_query>
 {user_query}
-</USER_QUERY>
+</user_query>
 
-Based on all the information above, provide a helpful response.
+<instructions>
+Based on the provided history and knowledge, answer the user's query. Prioritize information from the patient history. Do not suggest any medications.
+</instructions>
 """
+    return system_prompt
+
+# Example usage:
+patient_data = "No known allergies. Prefers holistic remedies. Reports occasional stress-related headaches."
+retrieved_docs = "For tension headaches, recommend relaxation techniques, hydration, and applying a cold compress."
+query = "I have a headache. What can I do to stop it? I would prefer not to take any medicine."
+
+final_prompt = create_system_prompt(query, patient_data, retrieved_docs)
+print(final_prompt)
 ```
-To build such a system, you would use a combination of tools. An LLM like **Gemini** provides the reasoning engine. A framework like **LangChain** orchestrates the workflow. Databases such as **PostgreSQL**, **Qdrant**, or **Neo4j** serve as long-term memory stores. Specialized tools like **Mem0** can manage memory state, and observability platforms are essential for debugging complex interactions.
+It outputs:
+```
+<role>
+You are a helpful and cautious AI healthcare assistant. Your goal is to provide safe, non-medicinal advice. You must not provide a diagnosis. Always advise the user to consult a doctor for serious issues.
+</role>
+
+<patient_history>
+No known allergies. Prefers holistic remedies. Reports occasional stress-related headaches.
+</patient_history>
+
+<retrieved_knowledge>
+For tension headaches, recommend relaxation techniques, hydration, and applying a cold compress.
+</retrieved_knowledge>
+
+<user_query>
+I have a headache. What can I do to stop it? I would prefer not to take any medicine.
+</user_query>
+
+<instructions>
+Based on the provided history and knowledge, answer the user's query. Prioritize information from the patient history. Do not suggest any medications.
+</instructions>
+```
+You can apply this approach across many domains. Imagine financial services agents that access Customer Relationship Management (CRM) systems and market data, or project managers who integrate with Slack, Zoom, and task management tools. The key tools in this stack often include a powerful LLM like Gemini, an orchestrator like LangChain, various databases (PostgreSQL, Neo4j, Qdrant), and specialized memory libraries like Mem0.
 
 ## Connecting Context Engineering to AI Engineering
 
-Mastering context engineering is less about learning a specific algorithm and more about building intuition. It’s the art of knowing how to structure prompts, what information to include, and how to order it for maximum impact.
+Context engineering is more than a set of techniques; it's a mindset. It blends art and intuition, guiding you to structure prompts, pass information, and order components for optimal AI system performance.
 
-This skill doesn't exist in a vacuum. It’s a multidisciplinary practice that sits at the intersection of several key engineering fields:
-*   **AI Engineering:** Understanding LLMs, RAG, and AI agents is the foundation.
-*   **Software Engineering:** You need to build scalable and maintainable systems to aggregate context and wrap agents in robust APIs.
-*   **Data Engineering:** Constructing reliable data pipelines for RAG and other memory systems is critical.
-*   **MLOps:** Deploying agents on the right infrastructure and automating Continuous Integration/Continuous Deployment (CI/CD) makes them reproducible, observable, and scalable.
+You cannot master context engineering in isolation. This multidisciplinary field blends several engineering domains:
+*   **AI Engineering:** Master LLMs, RAG, and agentic architectures.
+*   **Software Engineering:** Build scalable, maintainable systems to aggregate context, manage state, and wrap agents in robust APIs.
+*   **Data Engineering:** Construct data pipelines for RAG systems and LLM workflows.
+*   **Ops:** Deploy reproducible, observable, and scalable agents on the right infrastructure, leveraging Continuous Integration/Continuous Delivery (CI/CD).
+*   **AI Research:** Explore fine-tuning when context engineering reaches its limits.
 
-The best way to develop your context engineering skills is to get your hands dirty. Start building AI agents that integrate RAG for semantic memory, tools for procedural memory, and user profiles for episodic memory. By wrestling with the trade-offs of context management in a real project, you’ll build the intuition that separates a simple chatbot from a truly intelligent agent.
+To truly develop your context engineering skills, practice is essential. Build AI agents that integrate RAG for semantic memory, tools for procedural memory, and user preferences for episodic memory. Wrestling with real-world context management challenges will build the intuition you need to create intelligent, reliable AI applications.
 
 ## References
 
-- [1] [Long-context RAG performance on LLMs](https://www.databricks.com/blog/long-context-rag-performance-llms)
-- [2] [A Survey of Context Engineering for Large Language Models](https://arxiv.org/pdf/2507.13334)
-- [3] [Andrej Karpathy on Context Engineering](https://x.com/karpathy/status/1937902205765607626)
-- [4] [Human-like memory in AI](https://www.nature.com/articles/s41593-023-01496-2)
-- [5] [AI agent memory](https://www.ibm.com/think/topics/ai-agent-memory)
-- [6] [LLM-based Generation of E-commerce Product Descriptions](https://arxiv.org/pdf/2505.00019)
-- [7] [Gorilla LLM Leaderboard](https://gorilla.cs.berkeley.edu/leaderboard.html)
-- [8] [Prompt Compression](https://www.datacamp.com/tutorial/prompt-compression)
-- [9] [Dynamic Context Prioritization for Personalized Response Generation](https://aclanthology.org/2025.naacl-srw.42.pdf)
-- [10] [Building a multi-agent research system](https://www.anthropic.com/engineering/built-multi-agent-research-system)
-- [11] [AI Agent Architecture Patterns](https://www.speakeasy.com/mcp/ai-agents/architecture-patterns)
-- [12] [The 12-Factor Agent: Own Your Context Window](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md)
+- [1] [A Survey of Context Engineering for Large Language Models](https://arxiv.org/pdf/2507.13334)
+- [2] [Context Engineering - What it is, and techniques to consider](https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider)
+- [3] [Retrieval-Augmented Generation vs. Fine-Tuning](https://www.glean.com/blog/retrieval-augemented-generation-vs-fine-tuning)
+- [4] [Fine-Tuning or Retrieval-Augmented Generation?](https://fabrix.ai/blog/fine-tuning-or-retrieval-augmented-generation-when-dealing-with-multi-domain-datasets/)
+- [5] [Own your context window](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md)
+- [6] [The AI Memory Revolution: How RAG-Powered Memory Systems Will Transform Enterprise AI in 2025](https://ragwalla.com/blog/the-ai-memory-revolution-how-rag-powered-memory-systems-will-transform-enterprise-ai-in-2025)
+- [7] [Understanding AI Memory: A Deep Dive Into the Cognitive Layers of Service Automation](https://techsee.com/blog/understanding-ai-memory-a-deep-dive-into-the-cognitive-layers-of-service-automation/)
+- [8] [Context Engineering: A Guide With Examples](https://www.datacamp.com/blog/context-engineering)
+- [9] [Prompt Compression](https://www.datacamp.com/tutorial/prompt-compression)
+- [10] [Compressing LLM Context to Accelerate Self-Attention](https://arxiv.org/pdf/2505.00019)
+- [11] [Context Engineering for Agents](https://blog.langchain.com/context-engineering-for-agents/)
+- [12] [Memory-augmented RAG for Personalized Response](https://arxiv.org/pdf/2504.19413)
+- [13] [What is AI agent memory?](https://www.ibm.com/think/topics/ai-agent-memory)

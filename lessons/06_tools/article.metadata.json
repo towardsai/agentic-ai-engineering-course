@@ -1,0 +1,9 @@
+{
+    "num_chars": 35224,
+    "num_words": 4325,
+    "num_sections": 7,
+    "seo": {
+        "title": "LLM Agents: Tools for Real-World AI",
+        "description": "Unlock the true potential of LLM agents! Learn how tools give LLMs 'hands & senses' to interact with the real world, from building custom tools to leveraging native APIs. Master agentic workflows, structured data extraction with Pydantic, and common tool categories like RAG & code execution. Essential for AI engineers!"
+    }
+}
