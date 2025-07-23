@@ -189,26 +189,23 @@ Figure 3: The architecture of CLIP consists of a text encoder and an image encod
 This shared embedding space forms the backbone of multimodal Retrieval-Augmented Generation (RAG). You can embed a massive library of images using the image encoder and store these embeddings in a vector database. When a user enters a text query, you embed the query using the text encoder and perform a similarity search in the vector database to find the most relevant images. This allows for semantic search across modalities, overcoming the limitations of unimodal models [[13]](https://towardsdatascience.com/multimodal-embeddings-an-introduction-5dc36975966f).
 ```mermaid
 graph TD
-    subgraph User Interaction
-        A[User Query: "Show me pictures of dogs playing"]
+    subgraph "User Interaction"
+        A["User Query: Show me pictures of dogs playing"]
     end
 
-    subgraph Retrieval
-        A -- text --> B(Text Encoder)
-        B -- text_embedding --> C{Vector Database}
-        D[Image Collection] -- image --> E(Image Encoder)
-        E -- image_embeddings --> C
-        C -- "Semantic Search" --> F[Top-K Relevant Images]
+    subgraph "Retrieval"
+        A -->|"text"| B["Text Encoder"]
+        B -->|"text_embedding"| C[("Vector Database")]
+        D["Image Collection"] -->|"image"| E["Image Encoder"]
+        E -->|"image_embeddings"| C
+        C -->|"Semantic Search"| F["Top-K Relevant Images"]
     end
 
-    subgraph Generation
-        A -- "Original Query" --> G(LLM)
-        F -- "Retrieved Images" --> G
-        G -- "Generates Answer" --> H(Response: "Here are some images of dogs playing...")
+    subgraph "Generation"
+        A -->|"Original Query"| G["LLM"]
+        F -->|"Retrieved Images"| G
+        G -->|"Generates Answer"| H["Response: Here are some images of dogs playing..."]
     end
-
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style G fill:#ccf,stroke:#333,stroke-width:2px
 ```
 Figure 4: A diagram illustrating how multimodal embeddings are used in a RAG system to retrieve images based on a text query.
 
@@ -380,23 +377,20 @@ react_agent = build_react_agent()
 You can visualize the agent's workflow as a graph where it cycles between reasoning and acting.
 ```mermaid
 graph TD
-    A[Start] --> B{Agent Executor};
-    B -- "User Query: 'What color is my kitten?'" --> C[Reasoning LLM (Gemini)];
-    C -- "Thought: I need to find an image of the user's kitten. I should use the multimodal_search_tool." --> D[Tool Invocation];
-    D -- "Tool: multimodal_search_tool, Input: 'kitten'" --> E(Multimodal RAG System);
-    E -- "Retrieves image and description" --> D;
-    D -- "Tool Output: [Image of kitten, Description]" --> C;
-    C -- "Thought: The description says the kitten is grey. I will answer the user." --> F[Final Answer Generation];
-    F -- "Response: 'Your kitten is grey.'" --> G[End];
+    A["Start"] --> B{{"Agent Executor"}}
+    B -->|"User Query: What color is my kitten?"| C["Reasoning LLM (Gemini)"]
+    C -->|"Thought: Need to search for kitten image"| D["Tool Invocation"]
+    D -->|"Tool: multimodal_search_tool"| E["Multimodal RAG System"]
+    E -->|"Retrieves image and description"| D
+    D -->|"Tool Output: Image of kitten, Description"| C
+    C -->|"Thought: Kitten is grey, will answer user"| F["Final Answer Generation"]
+    F -->|"Response: Your kitten is grey"| G["End"]
 
     subgraph "ReAct Loop"
         C
         D
         E
     end
-
-    style C fill:#ccf,stroke:#333,stroke-width:2px
-    style E fill:#f9f,stroke:#333,stroke-width:2px
 ```
 Figure 6: The ReAct agent workflow, showing the loop of reasoning, tool use, and observation.
 
