@@ -1,8 +1,8 @@
 ## Global Context of the Lesson
 
-- **What I'm planning to share**: I will write a lesson on context engineering, starting by stating that prompt engineering is not enough, and then explaining why it is no longer sufficient in the world of AI. Next, I will slowly introduce the idea of context engineering, starting with a general overview and how it differs from prompt engineering. Then we will present what makes up the context passed to an LLM, key challenges in production, and tools and solutions for context engineering. Ultimately, I want to connect context engineering to the broader AI engineering field.
+- **What I'm planning to share**: I will write a lesson on context engineering, starting by stating that prompt engineering is not enough, and then explaining why it is no longer sufficient in the world of AI. Next, I will slowly introduce the idea of context engineering, starting with a general overview and how it differs from prompt engineering. Context Engineering is a better way to see the work done by AI Engineers when building AI applications. Then we will present what makes up the context passed to an LLM, key challenges in production, and tools and solutions for context engineering. Ultimately, I want to connect context engineering to the broader AI engineering field.
 - **Why I think it's valuable:** Context engineering is the new fine-tuning. As fine-tuning is required less and less due to the fact that it is expensive, slow, and extremely inflexible in a world where data keeps changing, fine-tuning becomes the last resort when building AI applications. Thus, context engineering becomes a core skill for building successful AI agents or LLM workflows that juggle the short-term memory and long-term memory of AI applications to squeeze out the best performance possible.
-- **Who the intended audience is:** Aspiring AI engineers learning about context engineering and RAG for the first time, but who already have knowledge about tools, ReACT, and memory.
+- **Who the intended audience is:** Aspiring AI engineers learning about context engineering, RAG, tool calling, ReACT, and memory. Context engineering is the core foundation. Those subset of concepts will be taught in the following lessons.
 - **Theory / Practice ratio:** 90% theory / 10% practice
 - **Expected length of the article in words** (where 200-250 words ~= 1 minute of reading time): 1800 words (~7-8 minute read)
 
@@ -43,12 +43,12 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - Tool-Using Agents (2024): LLMs with function calling capabilities
     - Memory-Enabled Agents (2025 - Now): Stateful, relationship-building systems
 - Issues with prompt engineering:
-    - Single-interaction focus: Optimized for individual interactions rather than sustained, multi-turn conversations
-    - Context decay: As prompts start to grow exponentially, the LLM becomes more and more confused, not knowing what to focus on (due to the needle in the haystack problem) and providing hallucinations or misguided answers
-    - The context window challenge: Even if the LLM knows how to pick the right information from the context, the context window (intuitively known as the `RAM`/short-term memory/working memory) is limited. 
+    - Single-interaction focus: Optimized for individual interactions rather than sustained, multi-turn conversations. The context is relatively small.
+    - Context decay: As context starts to grow exponentially, the LLM becomes more and more confused, not knowing what to focus on (due to the needle in the haystack problem) and providing hallucinations or misguided answers
+    - The context window challenge: Even if the LLM knows how to pick the right information from the context, the context window (intuitively known as the `RAM`/short-term memory/working memory) is limited. We know from practice that 2M of context (that might contain irrelevant information) is worse than a small, focused prompt and context.
     - Costs and latency: Every token makes LLM inference slower and more expensive to run. Thus, the naive idea of throwing everything into the LLM context (known as CAG) quickly becomes a bad one.
-- Real-world example: In one of my previous projects, I tried to add everything into my context window: my research, intentions, guidelines, examples, reviews, etc. The result? An LLM workflow that takes 30 minutes to run. 
-- Context engineering addresses these limitations by treating AI applications not as isolated prompts, but as systems that operate through dynamic context gathered from past conversations, databases, tools, and other types of memory. Thus, we keep only what's essential in the context when we pass the prompt to the LLM, making it accurate, fast, and cost-effective.
+- Real-world example: In one of my previous projects, I tried to add everything into my context window: my research, intentions, guidelines, examples, reviews, etc. The result? An LLM workflow that takes 30 minutes to run. And an output that wasn't of high quality.
+- Context engineering addresses these limitations by treating AI applications not as a series of isolated prompts, but as systems that operate through dynamic context gathered from past conversations, databases, tools, and other types of memory. Thus, as AI Engineers, our job is to keep only what's essential in the context when we pass it to the LLM, making it accurate, fast, and cost-effective.
 
 -  **Section length:** 300 words
 
@@ -56,12 +56,12 @@ Follow the next narrative flow when writing the end-to-end lesson:
 (At a theoretical level, explain our solution or transformation.)
 
 - The complicated answer: "Context engineering is formally defined as the optimization problem of assembling the right information at the right time to get the right answer from an LLM: `Context* = argmax E[Reward(LLM(context), target)]`"
-- The easy answer: "Context engineering is about finding the best way to arrange parts of your short and long-term memory into the prompt for the best results. It's a problem in which you have to retrieve the right parts of both your short and long-term memory to solve a specific task without breaking the LLM."
+- The easy answer: "Context engineering is about finding the best way to arrange parts of the short and long-term memory into the context for the best results. It's a problem in which you have to retrieve the right parts of both your short and long-term memory to solve a specific task without breaking the LLM." It also doesn't just mean correctly processing the memory aspect of the application, but essentially optimizing all the input tokens that are passed to the LLM at every step. So the instructions, state/history of the agent, etc.
 
 - Analogy: `Context as the AI's "RAM"`: "LLMs are like a new kind of operating system where the model is the CPU and its context window is the RAM. Just as an operating system curates what fits into RAM, context engineering manages what information occupies the model's limited context window." - Quote by Andrej Karpathy
 - Analogy to memory: The context is a subset of the short-term working memory that is passed to the LLM. It's not the whole short-term memory, as you can keep other aspects in your working memory without using them in the prompt passed to the LLM.
 
-- Prompt engineering vs. context engineering: Context engineering will not replace prompt engineering. Instead, prompt engineering is becoming part of context engineering. You still need to learn how to write effective prompts while understanding how to incorporate the right context into the prompt without compromising the LLM.
+- Prompt engineering vs. context engineering: Context engineering will not replace prompt engineering. Instead, prompt engineering is becoming part of context engineering. You still need to learn how to write effective prompts/instructions while understanding how to incorporate the right context into the prompt without compromising the LLM.
 - Table on `Prompt Engineering` vs. `Context Engineering`. Render it in Markdown.
 | Dimension | Prompt Engineering | Context Engineering |
 |-----------|-------------------|---------------------|
@@ -83,9 +83,10 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 3: What makes up the context
 (Go deeper into the advanced theory.)
 
+- Essentially all the input tokens that are passed to the LLM is the context. Which can be grouped into the following categories:
 - Explain the core components that build up the context:
     - the system prompt (procedural long-term memory)
-    - message history (short-term / working memory): user inputs, ReAct internal components (thought/internal chatter, action/tool call, observation/tool result)
+    - message history/state (short-term / working memory): user inputs, ReAct internal components (thought/internal chatter, action/tool call, observation/tool result)
     - user preferences or past experiences (episodic memory): state, vector or graph databases
     - information retrieved from our internal knowledge base (semantic memory) or external knowledge base (real-time environment factors): vector, SQL, document or graph database OR any other API call or MCP tools
     - tool schemas (procedural memory)
@@ -100,7 +101,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 4: Production implementation challenges 
 (Go deeper into the advanced theory)
 
-- The context window challenge: Every AI model has a limited context window, which is the maximum amount of information it can process simultaneously. Even with recent advances reaching millions of tokens, this space fills quickly.
+- The context window challenge: Every AI model has a limited context window, which is the maximum amount of information/tokens it can process simultaneously. Even with recent advances reaching millions of tokens, this space fills quickly.
 - Information overload or context decay: Too much context reduces the performance of the LLM by confusing it
 - Context drift: Conflicting views of truth over time. For example, you can have conflicting statements about the same concept such as "My cat is white" and "My cat is black". This is not quantum physics or the Schrödinger Cat experiment—it's confusing the LLM and preventing it from knowing what to pick. 
 - Tool confusion: Adding too many tools with poor descriptions and unclear separations between them confuses the LLM about which one to pick, ending up with failing AI agents
@@ -128,6 +129,8 @@ Follow the next narrative flow when writing the end-to-end lesson:
 - Isolating Context: Splitting information across multiple agents or LLM workflows
 
 - Format optimization for model clarity. For example, using XML and YAML to clearly structure different parts of the prompt.
+
+- Do not let frameworks abstract away the context from you, own the context! Seeing exactly what is passed to the LLM is key to understanding the context engineering process. At every step of LLM app.
 
 - Add an image from the research illustrating some key strategies for context optimization.
 
@@ -163,7 +166,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 7 - Conclusion - Wrap-up: Connecting context engineering to AI engineering
 (Connect our solution to the bigger picture and next steps)
 
-- Context engineering is more of an art than science. It's the skill of building intuition on how to write prompts, how to pass the right information into the prompt, and in the right order
+- Context engineering is more of an art than science. It's the skill of building intuition on how to write prompts, how to pass the right information into the context, and in the right order. Its about answering the question "what are the best input tokens to pass to the LLM to solve a specific task and get the best results?, what does the model need to see?"
 - We cannot learn context engineering in isolation, as it's a complex but beautiful discipline that combines:
     1. AI Engineering: LLMs, RAG, AI Agents
     2. SWE: Aggregates all the context elements into scalable and maintainable code. Design scalable architectures. Wrap the agents as APIs.
