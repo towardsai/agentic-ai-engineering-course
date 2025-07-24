@@ -42,6 +42,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - RAG Systems (2023): Domain-specific knowledge integration
     - Tool-Using Agents (2024): LLMs with function calling capabilities
     - Memory-Enabled Agents (2025 - Now): Stateful, relationship-building systems
+- As a side note, make sure to mention that these concepts will be taught in more detail in the following lessons.
 - Issues with prompt engineering:
     - Single-interaction focus: Optimized for individual interactions rather than sustained, multi-turn conversations. The context is relatively small.
     - Context decay: As context starts to grow exponentially, the LLM becomes more and more confused, not knowing what to focus on (due to the needle in the haystack problem) and providing hallucinations or misguided answers
