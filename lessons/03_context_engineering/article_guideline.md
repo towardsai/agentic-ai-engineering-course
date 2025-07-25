@@ -87,8 +87,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 3: What makes up the context
 (Go deeper into the advanced theory.)
 
-- Essentially, all the input tokens that are passed to the LLM constitute the context, which can be grouped into the following categories:
-- Explain the core components that build up the context:
+- Essentially, all the input tokens that are passed to the LLM at once in a single prompt constitute the context, which can be grouped into the following core components that build up the context:
     - The system prompt (procedural long-term memory)
     - Agent's state (short-term working memory): user inputs, message history, ReAct internal components (thought/internal chatter, action/tool call, observation/tool result)
     - User preferences or past experiences (episodic memory): state, vector or graph databases
