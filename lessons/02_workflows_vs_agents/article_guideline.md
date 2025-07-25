@@ -111,7 +111,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Section 6: Zooming in on our favorite examples
 
-- In Section 4, we briefly described some common examples of agents and workflows. Now, we want to dig deeper into some examples and explain what they do, how they work, and how they combine both agents and workflows into cohesive products. 
+- In Section 5, we briefly described some common examples of agents and workflows. Now, we want to dig deeper into some examples and explain what they do, how they work, and how they combine both agents and workflows into cohesive products. 
 - The reader is not yet aware of any complex topics and knows about LLM workflows or AI agents only what was explained previously in this article, so keep this section high-level without any fancy acronyms. Explain everything as if speaking to a 7-year-old.
 - **Document summarization and analysis workflow by Gemini in Google Workspace**:
 	- Explain how such a workflow would look. Explain that this is a pure and simple workflow as a chain with multiple LLM calls:
