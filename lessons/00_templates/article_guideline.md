@@ -1,12 +1,24 @@
 ## Global Context of the Lesson
 
-- **Scope:** The <X> lesson from module <Y> of a broader course on AI agents and LLM workflows.
-- **What I’m planning to share**: ...
-- **Why I think it’s valuable:** ...
-: Aspiring AI engineers who are learning about <X> for the first time. In previous lessons, we introduced the concepts of <A>, <B> and <C>. Only in future lessons will we discuss <M>, <N>, and <O>. When discussing concepts introduced in previous lessons, avoid reintroducing them to the reader. Use them as if the reader already knows what they are. When discussing concepts that haven't been introduced in previous lessons, try to avoid using them altogether. If the guideline specifies them, keep them at an extremely high level, as if explaining them to a 7-year-old, while avoiding the use of acronyms that aren't explicitly stated in the guidelines.
+- **What we are planning to share**: ...
+- **Why we think it’s valuable:** ...
 - **Theory / Practice ratio:** <X>% theory / <Y>% practice
 - **Expected length of the article in words (without the titles and references)** (where 200-250 words ≈ 1 minute of reading time): <X> words
 
+## Achoring the Lesson in the Course
+
+- **Scope:** The <X> lesson from module <Y> of a broader course on AI agents and LLM workflows.
+- **Who is the intended audience:**: Aspiring AI engineers who are learning about <X> for the first time. 
+- **Concepts introduced in previous lessons:**:
+    - <A>
+    - <B>
+    - <C>
+- **Concepts that will be introduced in future lessons:**
+    - <M>
+    - <N>
+    - <O>
+
+When discussing concepts introduced in previous lessons, avoid reintroducing them to the reader. Use them as if the reader already knows what they are. When discussing concepts that haven't been introduced in previous lessons, try to avoid using them altogether. If the guideline specifies them, keep them at an extremely high level, as if explaining them to a 7-year-old, while avoiding the use of acronyms that aren't explicitly stated in the guidelines.
 
 ## Narrative Flow of the Lesson
 
@@ -24,13 +36,11 @@ Follow the next narrative flow when writing the end-to-end lesson:
 - Provide a more complex example supporting the advanced theory.
 - Connect our solution to the bigger picture and next steps.
 
-
 ## Lesson Outline 
 
 1. Section 1 - Introduction: ...
 2. Section 2: ...
 3. Section 3 - Conclusion: ...
-
 
 ## Section 1 - Introduction: ...
 

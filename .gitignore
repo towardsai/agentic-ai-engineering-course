@@ -197,6 +197,8 @@ reflection_scores.md
 sources.md
 style_guideline.md
 article_error*
+*human_review.md
+checkpoints/
 
 # Nova Agent
 .nova

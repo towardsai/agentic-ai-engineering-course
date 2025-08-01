@@ -102,9 +102,9 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - In this section we want to take a brief look at what LLM workflows and AI agents are. At this point we don't focus on the technical specifics of each, but rather on their properties and how they are used.
 - On **LLM workflows** we care about:
-	- Definition: Systems where a sequence of tasks, potentially involving LLM calls, is largely predefined and orchestrated by developer-written code.
+	- Definition: A sequence of tasks involving LLM calls or other operations such as reading/writing data to a database or file system. It is largely predefined and orchestrated by developer-written code.
 	- Characteristics: The steps are defined in advance, resulting in deterministic or rule-based paths with predictable execution and explicit control flow. 
-	- Analogy: A well-defined assembly line.
+	- Analogy: A factory assembly line.
 	- Concepts we will learn in future lessons: chaining, routing, orchestrator-worker patterns
 	- Attach an image from the research with a simple LLM Workflow.
 - On **AI agents** we care about:
@@ -119,16 +119,20 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 3: Choosing Your Path
 
 - In the previous section we defined the LLM workflows and AI agents independently, now we want to explore their core differences: Developer-defined logic vs LLM-driven autonomy in reasoning and action selection.
+- Attach an image from the research showing the gradient between LLM workflows and AI agents.
 - **When to use LLM workflows:**
 	- Examples where the structure is well-defined:
-		- Structured data extraction and transformation from places such as the web, messaging tools (Slack), video calls (Zoom), project management tools (Notion, Jira) and other cloud tools (Google Drive) 
-		- Automated report generation based on a template taking data from multiple data sources (Teams, Slack, Gmail, Jira)
+		- Pipelines for data extraction and transformation from sources such as the web, messaging tools like Slack, video calls from Zoom, project management tools like Notion, and cloud storage tools like Google Drive
+		- Automated report or emails generation from multiple data sources
+		- Understanding project requirements and creating or updating tasks in Notion project management tools
 		- Document summarization followed by translation
-		- Repetitive daily tasks: Sending emails, posting social posts, responding to messages
-		- Content generation, such as articles or blogs or reporpousing such as transforming articles into social media posts. 
+		- Repetitive daily tasks: Sending emails, posting social media updates, responding to messages
+		- Content generation or repurposing, such as transforming articles into social media posts 
 	- Strengths: Predictability, reliability for well-defined tasks, easier debugging of fixed paths, potentially lower operational costs as we can leverage simpler and smaller models specialized in given sub-tasks. Because the workflows are predictable, the costs and latency are more predictable. Ultimately, because we can leverage smaller models, the infrastructure overhead is smaller.
 	- Weaknesses: Potentially more development time required as each step is manually engineered. The user experience is rigid as it cannot handle unexpected scenarios. Adding new features can get complex when the application grows, similar to developing standard software tools.
-	- Usually preferred in enterprises as they require predictable programs that work all the time. For example, in finance, when a financial advisor asks for a financial report, it should contain the right information all the time, as it has a direct impact on people's money and life. Another domain where workflows are preferred is in the health space, where for AI tools to be used in production, they require working with high-accuracy all the time, as they have a direct impact on people's lives. 
+	- Usually preferred in enterprises or regulated fiels as they require predictable programs that work all the time. For example, in finance, when a financial advisor asks for a financial report, it should contain the right information all the time, as it has a direct impact on people's money and life. Another domain where workflows are preferred is in the health space, where for AI tools to be used in production, they require working with high-accuracy all the time, as they have a direct impact on people's lives.
+	- Ideal for MVPs requiring rapid deployment by hardcoding features
+	- Best for scenarios where cost per request matters more than sophisticated reasoning (thousands of requests per minute)
 - **When to use AI agents:**
 	- Examples: 
 		- Open-ended research and synthesis (e.g., researching about WW2)
@@ -140,7 +144,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 - **Hybrid Approaches:** Most real-world systems blend elements of both approaches. Thus, in reality, we have a spectrum, a gradient between LLM workflows and AI agents, where a system adopts what's best from both worlds depending on its use cases.
 - Highlight that when building an application you usually have an "autonomy slider" where you decide how much control to give to the LLM versus the user. As you go more manually, you usually use an LLM workflow together with a human that verifies intermediate steps. As you go more automatically, you give more control to the agent with fewer human-in-the-loop steps. Use the Cursor (CMD+K, CMD+L, CMD+I) and Perplexity (search, research, deep research) examples from the Andrej Karpathy "Software Is Changing (Again)" resource.
 - The ultimate goal is to speed up the AI generation <-> Human verification loop, which is often achieved through good workflows/agentic architecture and well-designed UI/UX platforms (e.g., Cursor for coding).
-- Attach an image from the research showing the gradient between LLM workflows and AI agents.
+- Generate a mermaid to illustrate the AI generation and human verification loop
 - **Section length:** 500 words
 
 ## Section 4: Exploring Common Patterns
@@ -248,20 +252,20 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Golden Sources
 
-[Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
-[What is an AI agent?](https://cloud.google.com/discover/what-are-ai-agents)
-[Real Agents vs. Workflows: The Truth Behind AI 'Agents'](https://www.youtube.com/watch?v=kQxr-uOxw2o&t=1s)
-[Exploring the difference between agents and workflows](https://decodingml.substack.com/p/llmops-for-production-agentic-rag)
-[A Developer’s Guide to Building Scalable AI: Workflows vs Agents](https://towardsdatascience.com/a-developers-guide-to-building-scalable-ai-workflows-vs-agents/)
+- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+- [What is an AI agent?](https://cloud.google.com/discover/what-are-ai-agents)
+- [Real Agents vs. Workflows: The Truth Behind AI 'Agents'](https://www.youtube.com/watch?v=kQxr-uOxw2o&t=1s)
+- [Exploring the difference between agents and workflows](https://decodingml.substack.com/p/llmops-for-production-agentic-rag)
+- [A Developer’s Guide to Building Scalable AI: Workflows vs Agents](https://towardsdatascience.com/a-developers-guide-to-building-scalable-ai-workflows-vs-agents/)
 
 
 ## Other Sources
 
-[601 real-world gen AI use cases from the world's leading organizations](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders)
-[Stop Building AI Agents: Here’s what you should build instead](https://decodingml.substack.com/p/stop-building-ai-agents)
-[Andrej Karpathy: Software Is Changing (Again)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
-[Building Production-Ready RAG Applications: Jerry Liu](https://www.youtube.com/watch?v=TRjq7t2Ms5I)
-[Gemini CLI: your open-source AI agent](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/)
-[Gemini CLI README.md](https://github.com/google-gemini/gemini-cli/blob/main/README.md)
-[Introducing Perplexity Deep Research](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research)
-[Introducing ChatGPT agent: bridging research and action](https://openai.com/index/introducing-chatgpt-agent/)
+- [601 real-world gen AI use cases from the world's leading organizations](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders)
+- [Stop Building AI Agents: Here’s what you should build instead](https://decodingml.substack.com/p/stop-building-ai-agents)
+- [Andrej Karpathy: Software Is Changing (Again)](https://www.youtube.com/watch?v=LCEmiRjPEtQ)
+- [Building Production-Ready RAG Applications: Jerry Liu](https://www.youtube.com/watch?v=TRjq7t2Ms5I)
+- [Gemini CLI: your open-source AI agent](https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/)
+- [Gemini CLI README.md](https://github.com/google-gemini/gemini-cli/blob/main/README.md)
+- [Introducing Perplexity Deep Research](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research)
+- [Introducing ChatGPT agent: bridging research and action](https://openai.com/index/introducing-chatgpt-agent/)

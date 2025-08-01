@@ -3,51 +3,59 @@
 
 ## Introduction
 
-As an AI engineer preparing to build your first real AI application, after narrowing down the problem you want to solve, you face a critical decision: How should you design your AI solution? This architectural choice, made early in development, determines whether your Large Language Model (LLM) application follows a predictable, step-by-step workflow or demands a more autonomous approach where the LLM makes self-directed decisions. This fundamental question impacts development time, cost, reliability, and user experience, ultimately determining your project's success or failure. Choosing the wrong path can lead to an overly rigid system that breaks when users deviate from expected patterns, an unpredictable agent that fails when it matters most, or a system too expensive to run.
+As an AI engineer preparing to build your first real AI application, after narrowing down the problem you want to solve, you face a critical decision: How should you design your AI solution? This architectural choice, made early in development, determines whether your AI application follows a predictable, step-by-step workflow or demands a more autonomous approach where the LLM makes self-directed decisions. This fundamental question impacts development time, cost, reliability, and user experience, ultimately determining your project's success or failure. Choosing the wrong path can lead to an overly rigid system that breaks when users deviate from expected patterns or an unpredictable agent that fails when it matters most and is too expensive to run.
 
-This isn’t a theoretical exercise. In 2024 and 2025, the success of billion-dollar AI startups often depends on this decision. Companies like Glean and Anysphere, which have raised hundreds of millions, built their success on reliable, workflow-centric architectures that deliver consistent value in the enterprise [[1]](https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/). They understand when to use workflows versus agents and how to combine both approaches effectively.
+This is one core decision every AI engineer has to make. For example, In 2024 and 2025, the success of billion-dollar AI startups often depends on this decision. Companies like Glean and Anysphere (the AI research lab behind the AI coding tool Cursor), which have raised hundreds of millions, built their success on knowing when to use workflow-centric architectures that deliver consistent results in the enterprise versus more flexible AI agents that can navigate unpredictable territories [[1]](https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/).
 
 This lesson provides a framework for making this decision. We will cover the spectrum from workflows to agents, explain the trade-offs, and show you how to design systems using real-world examples from leading AI companies.
 
 ## Understanding the Spectrum: From Workflows to Agents
 
-When you set out to build an AI application, one of the first architectural decisions you face involves understanding the core differences between Large Language Model (LLM) workflows and AI agents. While these terms often get used interchangeably, they represent distinct approaches to designing AI systems. We will not focus on deep technical specifics yet, but rather on their fundamental properties and how they are typically used.
+As highlighted in the introduction, when you start building an AI application, one of the first architectural decisions you face involves understanding the core differences between LLM workflows and AI agents. While these terms often get used interchangeably, they represent distinct approaches to designing AI systems. We will not focus on deep technical specifics yet, but rather on their fundamental properties and how they are typically used.
 
-LLM workflows are systems where developers largely predefine and orchestrate a sequence of tasks. These tasks may involve calls to an LLM, but the overall flow remains fixed. A well-defined assembly line is a good way to think about it: each station performs a specific, repeatable task in a set order. Every step is explicitly coded by the developer, ensuring a clear and controlled process from start to finish.
+LLM workflows are systems where developers largely predefine and orchestrate a sequence of tasks. These tasks involve calls to an LLM or other operations such as reading/writing data to a database or file system. The key idea is that the overall flow remains fixed. For example, a factory assembly line is a good way to think about it: each stop performs a specific, repeatable task in a set order. Every step is explicitly coded by the developer, ensuring a clear and controlled process from start to finish.
 
-You define the steps in advance, giving you full control over the execution path. This results in a predictable flow where you, the developer, maintain explicit control over every action the system takes. This predictability is essential for applications requiring consistent output and clear error handling. In future lessons, we will explore common workflow patterns like chaining, routing, and orchestrator-worker models that help you build these reliable systems.
+This results in a predictable AI product which is essential for applications requiring consistent output and clear error handling. In future sections, we will explore common workflow patterns like chaining, routing, and orchestrator-worker models that help you build these reliable systems.
 
 <div align="center">
-<img src="https://substackcdn.com/image/fetch/$s_!gLNT!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F67ffe267-55f2-4af7-9910-7410c7605550_1220x754.png" alt="A simple LLM workflow follows a predefined, developer-controlled path to generate an answer." width="700"/>
+<img src="./media/the_prompt_chaining_workflow.png" alt="A simple LLM workflow follows a predefined, developer-controlled path to execute a given task" width="700"/>
 </div>
 
-Figure 1: A simple LLM workflow follows a predefined, developer-controlled path to generate an answer.
+Figure 1: A simple LLM workflow follows a predefined, developer-controlled path to execute a given task - Source [[12]](https://www.anthropic.com/research/building-effective-agents)
 
 AI agents, on the other hand, are systems where an LLM plays a central role in dynamically deciding the sequence of steps, reasoning, and actions required to achieve a goal. The path is not fixed in advance. Instead, the agent plans its actions based on the task and its environment, making decisions on the fly as it progresses. This dynamic decision-making allows for greater flexibility.
 
 This is less like an assembly line and more like a skilled human expert tackling an unfamiliar problem, adapting their approach with each new piece of information. These systems are more flexible and handle novelty, allowing them to navigate complex and ambiguous situations. However, this autonomy reduces predictability, making their behavior harder to foresee. We will later see how agents use actions, memory, and reasoning patterns like ReAct to achieve their goals.
 
 <div align="center">
-<img src="https://substackcdn.com/image/fetch/$s_!ZnV_!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4c59d9df-d60f-47bc-81de-cfd4fdebf5f8_1210x704.png" alt="An AI agent's core components include memory, planning, and tools, which it uses to reason and act autonomously." width="700"/>
+<img src="./media/autonomous_agent.webp" alt="An AI agent's core components include memory, planning, and tools, which it uses to reason and act autonomously." width="700"/>
 </div>
 
-Figure 2: An AI agent's core components include memory, planning, and actions, which it uses to reason and act autonomously [[2]](https://decodingml.substack.com/p/llmops-for-production-agentic-rag).
+Figure 2: Autonomous agents taking actions into an external environment and adapting based on feedback from it - Source [[12]](https://www.anthropic.com/research/building-effective-agents)
 
-Both architectures require an orchestration layer, but its function differs significantly. In a workflow, the orchestrator executes a fixed, predefined plan, ensuring tasks run in a specific order. In an agent, the orchestrator facilitates the LLM's dynamic planning and action loop, allowing the agent to adapt its strategy as needed. Understanding this difference helps you build effective AI solutions.
+Both architectures require an orchestration layer, but its function differs significantly. In a workflow, the orchestrator executes a fixed, predefined plan, ensuring tasks run in a specific order. In an agent, the orchestrator is a dynamic planning and action loop, controlled by an LLM, which allows the agent to adapt its strategy as needed. Understanding this difference helps you build effective AI solutions.
 
 ## Choosing Your Path
 
-The core difference between these two approaches comes down to a trade-off between developer-defined logic and Large Language Model (LLM)-driven autonomy. Your choice will depend entirely on the nature of the problem you are solving.
+The core difference between these two approaches comes down to a trade-off between developer-defined logic and LLM-driven autonomy. Your choice will depend entirely on the nature of the problem you are solving.
 
-LLM workflows best suit tasks where the structure is well-defined and the desired outcome is predictable. These include use cases like structured data extraction and transformation from sources such as the web, messaging tools like Slack, video calls from Zoom, project management tools like Notion and Jira, and other cloud tools such as Google Drive. You can also use them for automated report generation based on a template, taking data from multiple sources like Teams, Slack, Gmail, and Jira.
+LLM workflows work best for well-defined, structured tasks where the desired outcome is predictable. These include use cases like pipelines for data extraction and transformation from sources such as the web, messaging tools like Slack, video calls from Zoom, project management tools like Notion, and cloud storage tools like Google Drive. Out of this, you can automate report or emails generation. Also, you can take this even further, and automatically understand the requirements of a given project and create or update tasks in your Notion project management tools.
 
-Other applications include document summarization followed by translation, repetitive daily tasks like sending emails or posting social media updates, and content generation or repurposing, such as transforming articles into social media posts. Their primary strength is reliability. Because the path is fixed, they are easier to debug, their costs and latency are more predictable, and their outputs are consistent [[3]](https://www.lyzr.ai/blog/agentic-ai-vs-llm/), [[4]](https://www.louisbouchard.ai/agents-vs-workflows/).
+Other applications include document summarization followed by translation, repetitive daily tasks like sending emails or posting social media updates, and content generation or repurposing, such as transforming articles into social media posts. 
 
-Enterprises often prefer workflows, especially in regulated industries like finance and healthcare, where a mistake can have serious consequences. For example, when a financial advisor asks for a financial report, it should contain the right information every time, as it directly impacts people's money and life. In the health space, AI tools used in production require high accuracy consistently, as they directly impact people's lives. Workflows are also ideal for scenarios where cost per request matters more than sophisticated reasoning. If you need to handle thousands of requests per minute at predictable costs and latency, a structured workflow is often better. For projects or Minimum Viable Products (MVPs) that require rapid deployment, workflows allow you to move quickly and understand how LLMs behave without requiring extensive setup. The main weaknesses of workflows are rigidity and development time; since you manually engineer every step, the system cannot handle unexpected scenarios, and adding new features can be as complex as in traditional software development.
+Their primary strength is reliability. Because the path is fixed, they are easier to debug, their costs and latency are more predictable, and their outputs are consistent [[3]](https://www.lyzr.ai/blog/agentic-ai-vs-llm/), [[4]](https://www.louisbouchard.ai/agents-vs-workflows/). All key factors for enterprise-level applications. Additionally, you can build workflows with lower operational costs as you can leverage simpler and smaller models specialized in given sub-tasks, which require smaller infrastructure overhead.
 
-AI agents are the better choice for open-ended problems that require adaptability and dynamic problem-solving. Examples include conducting comprehensive research on a novel topic, such as the history of World War II, debugging a complex codebase, providing interactive customer support for non-standard issues, or even booking a flight without specifying the exact websites to use. The agent's strength lies in its flexibility to handle ambiguity by dynamically planning its steps.
+Enterprises prefer workflows, especially in regulated industries like finance and healthcare, where a mistake can have serious consequences. For example, when a financial advisor asks for a financial report, it should contain the right information every time, as it directly impacts people's money and life. In the health space, AI tools used in production require high accuracy consistently, as they directly impact people's lives. 
 
-However, this comes with clear weaknesses. Agents are less reliable, and their non-deterministic nature means performance, latency, and costs vary with each run [[5]](https://blog.gopenai.com/agentic-workflows-vs-autonomous-ai-agents-do-you-know-the-difference-c21c9bfb20ac). They often require more powerful—and thus more expensive—LLMs to reason effectively. They also introduce security risks, especially with write permissions, and you will find them challenging to debug and evaluate [[6]](https://ardor.cloud/blog/common-ai-agent-deployment-issues-and-solutions/), [[7]](https://www.strata.io/blog/agentic-identity/hidden-identity-challenges-ai-agents-hybrid-environment-1a/). A common joke among engineers is about agents deleting code, with comments like, "Anyway, I wanted to start a new project."
+On the other side of the spectrum, when building Minimum Viable Products (MVPs) that require rapid deployment, workflows allow you to quickly hardcode a few critical paths required to get your product to the market.
+
+Workflows are also ideal for scenarios where cost per request matters more than sophisticated reasoning. If you need to handle thousands of requests per minute at predictable costs and latency, a structured workflow is often better. 
+
+The main weaknesses of workflows are rigidity and development time. Since you manually engineer every step, the system cannot handle unexpected scenarios, and adding new features can be as complex as in traditional software development.
+
+AI agents are a better choice for open-ended problems that require adaptability and dynamic problem-solving. For example, popular use cases are doing deep research on a novel topic, such as the history of World War II, debugging a complex codebase, providing interactive customer support for non-standard issues, or even booking a flight without specifying the exact websites to use. The agent's strength lies in its flexibility to handle ambiguity by dynamically planning its steps based on what happens in the environment.
+
+However, this comes with clear weaknesses. Agents are less reliable, and their non-deterministic nature means performance, latency, and costs vary with each run [[5]](https://blog.gopenai.com/agentic-workflows-vs-autonomous-ai-agents-do-you-know-the-difference-c21c9bfb20ac). They often require more powerful and more expensive LLMs to perform tasks effectively. They also introduce security risks, especially with write permissions where they can accidently send innapropiate emails, delete database records or even your entire codebase. A common joke among engineers is about agents deleting code, with comments like, "Anyway, I wanted to start a new project." Last one of the most challenging aspects of deploying AI agents is to debug and evaluate them. Their randomness makes this extremely complicated. As this is a huge topic in it self, we will cover it in details in future lessons. [[6]](https://ardor.cloud/blog/common-ai-agent-deployment-issues-and-solutions/), [[7]](https://www.strata.io/blog/agentic-identity/hidden-identity-challenges-ai-agents-hybrid-environment-1a/)
 
 <div align="center">
 <img src="https://substackcdn.com/image/fetch/$s_!yBni!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5e64d5e0-7ef1-4e7f-b441-3bf1fef4ff9a_1276x818.png" alt="A fundamental trade-off exists between an agent's autonomous control and the system's overall reliability." width="700"/>
@@ -57,7 +65,29 @@ Figure 3: A fundamental trade-off exists between an agent's autonomous control a
 
 In reality, most production systems are not purely one or the other. They exist on a spectrum, blending the stability of workflows with the flexibility of agents. When you build an application, you are effectively setting an "autonomy slider," deciding how much control to give the LLM versus the user.
 
-For instance, the AI code editor **Cursor** offers different levels of autonomy: simple tab-completion (low autonomy), refactoring a selected block of code with `Cmd+K` (medium autonomy), or letting the AI modify the entire repository with `Cmd+I` (high autonomy) [[8]](https://www.youtube.com/watch?v=LCEmiRjPEtQ). Similarly, **Perplexity** offers a quick "search" (a simple workflow), a more involved "research" mode, and a "deep research" function that deploys a complex agentic system [[8]](https://www.youtube.com/watch?v=LCEmiRjPEtQ). The goal is to create a fast, effective loop between AI generation and human verification, which you often achieve through a thoughtful combination of architecture and user interface design.
+For instance, the AI code editor **Cursor** offers different levels of autonomy: simple tab-completion (low autonomy), refactoring a selected block of code with `Cmd+K` (medium autonomy), or letting the AI modify the entire repository with `Cmd+I` (high autonomy) [[8]](https://www.youtube.com/watch?v=LCEmiRjPEtQ). Similarly, **Perplexity** offers a quick "search" (a simple workflow), a more involved "research" mode, and a "deep research" function that deploys a complex agentic system [[8]](https://www.youtube.com/watch?v=LCEmiRjPEtQ). As you can see, for most applications, the goal is to create a fast, effective loop between AI generation and human verification, which you often achieve through a thoughtful combination of architecture and user interface design.
+
+```mermaid
+graph TD
+    A[User Input] --> B[AI Generation];
+    B --> C[AI Output];
+    C --> D{Human Verification};
+    D -->|Approved| E[Final Result];
+    D -->|Needs Changes| F[Feedback/Refinement];
+    F --> B;
+    D -->|Rejected| G[Start Over];
+    G --> A;
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#fff3e0
+    style D fill:#e8f5e8
+    style E fill:#c8e6c9
+    style F fill:#ffecb3
+    style G fill:#ffcdd2
+```
+
+Figure 4: The AI generation and human verification loop, showing how AI outputs are validated and refined through human feedback.
 
 ## Exploring Common Patterns
 
