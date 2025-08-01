@@ -237,7 +237,6 @@ graph TD
         C3[...] 
         C4[Agent N: Sub-QN]
     end
-    C -.-> C1;
     C --> D[Orchestrator: Synthesize & Find Gaps];
     D -- Gaps Found --> B;
     D -- No Gaps --> E[Generate Final Report];
