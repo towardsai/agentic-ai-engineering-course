@@ -77,14 +77,6 @@ graph TD
     F --> B;
     D -->|Rejected| G[Start Over];
     G --> A;
-    
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#fff3e0
-    style D fill:#e8f5e8
-    style E fill:#c8e6c9
-    style F fill:#ffecb3
-    style G fill:#ffcdd2
 ```
 
 Figure 4: The AI generation and human verification loop, showing how AI outputs are validated and refined through human feedback.
