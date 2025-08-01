@@ -173,14 +173,13 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - [Start with a simple LLM workflow example] **Document summarization and analysis workflow by Gemini in Google Workspace**:
 	- **Problem:** When working in teams and looking for the right document, it can transform into a time-consuming process, because many documents are large, hence it's hard for us to understand which document contains the right information. Thus, a quick, embedded summarization can guide us and our search strategies. 
+	- Create a suggestive mermaid diagram highlighting that this is a workflow.
 	- Explain how such a workflow would look. Explain that this is a pure and simple workflow as a chain with multiple LLM calls:
 		- read document
 		- summarize using an LLM call
 		- extract key points using another LLM call
 		- save results to a database
 		- show results to user
-	- Create a suggestive mermaid diagram highlighting that this is a workflow.
-
 - [Continue with an AI agent example] **Gemini CLI coding assistant:** 
 	- **Problem:** Writing code is a time-consuming process. You have to read boring documentation or outdated blogs. When working on new code bases, understanding it is a slow process. When working with a new programming language, to write high-quality code, you first need a bootcamp on it before writing any industry-level code. That's where a coding assistant can help you speed up writing code on existing and new code bases.
 	- To build up the intuition on agents, we present at a very high and intuitive level how the Gemini CLI tool leverages the ReAct (Reason and Act) agent architecture to implement a single-agent system for coding. 
@@ -202,6 +201,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 		4. **Tool Execution**: The selected actions, known as tools, are executed. The tools can be things such as file operations to read the current state of the code, web requests to documentation and ultimately generating the code. Then the agent processes the tool outputs, adds the results into the conversation context to reference it in future iterations.
 		5. **Evaluation**: The agent dynamically evaluates whether the generated code is correct or not by running or compiling the code.
 		6. **Loop Decision**: The agent determines if the task is completed or it should repeat steps 2 to 5 by planning and executing more tools.
+	- Create a mermaid diagram showing how the operational loop works.
 	- More tool examples: 
 		- File system access: 
 			- grep functions to read specific functions or classes from the codebase
@@ -215,7 +215,6 @@ Follow the next narrative flow when writing the end-to-end lesson:
 			- blogs
 			- solutions
 		- version control, such as git, to automatically commit your code to GitHub or GitLab
-	- Create a mermaid diagram showing how the operational loop works.
 
 - [Wrap-up with a hybrid example between workflows and agents] **Perplexity deep research (e.g., for scientific, financial, social research):**
 	- **Problem:** Researching a brand new topic is a scary thing to do. Most of the time we don't know where to start. What is the right blog, paper, YouTube video or course to start reading? Also, for more trivial questions, most of the time, we don't have the time to dig into too many resources. That's why having a research assistant that quickly scans the internet into a report can provide a huge boost in your learning process on scientific, financial, social topics.
@@ -228,10 +227,8 @@ Follow the next narrative flow when writing the end-to-end lesson:
 		3. **Analysis & Synthesis**: After gathering bulks of sources, each agent validates and scores each source using strategies such as domain credibility or relevance scoring relative to the query. Then, each source is ranked based on its importance. Ultimately, the top K sources are summarized into a final report.
 		4. **Iterative Refinement & Gap Analysis:** The orchestrator gathers the information from all the agents which ran in parallel and tries to identify knowledge gaps relative to the research requested by the user. Based on any potential knowledge gaps it generates follow-up queries by repeating steps 1 and 3 until all the knowledge gaps are filled or, to avoid infinite loops, a max number of steps is reached.
 		5. **Report Generation:** The orchestrator takes the results from all the AI agents and generates a final report with inline citations.
-	- Highlight how the deep research agent operates as a hybrid between workflows and agents combining structured planning with dynamic adaptation: The workflow uses the orchestrator-worker pattern to dynamically reason, supervise and call in parallel multiple agents specialized in researching only a targeted sub-query until all the user requested research topics are fulfilled.
 	- Create a mermaid diagram showing how the iterative multi-step process works.
-
-- Other popular tools are AI-native browsers which allow AI agents to navigate and move data between sites with minimal human input. Popular demos show how agents autonomously book flights, order food, create Notion tasks, or take posts from LinkedIn and forward them to X. Some tools that get traction are ChatGPT Agent and Perplexity Comet. Still, at the time we are writing this lesson (August 2025), these families of tools are just at the beginning, so we won't dig into more details.
+	- Highlight how the deep research agent operates as a hybrid between workflows and agents combining structured planning with dynamic adaptation: The workflow uses the orchestrator-worker pattern to dynamically reason, supervise and call in parallel multiple agents specialized in researching only a targeted sub-query until all the user requested research topics are fulfilled.
 
 -  **Section length:** 900 words (without counting the mermaid diagram code)
 

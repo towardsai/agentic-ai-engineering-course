@@ -162,14 +162,6 @@ To help you understand these ideas, let's look at how they appear in real-world 
 
 **The Solution:** The summarization feature in Google Workspace is a clear example of a simple, step-by-step LLM workflow [[14]](https://www.cnet.com/tech/services-and-software/how-to-summarize-text-using-googles-ai-tool/), [[15]](https://workspace.google.com/blog/product-announcements/may-workspace-feature-drop-new-ai-features). It does not need complex thinking or dynamic planning. Instead, it follows a set order of steps managed by the application.
 
-A typical workflow works like this:
-1.  You select a document or highlight text.
-2.  The application reads the chosen content.
-3.  An LLM call is made to summarize the text.
-4.  Another LLM call might pull out key points or action items.
-5.  The results are put into a clear format and shown to you.
-
-This is a pure workflow because each step is set beforehand and runs in order.
 ```mermaid
 graph TD
     A[User selects document] --> B[Read Document Content];
@@ -178,6 +170,15 @@ graph TD
     D --> E[Format & Display Results];
 ```
 Figure 9: A simple workflow for document summarization in Google Workspace.
+
+A typical workflow works like this:
+1.  You select a document or highlight text.
+2.  The application reads the chosen content.
+3.  An LLM call is made to summarize the text.
+4.  Another LLM call might pull out key points or action items.
+5.  The results are put into a clear format and shown to you.
+
+This is a pure workflow because each step is set beforehand and runs in order.
 
 ### Single Agent System: Gemini CLI Coding Assistant
 **The Problem:** Writing code is a slow process that often means switching between reading guides, searching for answers, and understanding existing code. An AI coding assistant can make this process faster.
@@ -192,11 +193,6 @@ Here is a simplified step-by-step guide on how it works:
 5.  **Evaluation:** The agent checks if the generated code is correct by running or compiling it.
 6.  **Loop Decision:** Based on the results, the agent decides if the task is finished or if it needs another round of thinking and action.
 
-More action examples include:
-*   File system access: Using functions like `grep` to read specific parts of the codebase, or listing the folder structure of the code.
-*   Coding: Interpreting code, showing code changes, and running the generated code to check it.
-*   Web search: Finding documentation, articles, or solutions online.
-*   Version control: Using tools like Git to automatically save your code to platforms like GitHub or GitLab.
 ```mermaid
 graph TD
     A[User Request] --> B[Context Gathering];
@@ -211,28 +207,35 @@ graph TD
 ```
 Figure 10: The operational loop of the Gemini CLI, a single-agent coding assistant.
 
+More action examples include:
+*   File system access: Using functions like `grep` to read specific parts of the codebase, or listing the folder structure of the code.
+*   Coding: Interpreting code, showing code changes, and running the generated code to check it.
+*   Web search: Finding documentation, articles, or solutions online.
+*   Version control: Using tools like Git to automatically save your code to platforms like GitHub or GitLab.
+
 ### Hybrid System: Perplexity's Deep Research Agent
-**The Problem:** Doing in-depth research on a new or complex topic can be hard. It is often unclear where to start, which sources are trustworthy, and how to combine a lot of information into a clear report.
+**The Problem:** Conducting in-depth research on a new or complex topic can be challenging and time-consuming. We often lack the time to read numerous resources, and it's unclear where to start, which sources are trustworthy, and how to combine a lot of information into a clear report.
 
-**The Solution:** Perplexity's Deep Research feature is a powerful hybrid system. It combines ReAct reasoning with LLM workflow patterns to do autonomous research at an expert level [[18]](https://arxiv.org/html/2506.18096v1), [[19]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research). Unlike single-agent systems, like the Gemini CLI, this system uses many specialized agents that workflows manage at the same time. It performs many searches across hundreds of sources to create full research reports in 2-4 minutes. The exact way it works is not public, so we make assumptions about its design based on available information.
+**The Solution:** Perplexity's Deep Research feature is the perfect use case to understand how hybrid system work.
+It combines the orchestrator-worker pattern with ReAct agents to do autonomous research on a given topic [[18]](https://arxiv.org/html/2506.18096v1), [[19]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research). Unlike single-agent systems, like the Gemini CLI, this system uses many specialized agents to research sub-topics in parallel.
 
-Here is a simplified view of how it likely works:
-1.  **Research Planning & Decomposition:** An "orchestrator" agent looks at the main research question (for example, "What is the impact of AI on the job market?") and breaks it into smaller, focused sub-questions. The orchestrator uses the orchestrator-worker pattern we introduced earlier to send these sub-questions to many research agents.
-2.  **Parallel Information Gathering:** For each sub-question, specialized search agents run at the same time to find information faster. These agents use actions like web searches and document retrieval to gather as much information as possible for their specific question. Because these research agents work separately, the amount of input information for each LLM is smaller, helping the LLM stay focused.
+The exact way it works is not public, so we make assumptions about its design based on available information, but here is a simplified view of how it likely works:
+1.  **Research Planning & Decomposition:** A core orchestrator looks at the main research question (for example, "What is the impact of AI on the job market?") and breaks it into smaller, focused sub-questions. The orchestrator uses the orchestrator-worker pattern we introduced earlier to send these sub-questions to many research agents.
+2.  **Parallel Information Gathering:** For each sub-question, specialized search agents run at the same time to find the right information. These agents use actions like web searches and document retrieval to gather as much information as possible for their specific question. Because these research agents work separately, the amount of input information for each LLM is smaller, helping the LLM stay focused on their task.
 3.  **Analysis & Synthesis:** After gathering many sources, each agent checks and scores each source. They use strategies like checking how trustworthy the source is or how well it matches the question. Then, each source is ranked by importance. Finally, the best sources are summarized into a report.
-4.  **Iterative Refinement & Gap Analysis:** The orchestrator collects the reports from all the search agents and looks for any missing information. If there are gaps, it creates new questions by repeating steps 1 and 3. This continues until all missing information is found or a maximum number of steps is reached to avoid endless loops.
+4.  **Iterative Refinement & Gap Analysis:** The orchestrator collects the reports from all the search agents and looks for any missing information. If there are gaps, it creates new questions by repeating steps 1, 2 and 3. This continues until all missing information is found or a maximum number of steps is reached to avoid endless loops.
 5.  **Report Generation:** The orchestrator takes all the results from the AI agents and creates a final report with citations.
 
-This system is a hybrid because a high-level workflow manages the dynamic, autonomous work of many agents. The workflow uses the orchestrator-worker pattern to think, supervise, and call many agents in parallel. Each agent specializes in researching only a specific sub-question until all the research topics you asked for are complete.
 ```mermaid
 graph TD
     A[User Research Question] --> B[Orchestrator: Decompose into Sub-Questions];
     B --> C[Parallel Search Agents];
-    subgraph C
+    subgraph Research Agents
         direction LR
         C1[Agent 1: Sub-Q1]
-        C2[...] 
-        C3[Agent N: Sub-QN]
+        C2[Agent 2: Sub-Q2]
+        C3[...] 
+        C4[Agent N: Sub-QN]
     end
     C --> D[Orchestrator: Synthesize & Find Gaps];
     D -- Gaps Found --> B;
@@ -240,7 +243,7 @@ graph TD
 ```
 Figure 11: The iterative, multi-agent process used by Perplexity's Deep Research agent.
 
-Another new type of tool is AI-native browsers, like **ChatGPT Agent** and **Perplexity Comet**. These allow agents to move between websites and transfer data with very little human help [[20]](https://www.techtarget.com/whatis/feature/ChatGPT-agents-explained). However, as of August 2025, these tools are still in their early stages.
+To conclude, this system is a hybrid because it uses a master orchestrator to interpret the user request, divide it into smaller units of work, and delegate them to multiple agents. The workflow uses the orchestrator-worker pattern to supervise and call many specialized ReAct agents that run in parallel on their specialized tasks. Like this, it can easily perform hundreds of searches to create full research reports in 2-4 minutes instead of hours.
 
 ## The Challenges of Every AI Engineer
 
