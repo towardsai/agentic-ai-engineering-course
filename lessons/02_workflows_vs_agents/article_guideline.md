@@ -234,16 +234,15 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Section 6 - Conclusion: The Challenges of Every AI Engineer
 
-- **The Reality of AI Engineering:** Now that you understand the spectrum from LLM workflows to AI agents, it's important to recognize that every AI Engineer—whether working at a startup or a Fortune 500 company faces these same fundamental challenges on a daily basis. These are one of the core decisions that determine whether your AI application succeeds in production or fails spectacularly.
+- **The Reality of AI Engineering:** Now that you understand the spectrum from LLM workflows to AI agents, it's important to recognize that every AI Engineer—whether working at a startup or a Fortune 500 company faces these same fundamental challenges whenever it has to design a new AI application. These are one of the core decisions that determine whether your AI application succeeds in production or fails spectacularly.
 - To set the scene for future lessons and patterns we will learn, present some daily challenges every AI engineer battles:
-	- **Reliability Issues:** Your agent works perfectly in demos but becomes unpredictable with real users. LLM reasoning fails, errors compound through multi-step processes, and your "intelligent" system starts making nonsensical decisions.
-	- **Window Context Limits:** You're constantly battling context limits, trying to maintain coherence across long conversations while your workflow or agent gradually loses track of what it's supposed to be doing.
-	- **Quality Consistency:**  Ensuring uniform output quality across agent specializations (e.g., Gemini CLI and Perplexity Deep Research agent examples)
-	- **Data Integration Nightmare:** Every day you're pulling data from Slack, web APIs, Zoom transcripts, SQL databases, and data lakes—but your system struggles to process this multimodal information coherently.
-	- **The Cost-Performance Trap:** Your sophisticated agent delivers amazing results but costs $50 per user interaction
-	- **Security Paranoia:** You're constantly worried about your autonomous agent sending the wrong email, deleting critical files, or exposing sensitive data because it has powerful write permissions.
-- **The Good News:** These challenges aren't impossible to overcome. In fact, they're exactly what this course is designed to solve. Throughout our upcoming lessons, we'll tackle each of these problems systematically. You'll learn LLM workflows and AI agents battle-tested patterns to make your AI solutions more reliable (e.g., monitoring and evaluations), cost-effective, run in given latency and throughput requirements and secure enough to allow you sleep at night.
-- **Your Path Forward:** By the end of this course, especially during our capstone project, you'll have the tools and knowledge to architect AI systems that handle these daily realities gracefully. You'll know when to choose workflows versus agents, how to architect hybrid approaches effectively, and most importantly, how to build AI applications that work reliably in the real world.
+	- **Reliability Issues:** Your agent works perfectly in demos but becomes unpredictable with real users. LLM reasoning failures can compound through multi-step processes, leading to unexpected and costly outcomes.
+	- **Context Limits:** Systems struggle to maintain coherence across long conversations, gradually losing track of their purpose. Ensuring consistent output quality across different agent specializations presents a continuous challenge.
+	- **Data Integration:** Building pipelines to pull information from Slack, web APIs, SQL databases, and data lakes while ensuring only high-quality data is passed to your AI system (garbage-in, garbage-out principle).
+	- **Cost-Performance Trap:** Sophisticated agents deliver impressive results but cost a fortune per user interaction, making them economically unfeasible for many applications.
+	- **Security Concerns:** Autonomous agents with powerful write permissions could send wrong emails, delete critical files, or expose sensitive data.
+- **The Good News:** These challenges are solvable. In upcoming lessons, we'll cover patterns for building reliable products through specialized evaluation and monitoring pipelines, strategies for building hybrid systems, and ways to keep costs and latency under control.
+- **Your Path Forward:** By the end of this course, you'll have the knowledge to architect AI systems that are not only powerful but also robust, efficient, and safe. You'll know when to use workflows versus agents and how to build effective hybrid systems that work in the real world.
 - Leverage the concepts listed in subsection `Concepts That Will Be Introduced in Future Lessons` to make slight references to other topics we will learn during this course. To stay focused, specify only the ones that are present in this current lesson.
 - **Section length:** 350 words
 

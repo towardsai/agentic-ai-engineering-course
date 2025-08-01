@@ -219,7 +219,7 @@ More action examples include:
 **The Solution:** Perplexity's Deep Research feature is the perfect use case to understand how hybrid system work.
 It combines the orchestrator-worker pattern with ReAct agents to do autonomous research on a given topic [[18]](https://arxiv.org/html/2506.18096v1), [[19]](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research). Unlike single-agent systems, like the Gemini CLI, this system uses many specialized agents to research sub-topics in parallel.
 
-The exact way it works is not public, so we make assumptions about its design based on available information, but here is a simplified view of how it likely works:
+The exact way  Perplexity's Deep Research agent works is not public, so to explain how it functions, we had to make assumptions about its design based on available information, but here is a simplified view of how it likely works:
 1.  **Research Planning & Decomposition:** A core orchestrator looks at the main research question (for example, "What is the impact of AI on the job market?") and breaks it into smaller, focused sub-questions. The orchestrator uses the orchestrator-worker pattern we introduced earlier to send these sub-questions to many research agents.
 2.  **Parallel Information Gathering:** For each sub-question, specialized search agents run at the same time to find the right information. These agents use actions like web searches and document retrieval to gather as much information as possible for their specific question. Because these research agents work separately, the amount of input information for each LLM is smaller, helping the LLM stay focused on their task.
 3.  **Analysis & Synthesis:** After gathering many sources, each agent checks and scores each source. They use strategies like checking how trustworthy the source is or how well it matches the question. Then, each source is ranked by importance. Finally, the best sources are summarized into a report.
@@ -247,21 +247,23 @@ To conclude, this system is a hybrid because it uses a master orchestrator to in
 
 ## The Challenges of Every AI Engineer
 
-Now that you understand the spectrum from LLM workflows to AI agents, it is clear that every AI engineer, whether at a startup or a Fortune 500 company, faces these fundamental challenges daily. This architectural decision is a core factor determining whether an AI application succeeds in production or fails.
+Now that you understand the spectrum from LLM workflows to AI agents, it is clear that every AI engineer, whether at a startup or a Fortune 500 company, faces these fundamental challenges whenever it has to design a new AI application. This architectural decision is a core factor determining whether an AI application succeeds in production or fails.
 
-AI engineers constantly deal with several issues. Reliability is a major concern. An agent might work perfectly in a demo but become unpredictable with real users. Reasoning failures can compound through multi-step processes, leading to unexpected and costly outcomes.
+Before wrapping up this lesson, to help you understand why these design patterns truly matter, we want to explore a few issues that AI engineers constantly deal with. 
 
-You also constantly battle context limits. Systems struggle to maintain coherence across long conversations, gradually losing track of their purpose. Ensuring consistent output quality across different agent specializations, like coding assistance or research, presents a continuous and complex challenge.
+Reliability is a major concern. An agent might work perfectly in a demo but become unpredictable with real users. This usually happens because LLM reasoning failures can compound through multi-step processes, leading to unexpected and costly outcomes.
 
-Integrating data from various sources often proves difficult. You pull information from Slack, web APIs, SQL databases, and data lakes. Yet, your system struggles to process this multimodal information coherently, impacting overall performance.
+You will also constantly battle context limits. Systems struggle to maintain coherence across long conversations, gradually losing track of their purpose. Ensuring consistent output quality across different agent specializations, like coding assistance or research, presents a continuous and complex challenge.
 
-The cost-performance trap is another hurdle. A sophisticated agent might deliver impressive results but cost a fortune per user interaction. This makes it economically unfeasible for many applications, demanding careful resource management.
+Another difficult challenge is integrating data from various sources. For example, you will have to build pipelines to pull information from Slack, web APIs, SQL databases, and data lakes and pass them to an AI agent in given latency requirements. Another huge challenge when it comes to integrations is ensuring only high-quality is passed to your AI system. Garbage-in, garbage-out, remember? This is true for workflows and agents as well.
+
+The cost-performance trap is another obstacle. A sophisticated agent might deliver impressive results but cost a fortune per user interaction. This makes it economically unfeasible for many applications, demanding careful resource management.
 
 Finally, security is a constant worry. Autonomous agents with powerful write permissions could send the wrong email, delete critical files, or expose sensitive data. This demands careful design and robust safeguards to prevent unintended actions.
 
-These challenges are solvable, and this course is designed to address them. In upcoming lessons, we will cover patterns for building reliable systems, strategies for managing context, and approaches for handling multimodal data. We will also explore context engineering, memory systems, structured outputs, and robust evaluation techniques.
+These challenges are solvable, and this course is designed to address them. In upcoming lessons, we will cover patterns for building reliable products by implementing specialized evaluation and monitor pipelines. Also, we will look at multiple strategies for building hybrid systems and ways to keep costs and latency under control.
 
-Your path forward as an AI engineer involves mastering these realities. By the end of this course, you will have the knowledge to architect AI systems that are not only powerful but also robust, efficient, and safe. You will know when to use a workflow, when to deploy an agent, and how to build effective hybrid systems that work in the real world.
+By the end of this course, you will have the knowledge to architect AI systems that are not only powerful but also robust, efficient, and safe. You will know when to use a workflow, when to deploy an agent, and how to build effective hybrid systems that work in the real world.
 
 ## References
 
