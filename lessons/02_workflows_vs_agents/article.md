@@ -143,7 +143,7 @@ graph TD
         B --> C{Select Action};
         C --> D[Action: Execute];
         D -- Observation --> B;
-        B -- Working Memory --> G[(Short-Term Memory)];
+        B -- Context --> G[(Short-Term Memory)];
         G -- Context --> B;
     end
     B -- Task Complete --> E[Final Response];
