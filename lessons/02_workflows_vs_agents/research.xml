@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>What are the architectural patterns of state-of-the-art AI coding assistants like Gemini CLI as of 2025?</summary>
-
-### Source [3]: https://cloud.google.com/gemini/docs/codeassist/gemini-cli
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[What are the architectural patterns of state-of-the-art AI coding assistants like Gemini CLI as of 2025?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [3]: https://cloud.google.com/gemini/docs/codeassist/gemini-cli
 
 Query: What are the architectural patterns of state-of-the-art AI coding assistants like Gemini CLI as of 2025?
 
@@ -19,11 +18,8 @@ Answer: The official Google documentation describes Gemini CLI as an **open sour
 
 -----
 
------
-
------
-
-### Source [4]: https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [4]: https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/
 
 Query: What are the architectural patterns of state-of-the-art AI coding assistants like Gemini CLI as of 2025?
 
@@ -37,14 +33,13 @@ Answer: According to Google's official announcement, Gemini CLI is:
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How do hybrid AI systems like Perplexity's Deep Research agent combine LLM workflows and multi-agent architectures for complex research tasks?</summary>
-
-### Source [6]: https://arxiv.org/html/2506.18096v1
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do hybrid AI systems like Perplexity's Deep Research agent combine LLM workflows and multi-agent architectures for complex research tasks?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [6]: https://arxiv.org/html/2506.18096v1
 
 Query: How do hybrid AI systems like Perplexity's Deep Research agent combine LLM workflows and multi-agent architectures for complex research tasks?
 
@@ -57,11 +52,8 @@ Answer: Deep Research (DR) agents, such as Perplexity's, expand on **retrieval-a
 
 -----
 
------
-
------
-
-### Source [8]: https://www.langchain.com/breakoutagents/perplexity
+-----]]></source_block>
+        <source_block><![CDATA[### Source [8]: https://www.langchain.com/breakoutagents/perplexity
 
 Query: How do hybrid AI systems like Perplexity's Deep Research agent combine LLM workflows and multi-agent architectures for complex research tasks?
 
@@ -69,14 +61,13 @@ Answer: Perplexity Pro's AI agent separates **planning** from **execution** to i
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most common reliability and security challenges when deploying autonomous AI agents in production environments?</summary>
-
-### Source [9]: https://ardor.cloud/blog/common-ai-agent-deployment-issues-and-solutions
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common reliability and security challenges when deploying autonomous AI agents in production environments?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [9]: https://ardor.cloud/blog/common-ai-agent-deployment-issues-and-solutions
 
 Query: What are the most common reliability and security challenges when deploying autonomous AI agents in production environments?
 
@@ -92,11 +83,8 @@ Recommended mitigations include using middleware for integration, cloud-based sc
 
 -----
 
------
-
------
-
-### Source [11]: https://www.strata.io/blog/agentic-identity/hidden-identity-challenges-ai-agents-hybrid-environment-1a/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [11]: https://www.strata.io/blog/agentic-identity/hidden-identity-challenges-ai-agents-hybrid-environment-1a/
 
 Query: What are the most common reliability and security challenges when deploying autonomous AI agents in production environments?
 
@@ -108,11 +96,8 @@ Answer: In hybrid and multi-cloud environments, enterprises struggle with:
 
 -----
 
------
-
------
-
-### Source [13]: https://www.deloitte.com/us/en/insights/industry/technology/technology-media-and-telecom-predictions/2025/autonomous-generative-ai-agents-still-under-development.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [13]: https://www.deloitte.com/us/en/insights/industry/technology/technology-media-and-telecom-predictions/2025/autonomous-generative-ai-agents-still-under-development.html
 
 Query: What are the most common reliability and security challenges when deploying autonomous AI agents in production environments?
 
@@ -123,14 +108,13 @@ Answer: According to Deloitte, common challenges in deploying autonomous generat
 - **Trust and Accountability:** Executives hesitate to deploy autonomous agents due to uncertainty about system behavior and the potential for unintended or harmful outcomes.
 - Achieving reliable, autonomous behavior in production requires incremental improvements in accuracy, auditing capabilities, and transparent decision-making processes.
 
------
-
-</details>
-
-<details>
-<summary>What are the best practices for designing and implementing the 'evaluator-optimizer' and 'orchestrator-worker' LLM workflow patterns?</summary>
-
-### Source [14]: https://javaaidev.com/docs/agentic-patterns/patterns/evaluator-optimizer/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the best practices for designing and implementing the 'evaluator-optimizer' and 'orchestrator-worker' LLM workflow patterns?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [14]: https://javaaidev.com/docs/agentic-patterns/patterns/evaluator-optimizer/
 
 Query: What are the best practices for designing and implementing the 'evaluator-optimizer' and 'orchestrator-worker' LLM workflow patterns?
 
@@ -150,11 +134,8 @@ These recommendations aim to balance output quality, system efficiency, and cost
 
 -----
 
------
-
------
-
-### Source [16]: https://www.anthropic.com/research/building-effective-agents
+-----]]></source_block>
+        <source_block><![CDATA[### Source [16]: https://www.anthropic.com/research/building-effective-agents
 
 Query: What are the best practices for designing and implementing the 'evaluator-optimizer' and 'orchestrator-worker' LLM workflow patterns?
 
@@ -174,14 +155,13 @@ These patterns should be chosen based on the task’s complexity, need for refin
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the fundamental differences in cost, latency, and debuggability between LLM workflows and autonomous AI agents?</summary>
-
-### Source [18]: https://blog.gopenai.com/agentic-workflows-vs-autonomous-ai-agents-do-you-know-the-difference-c21c9bfb20ac
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the fundamental differences in cost, latency, and debuggability between LLM workflows and autonomous AI agents?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [18]: https://blog.gopenai.com/agentic-workflows-vs-autonomous-ai-agents-do-you-know-the-difference-c21c9bfb20ac
 
 Query: What are the fundamental differences in cost, latency, and debuggability between LLM workflows and autonomous AI agents?
 
@@ -195,11 +175,8 @@ The source does not provide explicit details on cost and latency but implies tha
 
 -----
 
------
-
------
-
-### Source [19]: https://www.lyzr.ai/blog/agentic-ai-vs-llm/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [19]: https://www.lyzr.ai/blog/agentic-ai-vs-llm/
 
 Query: What are the fundamental differences in cost, latency, and debuggability between LLM workflows and autonomous AI agents?
 
@@ -221,11 +198,8 @@ Key architectural differences:
 
 -----
 
------
-
------
-
-### Source [21]: https://www.louisbouchard.ai/agents-vs-workflows/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [21]: https://www.louisbouchard.ai/agents-vs-workflows/
 
 Query: What are the fundamental differences in cost, latency, and debuggability between LLM workflows and autonomous AI agents?
 
@@ -237,14 +211,13 @@ The source emphasizes that while agents strive for flexibility, the current stat
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?</summary>
-
-### Source [22]: https://www.cnet.com/tech/services-and-software/how-to-summarize-text-using-googles-gemini-ai/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [22]: https://www.cnet.com/tech/services-and-software/how-to-summarize-text-using-googles-gemini-ai/
 
 Query: What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?
 
@@ -258,11 +231,8 @@ Answer: **Common use cases and workflow for LLM summarization in Google Workspac
 
 -----
 
------
-
------
-
-### Source [23]: https://belitsoft.com/llm-summarization
+-----]]></source_block>
+        <source_block><![CDATA[### Source [23]: https://belitsoft.com/llm-summarization
 
 Query: What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?
 
@@ -276,11 +246,8 @@ Answer: **Architectural patterns and techniques for LLM-based summarization:**
 
 -----
 
------
-
------
-
-### Source [24]: https://workspaceupdates.googleblog.com/2025/06/summarize-responses-with-gemini-google-forms.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [24]: https://workspaceupdates.googleblog.com/2025/06/summarize-responses-with-gemini-google-forms.html
 
 Query: What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?
 
@@ -294,11 +261,8 @@ Answer: **LLM summarization workflow in Google Forms:**
 
 -----
 
------
-
------
-
-### Source [25]: https://workspace.google.com/blog/product-announcements/may-workspace-feature-drop-new-ai-features
+-----]]></source_block>
+        <source_block><![CDATA[### Source [25]: https://workspace.google.com/blog/product-announcements/may-workspace-feature-drop-new-ai-features
 
 Query: What are the most common use cases and architectural patterns for simple LLM workflows, such as document summarization in Google Workspace, as of 2025?
 
@@ -311,14 +275,13 @@ Answer: **Broader LLM summarization features in Google Workspace (as of May 2025
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the key differences between chaining and routing patterns in LLM workflows?</summary>
-
-### Source [26]: https://www.revanthquicklearn.com/post/understanding-workflow-design-patterns-in-ai-systems
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the key differences between chaining and routing patterns in LLM workflows?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [26]: https://www.revanthquicklearn.com/post/understanding-workflow-design-patterns-in-ai-systems
 
 Query: What are the key differences between chaining and routing patterns in LLM workflows?
 
@@ -328,11 +291,8 @@ Answer: **Prompt chaining** is described as chaining a series of LLM calls to br
 
 -----
 
------
-
------
-
-### Source [27]: https://www.philschmid.de/agentic-pattern
+-----]]></source_block>
+        <source_block><![CDATA[### Source [27]: https://www.philschmid.de/agentic-pattern
 
 Query: What are the key differences between chaining and routing patterns in LLM workflows?
 
@@ -342,11 +302,8 @@ Answer: **Prompt Chaining** involves the sequential feeding of one LLM’s outpu
 
 -----
 
------
-
------
-
-### Source [29]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/workflow-for-routing.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [29]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/workflow-for-routing.html
 
 Query: What are the key differences between chaining and routing patterns in LLM workflows?
 
@@ -356,14 +313,13 @@ Routing is effective for triaging requests across multiple possible tasks (such 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What is the current state of AI-native browsers like ChatGPT Agent and Perplexity Comet as of late 2025?</summary>
-
-### Source [30]: https://www.techtarget.com/whatis/feature/ChatGPT-agents-explained
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What is the current state of AI-native browsers like ChatGPT Agent and Perplexity Comet as of late 2025?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [30]: https://www.techtarget.com/whatis/feature/ChatGPT-agents-explained
 
 Query: What is the current state of AI-native browsers like ChatGPT Agent and Perplexity Comet as of late 2025?
 
@@ -375,11 +331,8 @@ The agents also support **API integration**, able to connect with public APIs an
 
 -----
 
------
-
------
-
-### Source [32]: https://www.tomsguide.com/ai/openais-new-chatgpt-agent-is-here-5-features-that-change-everything
+-----]]></source_block>
+        <source_block><![CDATA[### Source [32]: https://www.tomsguide.com/ai/openais-new-chatgpt-agent-is-here-5-features-that-change-everything
 
 Query: What is the current state of AI-native browsers like ChatGPT Agent and Perplexity Comet as of late 2025?
 
@@ -393,14 +346,13 @@ Technical capabilities are expanded by the agent’s ability to use built-in too
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are real-world examples of billion-dollar AI companies from 2024-2025 whose success or failure was tied to their architectural choices between LLM workflows and AI agents?</summary>
-
-### Source [34]: https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are real-world examples of billion-dollar AI companies from 2024-2025 whose success or failure was tied to their architectural choices between LLM workflows and AI agents?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [34]: https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/
 
 Query: What are real-world examples of billion-dollar AI companies from 2024-2025 whose success or failure was tied to their architectural choices between LLM workflows and AI agents?
 
@@ -408,14 +360,13 @@ Answer: TechCrunch lists several billion-dollar AI companies that raised mega-ro
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How do AI engineering teams practically manage and coordinate context across multi-agent systems like Perplexity's Deep Research agent?</summary>
-
-### Source [38]: https://www.usaii.org/ai-insights/what-is-perplexity-deep-research-a-detailed-overview
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do AI engineering teams practically manage and coordinate context across multi-agent systems like Perplexity's Deep Research agent?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [38]: https://www.usaii.org/ai-insights/what-is-perplexity-deep-research-a-detailed-overview
 
 Query: How do AI engineering teams practically manage and coordinate context across multi-agent systems like Perplexity's Deep Research agent?
 
@@ -423,11 +374,8 @@ Answer: Perplexity Deep Research utilizes a proprietary framework called **test 
 
 -----
 
------
-
------
-
-### Source [39]: https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research
+-----]]></source_block>
+        <source_block><![CDATA[### Source [39]: https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research
 
 Query: How do AI engineering teams practically manage and coordinate context across multi-agent systems like Perplexity's Deep Research agent?
 
@@ -435,11 +383,8 @@ Answer: Perplexity’s Deep Research agent coordinates context across its multi-
 
 -----
 
------
-
------
-
-### Source [40]: https://www.langchain.com/breakoutagents/perplexity
+-----]]></source_block>
+        <source_block><![CDATA[### Source [40]: https://www.langchain.com/breakoutagents/perplexity
 
 Query: How do AI engineering teams practically manage and coordinate context across multi-agent systems like Perplexity's Deep Research agent?
 
@@ -447,17 +392,14 @@ Answer: Perplexity Pro’s AI agent handles context management in multi-agent se
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>The [Gemini command line interface (CLI)](https://github.com/google-gemini/gemini-cli) is an open source</summary>
-
-The [Gemini command line interface (CLI)](https://github.com/google-gemini/gemini-cli) is an open source
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[The [Gemini command line interface (CLI)](https://github.com/google-gemini/gemini-cli) is an open source]]></title>
+      <content><![CDATA[The [Gemini command line interface (CLI)](https://github.com/google-gemini/gemini-cli) is an open source
 AI agent that provides access to Gemini directly in your terminal. The
 Gemini CLI uses a reason and act (ReAct) loop with your built-in tools
 and local or remote MCP servers to complete complex use cases like fixing bugs,
@@ -490,14 +432,11 @@ Gemini Code Assist for VS Code.
 - [Yolo mode](https://cloud.google.com/gemini/docs/codeassist/use-agentic-chat-pair-programmer#yolo-mode)
 - built-in tools like grep, terminal, file read or file write
 - Web search
-- Web fetch
-
-</details>
-
-<details>
-<summary>Last year was monumental for the AI industry in the U.S. and beyond.</summary>
-
-Last year was monumental for the AI industry in the U.S. and beyond.
+- Web fetch]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Last year was monumental for the AI industry in the U.S. and beyond.]]></title>
+      <content><![CDATA[Last year was monumental for the AI industry in the U.S. and beyond.
 
 There were [49 startups that raised funding rounds worth $100 million](https://techcrunch.com/2024/12/20/heres-the-full-list-of-49-us-ai-startups-that-have-raised-100m-or-more-in-2024/) or more in 2024, per our count at TechCrunch; three companies raised more than one “mega-round,” and seven companies raised rounds that were $1 billion in size or larger.
 
@@ -545,14 +484,11 @@ Here are all the U.S. AI companies that have raised $100 million this year:
 ## January
 
 - Synthetic voice startup **ElevenLabs** raised a [$180 million Series C round](https://techcrunch.com/2025/01/30/elevenlabs-raises-180-million-in-series-c-funding-at-3-3-billion-valuation/) that valued the company at more than $3 billion. It was announced on January 30. The round was co-led by ICONIQ Growth and Andreessen Horowitz. Sequoia, NEA, Salesforce Ventures, and others also participated in the round.
-- **Hippocratic AI**, which develops large language models for the healthcare industry, announced a [$141 million Series B round](https://techcrunch.com/2025/01/09/hippocratic-ai-raises-141m-for-creating-patient-facing-ai-agents/) on January 9. This round valued the company at more than $1.6 billion and was led by Kleiner Perkins. Andreessen Horowitz, Nvidia, and General Catalyst also participated, among others.
-
-</details>
-
-<details>
-<summary>What is Gemini?</summary>
-
-## What is Gemini?
+- **Hippocratic AI**, which develops large language models for the healthcare industry, announced a [$141 million Series B round](https://techcrunch.com/2025/01/09/hippocratic-ai-raises-141m-for-creating-patient-facing-ai-agents/) on January 9. This round valued the company at more than $1.6 billion and was led by Kleiner Perkins. Andreessen Horowitz, Nvidia, and General Catalyst also participated, among others.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[What is Gemini?]]></title>
+      <content><![CDATA[## What is Gemini?
 
 Google welcomed [Gemini](https://www.cnet.com/tech/services-and-software/what-is-gemini-everything-you-should-know-about-googles-ai-tool/), its AI-powered chatbot, to the digital world on Dec. 6, 2023. While the name doesn't coincide with its launch date (the tool went by a different name, Bard, originally), Gemini was named after the astrological symbol's dual-natured personality -- the ability to adapt quickly and connect to a wide range of people, all while seeing things from multiple perspectives. Gemini got its name "because we wanted to bring teams working on language modeling closer together," said Jeff Dean, Gemini's co-technical lead.
 
@@ -592,14 +528,11 @@ Just make sure you apply the usual AI caveat of double-checking that the tool ca
 
 There are many other choices if you need to summarize text and you're not a Google Docs or Gmail person. You can use other AI chatbots like [Microsoft Copilot](https://www.cnet.com/tech/services-and-software/microsoft-copilot-chatbot-review-bing-is-my-default-search-engine-now/), [Anthropic's Claude](https://www.cnet.com/tech/services-and-software/claude-ai-review-the-most-conversational-ai-engine/), [Perplexity](https://www.cnet.com/tech/services-and-software/perplexity-ai-review-imagine-chatgpt-with-an-internet-connection/) and [DeepSeek](https://www.cnet.com/tech/services-and-software/what-is-deepseek-everything-to-know-about-the-new-chinese-ai-tool/). Just prompt the chatbot with a request to summarize something for you, then either copy and paste your document or attach a PDF file.
 
-There are also tools specifically made for summarizing text, like [Summarizer](https://www.summarizer.org/) and [QuillBot](https://quillbot.com/summarize).
-
-</details>
-
-<details>
-<summary>Whentraditionalsearchfallsshort</summary>
-
-## Whentraditionalsearchfallsshort
+There are also tools specifically made for summarizing text, like [Summarizer](https://www.summarizer.org/) and [QuillBot](https://quillbot.com/summarize).]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Whentraditionalsearchfallsshort]]></title>
+      <content><![CDATA[## Whentraditionalsearchfallsshort
 
 Traditional search engines may struggle to answer complex queries that require connecting the dots across multiple ideas or extracting detailed information. For instance, searching "What’s the educational background of the founders of LangChain?" involves not only identifying the founders but also researching into each individual founder’s background.
 
@@ -641,17 +574,13 @@ Zhang highlights their guiding philosophy behind the design:
 
 ###### _“You don’t want to overload the user with too much information until they are actually curious. Then, you feed their curiosity.”_
 
-The team wanted to make sure that the user interface found the best balance of simplicity and utility, requiring several iteration cycles.
-
-</details>
-
-
-## Code Sources
-
-<details>
-<summary>Repository analysis for https://github.com/google-gemini/gemini-cli/blob/main/README.md</summary>
-
-# Repository analysis for https://github.com/google-gemini/gemini-cli/blob/main/README.md
+The team wanted to make sure that the user interface found the best balance of simplicity and utility, requiring several iteration cycles.]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <code_source>
+      <title><![CDATA[Repository analysis for https://github.com/google-gemini/gemini-cli/blob/main/README.md]]></title>
+      <content><![CDATA[# Repository analysis for https://github.com/google-gemini/gemini-cli/blob/main/README.md
 
 ## Summary
 Repository: google-gemini/gemini-cli
@@ -882,15 +811,14 @@ Head over to the [Uninstall](docs/Uninstall.md) guide for uninstallation instruc
 
 For details on the terms of service and privacy notice applicable to your use of Gemini CLI, see the [Terms of Service and Privacy Notice](./docs/tos-privacy.md).
 
-</details>
 
-
-## YouTube Video Transcripts
-
-<details>
-<summary>**Andrej Karpathy: Software in the Era of AI**</summary>
-
-**Andrej Karpathy: Software in the Era of AI**
+]]></content>
+    </code_source>
+  </code_sources>
+  <youtube_video_transcripts>
+    <youtube_transcript>
+      <title><![CDATA[**Andrej Karpathy: Software in the Era of AI**]]></title>
+      <content><![CDATA[**Andrej Karpathy: Software in the Era of AI**
 
 (On-screen text: Y Combinator Presents AI Startup School)
 
@@ -1002,14 +930,11 @@ Uh it it also has very similar features to what I've just pointed out in Cursor.
 [12:00:00]
 And I'm trying to think through like what does that look like? And for many of you who maintain products and services, how are you going to make your products and services partially autonomous? Can an LLM see everything that a human can see? Can an LLM act in all the ways that a human could act? And can humans supervise and stay in the loop of this activity? Because again, these are fallible systems that aren't yet perfect. And what does a diff look like in Photoshop or something like that, you know? And also a lot of the traditional software right now, it has all these switches and all this kind of stuff that's all designed for a human. All this has to change and become accessible to LLMs.
 
-*He argues that successful LLM applications are partial autonomy products, featuring an "autonomy slider" that allows users to control the level of AI involvement, and emphasizes the importance of custom GUIs to facilitate the fast, human-in-the-loop verification of AI-generated work.*
-
-</details>
-
-<details>
-<summary>(The video begins with an intro animation for the "AI Engineer SUMMIT".)</summary>
-
-(The video begins with an intro animation for the "AI Engineer SUMMIT".)
+*He argues that successful LLM applications are partial autonomy products, featuring an "autonomy slider" that allows users to control the level of AI involvement, and emphasizes the importance of custom GUIs to facilitate the fast, human-in-the-loop verification of AI-generated work.*]]></content>
+    </youtube_transcript>
+    <youtube_transcript>
+      <title><![CDATA[(The video begins with an intro animation for the "AI Engineer SUMMIT".)]]></title>
+      <content><![CDATA[(The video begins with an intro animation for the "AI Engineer SUMMIT".)
 
 [00:00] Hey everyone. Uh, my name is Jerry, co-founder and CEO of LlamaIndex, and today we'll be talking about how to build production-ready RAG applications. Um, I think there's still time for a raffle for the bucket hats. So if you guys stop by our booth, uh please fill out the Google form. (The presenter, Jerry Liu, is on stage. The title slide is displayed behind him, titled "Building Production-Ready RAG Applications" with his name and company, LlamaIndex.) Okay.
 
@@ -1157,14 +1082,11 @@ And I'm trying to think through like what does that look like? And for many of y
 
 [18:00] um compared to like bigger models. So, a solution here is what if you can generate a synthetic data set using a bigger model like GPT-4, this is something we're exploring, and you actually distill that into 3.5 Turbo. So it gets better at chain of thought, longer response quality, um better structured outputs and a lot of other possibilities as well. Um, and of course, if you want to scale to like, you know, hundreds or thousands or millions of documents, um, typically an agent can only have access to a limited window of tools. So you probably want to do some sort of retrieval on these tools similar to how you want to retrieve like text chunks from a document. The main difference is that because these are tools, you actually want to act upon them, you want to use them as opposed to just taking the raw text and plugging it into the context window. So blending this combination of like um embedding based retrieval or any sort of retrieval as well as like agent tool use is a very interesting paradigm that I think is really only possible with this age of LLMs and hasn't really existed before this. Another kind of advanced concept is this idea of fine tuning. um and so fine tuning you know some other presenters have talked about this as well but the idea of like fine tuning in a RAG system is that it really optimizes specific pieces of this RAG pipeline for you to kind of better um improve the performance of either retriever or synthesis capabilities. One thing you can do is fine tune your embeddings I think anton was talking about this as well like if you just use a pre trained model the embedding representations are not going to be optimized over your specific data so sometimes you're just going to retrieve the wrong wrong information um if you can somehow tune these embeddings so that given any sort of like relevant question that the user might ask that you're actually returning the relevant response then you're going to have like better performance so the idea here right is to generate a synthetic query data set from raw text chunks using LLMs and use this to fine tune an embedding model um and you can do this like uh if we go back real quick actually um you can do this by basically um fine tuning the base model itself you can also fine tune an adapter on top of the model um and fine tuning an adapter on top of the model has a few advantages in that you don't require the base model's weights to actually fine tune stuff and if you just fine tune the query you don't have to reindex your entire document corpus there's also fine tuning LLMs which of course like a lot of people are very interested in doing these days um an intuition here specifically for RAG is that if you have a weaker LLM like 3.5 turbo like Llama 2 7B like these weaker LLMs are bad at are are maybe a little bit worse at like response synthesis reasoning structured outputs etc um compared to like bigger models so a solution here is what if you can generate a synthetic data set using a bigger model like GPT4 this is something we're exploring and you actually distill that into 3.5 turbo so it gets better at chain of thought longer response quality um better structured outputs and a lot of other possibilities as well. (A final slide titled "Resources" shows two QR codes and URLs for "Production RAG" and "Fine-tuning" documentation.) So all these things are in our docs. There's production RAG, uh there's fine-tuning and I have two seconds left. So thank you very much. (The audience applauds.)
 
-*He proposes a solution where a larger, more capable model like GPT-4 generates a synthetic dataset, which is then used to fine-tune and distill knowledge into a smaller, more efficient LLM, improving its reasoning and synthesis capabilities.*
-
-</details>
-
-<details>
-<summary>Of course, here is the detailed transcript of the video.</summary>
-
-Of course, here is the detailed transcript of the video.
+*He proposes a solution where a larger, more capable model like GPT-4 generates a synthetic dataset, which is then used to fine-tune and distill knowledge into a smaller, more efficient LLM, improving its reasoning and synthesis capabilities.*]]></content>
+    </youtube_transcript>
+    <youtube_transcript>
+      <title><![CDATA[Of course, here is the detailed transcript of the video.]]></title>
+      <content><![CDATA[Of course, here is the detailed transcript of the video.
 
 ***
 
@@ -1293,17 +1215,13 @@ Of course, here is the detailed transcript of the video.
 
 (The video ends with a blue screen with social media handles and a logo.)
 
-*The speaker concludes by reiterating that while true agents are still unreliable and complex to build, simpler, more predictable workflows are highly effective for most current applications.*
-
-</details>
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>a-developer-s-guide-to-building-scalable-ai-workflows-vs-age</summary>
-
-# A Developer’s Guide to Building Scalable AI: Workflows vs Agents
+*The speaker concludes by reiterating that while true agents are still unreliable and complex to build, simpler, more predictable workflows are highly effective for most current applications.*]]></content>
+    </youtube_transcript>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[a-developer-s-guide-to-building-scalable-ai-workflows-vs-age]]></title>
+      <content><![CDATA[# A Developer’s Guide to Building Scalable AI: Workflows vs Agents
 
 Understanding the architectural trade-offs between autonomous agents and orchestrated workflows — because someone needs to make this decision, and it might as well be youhttps://towardsdatascience.com/wp-content/uploads/2025/06/agent-vs-workflow.jpegImage by author
 
@@ -2194,14 +2112,11 @@ Not what wows.
 
 * * *
 
-**Now go forth and make informed architectural decisions.** The world has enough AI demos that work in controlled environments. What we need are AI systems that work in the messy reality of production — regardless of whether they’re “cool” enough to get upvotes on Reddit.
-
-</details>
-
-<details>
-<summary>build-production-agentic-rag-with-llmops-at-its-core</summary>
-
-LLM-powered agents combine a **language model, tools, and memory** to process information and take action.
+**Now go forth and make informed architectural decisions.** The world has enough AI demos that work in controlled environments. What we need are AI systems that work in the messy reality of production — regardless of whether they’re “cool” enough to get upvotes on Reddit.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[build-production-agentic-rag-with-llmops-at-its-core]]></title>
+      <content><![CDATA[LLM-powered agents combine a **language model, tools, and memory** to process information and take action.
 
 They don’t just generate text—they **reason, retrieve data, and interact with external systems** to complete tasks.
 
@@ -3305,14 +3220,11 @@ Figure 11 shows a sample evaluation run, displaying the scores across all metric
 
 [https://substackcdn.com/image/fetch/$s_!KzPS!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F918a538b-8ac6-4fb7-864b-557a70ab1fe0_2908x1096.png](https://substackcdn.com/image/fetch/$s_!KzPS!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F918a538b-8ac6-4fb7-864b-557a70ab1fe0_2908x1096.png) Figure 11: Outcome of an evaluation run in [Opik](https://github.com/comet-ml/opik)
 
-By implementing this evaluation pipeline, we ensure that our agentic RAG module continues to improve while maintaining accuracy, relevance, and overall quality.
-
-</details>
-
-<details>
-<summary>building-effective-ai-agents-anthropic</summary>
-
-We've worked with dozens of teams building LLM agents across industries. Consistently, the most successful implementations use simple, composable patterns rather than complex frameworks.
+By implementing this evaluation pipeline, we ensure that our agentic RAG module continues to improve while maintaining accuracy, relevance, and overall quality.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[building-effective-ai-agents-anthropic]]></title>
+      <content><![CDATA[We've worked with dozens of teams building LLM agents across industries. Consistently, the most successful implementations use simple, composable patterns rather than complex frameworks.
 
 Over the past year, we've worked with dozens of teams building large language model (LLM) agents across industries. Consistently, the most successful implementations weren't using complex frameworks or specialized libraries. Instead, they were building with simple, composable patterns.
 
@@ -3424,14 +3336,11 @@ The following examples are from our own implementations:
 
 ## Combining and customizing these patterns
 
-These building blocks aren't prescriptive. They're common patterns that developers can shape and combine to fit different use cases. The key to success, as with any LLM features, is measuring performance and iterating on implementations. To repeat: you should consider adding complexity _only_ when it demonstrably improves outcomes.
-
-</details>
-
-<details>
-<summary>google-announces-gemini-cli-your-open-source-ai-agent</summary>
-
-For developers, the command line interface (CLI) isn't just a tool; it's home. The terminal’s efficiency, ubiquity and portability make it the go-to utility for getting work done. And as developers' reliance on the terminal endures, so does the demand for integrated AI assistance.
+These building blocks aren't prescriptive. They're common patterns that developers can shape and combine to fit different use cases. The key to success, as with any LLM features, is measuring performance and iterating on implementations. To repeat: you should consider adding complexity _only_ when it demonstrably improves outcomes.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[google-announces-gemini-cli-your-open-source-ai-agent]]></title>
+      <content><![CDATA[For developers, the command line interface (CLI) isn't just a tool; it's home. The terminal’s efficiency, ubiquity and portability make it the go-to utility for getting work done. And as developers' reliance on the terminal endures, so does the demand for integrated AI assistance.
 
 That’s why we’re introducing [Gemini CLI](http://github.com/google-gemini/gemini-cli), an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model. While it excels at coding, we built Gemini CLI to do so much more. It’s a versatile, local utility you can use for a wide range of tasks, from content generation and problem solving to deep research and task management.
 
@@ -3472,14 +3381,11 @@ Sometimes, an IDE is the right tool for the job. When that time comes, you want 
 
 Gemini Code Assist’s chat agent is a multi-step, collaborative, reasoning agent that expands the capabilities of simple-command response interactions
 
-Gemini Code Assist agent mode is available at no additional cost for all plans (free, Standard and Enterprise) through the [Insiders channel](https://developers.google.com/gemini-code-assist/docs/use-agentic-chat-pair-programmer#before-you-begin). If you aren’t already using Gemini Code Assist, give it a try. Its free tier has the highest usage limit in the market today, and only takes less than a minute to [get started](https://codeassist.google/).
-
-</details>
-
-<details>
-<summary>introducing-chatgpt-agent-bridging-research-and-action-opena</summary>
-
-ChatGPT now thinks and acts, proactively choosing from a toolbox of agentic skills to complete tasks for you using its own computer.
+Gemini Code Assist agent mode is available at no additional cost for all plans (free, Standard and Enterprise) through the [Insiders channel](https://developers.google.com/gemini-code-assist/docs/use-agentic-chat-pair-programmer#before-you-begin). If you aren’t already using Gemini Code Assist, give it a try. Its free tier has the highest usage limit in the market today, and only takes less than a minute to [get started](https://codeassist.google/).]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[introducing-chatgpt-agent-bridging-research-and-action-opena]]></title>
+      <content><![CDATA[ChatGPT now thinks and acts, proactively choosing from a toolbox of agentic skills to complete tasks for you using its own computer.
 
 ChatGPT can now do work for you using its own computer, handling complex tasks from start to finish.
 
@@ -3534,14 +3440,11 @@ ChatGPT agent is still in its early stages. It’s capable of taking on a range 
 
 While we see significant potential in its ability to generate slideshows, this functionality is currently in beta. At the moment, outputs can sometimes feel rudimentary in its formatting and polish, particularly when starting without an existing document. We focused the model’s initial capabilities on generating artifacts that organize information in a flow and format suitable for presentations, with elements like text, charts, images, and shapes that are natively and easily editable after export, optimizing for structure and flexibility. Currently, there are also occasional discrepancies between the slides in the viewer and the exported powerpoint that we are working to reduce. Additionally, while you can currently upload an existing spreadsheet for ChatGPT to edit or use as a template, this capability isn't yet available for slideshows. We’re already training the next iteration of ChatGPT's slideshow creation to produce more polished, sophisticated outputs, with broader capabilities and improved formatting.
 
-Overall, we expect continued improvements to ChatGPT agent’s efficiency, depth, and versatility over time, including more seamless interactions as we continue to adjust the amount of oversight required from the user to make it more useful while ensuring it’s safe to use.
-
-</details>
-
-<details>
-<summary>introducing-perplexity-deep-research</summary>
-
-# Introducing Perplexity Deep Research
+Overall, we expect continued improvements to ChatGPT agent’s efficiency, depth, and versatility over time, including more seamless interactions as we continue to adjust the amount of oversight required from the user to make it more useful while ensuring it’s safe to use.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[introducing-perplexity-deep-research]]></title>
+      <content><![CDATA[# Introducing Perplexity Deep Research
 
 **Today we’re launching Deep Research** to save you hours of time by conducting in-depth research and analysis on your behalf. When you ask a Deep Research question, Perplexity performs dozens of searches, reads hundreds of sources, and reasons through the material to autonomously deliver a comprehensive report. It excels at a range of expert-level tasks—from finance and marketing to product research—and attains high benchmarks on Humanity’s Last Exam.
 
@@ -3571,23 +3474,17 @@ We built Deep Research to empower everyone to conduct expert-level analysis acro
 
 #### Biographyhttps://framerusercontent.com/images/tQO9LIHgnWvalzwrgmmLCVzqT4.png
 
-#### Travelhttps://framerusercontent.com/images/ofWFPGvvrYQWaFAr6BOBwOIvpk.png
+#### Travelhttps://framerusercontent.com/images/ofWFPGvvrYQWaFAr6BOBwOIvpk.png]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[real-world-gen-ai-use-cases-from-the-world-s-leading-organiz]]></title>
+      <content><![CDATA[I have detected that the provided markdown content is entirely irrelevant to the article guidelines. The guidelines describe a lesson comparing LLM workflows and AI agents, while the provided content is a promotional list of 601 AI use cases from a Google Cloud blog.
 
-</details>
-
-<details>
-<summary>real-world-gen-ai-use-cases-from-the-world-s-leading-organiz</summary>
-
-I have detected that the provided markdown content is entirely irrelevant to the article guidelines. The guidelines describe a lesson comparing LLM workflows and AI agents, while the provided content is a promotional list of 601 AI use cases from a Google Cloud blog.
-
-Therefore, the cleaned markdown is empty.
-
-</details>
-
-<details>
-<summary>stop-building-ai-agents-use-smarter-llm-workflows</summary>
-
-I've taught and advised dozens of teams building LLM-powered systems. There's a common pattern I keep seeing, and honestly, it's frustrating.
+Therefore, the cleaned markdown is empty.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[stop-building-ai-agents-use-smarter-llm-workflows]]></title>
+      <content><![CDATA[I've taught and advised dozens of teams building LLM-powered systems. There's a common pattern I keep seeing, and honestly, it's frustrating.
 
 Everyone reaches for agents first. They set up memory systems. They add routing logic. They create tool definitions and character backstories. It feels powerful and it feels like progress.
 
@@ -3884,14 +3781,11 @@ Back to my CrewAI research crew: the agents kept forgetting goals and skipping t
 - ⚠️ Don't use agents for stable enterprise systems
 - 🧪 Build with observability and explicit control
 
-Agents are overhyped and often overused. In most real-world applications, simple patterns and direct API calls work better than complex agent frameworks. Agents do have a role—in particular, they shine in human-in-the-loop scenarios where oversight and flexibility are needed. But for stable enterprise systems, they introduce unnecessary complexity and risk. Instead, aim to build with strong observability, clear evaluation loops, and explicit control.
-
-</details>
-
-<details>
-<summary>what-are-ai-agents-definition-examples-and-types-google-clou</summary>
-
-# What is an AI agent?
+Agents are overhyped and often overused. In most real-world applications, simple patterns and direct API calls work better than complex agent frameworks. Agents do have a role—in particular, they shine in human-in-the-loop scenarios where oversight and flexibility are needed. But for stable enterprise systems, they introduce unnecessary complexity and risk. Instead, aim to build with strong observability, clear evaluation loops, and explicit control.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[what-are-ai-agents-definition-examples-and-types-google-clou]]></title>
+      <content><![CDATA[# What is an AI agent?
 
 AI agents are software systems that use AI to pursue goals and complete tasks on behalf of users. They show reasoning, planning, and memory and have a level of autonomy to make decisions, learn, and adapt.
 
@@ -3945,6 +3839,7 @@ While AI agents offer many benefits, there are also some challenges associated w
 
 **Domains with unpredictable physical environments** – AI agents can struggle in highly dynamic and unpredictable physical environments where real-time adaptation and complex motor skills are essential. This includes tasks like surgery, certain types of construction work, and disaster response.
 
-**Resource-intensive applications** – Developing and deploying sophisticated AI agents can be computationally expensive and require significant resources, potentially making them unsuitable for smaller projects or organizations with limited budgets.
-
-</details>
+**Resource-intensive applications** – Developing and deploying sophisticated AI agents can be computationally expensive and require significant resources, potentially making them unsuitable for smaller projects or organizations with limited budgets.]]></content>
+    </additional_source>
+  </additional_sources>
+</research>

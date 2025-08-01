@@ -1,35 +1,36 @@
 {
-    "num_chars_article": 24643,
-    "num_chars_conclusion": 2570,
-    "num_chars_introduction": 1669,
-    "num_sections": 5,
-    "num_words_article": 3161,
-    "num_words_conclusion": 352,
-    "num_words_introduction": 273,
+    "config": {
+        "thread_id": "19ee6414-6289-4581-89ec-85406eb5087e",
+        "article_id": "02_workflows_vs_agents",
+        "enable_human_review": null
+    },
+    "num_chars_article": 29174,
+    "num_chars_conclusion": 2316,
+    "num_chars_introduction": 1542,
+    "num_sections": 4,
+    "num_words_article": 3892,
+    "num_words_conclusion": 338,
+    "num_words_introduction": 214,
     "sections": {
         "Understanding the Spectrum: From Workflows to Agents": {
-            "num_chars": 2956,
-            "num_words": 397
+            "num_chars": 3636,
+            "num_words": 479
         },
-        "Choosing Your Path: PROs and CONs": {
-            "num_chars": 3731,
-            "num_words": 477
+        "Choosing Your Path": {
+            "num_chars": 5244,
+            "num_words": 665
         },
         "Exploring Common Patterns": {
-            "num_chars": 3792,
-            "num_words": 480
-        },
-        "Looking at State-of-the-Art (SOTA) Examples (2025)": {
-            "num_chars": 2625,
-            "num_words": 265
+            "num_chars": 5618,
+            "num_words": 805
         },
         "Zooming In on Our Favorite Examples": {
-            "num_chars": 4329,
-            "num_words": 655
+            "num_chars": 7794,
+            "num_words": 1143
         }
     },
     "seo": {
         "title": "AI Workflows vs. Agents: Choose Wisely",
-        "description": "AI Workflows vs. Agents: The AI Engineer's Dilemma. Learn to choose between predictable AI workflows and autonomous agents for your LLM applications. Master reliability, cost, and deployment for success."
+        "description": "Master AI workflows vs. agents! Learn to choose the right LLM architecture for your AI application to ensure success, reliability, and cost-efficiency. Avoid pitfalls!"
     }
 }
