@@ -1,11 +1,8 @@
-# AI Workflows vs. Agents: Choose Wisely
-### Workflows vs. Agents: The AI Engineer's Dilemma
-
-## Introduction
+# Lesson 2: LLM Workflows vs. AI Agents: The AI Engineer's Dilemma
 
 As an AI engineer preparing to build your first real AI application, after narrowing down the problem you want to solve, you face a critical decision: How should you design your AI solution? This architectural choice, made early in development, determines whether your AI application follows a predictable, step-by-step workflow or demands a more autonomous approach where the LLM makes self-directed decisions. This fundamental question impacts development time, cost, reliability, and user experience, ultimately determining your project's success or failure. Choosing the wrong path can lead to an overly rigid system that breaks when users deviate from expected patterns or an unpredictable agent that fails when it matters most and is too expensive to run.
 
-This is one core decision every AI engineer has to make. For example, In 2024 and 2025, the success of billion-dollar AI startups often depends on this decision. Companies like Glean and Anysphere (the AI research lab behind the AI coding tool Cursor), which have raised hundreds of millions, built their success on knowing when to use workflow-centric architectures that deliver consistent results in the enterprise versus more flexible AI agents that can navigate unpredictable territories [[1]](https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/).
+This is one core decision every AI engineer has to make. For example, in 2024 and 2025, the success of billion-dollar AI startups often depends on this decision. Companies like Glean and Anysphere (the AI research lab behind the AI coding tool Cursor), which have raised hundreds of millions, built their success on knowing when to use workflow-centric architectures that deliver consistent results in the enterprise versus more flexible AI agents that can navigate unpredictable territories [[1]](https://techcrunch.com/2025/06/18/here-are-the-24-us-ai-startups-that-have-raised-100m-or-more-in-2025/).
 
 This lesson provides a framework for making this decision. We will cover the spectrum from workflows to agents, explain the trade-offs, and show you how to design systems using real-world examples from leading AI companies.
 

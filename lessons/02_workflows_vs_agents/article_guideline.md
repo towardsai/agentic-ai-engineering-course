@@ -36,7 +36,6 @@ As this is only the 2nd lesson of the course, we haven't introduced too many con
 
 ### Concepts That Will Be Introduced in Future Lessons
 In future lessons of the course we will introduce the following concepts:
-- context engineering
 - structured outputs
 - chaining
 - routing
@@ -44,9 +43,15 @@ In future lessons of the course we will introduce the following concepts:
 - tools
 - ReAct agents
 - Plan-and-Execute agents
-- short and long-term memory
+- short-term memory
+- long-term memory:
+    - procedural long-term memory
+    - semantic long-term memory
+    - episodic long-term memory
+- RAG
 - multimodal LLMs
 - evaluations
+- MCP
 
 ### Course Instructions
 When discussing the **concepts introduced in previous lessons** listed in the `Concepts Introduced in Previous Lessons` section, avoid reintroducing them to the reader. Use them as if the reader already knows what they are. 

@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?</summary>
-
-### Source [1]: https://huggingface.co/papers/2507.13334
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [1]: https://huggingface.co/papers/2507.13334
 
 Query: What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?
 
@@ -13,11 +12,8 @@ Answer: Context engineering is presented as a systematic discipline focused on o
 
 -----
 
------
-
------
-
-### Source [2]: https://arize.com/docs/phoenix/learn/context-engineering/context-engineering-concepts
+-----]]></source_block>
+        <source_block><![CDATA[### Source [2]: https://arize.com/docs/phoenix/learn/context-engineering/context-engineering-concepts
 
 Query: What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?
 
@@ -25,11 +21,8 @@ Answer: Context engineering is defined as selecting, organizing, and framing the
 
 -----
 
------
-
------
-
-### Source [3]: https://ramp.com/blog/what-is-context-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [3]: https://ramp.com/blog/what-is-context-engineering
 
 Query: What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?
 
@@ -37,11 +30,8 @@ Answer: Context engineering involves deliberately crafting the inputs to an AI s
 
 -----
 
------
-
------
-
-### Source [4]: https://blog.getzep.com/what-is-context-engineering/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [4]: https://blog.getzep.com/what-is-context-engineering/
 
 Query: What is the relationship between context engineering and fine-tuning in large language models, and how do you decide which to use?
 
@@ -49,14 +39,13 @@ Answer: Context engineering marks a departure from traditional prompt engineerin
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the best practices for structuring and formatting different types of context, such as using XML or YAML, to optimize LLM performance?</summary>
-
-### Source [5]: https://milvus.io/ai-quick-reference/what-modifications-might-be-needed-to-the-llms-input-formatting-or-architecture-to-best-take-advantage-of-retrieved-documents-for-example-adding-special-tokens-or-segments-to-separate-context
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the best practices for structuring and formatting different types of context, such as using XML or YAML, to optimize LLM performance?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [5]: https://milvus.io/ai-quick-reference/what-modifications-might-be-needed-to-the-llms-input-formatting-or-architecture-to-best-take-advantage-of-retrieved-documents-for-example-adding-special-tokens-or-segments-to-separate-context
 
 Query: What are the best practices for structuring and formatting different types of context, such as using XML or YAML, to optimize LLM performance?
 
@@ -64,11 +53,8 @@ Answer: To optimize LLM performance when leveraging different types of context�
 
 -----
 
------
-
------
-
-### Source [7]: https://swimm.io/learn/large-language-models/llm-context-windows-basics-examples-and-prompting-best-practices
+-----]]></source_block>
+        <source_block><![CDATA[### Source [7]: https://swimm.io/learn/large-language-models/llm-context-windows-basics-examples-and-prompting-best-practices
 
 Query: What are the best practices for structuring and formatting different types of context, such as using XML or YAML, to optimize LLM performance?
 
@@ -76,37 +62,32 @@ Answer: For optimal LLM performance with large and structured contexts (such as 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the latest benchmarks and studies on the "lost-in-the-middle" problem and how do different context engineering strategies mitigate it?</summary>
-
-### Source [8]: https://openreview.net/forum?id=5sB6cSblDR
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the latest benchmarks and studies on the "lost-in-the-middle" problem and how do different context engineering strategies mitigate it?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [8]: https://openreview.net/forum?id=5sB6cSblDR
 
 Query: What are the latest benchmarks and studies on the "lost-in-the-middle" problem and how do different context engineering strategies mitigate it?
 
 Answer: This study investigates the "lost-in-the-middle" problem in long-context language models, particularly within multi-hop question answering tasks. Prior research established that models often focus on information at the beginning and end of the context, neglecting content in the middle. This work extends the analysis to cases where multiple necessary pieces of information are distributed throughout the input. The findings show that model performance not only drops as information is placed farther from the context edges but also between multiple pieces of relevant information spread across the context. To address this, the authors experiment with strategies such as: (1) reducing irrelevant content via knowledge graph triple extraction and summarization, which helps concentrate the model's attention on key facts; and (2) employing chain-of-thought prompting to encourage more thorough and explicit reasoning across the input. These interventions show promise in lessening the "lost-in-the-middle" effect by improving the model's ability to utilize central and distributed information more equitably.
 
------
-
------
-
-### Source [9]: https://www.marktechpost.com/2024/06/27/solving-the-lost-in-the-middle-problem-in-large-language-models-a-breakthrough-in-attention-calibration/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [9]: https://www.marktechpost.com/2024/06/27/solving-the-lost-in-the-middle-problem-in-large-language-models-a-breakthrough-in-attention-calibration/
 
 Query: What are the latest benchmarks and studies on the "lost-in-the-middle" problem and how do different context engineering strategies mitigate it?
 
 Answer: This article reports on recent research led by the University of Washington, MIT, Google Cloud AI Research, and Google, highlighting that even advanced large language models exhibit a strong attention bias toward the beginning and end of input sequences. As a result, their accuracy drops when critical information appears in the middle. Traditional mitigation strategies have included re-ranking documents or repositioning the most relevant content to the start or end of the input. However, these approaches often require extra supervision or fine-tuning and do not fundamentally change the model’s ability to process mid-sequence information. The researchers introduce a new calibration mechanism called “found-in-the-middle,” designed to reduce positional bias by making the model attend to context based on relevance rather than sequence location. This technique aims to improve LLMs’ utilization of information regardless of where it appears, representing a notable departure from earlier, location-based strategies.
 
------
-
-</details>
-
-<details>
-<summary>What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?</summary>
-
-### Source [12]: https://www.confluent.io/blog/event-driven-multi-agent-systems/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [12]: https://www.confluent.io/blog/event-driven-multi-agent-systems/
 
 Query: What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?
 
@@ -114,11 +95,8 @@ Answer: The orchestrator-worker pattern is widely used in event-driven multi-age
 
 -----
 
------
-
------
-
-### Source [13]: https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns
+-----]]></source_block>
+        <source_block><![CDATA[### Source [13]: https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns
 
 Query: What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?
 
@@ -126,11 +104,8 @@ Answer: Microsoft's Azure Architecture Center identifies the "handoff orchestrat
 
 -----
 
------
-
------
-
-### Source [14]: https://www.dailydoseofds.com/ai-agents-crash-course-part-12-with-implementation/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [14]: https://www.dailydoseofds.com/ai-agents-crash-course-part-12-with-implementation/
 
 Query: What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?
 
@@ -138,11 +113,8 @@ Answer: A practical case study involves implementing a multi-agent pipeline, whe
 
 -----
 
------
-
------
-
-### Source [15]: https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/design-patterns/mixture-of-agents.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [15]: https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/design-patterns/mixture-of-agents.html
 
 Query: What are some real-world case studies or examples of using a multi-agent architecture, like the orchestrator-worker pattern, to isolate context?
 
@@ -150,14 +122,13 @@ Answer: In the "Mixture of Agents" pattern, as implemented in Microsoft's AutoGe
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How do different memory types (procedural, episodic, semantic) map to the components of an LLM's context, and what are the common architectural patterns for managing them?</summary>
-
-### Source [16]: https://arxiv.org/html/2504.15965v1
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do different memory types (procedural, episodic, semantic) map to the components of an LLM's context, and what are the common architectural patterns for managing them?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [16]: https://arxiv.org/html/2504.15965v1
 
 Query: How do different memory types (procedural, episodic, semantic) map to the components of an LLM's context, and what are the common architectural patterns for managing them?
 
@@ -174,11 +145,8 @@ The survey also discusses challenges in integrating and synchronizing these memo
 
 -----
 
------
-
------
-
-### Source [17]: https://www.cognee.ai/blog/deep-dives/model-context-protocol-cognee-llm-memory-made-simple
+-----]]></source_block>
+        <source_block><![CDATA[### Source [17]: https://www.cognee.ai/blog/deep-dives/model-context-protocol-cognee-llm-memory-made-simple
 
 Query: How do different memory types (procedural, episodic, semantic) map to the components of an LLM's context, and what are the common architectural patterns for managing them?
 
@@ -190,11 +158,8 @@ The architectural pattern described involves an external memory layer that inter
 
 -----
 
------
-
------
-
-### Source [18]: https://arxiv.org/html/2504.02441v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [18]: https://arxiv.org/html/2504.02441v1
 
 Query: How do different memory types (procedural, episodic, semantic) map to the components of an LLM's context, and what are the common architectural patterns for managing them?
 
@@ -208,14 +173,13 @@ The paper emphasizes that short-term/working memory is limited by the context wi
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?</summary>
-
-### Source [20]: https://www.arionresearch.com/blog/67uxqj096in5m3qkksco4lktqmwyzw
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [20]: https://www.arionresearch.com/blog/67uxqj096in5m3qkksco4lktqmwyzw
 
 Query: What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?
 
@@ -227,11 +191,8 @@ Developer frameworks like LangChain, Semantic Kernel, and LlamaIndex enable soph
 
 -----
 
------
-
------
-
-### Source [21]: https://kanerika.com/blogs/context-engineering/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [21]: https://kanerika.com/blogs/context-engineering/
 
 Query: What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?
 
@@ -243,11 +204,8 @@ The architectural blueprint involves integrating context as a foundational layer
 
 -----
 
------
-
------
-
-### Source [22]: https://shellypalmer.com/2025/06/context-engineering-a-framework-for-enterprise-ai-operations/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [22]: https://shellypalmer.com/2025/06/context-engineering-a-framework-for-enterprise-ai-operations/
 
 Query: What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?
 
@@ -262,11 +220,8 @@ A well-context-engineered AI system anticipates information needs, maintains ins
 
 -----
 
------
-
------
-
-### Source [23]: https://www.clearpeople.com/blog/context-engineering-ai-differentiator
+-----]]></source_block>
+        <source_block><![CDATA[### Source [23]: https://www.clearpeople.com/blog/context-engineering-ai-differentiator
 
 Query: What are some detailed case studies or architectural blueprints for implementing context engineering in enterprise AI applications, particularly in healthcare or financial services?
 
@@ -278,14 +233,13 @@ Context engineering is also crucial for agent-to-agent interactions and smooth w
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most effective techniques for context compression in large language models, including summarization, deduplication, and moving working memory to long-term memory?</summary>
-
-### Source [24]: https://aclanthology.org/2024.findings-emnlp.138.pdf
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most effective techniques for context compression in large language models, including summarization, deduplication, and moving working memory to long-term memory?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [24]: https://aclanthology.org/2024.findings-emnlp.138.pdf
 
 Query: What are the most effective techniques for context compression in large language models, including summarization, deduplication, and moving working memory to long-term memory?
 
@@ -293,11 +247,8 @@ Answer: This source introduces the In-Context Former (IC-Former), a novel contex
 
 -----
 
------
-
------
-
-### Source [27]: https://openreview.net/forum?id=GYk0thSY1M
+-----]]></source_block>
+        <source_block><![CDATA[### Source [27]: https://openreview.net/forum?id=GYk0thSY1M
 
 Query: What are the most effective techniques for context compression in large language models, including summarization, deduplication, and moving working memory to long-term memory?
 
@@ -305,14 +256,13 @@ Answer: This paper proposes Recurrent Context Compression (RCC), which is design
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How is 'context drift' defined in AI systems, and what are the primary strategies to manage or mitigate conflicting information over time in an LLM's context?</summary>
-
-### Source [28]: https://viso.ai/deep-learning/concept-drift-vs-data-drift/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How is 'context drift' defined in AI systems, and what are the primary strategies to manage or mitigate conflicting information over time in an LLM's context?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [28]: https://viso.ai/deep-learning/concept-drift-vs-data-drift/
 
 Query: How is 'context drift' defined in AI systems, and what are the primary strategies to manage or mitigate conflicting information over time in an LLM's context?
 
@@ -320,11 +270,8 @@ Answer: Concept drift is defined as a change in the statistical properties of th
 
 -----
 
------
-
------
-
-### Source [31]: https://erikjlarson.substack.com/p/context-drift-and-the-illusion-of
+-----]]></source_block>
+        <source_block><![CDATA[### Source [31]: https://erikjlarson.substack.com/p/context-drift-and-the-illusion-of
 
 Query: How is 'context drift' defined in AI systems, and what are the primary strategies to manage or mitigate conflicting information over time in an LLM's context?
 
@@ -332,24 +279,20 @@ Answer: This source frames context drift in AI systems as the challenge of maint
 
 -----
 
------
-
------
-
-### Source [32]: https://www.evidentlyai.com/ml-in-production/concept-drift
+-----]]></source_block>
+        <source_block><![CDATA[### Source [32]: https://www.evidentlyai.com/ml-in-production/concept-drift
 
 Query: How is 'context drift' defined in AI systems, and what are the primary strategies to manage or mitigate conflicting information over time in an LLM's context?
 
 Answer: Concept drift is defined as a change in the relationship between input data and the model’s target variable, reflecting an evolution in the underlying problem the model addresses. It can be detected through shifts in feature distributions or changes in the distribution of target values (label drift). The source distinguishes target drift (change in the function mapping inputs to outputs) from label drift (change in frequency of observed outcomes), noting that both can impact model reliability. Effective management of concept drift includes monitoring feature and prediction distributions, frequent model retraining, and implementing drift detection mechanisms to trigger retraining or adaptation when significant changes are observed. This ensures that the model remains relevant as the context and relationships in the data evolve over time[5].
 
------
-
-</details>
-
-<details>
-<summary>How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?</summary>
-
-### Source [33]: https://www.charterglobal.com/context-engineering/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [33]: https://www.charterglobal.com/context-engineering/
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
@@ -357,11 +300,8 @@ Answer: Context engineering is defined as the strategic design and structuring o
 
 -----
 
------
-
------
-
-### Source [34]: https://www.philschmid.de/context-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [34]: https://www.philschmid.de/context-engineering
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
@@ -369,11 +309,8 @@ Answer: Context engineering is described as the discipline of designing and buil
 
 -----
 
------
-
------
-
-### Source [35]: https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider
+-----]]></source_block>
+        <source_block><![CDATA[### Source [35]: https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
@@ -381,64 +318,48 @@ Answer: Context engineering is portrayed as the "delicate art and science" of fi
 
 -----
 
------
-
------
-
-### Source [36]: https://addyo.substack.com/p/context-engineering-bringing-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [36]: https://addyo.substack.com/p/context-engineering-bringing-engineering
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
 Answer: Context engineering is about dynamically providing an AI system—particularly LLMs—with all the information and tools needed to successfully complete a task. This includes instructions, data, examples, tools, and task history, all orchestrated and packaged into the model’s context at runtime. The analogy used is to treat the LLM’s context window like a CPU’s RAM, where the role of the context engineer is similar to an operating system, responsible for loading the right "code and data" for each task. Inputs for context can come from a variety of sources, such as user queries, system instructions, retrieved documents, tool outputs, and summaries of previous interactions. Context engineering thus requires close integration with software engineering (for system logic and architecture), data engineering (for reliable data pipelines and retrieval), and MLOps (for monitoring, scaling, and continuous improvement of context delivery in production environments). The discipline brings engineering rigor to the process of assembling AI inputs, transforming context management from a manual art into a systematic, cross-functional engineering practice[4].
 
------
-
------
-
-### Source [58]: https://www.charterglobal.com/context-engineering/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [58]: https://www.charterglobal.com/context-engineering/
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
 Answer: Context engineering is defined as the strategic design and structuring of the environment, input data, and interaction flows that shape how an AI system interprets and responds to information. Unlike traditional software engineering, which relies on deterministic logic, AI systems—especially those using large language models (LLMs)—are highly sensitive to the context in which tasks are presented. Context engineering manages aspects such as user metadata, task instructions, data schemas, user intent, role-based behaviors, and environmental cues. This ensures that AI-generated responses are relevant, trustworthy, and aligned with organizational objectives. As generative AI adoption increases, context engineering is becoming foundational for AI reliability, safety, and scalability. It is now considered essential for developers, AI product managers, data scientists, and business leaders building robust AI applications. While prompt engineering focuses on crafting effective inputs for generative AI, it is limited for production systems; context engineering expands this by addressing the broader system-level integration required in real-world AI deployments[1].
 
------
-
------
-
-### Source [59]: https://www.philschmid.de/context-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [59]: https://www.philschmid.de/context-engineering
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
 Answer: Context engineering is described as the discipline of designing and building dynamic systems that supply the right information and tools, in the right format, at the right time, enabling LLMs to accomplish their tasks effectively. It is not limited to the creation of prompt templates but involves the development of a system that dynamically generates context before the main LLM invocation. This context may include data such as calendar entries, emails, or web search results, tailored to the current task. The approach emphasizes the importance of providing concise, well-formatted information and tool schemas, rather than overwhelming the model with raw data. The engineering of context is framed as a cross-functional challenge that requires understanding the business use case, defining desired outputs, and structuring all necessary information for the LLM to perform the required function. This integration is central to modern software engineering, data engineering, and MLOps practices in production AI systems, as it ensures that AI agents are reliable and aligned with business objectives[2].
 
------
-
------
-
-### Source [60]: https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider
+-----]]></source_block>
+        <source_block><![CDATA[### Source [60]: https://www.llamaindex.ai/blog/context-engineering-what-it-is-and-techniques-to-consider
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
 Answer: The article explains that context engineering is about providing AI agents with the relevant context needed to perform tasks effectively. Unlike prompt engineering, which focuses on crafting single task instructions, context engineering is concerned with carefully curating the contents of the LLM's context window using information drawn from multiple sources. This process includes, but is not limited to, retrieval-augmented generation (RAG) techniques. Context engineering encompasses the orchestration of dynamic, relevant information sources—such as databases, documentation, and recent interactions—while considering limitations like the model’s context window size. The discipline is crucial for building reliable, effective AI systems in production, as it addresses the broader system requirements for context assembly and integration, going beyond prompt engineering’s narrower focus[3].
 
------
-
------
-
-### Source [61]: https://addyo.substack.com/p/context-engineering-bringing-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [61]: https://addyo.substack.com/p/context-engineering-bringing-engineering
 
 Query: How does context engineering integrate with the broader roles of software engineering, data engineering, and MLOps in production AI systems?
 
 Answer: Context engineering is described as the process of dynamically providing an AI model—such as an LLM—with all the information and tools needed to complete a task. This includes instructions, data, examples, tools, and historical context, all packaged into the model’s input context at runtime. The article presents a mental model likening an LLM to a CPU and its context window to RAM, with the context engineer acting as an operating system: responsible for loading working memory with the appropriate code and data for the task at hand. In practice, this assembled context may be sourced from user queries, system instructions, retrieved knowledge from databases or documentation, outputs from external tools, and summaries of previous interactions. Context engineering orchestrates these components into a coherent prompt for the model. This approach integrates with software engineering (system design and orchestration), data engineering (retrieval, formatting, and transformation of relevant data), and MLOps (managing context pipelines, quality assurance, and deployment processes) to ensure robust, reliable AI deployments in production environments[4].
 
------
-
-</details>
-
-<details>
-<summary>What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?</summary>
-
-### Source [37]: https://shelf.io/blog/ai-agent-deployment/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [37]: https://shelf.io/blog/ai-agent-deployment/
 
 Query: What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?
 
@@ -454,11 +375,8 @@ These principles collectively help organizations avoid 'tool confusion' and opti
 
 -----
 
------
-
------
-
-### Source [38]: https://support.talkdesk.com/hc/en-us/articles/39096730105115--Preview-AI-Agent-Platform-Best-Practices
+-----]]></source_block>
+        <source_block><![CDATA[### Source [38]: https://support.talkdesk.com/hc/en-us/articles/39096730105115--Preview-AI-Agent-Platform-Best-Practices
 
 Query: What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?
 
@@ -475,11 +393,8 @@ These practices are designed to improve predictability, reduce confusion, and en
 
 -----
 
------
-
------
-
-### Source [39]: https://docs.wayfound.ai/agent-management-best-practices
+-----]]></source_block>
+        <source_block><![CDATA[### Source [39]: https://docs.wayfound.ai/agent-management-best-practices
 
 Query: What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?
 
@@ -495,11 +410,8 @@ The focus is on continuous iteration and feedback-driven improvement to maintain
 
 -----
 
------
-
------
-
-### Source [40]: https://help.make.com/ai-agent-best-practices
+-----]]></source_block>
+        <source_block><![CDATA[### Source [40]: https://help.make.com/ai-agent-best-practices
 
 Query: What are the best practices for managing and selecting from a large number of tools (100+) in an AI agent to avoid 'tool confusion' and optimize performance?
 
@@ -514,14 +426,13 @@ Answer: Make.com highlights technical and operational controls for managing larg
 
 These controls collectively reduce the risk of tool confusion and help optimize agent performance when managing a large and diverse toolset[4].
 
------
-
-</details>
-
-<details>
-<summary>What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?</summary>
-
-### Source [41]: https://www.tabnine.com/blog/your-ai-doesnt-need-more-training-it-needs-context/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [41]: https://www.tabnine.com/blog/your-ai-doesnt-need-more-training-it-needs-context/
 
 Query: What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?
 
@@ -529,11 +440,8 @@ Answer: The article emphasizes that context engineering—particularly through R
 
 -----
 
------
-
------
-
-### Source [42]: https://ai-pro.org/learn-ai/articles/optimal-strategies-for-ai-performance-fine-tune-vs-incontext-learning/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [42]: https://ai-pro.org/learn-ai/articles/optimal-strategies-for-ai-performance-fine-tune-vs-incontext-learning/
 
 Query: What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?
 
@@ -541,11 +449,8 @@ Answer: This source compares fine-tuning and in-context learning (a form of cont
 
 -----
 
------
-
------
-
-### Source [43]: https://www.tribe.ai/applied-ai/fine-tuning-vs-prompt-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [43]: https://www.tribe.ai/applied-ai/fine-tuning-vs-prompt-engineering
 
 Query: What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?
 
@@ -553,11 +458,8 @@ Answer: This article frames fine-tuning as akin to hiring a specialist—excelle
 
 -----
 
------
-
------
-
-### Source [44]: https://nexla.com/ai-infrastructure/prompt-engineering-vs-fine-tuning/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [44]: https://nexla.com/ai-infrastructure/prompt-engineering-vs-fine-tuning/
 
 Query: What are the primary trade-offs between context engineering and model fine-tuning in terms of cost, development speed, and adaptability for enterprise AI applications?
 
@@ -565,14 +467,13 @@ Answer: According to this source, fine-tuning is preferred for enterprise AI app
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?</summary>
-
-### Source [45]: https://productschool.com/blog/artificial-intelligence/ai-agents-product-managers
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [45]: https://productschool.com/blog/artificial-intelligence/ai-agents-product-managers
 
 Query: What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?
 
@@ -586,11 +487,8 @@ These approaches indirectly address tool confusion by optimizing descriptions (c
 
 -----
 
------
-
------
-
-### Source [46]: https://www.hashicorp.com/en/blog/before-you-build-agentic-ai-understand-the-confused-deputy-problem
+-----]]></source_block>
+        <source_block><![CDATA[### Source [46]: https://www.hashicorp.com/en/blog/before-you-build-agentic-ai-understand-the-confused-deputy-problem
 
 Query: What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?
 
@@ -603,11 +501,8 @@ While this source focuses on security, these measures also help manage tool conf
 
 -----
 
------
-
------
-
-### Source [47]: https://www.uctoday.com/collaboration/ai-agent-confusion-from-digital-assistants-to-autonomous-co-workers/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [47]: https://www.uctoday.com/collaboration/ai-agent-confusion-from-digital-assistants-to-autonomous-co-workers/
 
 Query: What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?
 
@@ -620,11 +515,8 @@ These insights suggest that reducing tool confusion depends on both better defin
 
 -----
 
------
-
------
-
-### Source [49]: https://www.forrester.com/blogs/the-state-of-ai-agents-lots-of-potential-and-confusion/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [49]: https://www.forrester.com/blogs/the-state-of-ai-agents-lots-of-potential-and-confusion/
 
 Query: What are the most effective strategies for managing 'tool confusion' in AI agents when the number of available tools is large, specifically regarding tool description optimization and dynamic selection?
 
@@ -634,14 +526,13 @@ Answer: This source discusses the widespread confusion around GenAI agents and r
 - Ensuring tool descriptions are structured around clear, actionable criteria within the decision framework, so agents can accurately match tasks to tools.
 This approach addresses both description optimization (by standardizing how tools are presented to the agent) and dynamic selection (by providing a systematic selection logic).
 
------
-
-</details>
-
-<details>
-<summary>Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?</summary>
-
-### Source [50]: https://66degrees.com/building-a-business-case-for-ai-in-financial-services/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [50]: https://66degrees.com/building-a-business-case-for-ai-in-financial-services/
 
 Query: Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?
 
@@ -657,11 +548,8 @@ Key architectural considerations highlighted included data integration, iterativ
 
 -----
 
------
-
------
-
-### Source [51]: https://shellypalmer.com/2025/06/context-engineering-a-framework-for-enterprise-ai-operations/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [51]: https://shellypalmer.com/2025/06/context-engineering-a-framework-for-enterprise-ai-operations/
 
 Query: Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?
 
@@ -687,11 +575,8 @@ The blueprint emphasizes that context engineering enables AI systems to maintain
 
 -----
 
------
-
------
-
-### Source [52]: https://www.akira.ai/blog/context-engineering
+-----]]></source_block>
+        <source_block><![CDATA[### Source [52]: https://www.akira.ai/blog/context-engineering
 
 Query: Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?
 
@@ -709,11 +594,8 @@ The source stresses the importance of fairness, transparency, and privacy in des
 
 -----
 
------
-
------
-
-### Source [53]: https://www.finextra.com/blogposting/28834/context-engineering-for-financial-services
+-----]]></source_block>
+        <source_block><![CDATA[### Source [53]: https://www.finextra.com/blogposting/28834/context-engineering-for-financial-services
 
 Query: Can you provide detailed architectural blueprints or case studies for implementing context engineering in the financial services or healthcare sectors?
 
@@ -727,14 +609,13 @@ The article underscores that context engineering is essential for moving beyond 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?</summary>
-
-### Source [54]: https://www.marktechpost.com/2024/06/27/solving-the-lost-in-the-middle-problem-in-large-language-models-a-breakthrough-in-attention-calibration/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [54]: https://www.marktechpost.com/2024/06/27/solving-the-lost-in-the-middle-problem-in-large-language-models-a-breakthrough-in-attention-calibration/
 
 Query: What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?
 
@@ -742,11 +623,8 @@ Answer: Researchers from the University of Washington, MIT, Google Cloud AI Rese
 
 -----
 
------
-
------
-
-### Source [55]: https://www.unite.ai/why-large-language-models-forget-the-middle-uncovering-ais-hidden-blind-spot/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [55]: https://www.unite.ai/why-large-language-models-forget-the-middle-uncovering-ais-hidden-blind-spot/
 
 Query: What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?
 
@@ -754,11 +632,8 @@ Answer: The "lost-in-the-middle" problem in LLMs arises due to architectural bia
 
 -----
 
------
-
------
-
-### Source [56]: https://promptmetheus.com/resources/llm-knowledge-base/lost-in-the-middle-effect
+-----]]></source_block>
+        <source_block><![CDATA[### Source [56]: https://promptmetheus.com/resources/llm-knowledge-base/lost-in-the-middle-effect
 
 Query: What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?
 
@@ -766,11 +641,8 @@ Answer: The "Lost-in-the-Middle Effect" refers to the tendency of LLMs to pay le
 
 -----
 
------
-
------
-
-### Source [57]: https://news.mit.edu/2025/unpacking-large-language-model-bias-0617
+-----]]></source_block>
+        <source_block><![CDATA[### Source [57]: https://news.mit.edu/2025/unpacking-large-language-model-bias-0617
 
 Query: What are the latest research findings and benchmarks on the 'lost-in-the-middle' problem, and how do techniques like instruction repetition and context reordering mitigate it?
 
@@ -778,17 +650,14 @@ Answer: MIT researchers discovered that positional bias, where LLMs prefer infor
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>As architects and developers design their workload to take full advantage of language model capabilities, AI agent systems become increasingly complex. These systems often exceed the abilities of a single agent that has access to many tools and knowledge sources. Instead, these systems use multi-agent orchestrations to handle complex, collaborative tasks reliably. This guide covers fundamental orchestration patterns for multi-agent architectures and helps you choose the approach that fits your specific requirements.</summary>
-
-As architects and developers design their workload to take full advantage of language model capabilities, AI agent systems become increasingly complex. These systems often exceed the abilities of a single agent that has access to many tools and knowledge sources. Instead, these systems use multi-agent orchestrations to handle complex, collaborative tasks reliably. This guide covers fundamental orchestration patterns for multi-agent architectures and helps you choose the approach that fits your specific requirements.
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[As architects and developers design their workload to take full advantage of language model capabilities, AI agent systems become increasingly complex. These systems often exceed the abilities of a single agent that has access to many tools and knowledge sources. Instead, these systems use multi-agent orchestrations to handle complex, collaborative tasks reliably. This guide covers fundamental orchestration patterns for multi-agent architectures and helps you choose the approach that fits your specific requirements.]]></title>
+      <content><![CDATA[As architects and developers design their workload to take full advantage of language model capabilities, AI agent systems become increasingly complex. These systems often exceed the abilities of a single agent that has access to many tools and knowledge sources. Instead, these systems use multi-agent orchestrations to handle complex, collaborative tasks reliably. This guide covers fundamental orchestration patterns for multi-agent architectures and helps you choose the approach that fits your specific requirements.
 
 ## Overview
 
@@ -1206,14 +1075,11 @@ For hands-on implementation, explore [Semantic Kernel multi-agent orchestration 
 
 ## Implementations in Azure AI Foundry Agent Service
 
-You can also use the [Azure AI Foundry Agent Service](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview) to chain agents together in relatively simple workflows by using its [connected agents](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/connected-agents) functionality. The workflows that you implement by using this service are primarily nondeterministic, which limits which patterns can be fully implemented in this no-code environment.
-
-</details>
-
-<details>
-<summary>We’ve spent two years teaching everyone about “prompt engineering,” which has been great. But crafting clever questions represents perhaps 5% of what makes enterprise AI successful. Now, there’s a new term being added to the buzzword bingo lexicon: “context engineering.” I want to make fun of it, but I really like it. Context engineering isn’t about the evolution of end user behavior, it’s a nice way to describe the components you need to get the most out of the current crop of LLMs and Reasoning Engines.</summary>
-
-We’ve spent two years teaching everyone about “prompt engineering,” which has been great. But crafting clever questions represents perhaps 5% of what makes enterprise AI successful. Now, there’s a new term being added to the buzzword bingo lexicon: “context engineering.” I want to make fun of it, but I really like it. Context engineering isn’t about the evolution of end user behavior, it’s a nice way to describe the components you need to get the most out of the current crop of LLMs and Reasoning Engines.
+You can also use the [Azure AI Foundry Agent Service](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview) to chain agents together in relatively simple workflows by using its [connected agents](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/connected-agents) functionality. The workflows that you implement by using this service are primarily nondeterministic, which limits which patterns can be fully implemented in this no-code environment.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[We’ve spent two years teaching everyone about “prompt engineering,” which has been great. But crafting clever questions represents perhaps 5% of what makes enterprise AI successful. Now, there’s a new term being added to the buzzword bingo lexicon: “context engineering.” I want to make fun of it, but I really like it. Context engineering isn’t about the evolution of end user behavior, it’s a nice way to describe the components you need to get the most out of the current crop of LLMs and Reasoning Engines.]]></title>
+      <content><![CDATA[We’ve spent two years teaching everyone about “prompt engineering,” which has been great. But crafting clever questions represents perhaps 5% of what makes enterprise AI successful. Now, there’s a new term being added to the buzzword bingo lexicon: “context engineering.” I want to make fun of it, but I really like it. Context engineering isn’t about the evolution of end user behavior, it’s a nice way to describe the components you need to get the most out of the current crop of LLMs and Reasoning Engines.
 
 ## What Is Context Engineering?
 
@@ -1360,14 +1226,11 @@ Context engineering leverages existing enterprise capabilities: data management,
 
 Start by bringing your business and technology leaders together around this question: “What context would transform our AI from a smart assistant into a knowledgeable partner?” The answer will drive your context engineering strategy.
 
-Is “context engineering” another buzzword? Perhaps. But it’s a useful one that captures a critical need: orchestrating your entire information ecosystem to make AI truly intelligent about your business. In an era where competitive advantage comes from decision speed and quality, context isn’t just king… it’s the entire kingdom.
-
-</details>
-
-<details>
-<summary>In neuroscience, human memory refers to the brain’s ability to store, retain, and recall information \[ [9](https://arxiv.org/html/2504.15965v1#bib.bib9 ""), [10](https://arxiv.org/html/2504.15965v1#bib.bib10 "")\].</summary>
-
-In neuroscience, human memory refers to the brain’s ability to store, retain, and recall information \[ [9](https://arxiv.org/html/2504.15965v1#bib.bib9 ""), [10](https://arxiv.org/html/2504.15965v1#bib.bib10 "")\].
+Is “context engineering” another buzzword? Perhaps. But it’s a useful one that captures a critical need: orchestrating your entire information ecosystem to make AI truly intelligent about your business. In an era where competitive advantage comes from decision speed and quality, context isn’t just king… it’s the entire kingdom.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[In neuroscience, human memory refers to the brain’s ability to store, retain, and recall information \[ [9](https://arxiv.org/html/2504.15965v1#bib.bib9 ""), [10](https://arxiv.org/html/2504.15965v1#bib.bib10 "")\].]]></title>
+      <content><![CDATA[In neuroscience, human memory refers to the brain’s ability to store, retain, and recall information \[ [9](https://arxiv.org/html/2504.15965v1#bib.bib9 ""), [10](https://arxiv.org/html/2504.15965v1#bib.bib10 "")\].
 Human memory serves as the foundation for understanding the world, learning new knowledge, adapting to the environment, and making decisions, allowing us to preserve past experiences, skills, and knowledge, and helping us form our personal identity and behavior patterns \[ [11](https://arxiv.org/html/2504.15965v1#bib.bib11 "")\].
 Human memory can be broadly classified into short-term memory and long-term memory based on the duration of new memory formation \[ [12](https://arxiv.org/html/2504.15965v1#bib.bib12 "")\].
 Short-term memory refers to the information we temporarily store and process, typically lasting from a few seconds to a few minutes, and includes sensory memory and working memory \[ [11](https://arxiv.org/html/2504.15965v1#bib.bib11 "")\].
@@ -1848,21 +1711,15 @@ This article systematically examines the relationship between human memory and m
 We begin by analyzing various categories of human memory—including perceptual memory, working memory, and long-term memory—and compare them with existing memory models in AI. Building upon this, we propose an eight-quadrant classification framework grounded in three dimensions: object, form, and time, offering a theoretical foundation for the construction of multi-level and comprehensive memory systems.
 Furthermore, we review the current state of memory development in AI from both personal memory and system memory perspectives.
 Finally, we identify key open challenges in contemporary AI memory design and outline promising directions for future research in the LLM era.
-We believe that, with continued technological progress, AI systems will increasingly adopt more dynamic, adaptive, and intelligent memory architectures, thereby enabling more robust applications across complex, real-world tasks.
-
-</details>
-
-<details>
-<summary>⚠️ Error scraping https://aclanthology.org/2024.findings-emnlp.138.pdf after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.</summary>
-
-⚠️ Error scraping https://aclanthology.org/2024.findings-emnlp.138.pdf after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.
-
-</details>
-
-<details>
-<summary>Despite the significant advancement in large language models (LLMs), LLMs often need help with long contexts, especially where information is spread across the complete text. LLMs can now handle long stretches of text as input, but they still face the “lost in the middle” problem. The ability of LLMs to accurately find and use information within that context weakens as the relevant information gets further away from the beginning or end. In other words, they tend to focus on the information at the beginning and end, neglecting what’s sandwiched in between.</summary>
-
-Despite the significant advancement in large language models (LLMs), LLMs often need help with long contexts, especially where information is spread across the complete text. LLMs can now handle long stretches of text as input, but they still face the “lost in the middle” problem. The ability of LLMs to accurately find and use information within that context weakens as the relevant information gets further away from the beginning or end. In other words, they tend to focus on the information at the beginning and end, neglecting what’s sandwiched in between.
+We believe that, with continued technological progress, AI systems will increasingly adopt more dynamic, adaptive, and intelligent memory architectures, thereby enabling more robust applications across complex, real-world tasks.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[⚠️ Error scraping https://aclanthology.org/2024.findings-emnlp.138.pdf after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.]]></title>
+      <content><![CDATA[⚠️ Error scraping https://aclanthology.org/2024.findings-emnlp.138.pdf after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Despite the significant advancement in large language models (LLMs), LLMs often need help with long contexts, especially where information is spread across the complete text. LLMs can now handle long stretches of text as input, but they still face the “lost in the middle” problem. The ability of LLMs to accurately find and use information within that context weakens as the relevant information gets further away from the beginning or end. In other words, they tend to focus on the information at the beginning and end, neglecting what’s sandwiched in between.]]></title>
+      <content><![CDATA[Despite the significant advancement in large language models (LLMs), LLMs often need help with long contexts, especially where information is spread across the complete text. LLMs can now handle long stretches of text as input, but they still face the “lost in the middle” problem. The ability of LLMs to accurately find and use information within that context weakens as the relevant information gets further away from the beginning or end. In other words, they tend to focus on the information at the beginning and end, neglecting what’s sandwiched in between.
 
 Researchers from the University of Washington, MIT, Google Cloud AI Research, and Google collaborated to address the “lost-in-the-middle” issue. Despite being trained to handle large input contexts, LLMs exhibit an inherent attention bias that results in higher attention to tokens at the beginning and end of the input. This leads to reduced accuracy when critical information is situated in the middle. The study aims to mitigate the positional bias by allowing the model to attend to contexts based on their relevance, regardless of their position within the input sequence.
 
@@ -1874,17 +1731,13 @@ The proposed “found-in-the-middle” mechanism disentangles positional bias fr
 
 The researchers operationalize this calibration mechanism to improve overall RAG performance. The attention calibration method consistently outperforms uncalibrated models across various tasks and models, including those with different context window lengths. The approach yields improvements of up to 15 percentage points on the NaturalQuestions dataset. Additionally, combining attention calibration with existing reordering methods further enhances model performance, demonstrating the effectiveness and complementarity of the proposed solution.
 
-In conclusion, the proposed mechanism effectively identifies and addresses the lost-in-the-middle phenomenon by linking it to intrinsic positional attention bias in LLMs. The found-in-the-middle mechanism successfully mitigates this bias, enabling the models to attend to relevant contexts more faithfully and significantly improving performance in long-context utilization tasks. This advancement opens new ways for enhancing LLM attention mechanisms and their application in various user-facing applications.
-
-</details>
-
-
-## Code Sources
-
-<details>
-<summary>Repository analysis for https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md</summary>
-
-# Repository analysis for https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md
+In conclusion, the proposed mechanism effectively identifies and addresses the lost-in-the-middle phenomenon by linking it to intrinsic positional attention bias in LLMs. The found-in-the-middle mechanism successfully mitigates this bias, enabling the models to attend to relevant contexts more faithfully and significantly improving performance in long-context utilization tasks. This advancement opens new ways for enhancing LLM attention mechanisms and their application in various user-facing applications.]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <code_source>
+      <title><![CDATA[Repository analysis for https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md]]></title>
+      <content><![CDATA[# Repository analysis for https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md
 
 ## Summary
 Repository: humanlayer/12-factor-agents
@@ -2164,20 +2017,17 @@ Recurring theme here: I don't know what's the best approach, but I know you want
 
 [← Own Your Prompts](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-02-own-your-prompts.md) | [Tools Are Structured Outputs →](https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-04-tools-are-structured-outputs.md)
 
-</details>
 
-
-## YouTube Video Transcripts
-
-_No YouTube video transcripts found._
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>context-engineering-a-guide-with-examples-datacamp</summary>
-
-You may be a master prompt engineer, but as the conversation goes on, your chatbot often forgets the earliest and most important pieces of your instructions, your code assistant loses track of project architecture, and your RAG tool can’t connect information across complex documents and domains.
+]]></content>
+    </code_source>
+  </code_sources>
+  <youtube_video_transcripts>
+    <message>No YouTube video transcripts found.</message>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[context-engineering-a-guide-with-examples-datacamp]]></title>
+      <content><![CDATA[You may be a master prompt engineer, but as the conversation goes on, your chatbot often forgets the earliest and most important pieces of your instructions, your code assistant loses track of project architecture, and your RAG tool can’t connect information across complex documents and domains.
 
 As AI use cases grow more complex, writing a clever prompt is just one small part of a much larger challenge: **context engineerin** **g**.
 
@@ -2327,14 +2177,11 @@ If you’re building anything more complex than a simple content generator, you�
 
 ### Why do AI models perform worse when I give them more tools or information?
 
-**This is called context confusion—models get distracted by irrelevant information and may use tools that don't match the task. The solution is tool loadout management: use RAG techniques to select only the most relevant tools for each specific task, keeping selections under 30 tools.**
-
-</details>
-
-<details>
-<summary>context-engineering-guide-by-elvis-ai-newsletter</summary>
-
-A few years ago, many, even top AI researchers, claimed that prompt engineering would be dead by now.
+**This is called context confusion—models get distracted by irrelevant information and may use tools that don't match the task. The solution is tool loadout management: use RAG techniques to select only the most relevant tools for each specific task, keeping selections under 30 tools.**]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[context-engineering-guide-by-elvis-ai-newsletter]]></title>
+      <content><![CDATA[A few years ago, many, even top AI researchers, claimed that prompt engineering would be dead by now.
 
 Obviously, they were very wrong, and in fact, prompt engineering is now even more important than ever. It is so important that it is now being rebranded as _**context engineering**_.
 
@@ -2566,14 +2413,11 @@ This first version of the deep research application I have built doesn’t requi
 This is clever context engineering as it makes your application more dynamic, cheaper, and efficient. You see, context engineering is not just about optimizing your prompt; it’s about choosing the right context for the goals you are targeting. You can also get more creative about how you are maintaining that vector store and how you pull those existing subtasks into context. Creative and novel context engineering is the moat!
 ### **States & Historical Context**
 We are not showing it in v1 of our deep research agent, but an important part of this project was to optimize the results to generate the final report. In many cases, the agentic system might need to revise all or a subset of the queries, subtasks, and potentially the data it’s pulling from the web search APIs. This means that the system will take multiple shots at the problem and needs access to the previous states and potentially all the historical context of the system.
-What does this mean in the context of our use case? In our example, it could be giving the agent access to the state of the subtasks, the revisions (if any), the past results from each agent in the workflow, and whatever other context is necessary to help in the revision phase. For this type of context, what we are passing would depend on what you are optimizing for. Lots of decision-making will happen here. Context engineering isn’t always straightforward, and I think you can start to imagine how many iterations this component will require. This is why I continue to emphasize the importance of other areas, such as evaluation. If you are not measuring all these things, how do you know whether your context engineering efforts are working?
-
-</details>
-
-<details>
-<summary>context-engineering-what-it-is-and-techniques-to-consider-ll</summary>
-
-Although the principles behind the term ‘context engineering’ are not new, the wording is a useful abstraction that allows us to reason about the most pressing challenges when it comes to building effective AI agents. So let’s break it down. In this article, I want to cover three things: what we mean by context engineering, how it’s different from “prompt engineering”, and how you can use LlamaIndex and LlamaCloud to design agentic systems that adhere to context engineering principles.
+What does this mean in the context of our use case? In our example, it could be giving the agent access to the state of the subtasks, the revisions (if any), the past results from each agent in the workflow, and whatever other context is necessary to help in the revision phase. For this type of context, what we are passing would depend on what you are optimizing for. Lots of decision-making will happen here. Context engineering isn’t always straightforward, and I think you can start to imagine how many iterations this component will require. This is why I continue to emphasize the importance of other areas, such as evaluation. If you are not measuring all these things, how do you know whether your context engineering efforts are working?]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[context-engineering-what-it-is-and-techniques-to-consider-ll]]></title>
+      <content><![CDATA[Although the principles behind the term ‘context engineering’ are not new, the wording is a useful abstraction that allows us to reason about the most pressing challenges when it comes to building effective AI agents. So let’s break it down. In this article, I want to cover three things: what we mean by context engineering, how it’s different from “prompt engineering”, and how you can use LlamaIndex and LlamaCloud to design agentic systems that adhere to context engineering principles.
 
 ### What is Context Engineering
 
@@ -2667,14 +2511,11 @@ While context engineering focuses on optimizing what information goes into each 
 
 From a context engineering perspective, workflows are crucial because they prevent context overload. Instead of cramming everything into a single LLM call and hoping for the best, you can break complex tasks into focused steps, each with its own optimized context window.
 
-The strategic insight here is that every AI builder is ultimately building specialized workflows - whether they realize it or not. Document processing workflows, customer support workflows, coding workflows - these are the building blocks of practical AI applications.
-
-</details>
-
-<details>
-<summary>context-engineering</summary>
-
-As Andrej Karpathy puts it, LLMs are like a [new kind of operating system](https://www.youtube.com/watch?si=-aKY-x57ILAmWTdw&t=620&v=LCEmiRjPEtQ&feature=youtu.be&ref=blog.langchain.com). The LLM is like the CPU and its [context window](https://docs.anthropic.com/en/docs/build-with-claude/context-windows?ref=blog.langchain.com) is like the RAM, serving as the model’s working memory. Just like RAM, the LLM context window has limited [capacity](https://lilianweng.github.io/posts/2023-06-23-agent/?ref=blog.langchain.com) to handle various sources of context. And just as an operating system curates what fits into a CPU’s RAM, we can think about “context engineering” playing a similar role. [Karpathy summarizes this well](https://x.com/karpathy/status/1937902205765607626?ref=blog.langchain.com):
+The strategic insight here is that every AI builder is ultimately building specialized workflows - whether they realize it or not. Document processing workflows, customer support workflows, coding workflows - these are the building blocks of practical AI applications.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[context-engineering]]></title>
+      <content><![CDATA[As Andrej Karpathy puts it, LLMs are like a [new kind of operating system](https://www.youtube.com/watch?si=-aKY-x57ILAmWTdw&t=620&v=LCEmiRjPEtQ&feature=youtu.be&ref=blog.langchain.com). The LLM is like the CPU and its [context window](https://docs.anthropic.com/en/docs/build-with-claude/context-windows?ref=blog.langchain.com) is like the RAM, serving as the model’s working memory. Just like RAM, the LLM context window has limited [capacity](https://lilianweng.github.io/posts/2023-06-23-agent/?ref=blog.langchain.com) to handle various sources of context. And just as an operating system curates what fits into a CPU’s RAM, we can think about “context engineering” playing a similar role. [Karpathy summarizes this well](https://x.com/karpathy/status/1937902205765607626?ref=blog.langchain.com):
 
 > _\[Context engineering is the\] ”…delicate art and science of filling the context window with just the right information for the next step.”_https://blog.langchain.com/content/images/2025/07/image-1.pngContext types commonly used in LLM applications
 
@@ -2789,21 +2630,15 @@ This allows context to be isolated from the LLM in the environment. Hugging Face
 
 **State**
 
-It’s worth calling out that an agent’s runtime [state object](https://langchain-ai.github.io/langgraph/concepts/low_level/?ref=blog.langchain.com#state) can also be a great way to isolate context. This can serve the same purpose as sandboxing. A state object can be designed with a [schema](https://langchain-ai.github.io/langgraph/concepts/low_level/?ref=blog.langchain.com#schema) that has fields that context can be written to. One field of the schema (e.g., `messages`) can be exposed to the LLM at each turn of the agent, but the schema can isolate information in other fields for more selective use.
-
-</details>
-
-<details>
-<summary>scraping-failed</summary>
-
-⚠️ Error scraping https://arxiv.org/pdf/2507.13334 after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.
-
-</details>
-
-<details>
-<summary>the-rise-of-context-engineering</summary>
-
-Context engineering is building dynamic systems to provide the right information and tools in the right format such that the LLM can plausibly accomplish the task.
+It’s worth calling out that an agent’s runtime [state object](https://langchain-ai.github.io/langgraph/concepts/low_level/?ref=blog.langchain.com#state) can also be a great way to isolate context. This can serve the same purpose as sandboxing. A state object can be designed with a [schema](https://langchain-ai.github.io/langgraph/concepts/low_level/?ref=blog.langchain.com#schema) that has fields that context can be written to. One field of the schema (e.g., `messages`) can be exposed to the LLM at each turn of the agent, but the schema can isolate information in other fields for more selective use.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[scraping-failed]]></title>
+      <content><![CDATA[⚠️ Error scraping https://arxiv.org/pdf/2507.13334 after 3 attempts: Request Timeout: Failed to make POST request as the request timed out. Request timed out - No additional error details provided.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[the-rise-of-context-engineering]]></title>
+      <content><![CDATA[Context engineering is building dynamic systems to provide the right information and tools in the right format such that the LLM can plausibly accomplish the task.
 
 Most of the time when an agent is not performing reliably the underlying cause is that the appropriate context, instructions and tools have not been communicated to the model.
 
@@ -2867,14 +2702,11 @@ Some basic examples of good context engineering include:
 - Short term memory: If a conversation is going on for a while, creating a summary of the conversation and using that in the future.
 - Long term memory: If a user has expressed preferences in a previous conversation, being able to fetch that information.
 - Prompt Engineering: Instructions for how an agent should behave are clearly enumerated in the prompt.
-- Retrieval: Fetching information dynamically and inserting it into the prompt before calling the LLM.
-
-</details>
-
-<details>
-<summary>what-is-context-engineering-pinecone</summary>
-
-LLMs are getting better, faster, and smarter, and as they do, we need new ways to use them.
+- Retrieval: Fetching information dynamically and inserting it into the prompt before calling the LLM.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[what-is-context-engineering-pinecone]]></title>
+      <content><![CDATA[LLMs are getting better, faster, and smarter, and as they do, we need new ways to use them.
 
 Applications people build with them have transitioned from asking LLMs to write to letting LLMs drive actions. With that, comes new challenges in developing what are called agentic applications.
 
@@ -3001,6 +2833,7 @@ This would free up our “driving” LLM instance to continue conversing with ou
 
 Great idea! But, context engineering gives us a framework to think about the benefits of these kinds of parallelized architectures versus sequential ones.
 
-Anthropic and Cognition both wrote about the tradeoffs that come with these, concluding that for read-heavy applications (l [ike research agents](https://www.anthropic.com/engineering/built-multi-agent-research-system)) or certain technical ones ( [code agents](https://cognition.ai/blog/dont-build-multi-agents)), a sequential agentic architecture may be easier to maintain context with than one that involves subagents. This mostly comes down to engineering the context gained and lost over the course of the agent’s work, as well as eschewing multi-agent architectures due to the difficulty of maintaining context over multiple agent runs.
-
-</details>
+Anthropic and Cognition both wrote about the tradeoffs that come with these, concluding that for read-heavy applications (l [ike research agents](https://www.anthropic.com/engineering/built-multi-agent-research-system)) or certain technical ones ( [code agents](https://cognition.ai/blog/dont-build-multi-agents)), a sequential agentic architecture may be easier to maintain context with than one that involves subagents. This mostly comes down to engineering the context gained and lost over the course of the agent’s work, as well as eschewing multi-agent architectures due to the difficulty of maintaining context over multiple agent runs.]]></content>
+    </additional_source>
+  </additional_sources>
+</research>

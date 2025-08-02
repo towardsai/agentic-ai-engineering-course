@@ -1,35 +1,44 @@
 {
-    "num_chars_article": 24777,
-    "num_chars_conclusion": 2046,
-    "num_chars_introduction": 2254,
-    "num_sections": 5,
-    "num_words_article": 3347,
-    "num_words_conclusion": 299,
-    "num_words_introduction": 336,
+    "config": {
+        "thread_id": "8ed1cc93-19ad-4a40-a767-2f944e06a29a",
+        "article_id": "03_context_engineering",
+        "enable_human_review": null
+    },
+    "num_chars_article": 28096,
+    "num_chars_conclusion": 1362,
+    "num_chars_introduction": 1182,
+    "num_sections": 6,
+    "num_words_article": 3779,
+    "num_words_conclusion": 205,
+    "num_words_introduction": 176,
     "sections": {
-        "What is Context Engineering?": {
-            "num_chars": 4084,
-            "num_words": 565
+        "From prompt to context engineering": {
+            "num_chars": 1588,
+            "num_words": 255
         },
-        "What Makes Up the Context": {
-            "num_chars": 4113,
-            "num_words": 514
+        "Understanding context engineering": {
+            "num_chars": 3693,
+            "num_words": 475
         },
-        "Challenges in Context Engineering": {
-            "num_chars": 1937,
-            "num_words": 253
+        "What makes up the context": {
+            "num_chars": 4046,
+            "num_words": 581
         },
-        "Context Optimization Strategies": {
-            "num_chars": 4805,
-            "num_words": 646
+        "Production implementation challenges": {
+            "num_chars": 2538,
+            "num_words": 344
         },
-        "Practical Application: Healthcare AI Assistant": {
-            "num_chars": 3824,
-            "num_words": 574
+        "Key strategies for context optimization": {
+            "num_chars": 5498,
+            "num_words": 739
+        },
+        "Here is an example": {
+            "num_chars": 6269,
+            "num_words": 896
         }
     },
     "seo": {
-        "title": "Context Engineering: Own Your LLM",
-        "description": "Master context engineering for LLMs! Learn to optimize, select, and compress context for accurate, fast, and cost-effective AI. Dive into practical strategies & challenges."
+        "title": "Context Engineering: The New Prompt",
+        "description": "Prompt engineering is dead! Discover context engineering, the new frontier in AI. Master managing LLM information flow for accurate, fast, and cost-effective AI applications."
     }
 }

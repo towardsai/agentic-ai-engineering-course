@@ -45,7 +45,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 1 - Introduction: ...
 
 - ...
-- Give step-by-step examples from section `1. <X>`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration. Avoid using code from other sections of the Notebook.
+- **Quick walkthrough of what we'll learn by the end of this lesson:** Take the core ideas of what we'll learn in the lesson from the `What We Are Planning to Share` subsection and highlight the importance and existence of the lesson from `Why We Think It's Valuable` subsection of the `Global Context of the Lesson` section.
 -  **Section length:** <X> words
 
 ## Section 2: ...
@@ -58,8 +58,7 @@ Avoid using code from other sections of the Notebook.
 ## Section 3 - Conclusion: ...
 
 - ...
-- Give step-by-step examples from section `3. <X>`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
-Avoid using code from other sections of the Notebook.
+- Leverage the concepts listed in subsection `Concepts That Will Be Introduced in Future Lessons` to make slight references to other topics we will learn during this course. To stay focused, specify only the ones that are present in this current lesson.
 -  **Section length:** <X> words
 
 ## Article Code
