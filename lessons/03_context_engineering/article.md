@@ -131,48 +131,34 @@ To solve this, consider these approaches:
 
 ```mermaid
 graph TD
-    subgraph "1. Context Selection"
-        A[Memory Sources] --> B{Information Retrieval};
-        B -->|RAG| C[Relevant Facts];
-        B -->|Tool Selection| D[Relevant Tools];
-        B -->|History Ranking| E[Relevant History];
-        C --> F[Selected Context];
-        D --> F;
-        E --> F;
+    subgraph "Context Selection Strategies"
+        A[User Query] --> B{Context Selection Engine};
+        
+        B -->|1. RAG| C[Retrieve Relevant Documents];
+        B -->|2. Tool Selection| D[Filter to <30 Tools];
+        B -->|3. Time Ranking| E[Rank by Date/Relevance];
+        B -->|4. Structured Outputs| F[Define Response Schema];
+        
+        C --> G[Selected Context];
+        D --> G;
+        E --> G;
+        F --> G;
     end
     
-    subgraph "2. Context Compression"
-        F --> G{Compression Engine};
-        G -->|Summarize| H[Compressed History];
-        G -->|Extract Preferences| I[User Preferences];
-        G -->|Deduplicate| J[Clean Context];
-        H --> K[Optimized Context];
-        I --> K;
+    subgraph "Context Assembly"
+        G --> H[Assemble Context];
+        H --> I[Add Core Instructions at Start];
+        H --> J[Add Core Instructions at End];
+        I --> K[Final Optimized Context];
         J --> K;
     end
     
-    subgraph "3. Context Isolation"
-        K --> L{Orchestrator Agent};
-        L --> M[Worker Agent 1<br/>Context A];
-        L --> N[Worker Agent 2<br/>Context B];
-        L --> O[Worker Agent 3<br/>Context C];
-        M --> P[Specialized Results];
-        N --> P;
-        O --> P;
-    end
-    
-    subgraph "4. Format Optimization"
-        P --> Q[Format with XML Tags];
-        Q --> R[YAML Structured Data];
-        R --> S[Final Optimized Context];
-    end
-    
-    S --> T((LLM Call));
-    T --> U[Response];
-    U --> V[Update Memory];
-    V --> A;
+    K --> L((LLM Call));
+    L --> M[Structured Response];
+    M --> N[Update Memory];
+    N --> A;
 ```
-Figure 6: A comprehensive workflow showing how all four context engineering techniques work together to optimize information flow from memory to LLM.
+Figure 6: A workflow showing how the four context selection strategies work together to optimize information retrieval and assembly.
 
 ### 2. Context compression
 As message history grows in short-term working memory, you must manage past interactions to keep your context window in check. You cannot simply drop past conversation turns, as the LLM still needs to remember what happened. Instead, you need ways to compress key facts from the past.
