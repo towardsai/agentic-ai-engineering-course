@@ -135,9 +135,9 @@ graph TD
         A[User Query] --> B{Context Selection Engine};
         
         B --> C["RAG: Retrieve Relevant Documents"];
-        B -->|2. Tool Selection| D[Filter to <30 Tools];
-        B -->|3. Time Ranking| E[Rank by Date/Relevance];
-        B -->|4. Structured Outputs| F[Define Response Schema];
+        B --> D["Tool Selection: Filter to <30 Tools"];
+        B --> E["Time Ranking: Rank by Date/Relevance"];
+        B --> F["Structured Outputs: Define Response Schema"];
         
         C --> G[Selected Context];
         D --> G;
