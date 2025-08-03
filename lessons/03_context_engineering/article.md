@@ -126,8 +126,7 @@ To solve this, consider these approaches:
 *   **Use structured outputs:** Define clear schemas for what the LLM should return. This allows you to pass only the necessary, structured information to downstream steps. We will cover this in detail in Lesson 4.
 *   **Use RAG:** Instead of providing entire documents, use RAG to fetch only the specific chunks of text needed to answer a user's question. This is a core topic we will explore in Lesson 10.
 *   **Reduce the number of available actions:** Rather than giving an agent access to every available action, use various strategies to delegate action subsets to specialized components. For example, a typical pattern is to leverage the orchestrator-worker pattern to delegate subtasks to specialized agents. Studies show that limiting the selection to under 30 tools can triple the agent's selection accuracy [[45]](https://productschool.com/blog/artificial-intelligence/ai-agents-product-managers). Still the exact number of the perfect number of tools an agent can use can be extremely dependent on what tools you provide, what LLM you use, and how well the actions are defined. That's why evaluating the performance of your AI system on core business metrics it's a mandatory step that will help you pick the number. We will learn how to do this in future lessons.
-*   **Rank time-sensitive data:** For time-sensitive information, rank it by date and filter out anything no longer relevant.
-*   **Repeat core instructions:** For the most important instructions, repeat them at both the start and the end of the prompt. This uses the model's tendency to pay more attention to the context edges, ensuring core instructions are not lost [[56]](https://promptmetheus.com/resources/llm-knowledge-base/lost-in-the-middle-effect).
+
 
 ```mermaid
 graph TD
@@ -151,7 +150,7 @@ graph TD
         H --> J[Add Core Instructions at End];
         I --> K[Prompt Template];
         J --> K;
-        K --> L[Final Prompt];
+        K --> L[Prompt];
     end
     
     L --> M((LLM Call));
@@ -161,13 +160,15 @@ graph TD
 ```
 Figure 6: A workflow showing how the four context selection strategies work together to optimize information retrieval and assembly.
 
+*   **Rank time-sensitive data:** For time-sensitive information, rank it by date and filter out anything no longer relevant.
+*   **Repeat core instructions:** For the most important instructions, repeat them at both the start and the end of the prompt. This uses the model's tendency to pay more attention to the context edges, ensuring core instructions are not lost [[56]](https://promptmetheus.com/resources/llm-knowledge-base/lost-in-the-middle-effect).
+
 ### 2. Context compression
 As message history grows in short-term working memory, you must manage past interactions to keep your context window in check. You cannot simply drop past conversation turns, as the LLM still needs to remember what happened. Instead, you need ways to compress key facts from the past.
 
 You can do this through:
-*   **Creating summaries of past interactions:** Use an LLM to replace a long, detailed history with a concise overview.
-*   **Moving user preferences to long-term memory:** Transfer user preferences from working memory to long-term episodic memory. This keeps the working context clean while ensuring preferences are remembered for future sessions.
-*   **Deduplication:** Remove redundant information from the context to avoid repetition.
+1.   **Creating summaries of past interactions:** Use an LLM to replace a long, detailed history with a concise overview.
+2.   **Moving user preferences to long-term memory:** Transfer user preferences from working memory to long-term episodic memory. This keeps the working context clean while ensuring preferences are remembered for future sessions.
 
 ```mermaid
 graph TD
@@ -180,10 +181,10 @@ graph TD
 ```
 Figure 7: Compressing context by summarizing history and extracting preferences to long-term memory.
 
-### 3. Isolating context
-Another powerful strategy is to isolate context by splitting information across multiple agents or LLM workflows. Instead of one agent with a massive, cluttered context window, you can have a team of agents, each with a smaller, focused context.
+3.   **Deduplication:** Remove redundant information from the context to avoid repetition.
 
-We often implement this using an orchestrator-worker pattern, where a central orchestrator agent breaks down a problem and assigns sub-tasks to specialized worker agents [[12]](https://www.confluent.io/blog/event-driven-multi-agent-systems/). Each worker operates in its own isolated context, improving focus and allowing for parallel processing. We will cover this pattern in more detail in Lesson 5.
+### 3. Isolating context
+Another powerful strategy is to isolate context by splitting information across multiple agents or LLM workflows. This technique is similar to tool isolation (explained in `Selecting the right context`), but it's more general, referring to the whole context. The key idea is that instead of one agent with a massive, cluttered context window, you can have a team of agents, each with a smaller, focused context.
 
 ```mermaid
 graph TD
@@ -197,20 +198,21 @@ graph TD
 ```
 Figure 8: The orchestrator-worker pattern isolates context across multiple specialized agents.
 
+We often implement this using an orchestrator-worker pattern, where a central orchestrator agent breaks down a problem and assigns sub-tasks to specialized worker agents [[12]](https://www.confluent.io/blog/event-driven-multi-agent-systems/). Each worker operates in its own isolated context, improving focus and allowing for parallel processing. We will cover this pattern in more detail in Lesson 5.
+
 ### 4. Format optimization
-Finally, the way you format the context matters. Models are sensitive to structure, and using clear delimiters can improve performance.
-*   **Use XML tags:** Wrap different pieces of context in XML-like tags (e.g., `<user_query>`, `<documents>`). This helps the model distinguish between different types of information [[5]](https://milvus.io/ai-quick-reference/what-modifications-might-be-needed-to-the-llms-input-formatting-or-architecture-to-best-take-advantage-of-retrieved-documents-for-example-adding-special-tokens-or-segments-to-separate-context).
+Finally, the way you format the context matters. Models are sensitive to structure, and using clear delimiters can improve performance. Common strategies are to:
+*   **Use XML tags:** Wrap different pieces of context in XML-like tags (e.g., `<user_query>`, `<documents>`). This helps the model distinguish between different types of information, while making it easier for the engineer to reference context elements within the system prompt [[5]](https://milvus.io/ai-quick-reference/what-modifications-might-be-needed-to-the-llms-input-formatting-or-architecture-to-best-take-advantage-of-retrieved-documents-for-example-adding-special-tokens-or-segments-to-separate-context).
 *   **Prefer YAML over JSON:** When providing structured data as input, YAML is often more token-efficient than JSON, which helps save space in your context window.
 
-💡 A final note: Always understand what is passed to the LLM. Seeing exactly what occupies your context window at every step is key to mastering context engineering.
+To conclude, you always have to understand what is passed to the LLM. Seeing exactly what occupies your context window at every step is key to mastering context engineering. Usually this is done by properly monitoring your traces, tracking what happens at each step, understanding what the inputs and outputs are. As this is a significant step to go from PoC to production, we will have dedicated lessons on this.
 
 ## Here is an example
 
-Let's connect the theories and strategies discussed earlier with concrete examples. Context engineering is fundamental for many advanced AI applications that need to manage memory and maintain state across interactions.
+Let's connect the theories and strategies discussed earlier with concrete examples. To do that, let's consider several common real-world scenarios:
 
-Consider several real-world scenarios where keeping context in memory is essential:
-*   **Healthcare:** An AI assistant accesses a patient's medical history (episodic memory), current symptoms (working memory), and the latest medical literature (semantic memory) to provide personalized diagnostic support [[52]](https://www.akira.ai/blog/context-engineering).
-*   **Financial Services:** AI systems integrate with enterprise tools like Customer Relationship Management (CRM) systems and calendars, combining real-time market data and client portfolio information to generate tailored financial advice [[50]](https://66degrees.com/building-a-business-case-for-ai-in-financial-services/).
+*   **Healthcare:** An AI assistant accesses a patient's medical history, current symptoms, and the latest medical literature to provide personalized diagnostic support [[52]](https://www.akira.ai/blog/context-engineering).
+*   **Financial Services:** AI systems integrate with enterprise tools like Customer Relationship Management (CRM) systems, emails and calendars, combining real-time market data and client portfolio information to generate tailored financial advice and reports [[50]](https://66degrees.com/building-a-business-case-for-ai-in-financial-services/).
 *   **Project Management:** AI systems access enterprise infrastructure like CRMs, Slack, and task managers to automatically understand project requirements, then add and update project tasks.
 *   **Content Creator Assistant:** An AI agent uses your research, past content, and personality traits to understand what and how to create a given piece of content.
 
@@ -219,11 +221,11 @@ Let's walk through a specific query to see context engineering in action. A user
 Before the AI attempts to answer, a context engineering system performs several steps:
 1.  It retrieves the user's patient history, known allergies, and lifestyle habits from episodic memory.
 2.  It queries a medical database for non-pharmacological headache remedies from semantic memory.
-3.  It uses various actions to assemble the key units of information from both memory types into the final context.
+3.  It uses various tools to assemble the key units of information from both memory types into the final context.
 4.  It formats this information into a structured prompt and calls the LLM.
 5.  Finally, it presents a personalized, context-aware answer to the user.
 
-Here is a simplified Python example showing how you might structure the prompt for the LLM, using XML tags to format the different context elements.
+Here is a simplified Python example showing how you might structure the context and prompt for the LLM, using XML tags to format the different context elements and YAML to format all input data collections: 
 
 1.  First, we define the user's query:
 ```python
@@ -232,26 +234,59 @@ user_query = "I have a headache. What can I do to stop it? I would prefer not to
 
 2.  Next, we define the patient's history, which would typically be retrieved from episodic memory:
 ```python
-patient_history = """
-- Patient: John Doe, 45M
-- Known Conditions: Mild hypertension
-- Allergies: None
-- Preferences: Avoids medication unless necessary. Prefers natural remedies.
-- Habits: Reports high stress from work, drinks 3-4 cups of coffee daily.
-"""
+patient_history = {
+    "patient": {
+        "name": "John Doe",
+        "age": 45,
+        "gender": "M",
+        "conditions": ["mild_hypertension"],
+        "allergies": [],
+        "preferences": {
+            "medication_avoidance": True,
+            "preferred_treatments": "natural_remedies"
+        },
+        "habits": {
+            "stress_level": "high",
+            "work_related": True,
+            "caffeine_intake": "3-4_cups_daily"
+        }
+    }
+}
 ```
 
 3.  Then, we include relevant medical literature, which would be retrieved from semantic memory:
 ```python
-medical_literature = """
-- Article 1: Dehydration is a common cause of tension headaches. Rehydration can alleviate symptoms within 30 minutes to three hours.
-- Article 2: Applying a cold compress to the forehead and temples can constrict blood vessels and reduce inflammation, helping to relieve migraine pain.
-- Article 3: Caffeine withdrawal can trigger headaches. For individuals who consume caffeine regularly, a small amount may alleviate a withdrawal headache.
-- Article 4: Stress-relief techniques such as deep breathing, meditation, or a short walk can be effective for tension headaches.
-"""
+medical_literature = {
+    "articles": [
+        {
+            "id": 1,
+            "topic": "dehydration_headaches",
+            "finding": "Dehydration is a common cause of tension headaches",
+            "treatment": "Rehydration can alleviate symptoms within 30 minutes to three hours"
+        },
+        {
+            "id": 2,
+            "topic": "cold_compress",
+            "finding": "Applying a cold compress to the forehead and temples can constrict blood vessels",
+            "treatment": "Reduces inflammation, helping to relieve migraine pain"
+        },
+        {
+            "id": 3,
+            "topic": "caffeine_withdrawal",
+            "finding": "Caffeine withdrawal can trigger headaches",
+            "treatment": "For regular caffeine consumers, a small amount may alleviate withdrawal headaches"
+        },
+        {
+            "id": 4,
+            "topic": "stress_relief",
+            "finding": "Stress-relief techniques are effective for tension headaches",
+            "treatment": "Deep breathing, meditation, or short walks can help"
+        }
+    ]
+}
 ```
 
-4.  Finally, we assemble the complete prompt, combining all elements into a structured format:
+4.  Finally, we assemble the complete prompt, combining all elements into a structured format. Notice how we format the patient history and medicalt literature as YAML, instead of passing them directly as plain Python dictionaries, which are equivalent to JSON:
 ```python
 prompt = f"""
 <system_prompt>
@@ -259,11 +294,11 @@ You are a helpful AI medical assistant. Your role is to provide safe, helpful, a
 </system_prompt>
 
 <patient_history>
-{patient_history}
+{yaml.dump(patient_history)}
 </patient_history>
 
 <medical_literature>
-{medical_literature}
+{yaml.dump(medical_literature)}
 </medical_literature>
 
 <user_query>
@@ -276,29 +311,47 @@ Based on all the information above, provide a step-by-step plan for the user to 
 """
 ```
 
-5.  Printing the assembled prompt shows the final input sent to the LLM:
-```python
-print(prompt)
-```
-It outputs:
+5.  Ultimately, let's merge everything together and take a look at the final input sent to the LLM:
 ```xml
 <system_prompt>
 You are a helpful AI medical assistant. Your role is to provide safe, helpful, and personalized health advice based on the provided context. Do not give advice outside of the provided context. Prioritize non-medicinal options as per user preference.
 </system_prompt>
 
 <patient_history>
-- Patient: John Doe, 45M
-- Known Conditions: Mild hypertension
-- Allergies: None
-- Preferences: Avoids medication unless necessary. Prefers natural remedies.
-- Habits: Reports high stress from work, drinks 3-4 cups of coffee daily.
+patient:
+  name: John Doe
+  age: 45
+  gender: M
+  conditions:
+    - mild_hypertension
+  allergies: []
+  preferences:
+    medication_avoidance: true
+    preferred_treatments: natural_remedies
+  habits:
+    stress_level: high
+    work_related: true
+    caffeine_intake: 3-4_cups_daily
 </patient_history>
 
 <medical_literature>
-- Article 1: Dehydration is a common cause of tension headaches. Rehydration can alleviate symptoms within 30 minutes to three hours.
-- Article 2: Applying a cold compress to the forehead and temples can constrict blood vessels and reduce inflammation, helping to relieve migraine pain.
-- Article 3: Caffeine withdrawal can trigger headaches. For individuals who consume caffeine regularly, a small amount may alleviate a withdrawal headache.
-- Article 4: Stress-relief techniques such as deep breathing, meditation, or a short walk can be effective for tension headaches.
+articles:
+  - id: 1
+    topic: dehydration_headaches
+    finding: "Dehydration is a common cause of tension headaches"
+    treatment: "Rehydration can alleviate symptoms within 30 minutes to three hours"
+  - id: 2
+    topic: cold_compress
+    finding: "Applying a cold compress to the forehead and temples can constrict blood vessels"
+    treatment: "Reduces inflammation, helping to relieve migraine pain"
+  - id: 3
+    topic: caffeine_withdrawal
+    finding: "Caffeine withdrawal can trigger headaches"
+    treatment: "For regular caffeine consumers, a small amount may alleviate withdrawal headaches"
+  - id: 4
+    topic: stress_relief
+    finding: "Stress-relief techniques are effective for tension headaches"
+    treatment: "Deep breathing, meditation, or short walks can help"
 </medical_literature>
 
 <user_query>
@@ -313,20 +366,20 @@ Based on all the information above, provide a step-by-step plan for the user to 
 To build such a system, you need a robust tech stack. Here is a potential stack we recommend and will use throughout this course:
 *   **LLM:** Gemini as a multimodal, reasoning, and cost-effective LLM API provider.
 *   **Orchestration:** LangGraph for defining stateful, agentic workflows.
-*   **Databases:** PostgreSQL, MongoDB, Redis, Qdrant, and Neo4j. Often, it is effective to keep it simple, as you can achieve much with only PostgreSQL or MongoDB.
-*   **Observability:** Opik or LangSmith for evaluation and monitoring.
+*   **Databases:** PostgreSQL, MongoDB, Redis, Qdrant, and Neo4j. Often, it is effective to keep it simple, as you can achieve much with only PostgreSQL or MongoDB. Also, for simpler AI applications where you don't have time or resources to invest a lot in infrastructure, you can achieve significant results with SQLite.
+*   **Observability:** Opik or LangSmith for evaluation and trace monitoring.
 
 ## Connecting context engineering to AI engineering
 
 Context engineering is more of an art than a science. It is about developing the intuition to craft effective prompts, select the right information from memory, and arrange context for optimal results. This discipline helps you determine the minimal yet essential information an LLM needs to perform at its best.
 
-This discipline cannot be learned in isolation. It is a complex field that combines:
-1.  **AI Engineering:** LLM workflows, RAG, and AI Agents. This includes implementing evaluation pipelines.
-2.  **Software Engineering (SWE):** Aggregating all context elements into scalable and maintainable code, designing scalable architectures, and wrapping agents as APIs.
-3.  **Data Engineering:** Building data pipelines to feed information into the long-term memory.
-4.  **Operations (Ops):** Deploying your agents on the right infrastructure to ensure they are reproducible, maintainable, observable, and scalable, including automating processes with CI/CD pipelines.
+It's important to understand that context engineering, or AI engineering for that matter, cannot be learned in isolation. It is a complex field that combines:
+1. **AI Engineering:** Implement practical solutions such as LLM workflows, RAG, AI Agents, and evaluation pipelines.
+2. **Software Engineering (SWE):** Build your AI product with code that is not just functional, but also scalable and maintainable, and design architectures that can grow with your product's needs.
+3.  **Data Engineering:** Design data pipelines that feed curated and validated data into the memory layer.
+4.  **Operations (Ops):** Deploy agents on the proper infrastructure to ensure they are reproducible, maintainable, observable, and scalable, including automating processes with CI/CD pipelines.
 
-Our goal is to teach you how to master these skills. In the world of AI, we should all think in systems rather than isolated components. We will show you how to build production-ready AI applications.
+Our goal with this course is to teach you how to combine these skills to build production-ready AI products. We like to say that in the world of AI, we should all think in systems rather than isolated components, having a mindset shift from developers to architects.
 
 To transition from this lesson, we will next explore structured outputs in Lesson 4. Later in the course, we will delve into actions (Lesson 6), memory (Lesson 9), and RAG (Lesson 10).
 

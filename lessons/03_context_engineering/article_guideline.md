@@ -207,19 +207,20 @@ Follow the next narrative flow when writing the end-to-end lesson:
         1. Use structured outputs to separate different parts of the LLM outputs and pass downstream only what is required (more on this in Lesson 4) 
         2. Use RAG to pass only the factual facts required to answer a given user question (more on this in Lesson 10.)
         3. Reducing the number of available tools to avoid confusing the LLM what actions to take at each step.
+        (Create a mermaid diagram that combines techniques 1, 2, 3, 4 and 5 to show how they could work together in a bigger system.)
         4. Temporal Relevance: Ranking time-sensitive data and cutting off irrelevant data points
         5. Repeat core instructions at both the start and the end. Unintuiteveliy, for the most important instructions, it's recommended to repeat yourself across the prompt, even if it translates into more tokens.  
-        (Create a mermaid diagram that combines techniques 1, 2, 3, and 4 to show how they could work together.)
     2. **Context compression:** As the message history grows in the short-term working memory, you have to carefully manage past interactions to keeping your context window in check. The trick is that you cannot just drop past conversation turns, as the LLM still needs to remember what happen. Thus, we need ways to compress key facts from the past, while shrinking the short-term memory. We can do that through:
-        - Creating summaries of past interactions using an LLM
-        - Moving preferences about the user, from the working memory into the long-term memory, which is most often labeled as the episodic memory (create a mermaid diagram to support the idea)
-        - Deduplication to avoid repetition
+        1. Creating summaries of past interactions using an LLM
+        2. Moving preferences about the user, from the working memory into the long-term memory, which is most often labeled as the episodic memory 
+        (create a mermaid diagram to support ideas from point 1 and 2)
+        3. Deduplication to avoid repetition
     3. **Isolating Context:**
         - Splitting information across multiple agents or LLM workflows.
         - Create a mermaid diagram showing how we can leverage the orchestrator-worker pattern to do this.
     4. **Format optimization for model clarity:** For example, using XML to clearly structure different parts of the prompt. Also, using YAML instead of JSON when inputting structured data to the LLM, as YAML is more token efficient than JSON.
 
-- **Final note:** Do not let frameworks abstract away the context from you. Own the context! Seeing exactly what is passed to the LLM is key to understanding the context engineering process at every step of the LLM app.
+- **Conclusion:** You always have to understand what is passed to the LLM. Seeing exactly what occupies your context window at every step is key to mastering context engineering. Usually this is done by properly monitoring your traces, tracking what happens at each step, understanding what the inputs and outputs are. As this is a significant step to go from PoC to production, we will have dedicated lessons on this.
 
 -  **Section length:** 600 words
 
@@ -252,14 +253,14 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 8 - Conclusion - Wrap-up: Connecting context engineering to AI engineering
 (Connect our solution to the bigger picture and next steps)
 
-- Context engineering is more of an art than a science. It's the skill of building intuition on how to write prompts, how to pass the right information from the memory into the context, and how to order the context into the prompt for best results. It's about answering questions such as "What's the less about information I should pass to the LLM to get the best results out of it?" or "What does the model need or doesn't need to see?"
-- We cannot learn context engineering in isolation, as it's a complex but beautiful discipline that combines:
-    1. AI Engineering: LLM worlfowks, RAG, AI Agents. Implement evaluation pipelines.
-    2. SWE: Aggregates all the context elements into scalable and maintainable code. Design scalable architectures. Wrap the agents as APIs.
-    3. Data Engineering: Building data pipelines to feed data into the long-term memory.
-    4. Ops: Deploy your agents on the right piece of infrastructure to make them reproducible, maintainable, observable, and scalable. Automate it. Write CI/CD pipelines.
-- Within this course, we did our best to teach you the right mix of all these skills to solve production-ready AI engineering problems. In the world of AI coding assistant, we should all think in systems rather than in isolated components. Our goal is to teach you how to do that.
-- To transition from this lesson to the next, specify what we will learn in future lessons. First mention what we will learn in next lesson, which is Lesson 4. Next leverage the concepts listed in subsection `Concepts That Will Be Introduced in Future Lessons` to make slight references to other topics we will learn during this course. To stay focused, specify only the ones that are present in this current lesson.
+- Context engineering is more of an art than a science. It's about developing the intuition to craft effective prompts, select the right information from memory, and arrange context for optimal results. This discipline helps you determine the minimal yet essential information an LLM needs to perform at its best.
+- Context engineering cannot be learned in isolation, as it's a complex field that combines:
+    1. **AI Engineering:**  Implement practical solutions such as LLM workflows, RAG, AI Agents, and evaluation pipelines.
+    2. **Software Engineering (SWE):** Build your AI product with code that is not just functional, but also scalable and maintainable, and design architectures that can grow with your product's needs.
+    3. **Data Engineering:** Design data pipelines that feed curated and validated data into the memory layer.
+    4. **Operations (Ops):** Deploy agents on the proper infrastructure to ensure they are reproducible, maintainable, observable, and scalable, including automating processes with CI/CD pipelines.
+- Our goal with this course is to teach you how to combine these skills to build production-ready AI products. In the world of AI, we should all think in systems rather than isolated components, having a mindset shift from developers to architects.
+- To transition from this lesson, we will next explore structured outputs in Lesson 4. Later in the course, we will delve into actions (Lesson 6), memory (Lesson 9), and RAG (Lesson 10).
 
 -  **Section length:** 250 words
 
