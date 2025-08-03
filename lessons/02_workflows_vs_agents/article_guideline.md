@@ -248,7 +248,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 	- **Security Concerns:** Autonomous agents with powerful write permissions could send wrong emails, delete critical files, or expose sensitive data.
 - **The Good News:** These challenges are solvable. In upcoming lessons, we'll cover patterns for building reliable products through specialized evaluation and monitoring pipelines, strategies for building hybrid systems, and ways to keep costs and latency under control.
 - **Your Path Forward:** By the end of this course, you'll have the knowledge to architect AI systems that are not only powerful but also robust, efficient, and safe. You'll know when to use workflows versus agents and how to build effective hybrid systems that work in the real world.
-- Leverage the concepts listed in subsection `Concepts That Will Be Introduced in Future Lessons` to make slight references to other topics we will learn during this course. To stay focused, specify only the ones that are present in this current lesson.
+- To transition from this lesson to the next, specify what we will learn in future lessons. First mention what we will learn in next lesson, which is Lesson 3. Next leverage the concepts listed in subsection `Concepts That Will Be Introduced in Future Lessons` to make slight references to other topics we will learn during this course. To stay focused, specify only the ones that are present in this current lesson.
 - **Section length:** 350 words
 
 ## Golden Sources
