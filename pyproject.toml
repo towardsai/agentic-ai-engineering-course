@@ -12,6 +12,7 @@ dependencies = [
     "langchain-google-genai>=2.1.7",
     "langgraph>=0.5.3",
     "matplotlib>=3.10.3",
+    "notebook>=7.4.5",
     "pillow>=11.3.0",
     "pydantic>=2.11.7",
     "python-dotenv>=1.1.0",
