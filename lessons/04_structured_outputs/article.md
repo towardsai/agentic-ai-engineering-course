@@ -24,6 +24,7 @@ flowchart TD
     D --> E["Database"];
     D --> F["User Interface"];
     D --> G["API"];
+```
 Figure 1: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream applications.
 
 Now that we understand the theory, let us move to practice. We will explore three ways to implement structured outputs: from scratch with JSON, from scratch with Pydantic, and natively with the Gemini API.
