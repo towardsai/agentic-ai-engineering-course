@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?</summary>
-
-### Source [2]: https://ai.google.dev/gemini-api/docs/structured-output
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [2]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?
 
@@ -13,11 +12,8 @@ Answer: Gemini’s structured output feature allows developers to configure the 
 
 -----
 
------
-
------
-
-### Source [3]: https://firebase.google.com/docs/ai-logic/generate-structured-output
+-----]]></source_block>
+        <source_block><![CDATA[### Source [3]: https://firebase.google.com/docs/ai-logic/generate-structured-output
 
 Query: What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?
 
@@ -25,11 +21,8 @@ Answer: The Gemini API returns unstructured text by default, but certain use cas
 
 -----
 
------
-
------
-
-### Source [4]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output
+-----]]></source_block>
+        <source_block><![CDATA[### Source [4]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output
 
 Query: What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?
 
@@ -37,25 +30,21 @@ Answer: With Google Cloud Vertex AI, structured output—controlled via a respon
 
 -----
 
------
-
------
-
-### Source [5]: https://gemini-api.apidog.io/doc-965858
+-----]]></source_block>
+        <source_block><![CDATA[### Source [5]: https://gemini-api.apidog.io/doc-965858
 
 Query: What are the pros and cons of forcing JSON output via prompt engineering versus using a native model API like Gemini's or OpenAI's structured output features?
 
 Answer: The Gemini API supports generating structured JSON output by allowing developers to specify a `responseSchema` in the `generateContent` method, whether using SDKs or the REST API. This ensures that responses always match the expected structure and can include simple or complex schemas, supporting text and multimodal (image, video, audio) inputs. By leveraging the schema feature, developers eliminate the need for prompt-engineering tricks to force JSON output, resulting in more predictable, valid, and easily parseable responses. This approach is more reliable than prompt engineering, which can yield inconsistent or malformed outputs that require additional validation or correction.
 -----
 
------
-
-</details>
-
-<details>
-<summary>How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?</summary>
-
-### Source [6]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [6]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
 
 Query: How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?
 
@@ -67,11 +56,8 @@ Pydantic, in contrast, performs actual runtime validation and type coercion. Whe
 
 -----
 
------
-
------
-
-### Source [7]: https://docs.pydantic.dev/latest/concepts/performance/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [7]: https://docs.pydantic.dev/latest/concepts/performance/
 
 Query: How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?
 
@@ -81,11 +67,8 @@ However, if the priority is data validation (such as with LLM output), Pydantic'
 
 -----
 
------
-
------
-
-### Source [8]: https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [8]: https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/
 
 Query: How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?
 
@@ -95,24 +78,20 @@ Pydantic models, on the other hand, validate and coerce types automatically upon
 
 -----
 
------
-
------
-
-### Source [10]: https://www.youtube.com/watch?v=WRiQD4lmnUk
+-----]]></source_block>
+        <source_block><![CDATA[### Source [10]: https://www.youtube.com/watch?v=WRiQD4lmnUk
 
 Query: How does Pydantic's data validation and schema generation compare to Python's built-in dataclasses or TypedDict for ensuring LLM output quality?
 
 Answer: Pydantic models are described as having all the benefits of dataclasses, but with the added advantage of runtime validation and type enforcement. This makes Pydantic a superior choice for scenarios that require strict data validation, such as checking the output from LLMs. While dataclasses and TypedDicts provide useful type annotations and structure for codebases, only Pydantic actively validates and coerces incoming data, ensuring it matches the declared schema at runtime[5].
 
------
-
-</details>
-
-<details>
-<summary>What are best practices for prompt engineering to get reliable structured JSON or YAML output from LLMs that don't have a dedicated structured output feature?</summary>
-
-### Source [11]: https://dev.to/zachary62/structured-output-for-beginners-3-must-know-prompting-tips-8cc
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are best practices for prompt engineering to get reliable structured JSON or YAML output from LLMs that don't have a dedicated structured output feature?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [11]: https://dev.to/zachary62/structured-output-for-beginners-3-must-know-prompting-tips-8cc
 
 Query: What are best practices for prompt engineering to get reliable structured JSON or YAML output from LLMs that don't have a dedicated structured output feature?
 
@@ -120,11 +99,8 @@ Answer: The core idea for achieving structured output from LLMs via prompt engin
 
 -----
 
------
-
------
-
-### Source [12]: https://www.tredence.com/blog/prompt-engineering-best-practices-for-structured-ai-outputs
+-----]]></source_block>
+        <source_block><![CDATA[### Source [12]: https://www.tredence.com/blog/prompt-engineering-best-practices-for-structured-ai-outputs
 
 Query: What are best practices for prompt engineering to get reliable structured JSON or YAML output from LLMs that don't have a dedicated structured output feature?
 
@@ -132,11 +108,8 @@ Answer: Prompt engineering is a practical approach to steering LLM behavior for 
 
 -----
 
------
-
------
-
-### Source [13]: https://www.lakera.ai/blog/prompt-engineering-guide
+-----]]></source_block>
+        <source_block><![CDATA[### Source [13]: https://www.lakera.ai/blog/prompt-engineering-guide
 
 Query: What are best practices for prompt engineering to get reliable structured JSON or YAML output from LLMs that don't have a dedicated structured output feature?
 
@@ -144,14 +117,13 @@ Answer: To get reliable structured JSON or YAML output from LLMs, prompts must b
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How are structured outputs from LLMs used as a preliminary step in building knowledge graphs for advanced RAG applications?</summary>
-
-### Source [16]: https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How are structured outputs from LLMs used as a preliminary step in building knowledge graphs for advanced RAG applications?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [16]: https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs
 
 Query: How are structured outputs from LLMs used as a preliminary step in building knowledge graphs for advanced RAG applications?
 
@@ -159,11 +131,8 @@ Answer: Large Language Models (LLMs) automate the creation of knowledge graphs b
 
 -----
 
------
-
------
-
-### Source [17]: https://www.nature.com/articles/s41524-025-01540-6
+-----]]></source_block>
+        <source_block><![CDATA[### Source [17]: https://www.nature.com/articles/s41524-025-01540-6
 
 Query: How are structured outputs from LLMs used as a preliminary step in building knowledge graphs for advanced RAG applications?
 
@@ -171,11 +140,8 @@ Answer: The knowledge graph construction workflow begins with data preprocessing
 
 -----
 
------
-
------
-
-### Source [18]: https://developer.nvidia.com/blog/insights-techniques-and-evaluation-for-llm-driven-knowledge-graphs/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [18]: https://developer.nvidia.com/blog/insights-techniques-and-evaluation-for-llm-driven-knowledge-graphs/
 
 Query: How are structured outputs from LLMs used as a preliminary step in building knowledge graphs for advanced RAG applications?
 
@@ -183,14 +149,13 @@ Answer: The process of using LLMs for knowledge graph construction involves seve
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Why is YAML considered more token-efficient than JSON for LLM outputs, and what are the practical implications for cost and performance?</summary>
-
-### Source [20]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Why is YAML considered more token-efficient than JSON for LLM outputs, and what are the practical implications for cost and performance?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [20]: https://betterprogramming.pub/yaml-vs-json-which-is-more-efficient-for-language-models-5bc11dd0f6df
 
 Query: Why is YAML considered more token-efficient than JSON for LLM outputs, and what are the practical implications for cost and performance?
 
@@ -198,14 +163,13 @@ Answer: YAML is considered more token-efficient than JSON for LLM outputs becaus
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?</summary>
-
-### Source [25]: https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [25]: https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses
 
 Query: What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?
 
@@ -218,11 +182,8 @@ This structured approach means LLMs can act as reliable components in production
 
 -----
 
------
-
------
-
-### Source [26]: https://purelogics.com/structured-outputs-in-large-language-models/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [26]: https://purelogics.com/structured-outputs-in-large-language-models/
 
 Query: What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?
 
@@ -235,11 +196,8 @@ Answer: Structured outputs from LLMs deliver several production benefits and use
 
 -----
 
------
-
------
-
-### Source [27]: https://humanloop.com/blog/structured-outputs
+-----]]></source_block>
+        <source_block><![CDATA[### Source [27]: https://humanloop.com/blog/structured-outputs
 
 Query: What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?
 
@@ -252,11 +210,8 @@ This approach is used by enterprises to maintain predictable, reliable, and acti
 
 -----
 
------
-
------
-
-### Source [28]: https://generative-ai-newsroom.com/structured-outputs-making-llms-reliable-for-document-processing-c3b6b2baed36
+-----]]></source_block>
+        <source_block><![CDATA[### Source [28]: https://generative-ai-newsroom.com/structured-outputs-making-llms-reliable-for-document-processing-c3b6b2baed36
 
 Query: What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?
 
@@ -268,11 +223,8 @@ This structured approach minimizes manual intervention, reduces errors, and enha
 
 -----
 
------
-
------
-
-### Source [45]: https://www.leewayhertz.com/structured-outputs-in-llms/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [45]: https://www.leewayhertz.com/structured-outputs-in-llms/
 
 Query: What are the most common real-world use cases for structured outputs from LLMs in production environments beyond simple data extraction?
 
@@ -286,14 +238,13 @@ Overall, structured outputs are transforming LLMs from general-purpose text gene
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?</summary>
-
-### Source [29]: https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [29]: https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/
 
 Query: What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?
 
@@ -309,11 +260,8 @@ Although the primary focus is JSON, the same practices apply for XML: precise in
 
 -----
 
------
-
------
-
-### Source [32]: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api
+-----]]></source_block>
+        <source_block><![CDATA[### Source [32]: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api
 
 Query: What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?
 
@@ -329,11 +277,8 @@ These practices are proven to increase the precision and reliability of LLM outp
 
 -----
 
------
-
------
-
-### Source [49]: https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [49]: https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/
 
 Query: What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?
 
@@ -347,11 +292,8 @@ While the AWS tutorial uses JSON in its step-by-step example, it explicitly stat
 
 -----
 
------
-
------
-
-### Source [52]: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api
+-----]]></source_block>
+        <source_block><![CDATA[### Source [52]: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api
 
 Query: What are the best practices for designing prompts to reliably generate structured data, specifically using XML tags to wrap context and guide the LLM's parsing?
 
@@ -364,45 +306,35 @@ Answer: OpenAI’s official prompt engineering guide offers several best practic
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?</summary>
-
-### Source [33]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [33]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
 Answer: `TypedDict` in Python allows for the definition of dictionary-like structures with specific key and value types, aiding in static type checking, especially in IDEs, but does not perform any runtime validation. As a result, if incorrect types are provided at runtime, errors may only surface during execution and not at development time. In contrast, Pydantic offers both type safety and runtime data validation, making it more robust for cases where data integrity is essential, such as SDK development for APIs. Pydantic also provides automatic serialization/deserialization and runtime enforcement of types, with minimal performance overhead due to its Rust-based implementation. Data classes offer type annotations and some built-in methods but lack validation and serialization features out of the box. Therefore, for structured output validation, especially from untrusted sources (such as LLMs), Pydantic is preferred due to its comprehensive validation and serialization capabilities, whereas `dataclasses` and `TypedDict` primarily enhance static analysis and developer experience without runtime guarantees[1].
 
------
-
------
-
-### Source [34]: https://docs.pydantic.dev/latest/concepts/performance/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [34]: https://docs.pydantic.dev/latest/concepts/performance/
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
 Answer: Performance benchmarks indicate that `TypedDict` is approximately 2.5 times faster than nested Pydantic models for structure validation because `TypedDict` leverages Python's native dictionary handling without runtime validation overhead. Pydantic's validation process involves more computational effort due to type coercion, validation, and possible error reporting. For optimal performance, especially when validation is not required, `TypedDict` is recommended. However, if data validation is essential, Pydantic offers significant advantages despite the added performance cost. The documentation also advises against using wrap validators in Pydantic when performance is critical, as these are slower due to the need for data materialization during validation[2].
 
------
-
------
-
-### Source [36]: https://www.youtube.com/watch?v=WRiQD4lmnUk
+-----]]></source_block>
+        <source_block><![CDATA[### Source [36]: https://www.youtube.com/watch?v=WRiQD4lmnUk
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
 Answer: Pydantic models, built upon the `BaseModel` class, offer all the benefits of `dataclasses` with additional flexibility and power, such as convenient custom validation through annotated fields. Pydantic automatically coerces compatible types or raises a validation error if coercion is not possible, providing robust runtime validation and type safety. For simple key-value data, dictionaries or `TypedDict` can suffice, especially when class creation is unnecessary and only type annotations are needed. `TypedDict` is typically used for annotating dictionaries, while Pydantic models are chosen for scenarios requiring both type annotations and runtime validation, especially when structured data must be validated from external sources (like LLM outputs)[4].
 -----
 
------
-
------
-
-### Source [54]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
+-----]]></source_block>
+        <source_block><![CDATA[### Source [54]: https://www.speakeasy.com/blog/pydantic-vs-dataclasses
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
@@ -418,11 +350,8 @@ In summary:
 
 -----
 
------
-
------
-
-### Source [55]: https://docs.pydantic.dev/latest/concepts/performance/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [55]: https://docs.pydantic.dev/latest/concepts/performance/
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
@@ -436,11 +365,8 @@ The guidance is:
 
 -----
 
------
-
------
-
-### Source [57]: https://www.youtube.com/watch?v=WRiQD4lmnUk
+-----]]></source_block>
+        <source_block><![CDATA[### Source [57]: https://www.youtube.com/watch?v=WRiQD4lmnUk
 
 Query: What are the key differences in implementation and performance when using Python's built-in `dataclasses` or `TypedDict` versus Pydantic for LLM structured output validation?
 
@@ -448,14 +374,13 @@ Answer: Pydantic models build on the capabilities of dataclasses by providing cu
 
 In contrast, dataclasses and TypedDict do not perform type coercion or runtime validation—type errors are only detected by static type checkers and not enforced during execution. For simple key-value data, a plain dictionary or TypedDict may suffice, but for robust, validated data structures—especially when interfacing with external or untrusted data—Pydantic offers a more powerful and flexible solution.
 
------
-
-</details>
-
-<details>
-<summary>What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?</summary>
-
-### Source [37]: https://ai.google.dev/gemini-api/docs/structured-output
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [37]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -463,11 +388,8 @@ Answer: Gemini allows developers to configure models for structured output (such
 
 -----
 
------
-
------
-
-### Source [38]: https://www.vellum.ai/blog/when-should-i-use-function-calling-structured-outputs-or-json-mode
+-----]]></source_block>
+        <source_block><![CDATA[### Source [38]: https://www.vellum.ai/blog/when-should-i-use-function-calling-structured-outputs-or-json-mode
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -475,11 +397,8 @@ Answer: Structured output features in APIs, such as using a `response_format` pa
 
 -----
 
------
-
------
-
-### Source [39]: https://www.googlecloudcommunity.com/gc/AI-ML/Structured-Output-in-vertexAI-BatchPredictionJob/m-p/866640
+-----]]></source_block>
+        <source_block><![CDATA[### Source [39]: https://www.googlecloudcommunity.com/gc/AI-ML/Structured-Output-in-vertexAI-BatchPredictionJob/m-p/866640
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -487,21 +406,15 @@ Answer: When using Gemini models in a batch prediction pipeline (for example, in
 
 -----
 
------
-
------
-
-### Source [40]: https://news.ycombinator.com/item?id=41173223
+-----]]></source_block>
+        <source_block><![CDATA[### Source [40]: https://news.ycombinator.com/item?id=41173223
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
 Answer: Structured output APIs, as opposed to function calling or manual output handling, provide a straightforward way to receive model responses in a predictable format (such as JSON). This eliminates the need to simulate function calls or perform complex output parsing and validation. The benefit is that the model only returns the structured data, which is more reliable for tasks such as database entry or automated workflows. Having both structured output and function calling interfaces allows models to be tailored for different use cases: structured output for direct data extraction and function calling for more interactive workflows. Dedicated API features for structured output simplify development, reduce error rates, and can lead to cost savings by minimizing the need for post-processing and error handling. Latency is also likely to be lower, since the output is already in the desired format. Reliability is enhanced because the model is constrained to only produce outputs that fit the defined schema.
 
------
-
------
-
-### Source [58]: https://ai.google.dev/gemini-api/docs/structured-output
+-----]]></source_block>
+        <source_block><![CDATA[### Source [58]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -509,11 +422,8 @@ Answer: Gemini's structured output feature allows developers to configure the mo
 
 -----
 
------
-
------
-
-### Source [59]: https://www.vellum.ai/blog/when-should-i-use-function-calling-structured-outputs-or-json-mode
+-----]]></source_block>
+        <source_block><![CDATA[### Source [59]: https://www.vellum.ai/blog/when-should-i-use-function-calling-structured-outputs-or-json-mode
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -521,11 +431,8 @@ Answer: According to Vellum, using dedicated structured output features (like Op
 
 -----
 
------
-
------
-
-### Source [60]: https://www.googlecloudcommunity.com/gc/AI-ML/Structured-Output-in-vertexAI-BatchPredictionJob/m-p/866640
+-----]]></source_block>
+        <source_block><![CDATA[### Source [60]: https://www.googlecloudcommunity.com/gc/AI-ML/Structured-Output-in-vertexAI-BatchPredictionJob/m-p/866640
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -533,11 +440,8 @@ Answer: This community discussion highlights that, when using Gemini models via 
 
 -----
 
------
-
------
-
-### Source [61]: https://news.ycombinator.com/item?id=41173223
+-----]]></source_block>
+        <source_block><![CDATA[### Source [61]: https://news.ycombinator.com/item?id=41173223
 
 Query: What are the pros and cons of implementing structured outputs from scratch versus using a dedicated API feature like Gemini's, considering factors like cost, latency, and reliability?
 
@@ -545,14 +449,13 @@ Answer: A discussion on Hacker News (with commentary from an OpenAI engineer) co
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How do LLM APIs like Gemini internally use a Pydantic model's schema to guide the generation of structured output?</summary>
-
-### Source [41]: https://ai.google.dev/gemini-api/docs/structured-output
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do LLM APIs like Gemini internally use a Pydantic model's schema to guide the generation of structured output?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [41]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: How do LLM APIs like Gemini internally use a Pydantic model's schema to guide the generation of structured output?
 
@@ -564,11 +467,8 @@ Gemini 2.5 also offers preview support for direct JSON Schema submission via the
 
 -----
 
------
-
------
-
-### Source [62]: https://ai.google.dev/gemini-api/docs/structured-output
+-----]]></source_block>
+        <source_block><![CDATA[### Source [62]: https://ai.google.dev/gemini-api/docs/structured-output
 
 Query: How do LLM APIs like Gemini internally use a Pydantic model's schema to guide the generation of structured output?
 
@@ -576,17 +476,14 @@ Answer: When using Gemini's API in Python, if you supply a Pydantic model, the P
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>Data is the lifeblood of modern enterprises, fueling everything from innovation to strategic decision making. However, as organizations amass ever-growing volumes of information—from technical documentation to internal communications—they face a daunting challenge: how to extract meaningful insights and actionable structure from an overwhelming sea of unstructured data.</summary>
-
-Data is the lifeblood of modern enterprises, fueling everything from innovation to strategic decision making. However, as organizations amass ever-growing volumes of information—from technical documentation to internal communications—they face a daunting challenge: how to extract meaningful insights and actionable structure from an overwhelming sea of unstructured data.
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[Data is the lifeblood of modern enterprises, fueling everything from innovation to strategic decision making. However, as organizations amass ever-growing volumes of information—from technical documentation to internal communications—they face a daunting challenge: how to extract meaningful insights and actionable structure from an overwhelming sea of unstructured data.]]></title>
+      <content><![CDATA[Data is the lifeblood of modern enterprises, fueling everything from innovation to strategic decision making. However, as organizations amass ever-growing volumes of information—from technical documentation to internal communications—they face a daunting challenge: how to extract meaningful insights and actionable structure from an overwhelming sea of unstructured data.
 
 [Retrieval-augmented generation](https://www.nvidia.com/en-us/glossary/retrieval-augmented-generation/) (RAG) has emerged as a popular solution, enhancing AI-generated responses by integrating relevant enterprise data. While effective for simple queries, traditional RAG methods often fall short when addressing complex, multi-layered questions that demand reasoning and cross-referencing.
 
@@ -779,14 +676,11 @@ To dive into these innovations, explore the [NVIDIA NeMo Framework](https://gith
 
 To replicate the workflows discussed in the post and other open-source examples, see the [/NVIDIA/GenerativeAIExamples](https://github.com/NVIDIA/GenerativeAIExamples/tree/main/community/knowledge_graph_rag) GitHub repo. These tools empower you to scale your systems efficiently, whether you’re building dynamic knowledge graphs, fine-tuning LLMs, or optimizing inference pipelines.
 
-Push the boundaries of AI innovation with NVIDIA cutting-edge technologies today
-
-</details>
-
-<details>
-<summary>Prompt engineering emerged with the release of OpenAI’s GPT. The world has heavily experimented with LLM prompts, ranging from simple queries to cool innovative prompts, to test the capabilities of LLMs. But for more domain-specific tasks, we often need the output in a certain format to save cost on API calls (or system memory).</summary>
-
-Prompt engineering emerged with the release of OpenAI’s GPT. The world has heavily experimented with LLM prompts, ranging from simple queries to cool innovative prompts, to test the capabilities of LLMs. But for more domain-specific tasks, we often need the output in a certain format to save cost on API calls (or system memory).
+Push the boundaries of AI innovation with NVIDIA cutting-edge technologies today]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Prompt engineering emerged with the release of OpenAI’s GPT. The world has heavily experimented with LLM prompts, ranging from simple queries to cool innovative prompts, to test the capabilities of LLMs. But for more domain-specific tasks, we often need the output in a certain format to save cost on API calls (or system memory).]]></title>
+      <content><![CDATA[Prompt engineering emerged with the release of OpenAI’s GPT. The world has heavily experimented with LLM prompts, ranging from simple queries to cool innovative prompts, to test the capabilities of LLMs. But for more domain-specific tasks, we often need the output in a certain format to save cost on API calls (or system memory).
 
 It is often easier and cheaper to get the desired output from LMs by prompting them rather than fine-tuning. This blog will look at some prompt engineering techniques to get better-structured outputs from LMs.
 
@@ -959,14 +853,11 @@ Two main types of CoT prompting:
 
 In zero-shot prompting, the model is asked to solve a problem with reasoning steps without being provided with examples.
 
-`Prompt: Mary travels 5 miles. She reaches the destination in 10 mins. What is the speed of Mary? Let's think step by step.`
-
-</details>
-
-<details>
-<summary>Generative AI is revolutionizing industries by streamlining operations and enabling innovation. While textual chat interactions with GenAI remain popular, real-world applications often depend on structured data for APIs, databases, data-driven workloads, and rich user interfaces. Structured data can also enhance conversational AI, enabling more reliable and actionable outputs. A key challenge is that LLMs (Large Language Models) are inherently unpredictable, which makes it difficult for them to produce consistently structured outputs like JSON. This challenge arises because their training data mainly includes unstructured text, such as articles, books, and websites, with relatively few examples of structured formats. As a result, LLMs can struggle with precision when generating JSON outputs, which is crucial for seamless integration into existing APIs and databases. Models vary in their ability to support structured responses, including recognizing data types and managing complex hierarchies effectively. These capabilities can make a difference when choosing the right model.</summary>
-
-Generative AI is revolutionizing industries by streamlining operations and enabling innovation. While textual chat interactions with GenAI remain popular, real-world applications often depend on structured data for APIs, databases, data-driven workloads, and rich user interfaces. Structured data can also enhance conversational AI, enabling more reliable and actionable outputs. A key challenge is that LLMs (Large Language Models) are inherently unpredictable, which makes it difficult for them to produce consistently structured outputs like JSON. This challenge arises because their training data mainly includes unstructured text, such as articles, books, and websites, with relatively few examples of structured formats. As a result, LLMs can struggle with precision when generating JSON outputs, which is crucial for seamless integration into existing APIs and databases. Models vary in their ability to support structured responses, including recognizing data types and managing complex hierarchies effectively. These capabilities can make a difference when choosing the right model.
+`Prompt: Mary travels 5 miles. She reaches the destination in 10 mins. What is the speed of Mary? Let's think step by step.`]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Generative AI is revolutionizing industries by streamlining operations and enabling innovation. While textual chat interactions with GenAI remain popular, real-world applications often depend on structured data for APIs, databases, data-driven workloads, and rich user interfaces. Structured data can also enhance conversational AI, enabling more reliable and actionable outputs. A key challenge is that LLMs (Large Language Models) are inherently unpredictable, which makes it difficult for them to produce consistently structured outputs like JSON. This challenge arises because their training data mainly includes unstructured text, such as articles, books, and websites, with relatively few examples of structured formats. As a result, LLMs can struggle with precision when generating JSON outputs, which is crucial for seamless integration into existing APIs and databases. Models vary in their ability to support structured responses, including recognizing data types and managing complex hierarchies effectively. These capabilities can make a difference when choosing the right model.]]></title>
+      <content><![CDATA[Generative AI is revolutionizing industries by streamlining operations and enabling innovation. While textual chat interactions with GenAI remain popular, real-world applications often depend on structured data for APIs, databases, data-driven workloads, and rich user interfaces. Structured data can also enhance conversational AI, enabling more reliable and actionable outputs. A key challenge is that LLMs (Large Language Models) are inherently unpredictable, which makes it difficult for them to produce consistently structured outputs like JSON. This challenge arises because their training data mainly includes unstructured text, such as articles, books, and websites, with relatively few examples of structured formats. As a result, LLMs can struggle with precision when generating JSON outputs, which is crucial for seamless integration into existing APIs and databases. Models vary in their ability to support structured responses, including recognizing data types and managing complex hierarchies effectively. These capabilities can make a difference when choosing the right model.
 
 This blog demonstrates how [Amazon Bedrock](https://aws.amazon.com/bedrock/?trk=a9c05117-53bb-40a3-89b2-a3ee2d23e7d2&sc_channel=ps&ef_id=Cj0KCQiAouG5BhDBARIsAOc08RTIRnbZdU_ZU3sFVtfBEz5-DlIIK_V5EWzecbvxUGEKOcztISVOMXMaAgE4EALw_wcB:G:s&s_kwcid=AL!4422!3!691967569326!e!!g!!amazon%20bedrock!21054971690!157173594137&gbraid=0AAAAADjHtp-IaOcjyBDPKF1aS_xtnvv5O&gclid=Cj0KCQiAouG5BhDBARIsAOc08RTIRnbZdU_ZU3sFVtfBEz5-DlIIK_V5EWzecbvxUGEKOcztISVOMXMaAgE4EALw_wcB), a managed service for securely accessing top AI models, can help address these challenges by showcasing two alternative options:
 
@@ -1051,14 +942,11 @@ For simplicity, we did not demonstrate a few areas in this blog. Other technique
 
 To try the Bedrock techniques demonstrated in this blog, follow the steps to [Run example Amazon Bedrock API requests through the AWS SDK for Python (Boto3).](https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started-api-ex-python.html) With pay-as-you-go pricing, you’re only charged for API calls, so little to no cleanup is required after testing. For more details on best practices, refer to the [Bedrock prompt engineering guidelines](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-engineering-guidelines.html) and model-specific documentation, such as [Anthropic’s best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview).
 
-Structured data is key to leveraging Generative AI in real-world scenarios like APIs, data-driven workloads, and rich user interfaces beyond text-based chat. Start using Amazon Bedrock today to unlock its potential for reliable structured responses.
-
-</details>
-
-<details>
-<summary>‍ **From crafting better outputs to understanding LLM vulnerabilities—this is prompt engineering as it really works today.**</summary>
-
-‍ **From crafting better outputs to understanding LLM vulnerabilities—this is prompt engineering as it really works today.**
+Structured data is key to leveraging Generative AI in real-world scenarios like APIs, data-driven workloads, and rich user interfaces beyond text-based chat. Start using Amazon Bedrock today to unlock its potential for reliable structured responses.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[‍ **From crafting better outputs to understanding LLM vulnerabilities—this is prompt engineering as it really works today.**]]></title>
+      <content><![CDATA[‍ **From crafting better outputs to understanding LLM vulnerabilities—this is prompt engineering as it really works today.**
 
 Prompt engineering isn’t just a trendy skill—it’s the key to making generative AI systems useful, reliable, and safe.
 
@@ -1862,14 +1750,11 @@ The techniques we’ve explored—scaffolding, anchoring, few-shot prompting, ad
 
 As models continue to grow in capability and complexity, the gap between “good enough” prompting and truly effective prompting will only widen. Use that gap to your advantage.
 
-And remember: every prompt is a test, a lens, and sometimes even a threat. Treat it accordingly.
-
-</details>
-
-<details>
-<summary>Python’s dynamic typing is one of its greatest strengths. It is the language developers use to get things done without getting bogged down by type definitions and boilerplate code. When prototyping, you don’t have time to think about unions, generics, or polymorphism - close your eyes, trust the interpreter to guess your variable’s type, and then start working on the next feature.</summary>
-
-Python’s dynamic typing is one of its greatest strengths. It is the language developers use to get things done without getting bogged down by type definitions and boilerplate code. When prototyping, you don’t have time to think about unions, generics, or polymorphism - close your eyes, trust the interpreter to guess your variable’s type, and then start working on the next feature.
+And remember: every prompt is a test, a lens, and sometimes even a threat. Treat it accordingly.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Python’s dynamic typing is one of its greatest strengths. It is the language developers use to get things done without getting bogged down by type definitions and boilerplate code. When prototyping, you don’t have time to think about unions, generics, or polymorphism - close your eyes, trust the interpreter to guess your variable’s type, and then start working on the next feature.]]></title>
+      <content><![CDATA[Python’s dynamic typing is one of its greatest strengths. It is the language developers use to get things done without getting bogged down by type definitions and boilerplate code. When prototyping, you don’t have time to think about unions, generics, or polymorphism - close your eyes, trust the interpreter to guess your variable’s type, and then start working on the next feature.
 
 That is, until your prototype takes off and your logs are littered with `TypeError: 'NoneType' object is not iterable` or `TypeError: unsupported operand type(s) for /: 'str' and 'int'`. You might blame the users for adding units in the amount field, or the frontend devs for posting `null` instead of `[]`. So you fix the bug with another `if` statement, a `try` block, or the tenth validation function you’ve written this week. No time for reflection, just keep shipping, right? The ball of twine must grow.
 
@@ -2236,17 +2121,13 @@ print(
 
 In this example, we define an `OrderTypedDict` `TypedDict` and an `Order` Pydantic model for the order data. We then define a `calculate_order_total` function to accept a union type of `Order` and `OrderTypedDict`.
 
-If the input is a `TypedDict`, it’ll be converted to a Pydantic model before performing the calculation. Now our function can accept both `TypedDict` and Pydantic models as input, providing us flexibility while still enforcing type safety at runtime.
-
-</details>
-
-
-## Code Sources
-
-<details>
-<summary>Repository analysis for https://github.com/towardsai/course-ai-agents/blob/main/lessons/04_structured_outputs/notebook.ipynb</summary>
-
-# Repository analysis for https://github.com/towardsai/course-ai-agents/blob/main/lessons/04_structured_outputs/notebook.ipynb
+If the input is a `TypedDict`, it’ll be converted to a Pydantic model before performing the calculation. Now our function can accept both `TypedDict` and Pydantic models as input, providing us flexibility while still enforcing type safety at runtime.]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <code_source>
+      <title><![CDATA[Repository analysis for https://github.com/towardsai/course-ai-agents/blob/main/lessons/04_structured_outputs/notebook.ipynb]]></title>
+      <content><![CDATA[# Repository analysis for https://github.com/towardsai/course-ai-agents/blob/main/lessons/04_structured_outputs/notebook.ipynb
 
 ## Summary
 Repository: towardsai/course-ai-agents
@@ -2867,15 +2748,14 @@ pretty_print.wrapped(
 From now on, throughout this course, we will utilize this native Gemini approach to generate structured outputs, aiming to achieve the most reliable and efficient results. Additionally, when using LangChain or LangGraph, we will utilize their abstractions on top of the same logic.
 """
 
-</details>
 
-
-## YouTube Video Transcripts
-
-<details>
-<summary>All right folks, in this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc.</summary>
-
-All right folks, in this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc.
+]]></content>
+    </code_source>
+  </code_sources>
+  <youtube_video_transcripts>
+    <youtube_transcript>
+      <title><![CDATA[All right folks, in this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc.]]></title>
+      <content><![CDATA[All right folks, in this video, what we're going to be doing is we're going to be discussing OpenAI function calling and structured prompting. Now, the idea here is that we want to first discuss what function calling is and how OpenAI implements it. And then discuss structured prompting using the Pydantic library as an example on how that can work in terms of writing code and what does it mean to structure the prompt, etc.
 
 [00:30]
 (The user has a Jupyter Notebook open titled '2.5-structured-prompting-openai-function-calling-pydantic.ipynb'. The on-screen text explains the steps for OpenAI's function calling.)
@@ -2967,17 +2847,13 @@ And then at the end, we can print the correct answer by saying by saying correct
 (The speaker runs a new code cell that iterates through the `quiz_output` object and prints each question, its options, and the correct answer.)
 So now we get the question, we get the options and we get the correct answer which if you ask me, this is a pretty cool application for large language model as well as for a structured prompting approach that leverages OpenAI function calling, Pydantic, and that's it for this video. See you in the next video.
 
-*The speaker demonstrates structured prompting by using the Pydantic and Instructor libraries to define a desired JSON output schema, prompting an LLM to generate a quiz from an article, and successfully receiving a perfectly formatted Pydantic object as the response.*
-
-</details>
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>how-to-return-structured-data-from-a-model-langchain</summary>
-
-It is often useful to have a model return output that matches a specific [schema](https://python.langchain.com/docs/concepts/structured_outputs/). One common use-case is extracting data from text to insert into a database or use with some other downstream system. This guide covers a few strategies for getting structured outputs from a model.
+*The speaker demonstrates structured prompting by using the Pydantic and Instructor libraries to define a desired JSON output schema, prompting an LLM to generate a quiz from an article, and successfully receiving a perfectly formatted Pydantic object as the response.*]]></content>
+    </youtube_transcript>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[how-to-return-structured-data-from-a-model-langchain]]></title>
+      <content><![CDATA[It is often useful to have a model return output that matches a specific [schema](https://python.langchain.com/docs/concepts/structured_outputs/). One common use-case is extracting data from text to insert into a database or use with some other downstream system. This guide covers a few strategies for getting structured outputs from a model.
 
 ## The `.with_structured_output()` method
 
@@ -3265,14 +3141,11 @@ chain.invoke({"query": query})
 
 ```python
 [{'people': [{'name': 'Anna', 'height_in_meters': 1.8288}]}]
-```
-
-</details>
-
-<details>
-<summary>steering-large-language-models-with-pydantic-pydantic</summary>
-
-Unlike libraries like `dataclasses`, `Pydantic` goes a step further and defines a schema for your dataclass. This schema is used to validate data, but also to generate documentation and even to generate a JSON schema, which is perfect for our use case of generating structured data with language models!
+```]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[steering-large-language-models-with-pydantic-pydantic]]></title>
+      <content><![CDATA[Unlike libraries like `dataclasses`, `Pydantic` goes a step further and defines a schema for your dataclass. This schema is used to validate data, but also to generate documentation and even to generate a JSON schema, which is perfect for our use case of generating structured data with language models!
 
 By providing the model with the following prompt, we can generate a JSON schema for a `PythonPackage` dataclass.
 
@@ -3397,14 +3270,11 @@ Packages.model_validate_json(
 		}\
 	]
 }
-```
-
-</details>
-
-<details>
-<summary>structured-output-gemini-api-google-ai-for-developers</summary>
-
-You can configure Gemini for structured output instead of unstructured text,
+```]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[structured-output-gemini-api-google-ai-for-developers]]></title>
+      <content><![CDATA[You can configure Gemini for structured output instead of unstructured text,
 allowing precise extraction and standardization of information for further processing.
 For example, you can use structured output to extract information from resumes,
 standardize them to build a structured database.
@@ -3885,14 +3755,11 @@ prompts or revise your response schema. For example, review the model's
 response without structured output to see how the model responds. You can then
 update your response schema so that it better fits the model's output.
 For additional troubleshooting tips on structured output, see the
-[troubleshooting guide](https://ai.google.dev/gemini-api/docs/troubleshooting#repetitive-tokens).
-
-</details>
-
-<details>
-<summary>yaml-vs-json-which-is-more-efficient-for-language-models-by-</summary>
-
-# YAML vs. JSON: Which Is More Efficient for Language Models?https://miro.medium.com/v2/resize:fit:700/1*2d8fldvpjiS1paVntoBPYQ.png
+[troubleshooting guide](https://ai.google.dev/gemini-api/docs/troubleshooting#repetitive-tokens).]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[yaml-vs-json-which-is-more-efficient-for-language-models-by-]]></title>
+      <content><![CDATA[# YAML vs. JSON: Which Is More Efficient for Language Models?https://miro.medium.com/v2/resize:fit:700/1*2d8fldvpjiS1paVntoBPYQ.png
 
 Illustration by author. Supercharge your language models: Slash costs by 50% and boost response time 2.5X by switching from JSON to YAML!
 
@@ -3981,6 +3848,7 @@ No CoT, JSON return, GPT-3.5. Wrong answer, should return 900030
 
 However, by utilizing YAML, you can define a format that accommodates the CoT within comments while presenting the final answer in the assigned key, ultimately producing a parseable output:https://miro.medium.com/v2/resize:fit:700/1*-PxoVjKFNxO7CCiGe6HwYQ.png
 
-CoT with YAML comments, GPT-3.5, CORRECT answer
-
-</details>
+CoT with YAML comments, GPT-3.5, CORRECT answer]]></content>
+    </additional_source>
+  </additional_sources>
+</research>
