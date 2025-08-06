@@ -2,6 +2,23 @@
 
 In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, looked at the difference between rule-based LLM workflows and autonomous AI agents, and covered context engineering—the art of feeding the right information to a LLM. Now, we are ready to tackle a fundamental challenge: getting structured and reliable information *out* of an LLM.
 
+```mermaid
+flowchart LR
+    subgraph "Software 3.0"
+        A["LLMs & AI Agents<br/>Probabilistic World<br/>Unstructured Data"]
+    end
+    
+    subgraph "Software 1.0"
+        B["Traditional Applications<br/>Deterministic World<br/>Structured Data"]
+    end
+    
+    A -->|"Unstructured Output<br/>(Free-form text)"| C["The Gap"]
+    C -->|"Structured Input<br/>(JSON, APIs, etc.)"| B
+    
+    C["The Gap<br/><br/>Goal of Structured Outputs:<br/>Bridge Software 3.0 to Software 1.0<br/><br/>Note: Software 2.0 was the<br/>Machine Learning/Deep Learning phase"]
+```
+Figure 1: The goal of structured outputs is to fill in the gap between Software 3.0 (LLM workflows & AI Agents) and Software 1.0 (Traditional Applications). Software 2.0 was referred to as the Machine Learning/Deep Learning phase.
+
 LLMs operate in a world of unstructured data and probabilities, where we input instructions in plain english and get results as plain text. This subdomain of engineering is often called "Software 3.0". Our applications, however, rely on deterministic code and predictable data structures, which is known as "Software 1.0". With that in mind, this lesson explores structured outputs, the bridge between these two worlds. Structured outputs are a fundamental technique for forcing LLMs to return consistent, machine-readable data. Mastering this is essential for any AI Engineer building production-grade systems.
 
 ## Understanding why structured outputs are critical
@@ -13,6 +30,7 @@ This approach offers several key benefits. **First**, structured outputs are eas
 **Second**, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` or `KeyError` down the line. Instead it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems and preventing bad data from propagating through your application.
 
 Structured outputs create a formal contract between the LLM and your application code, making easier to pass data around the system. Engineers use this pattern everywhere. As seen in Figure 1, we leverage structured outputs to pass the right subset of information to the next LLM step or other downstream systems like databases, user interfaces or APIs. For example, a popular use case is to extract properties like names, tags and dates to build knowledge graphs for advanced RAG or natural language filters to filter records from the database [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
+
 ```mermaid
 flowchart TD
     subgraph "Worflow / Agent"
@@ -32,7 +50,7 @@ flowchart TD
     B --> F;
     B --> H;
 ```
-Figure 1: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream components.
+Figure 2: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream components.
 
 Now that we understand the theory, let us move to practice. We will explore three ways to implement structured outputs: from scratch with JSON, from scratch with Pydantic, and natively with the Gemini API.
 
