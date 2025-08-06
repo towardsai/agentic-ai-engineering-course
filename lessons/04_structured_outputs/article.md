@@ -1,8 +1,8 @@
 # Lesson 4: Structured Outputs
 
-In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, distinguished between rule-based workflows and autonomous agents, and covered context engineering—the art of feeding the right information to a LLM. Now, we are ready to tackle a fundamental challenge: getting reliable information *out* of an LLM.
+In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, looked at the difference between rule-based LLM workflows and autonomous AI agents, and covered context engineering—the art of feeding the right information to a LLM. Now, we are ready to tackle a fundamental challenge: getting structured and reliable information *out* of an LLM.
 
-Large Language Models operate in a world of probabilities, often called "Software 3.0". Our applications, however, rely on deterministic code and predictable data structures—the world of "Software 1.0". This lesson explores structured outputs, the bridge between these two worlds. Structured outputs are a fundamental technique for forcing LLMs to return consistent, machine-readable data. Mastering this is essential for any AI Engineer building production-grade systems.
+LLMs operate in a world of unstructured data and probabilities, where we input instructions in plain english and get results as plain text. This subdomain of engineering is often called "Software 3.0". Our applications, however, rely on deterministic code and predictable data structures, which is known as "Software 1.0". With that in mind, this lesson explores structured outputs, the bridge between these two worlds. Structured outputs are a fundamental technique for forcing LLMs to return consistent, machine-readable data. Mastering this is essential for any AI Engineer building production-grade systems.
 
 ## Understanding why structured outputs are critical
 
@@ -10,9 +10,9 @@ Before we start coding, it is important to understand why structured outputs are
 
 This approach offers several key benefits. **First**, structured outputs are easy to parse, manipulate, and debug. Instead of wrestling with raw text, you work with clean Python objects like dictionaries or, even better, Pydantic models. This allows you to programmatically access the data you need without guesswork, making your code cleaner and more predictable.
 
-**Second**, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` down the line; it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems, preventing bad data from propagating through your application.
+**Second**, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` or `KeyError` down the line. Instead it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems and preventing bad data from propagating through your application.
 
-Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. As seen in Figure 1, they format outputs for the next LLM step or other downstream systems like databases, user interfaces or APIs. For example, a popular use case is to extract properties like names, tags and dates to build knowledge graphs for advanced RAG or natural language filters [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
+Structured outputs create a formal contract between the LLM and your application code, making easier to pass data around the system. Engineers use this pattern everywhere. As seen in Figure 1, we leverage structured outputs to pass the right subset of information to the next LLM step or other downstream systems like databases, user interfaces or APIs. For example, a popular use case is to extract properties like names, tags and dates to build knowledge graphs for advanced RAG or natural language filters to filter records from the database [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
 ```mermaid
 flowchart TD
     subgraph "Worflow / Agent"
@@ -32,7 +32,7 @@ flowchart TD
     B --> F;
     B --> H;
 ```
-Figure 1: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream applications.
+Figure 1: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream components.
 
 Now that we understand the theory, let us move to practice. We will explore three ways to implement structured outputs: from scratch with JSON, from scratch with Pydantic, and natively with the Gemini API.
 
@@ -234,7 +234,7 @@ Let's refactor our previous example to use Pydantic.
         tags: list[Tag]
     ```
 
-2.  With our Pydantic model defined, we can automatically generate a JSON Schema from it. A schema is the standard term for defining the structure and constraints of your data. Think of it as a formal contract between your application and the LLM. This contract precisely dictates the expected fields, their types, and any validation rules. We provide this generated schema to the LLM to guide its output, giving the model a clear blueprint for its response. This is similar to the technique used internally by APIs like Gemini and OpenAI to enforce a specific output format, ensuring their models adhere to predefined structures [[10]](https://ai.google.dev/gemini-api/docs/structured-output).
+2.  With our Pydantic model defined, we can automatically generate a JSON Schema from it. A schema is the standard term for defining the structure and constraints of your data. Think of it as a formal contract between your application and the LLM. This contract precisely dictates the expected fields, their types, and any validation rules. We provide this generated schema to the LLM to guide its output, giving the model a clear blueprint for its response. This is similar to the technique used internally by APIs like Gemini and OpenAI to enforce a specific output format, ensuring their models adhere to predefined structures [[10]](https://ai.google.dev/gemini-api/docs/structured-output) - more on this in the next section:
 
     ```python
     schema = DocumentMetadata.model_json_schema()
@@ -334,9 +334,9 @@ Let's refactor our previous example to use Pydantic.
 
     Now, the `document_metadata` Pydantic object can now be safely used throughout your application, with full type-hinting and attribute access. This is the main advantage: you move away from unclear dictionaries, where you constantly check for missing keys or incorrect types, to clean, predictable Python objects.
 
-6. For example, if for the tags attribute we had a simple string instead of a list of strings, such as:
+6. For example, if for the tags attribute we had a simple string instead of a list of strings (as defined in the Pydantic model), such as:
     ```python
-    tags = "Financial Performance, Earnings Report, Business Growth
+    tags = "Financial Performance, Earnings Report, Business Growth"
     ```
 
     The example, from above it would output:
