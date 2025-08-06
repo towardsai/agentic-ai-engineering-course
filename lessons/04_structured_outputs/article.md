@@ -11,11 +11,11 @@ Large Language Models operate in a world of probabilities, often called "Softwar
 
 Before we start coding, it is important to understand why structured outputs are a cornerstone of reliable AI applications. When an LLM returns a free-form string, you face the messy task of parsing it. This often involves fragile regular expressions or string-splitting logic. These methods easily break if the model changes its phrasing even slightly [[1]](https://pmc.ncbi.nlm.nih.gov/articles/PMC11751965/), [[2]](https://arxiv.org/html/2506.21585v1). Structured outputs solve this by forcing the model’s response into a predictable format like JSON.
 
-This approach offers several key benefits. First, structured outputs are easy to parse, manipulate, and debug. Instead of wrestling with raw text, you work with clean Python objects like dictionaries or, even better, Pydantic models. This allows you to programmatically access the data you need without guesswork, making your code cleaner and more predictable.
+This approach offers several key benefits. **First**, structured outputs are easy to parse, manipulate, and debug. Instead of wrestling with raw text, you work with clean Python objects like dictionaries or, even better, Pydantic models. This allows you to programmatically access the data you need without guesswork, making your code cleaner and more predictable.
 
-Second, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` down the line; it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems, preventing bad data from propagating through your application.
+**Second**, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` down the line; it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems, preventing bad data from propagating through your application.
 
-Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. For example, they extract entities like names and dates to build knowledge graphs for advanced Retrieval-Augmented Generation (RAG). As seen in Figure 1, they also format outputs for the next LLM workflow step or other downstream systems like databases, user interfaces or APIs. [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
+Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. As seen in Figure 1, they format outputs for the next LLM step or other downstream systems like databases, user interfaces or APIs. For example, a popular use case is to extract properties like names, tags and dates to build knowledge graphs for advanced RAG or natural language filters [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
 ```mermaid
 flowchart TD
     subgraph "Worflow / Agent"
@@ -41,9 +41,11 @@ Now that we understand the theory, let us move to practice. We will explore thre
 
 ## Implementing structured outputs from scratch using JSON
 
-To understand what modern LLM APIs offer, we will first build a structured output pipeline from the ground up. This hands-on approach will show you the underlying mechanics. Our goal is to prompt the model to return a JSON object and then parse it into a Python dictionary.
+To build an intuition on what modern LLM APIs offer, we will first implement from scratch a simple example where we guide an LLM to generate structured outputs. Our goal is to prompt the model to return a JSON object and then parse it into a Python dictionary.
 
-1.  We begin by setting up our environment. This involves initializing the Gemini client, defining the model we will use, and preparing a sample document for analysis.
+We will do that with a simple example where we want to extract key details, such as a summary, tags, keywords and other statistics from financial documents.
+
+1.  We begin by setting up our environment. This involves initializing the Gemini client from and the [google-genai](https://googleapis.github.io/python-genai/index.html) Python package defining the model we will use. Gemini offers two core types of models: `flash` and `pro`. For our simple examples, we will use `gemini-2.5-flash`, which is fast and cost-effective. While `pro` models are bigger and more costly. They are more useful for more intensive reasoning tasks, such as for ReAct agents - [more on Gemini models](https://ai.google.dev/gemini-api/docs/models):
 
     ```python
     import json
@@ -57,9 +59,13 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
     env.load(required_env_vars=["GOOGLE_API_KEY"])
     
     client = genai.Client()
-    
+
     MODEL_ID = "gemini-2.5-flash"
+    ```
+
+2. We define a sample document for analysis:
     
+    ```python
     DOCUMENT = """
     # Q3 2023 Financial Performance Analysis
     
@@ -77,7 +83,7 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
     """
     ```
 
-2.  Next, we craft a prompt that instructs the LLM to extract metadata and format it as JSON. Notice how we provide a clear example of the desired structure and use XML tags like `<document>` and `<json>` to separate the input data from the formatting instructions. This is a common and effective prompt engineering technique to improve clarity and guide the model's output [[8]](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api), [[9]](https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/).
+3.  Next, we craft a prompt that instructs the LLM to extract metadata and format it as JSON. Notice how we provide a clear example of the desired structure and use XML tags like `<document>` and `<json>` to separate the input data from the formatting instructions. This is a common and effective prompt engineering technique to improve clarity and guide the model's output [[8]](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api), [[9]](https://aws.amazon.com/blogs/machine-learning/structured-data-response-with-amazon-bedrock-prompt-engineering-and-tool-use/). They prompt engineering key is in providing a clear example on how the output should look like:
 
     ```python
     prompt = f"""
@@ -100,7 +106,7 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
     """
     ```
 
-3.  We send the prompt to the model and inspect the raw response. As expected, the model returns a JSON object, but it is often wrapped in markdown code blocks.
+4.  We send the prompt to the model and inspect the raw response. As expected, the model returns a JSON object, but it is often wrapped in Markdown code blocks:
 
     ```python
     response = client.models.generate_content(model=MODEL_ID, contents=prompt)
@@ -139,7 +145,7 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
     ```
     ```
 
-4.  To handle this, we create a simple helper function to strip the markdown and XML tags, leaving us with a clean JSON string.
+5.  To parse the generated output, we create a simple helper function to strip the Markdown JSON tags, leaving us with a clean JSON string:
 
     ```python
     def extract_json_from_response(response: str) -> dict:
@@ -153,7 +159,7 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
         return json.loads(response)
     ```
 
-5.  Finally, we parse the string into a Python dictionary, which can now be used in our application.
+6.  Finally, we parse the string into a Python dictionary, which can now be used in your application:
 
     ```python
     parsed_response = extract_json_from_response(response.text)
@@ -190,7 +196,7 @@ To understand what modern LLM APIs offer, we will first build a structured outpu
     }
     ```
 
-This "from scratch" method works, but it relies on manual parsing and lacks data validation. If the LLM makes a mistake, our application might fail. Next, we will see how Pydantic solves this problem.
+This "from scratch" method works, but it relies on manual parsing and lacks data validation. If the LLM makes a mistake, such as outputting an int or null, instead of a string, our application will fail. Next, we will see how Pydantic solves this problem.
 
 ## Implementing structured outputs from scratch using Pydantic
 
