@@ -6,18 +6,14 @@ In our previous lessons, we laid the groundwork for AI Engineering. We explored 
 flowchart LR
     subgraph "Software 3.0"
         A(("LLMs"))
-        D["Prompt"]
-        D --> A
     end
     
     subgraph "Software 1.0"
         B(("Code"))
-        C["Structured Data"]
-        C --> B
     end
     
-    A -->|"Unstructured Output"| C
-    B -->|"Structured Input"| D
+    A -->|"Unstructured Output"| B
+    B -->|"Structured Input"| A
 ```
 Figure 1: The goal of structured outputs is to fill in the gap between Software 3.0 (LLM workflows & AI Agents) and Software 1.0 (Traditional Applications). Software 2.0 was referred to as the Machine Learning/Deep Learning phase.
 
