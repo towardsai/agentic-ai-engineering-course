@@ -1,9 +1,0 @@
-{
-    "num_chars": 21013,
-    "num_words": 2748,
-    "num_sections": 4,
-    "seo": {
-        "title": "LLM Structured Output: Deep Dive",
-        "description": "Transform messy LLM text into clean, reliable data. Learn to enforce structured outputs using JSON, Pydantic, and the Gemini API for robust AI applications."
-    }
-}
