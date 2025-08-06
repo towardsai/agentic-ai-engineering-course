@@ -18,7 +18,7 @@ Second, using libraries like Pydantic adds a layer of data and type validation [
 Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. For example, they extract entities like names and dates to build knowledge graphs for advanced Retrieval-Augmented Generation (RAG). As seen in Figure 1, they also format outputs for the next LLM workflow step or other downstream systems like databases, user interfaces or APIs. [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
 ```mermaid
 flowchart TD
-    subgraph "Structured Output Pipeline"
+    subgraph "Worflow / Agent"
         A["Unstructured Text"] --> B{"LLM"};
         B --> C["Structured Output <br> (JSON/Pydantic)"];
         C --> D["Compile Prompt"];
