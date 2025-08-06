@@ -3,9 +3,9 @@
 
 ## Introduction
 
-In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, distinguished between rule-based workflows and autonomous agents, and covered context engineering—the art of feeding the right information to a Large Language Model (LLM). Now, we are ready to tackle a fundamental challenge: getting reliable information *out* of an LLM.
+In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, distinguished between rule-based workflows and autonomous agents, and covered context engineering—the art of feeding the right information to a LLM. Now, we are ready to tackle a fundamental challenge: getting reliable information *out* of an LLM.
 
-Large Language Models operate in a world of probabilities, often called "Software 3.0". Our applications, however, rely on deterministic code and predictable data structures—the world of "Software 1.0". This lesson builds the bridge between these two worlds. We explore structured outputs, a critical technique for forcing LLMs to return consistent, machine-readable data. Mastering this is essential for any AI Engineer building production-grade systems.
+Large Language Models operate in a world of probabilities, often called "Software 3.0". Our applications, however, rely on deterministic code and predictable data structures—the world of "Software 1.0". This lesson explores structured outputs, the bridge between these two worlds. Structured outputs are a fundamental technique for forcing LLMs to return consistent, machine-readable data. Mastering this is essential for any AI Engineer building production-grade systems.
 
 ## Understanding why structured outputs are critical
 
@@ -15,15 +15,25 @@ This approach offers several key benefits. First, structured outputs are easy to
 
 Second, using libraries like Pydantic adds a layer of data and type validation [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/). If the LLM returns a string where an integer is expected, your application will not crash silently with a `TypeError` down the line; it will raise a clear validation error immediately. This "fail-fast" behavior is essential for building reliable systems, preventing bad data from propagating through your application.
 
-Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. For example, they extract entities like names and dates to build knowledge graphs for advanced Retrieval-Augmented Generation (RAG). They also format outputs for downstream systems like databases or user interfaces [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
+Structured outputs create a formal contract between the LLM and your application code, making your system far more reliable. Engineers use this pattern everywhere. For example, they extract entities like names and dates to build knowledge graphs for advanced Retrieval-Augmented Generation (RAG). As seen in Figure 1, they also format outputs for the next LLM workflow step or other downstream systems like databases, user interfaces or APIs. [[5]](https://www.prompts.ai/en/blog-details/automating-knowledge-graphs-with-llm-outputs), [[6]](https://humanloop.com/blog/structured-outputs), [[7]](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
 ```mermaid
 flowchart TD
-    A["Unstructured Text"] --> B{"LLM"};
-    B --> C["Structured Output <br> (JSON/Pydantic)"];
-    C --> D["Downstream Application"];
-    D --> E["Database"];
-    D --> F["User Interface"];
-    D --> G["API"];
+    subgraph "Structured Output Pipeline"
+        A["Unstructured Text"] --> B{"LLM"};
+        B --> C["Structured Output <br> (JSON/Pydantic)"];
+        C --> D["Compile Prompt"];
+        D --> G{"LLM"};
+    end
+    
+    subgraph "Application"
+        E["Database"];
+        F["User Interface"];
+        H["API"];
+    end
+    
+    B --> E;
+    B --> F;
+    B --> H;
 ```
 Figure 1: A simplified flow showing how structured outputs bridge the gap between LLMs and downstream applications.
 
