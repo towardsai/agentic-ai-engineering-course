@@ -51,9 +51,6 @@ We will do that with a simple example where we want to extract key details, such
     import json
     
     from google import genai
-    from google.genai import types
-    from pydantic import BaseModel, Field
-    
     from lessons.utils import env
     
     env.load(required_env_vars=["GOOGLE_API_KEY"])
@@ -203,15 +200,17 @@ This "from scratch" method works, but it relies on manual parsing and lacks data
 
 ## Implementing structured outputs from scratch using Pydantic
 
-While forcing JSON output is an improvement over parsing raw text, it still leaves you with a plain Python dictionary. You cannot be sure what is inside that dictionary, if the keys are correct, or if the values have the right type. This uncertainty can lead to bugs and make your code difficult to maintain. This is where Pydantic helps. Pydantic is a data validation library that enforces type hints at runtime, ensuring data integrity from the moment data enters your application [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses). It provides a single, clear source of truth for your data structure and can automatically generate a JSON Schema from your Python class.
+While forcing JSON output is an improvement over parsing raw text, it still leaves you with a plain Python dictionary. You cannot be sure what is inside that dictionary, if the keys are correct, or if the values have the right type. This uncertainty can lead to bugs and make your code difficult to maintain. This is where Pydantic helps. Pydantic is a data validation library that enforces structure and type hints at runtime, ensuring data integrity from the moment data enters your application [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses). It provides a single, clear source of truth for your data structure and can automatically generate a JSON Schema from your Python class.
 
 When an LLM produces output that does not match the structure and types defined in your Pydantic model, the library raises a `ValidationError`. This error clearly explains what went wrong, allowing you to quickly identify and fix issues. This "fail-fast" behavior is essential for building reliable systems, preventing bad data from moving through your application and causing hard-to-debug errors later.
 
 Let's refactor our previous example to use Pydantic.
 
-1.  We define our desired data structure as a Pydantic class. This class acts as a single source of truth for your output format. We use standard Python type hints to define the expected type for each field. Pydantic works with Python’s `typing` module. Since Python 3.9, you can use built-in types like `list` directly, making the code cleaner. For example, `tags: list[str]` is now preferred over importing `List` from `typing`.
+1.  We define our desired data structure as a Pydantic class. This class acts as a single source of truth for your output format. We use standard Python type hints to define the expected type for each field. Pydantic works with Python’s `typing` module. Still, since Python 3.9, you can use built-in types like `list` directly, making the code cleaner. For example, `tags: list[str]` is now preferred over importing `List` from `typing`.
 
     ```python
+    from pydantic import BaseModel, Field
+
     class DocumentMetadata(BaseModel):
         """A class to hold structured metadata for a document."""
     
@@ -222,7 +221,7 @@ Let's refactor our previous example to use Pydantic.
         growth_rate: str = Field(description="The growth rate of the company described in the document (e.g, 10%).")
     ```
 
-    You can also nest Pydantic models to represent more complex, hierarchical data. This allows you to define intricate relationships between different pieces of information, such as a `DocumentMetadata` model containing a `Summary` object and a list of `Tag` objects. Nesting helps organize your data logically and reflects the real-world complexity of information. However, it is a good practice to keep schemas from becoming overly complex, as overly intricate structures can sometimes confuse the LLM and lead to more formatting errors.
+    You can also nest Pydantic models to represent more complex, hierarchical data. This allows you to define intricate relationships between different pieces of information, such as a `DocumentMetadata` model containing a `Summary` object and a list of `Tag` objects. Nesting helps organize your data logically and reflects the real-world complexity of information. However, it is a good practice to keep schemas from becoming overly complex, as it can confuse the LLM and lead to errors.
 
     ```python
     class Summary(BaseModel):
@@ -244,8 +243,8 @@ Let's refactor our previous example to use Pydantic.
     schema = DocumentMetadata.model_json_schema()
     ```
 
-    The generated schema looks like this:
-
+    The generated schema looks like this. Notice how the `description` defined in the `Field` type descriptor is present into the schema that is passed to the LLM to guide the structured output generation process. This makes Pydantic the perfect tool for defining your schemas:
+    ```
     ```json
     {'description': 'A class to hold structured metadata for a document.',
      'properties': {'summary': {'description': 'A concise, 1-2 sentence summary of the document.',
@@ -269,6 +268,7 @@ Let's refactor our previous example to use Pydantic.
      'title': 'DocumentMetadata',
      'type': 'object'}
     ```
+    ```
 
 3.  We update our prompt to include this JSON Schema. This gives the model a much more precise set of instructions than our previous plain-text example.
 
@@ -287,24 +287,69 @@ Let's refactor our previous example to use Pydantic.
     """
     ```
 
-4.  After calling the model and extracting the JSON string, we validate and parse it directly into our `DocumentMetadata` object.
+4.  Now we call the model and extract the JSON string, as in the previous example:
 
     ```python
     response = client.models.generate_content(model=MODEL_ID, contents=prompt)
     parsed_response = extract_json_from_response(response.text)
-    
-    try:
-        document_metadata = DocumentMetadata.model_validate(parsed_response)
-        print("\nValidation successful!")
-    except Exception as e:
-        print(f"\nValidation failed: {e}")
     ```
 
-    The validated Pydantic object can now be safely used throughout your application, with full type-hinting and attribute access. This is the main advantage: you move away from unclear dictionaries, where you constantly check for missing keys or incorrect types, to clean, predictable Python objects.
+    It outputs:
+    ```json
+    {
+        "summary": "The Q3 2023 financial report details a 20% increase in revenue and 15% growth in user engagement, surpassing market expectations. This strong performance is attributed to successful product strategy, market expansion, and improved customer acquisition and retention metrics, providing a solid foundation for continued growth.",
+        "tags": [
+            "Financial Performance",
+            "Earnings Report",
+            "Business Growth",
+            "Revenue Growth",
+            "Market Expansion"
+        ],
+        "keywords": [
+            "Q3 2023",
+            "revenue increase",
+            "user engagement",
+            "digital services",
+            "new markets",
+            "customer acquisition costs",
+            "retention rates",
+            "cash flow",
+            "market expectations"
+        ],
+        "quarter": "Q3 2023",
+        "growth_rate": "20%"
+        }
+    ```
 
-Python’s built-in `dataclasses` or `TypedDict` can define structure, but they only provide type hints for static analysis tools [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/), [[11]](https://dev.to/meeshkan/typeddict-vs-dataclasses-in-python-epic-typing-battle-onb). They do not perform runtime validation. This means if the LLM returns a string where an integer is expected, or if a required field is missing, a `dataclass` or `TypedDict` will not catch this error immediately. A type mismatch will go unnoticed until it causes an error during execution, potentially leading to difficult-to-debug issues later.
+5. Ultimately, we validate and parse it directly into our `DocumentMetadata` object:
+    ```
+    try:
+        document_metadata = DocumentMetadata.model_validate(parsed_response)
+        print("Validation successful!")
+    except Exception as e:
+        print(f"Validation failed!")
+    ```
 
-Pydantic, with its out-of-the-box runtime validation and type coercion, directly addresses these challenges [[12]](https://www.youtube.com/watch?v=WRiQD4lmnUk). While `TypedDict` can be faster for simple cases without validation, Pydantic's overhead is minimal for the robust data integrity it provides [[13]](https://docs.pydantic.dev/latest/concepts/performance/). This makes Pydantic the industry standard for moving data reliably in LLM workflows and AI agents, providing the robustness needed for production-grade systems.
+    It outputs:
+    ```text
+    Validation successful!
+    ```
+
+    Now, the `document_metadata` Pydantic object can now be safely used throughout your application, with full type-hinting and attribute access. This is the main advantage: you move away from unclear dictionaries, where you constantly check for missing keys or incorrect types, to clean, predictable Python objects.
+
+6. For example, if for the tags attribute we had a simple string instead of a list of strings, such as:
+    ```python
+    tags = "Financial Performance, Earnings Report, Business Growth
+    ```
+
+    The example, from above it would output:
+    ```text
+    Validation failed!
+    ```
+
+Python’s built-in `dataclasses` or `TypedDict` can define structure, but they only provide type hints for static analysis tools [[3]](https://www.speakeasy.com/blog/pydantic-vs-dataclasses), [[4]](https://codetain.com/blog/validators-approach-in-python-pydantic-vs-dataclasses/), [[11]](https://dev.to/meeshkan/typeddict-vs-dataclasses-in-python-epic-typing-battle-onb). They do not perform runtime validation. This means if the LLM returns a string where an integer is expected, or if a required field is missing, a `dataclass` or `TypedDict` will not catch this error immediately. A type mismatch will go unnoticed until it causes an error during execution, potentially leading to difficult-to-debug issues later. While `TypedDict` can be faster for simple cases without validation, Pydantic's overhead is minimal for the robust data integrity it provides [[13]](https://docs.pydantic.dev/latest/concepts/performance/). 
+
+To conclude, Pydantic's out-of-the-box runtime validation, type constraints and clean schema definition makes it the industry standard for moving data reliably in LLM workflows and AI agents, providing the robustness needed for production-grade systems.
 
 ## Implementing structured outputs using Gemini and Pydantic
 
@@ -315,10 +360,12 @@ Let us see how to achieve the same result using the Gemini API's native capabili
 1.  We define a `GenerateContentConfig` object, instructing the Gemini API to set the `response_mime_type` to `"application/json"` and the `response_schema` to our `DocumentMetadata` Pydantic model. The Gemini SDK automatically converts the Pydantic model into a JSON Schema [[10]](https://ai.google.dev/gemini-api/docs/structured-output).
 
     ```python
+    from google.genai import types
+
     config = types.GenerateContentConfig(response_mime_type="application/json", response_schema=DocumentMetadata)
     ```
 
-2.  This configuration makes our prompt significantly shorter and cleaner, eliminating the need to manually inject JSON examples or full schemas; we simply ask the model to perform the task.
+2.  This configuration makes our prompt significantly shorter and cleaner, eliminating the need to manually inject JSON examples or full schemas. We simply ask the model to perform the task, as the instruction comes directly from the config:
 
     ```python
     prompt = f"""
@@ -340,45 +387,21 @@ Let us see how to achieve the same result using the Gemini API's native capabili
 4.  The Gemini client automatically parses the output for us. By accessing the `response.parsed` attribute, we receive a ready-to-use instance of our `DocumentMetadata` Pydantic model. This eliminates the need for custom parsing functions or manual validation steps.
 
     ```python
-    # response.parsed is a DocumentMetadata object
     document_metadata = response.parsed
-    print(document_metadata.model_dump_json(indent=2))
+    print(f"Type of the response: `{type(document_metadata)}`")
     ```
 
     It outputs:
 
-    ```json
-    {
-      "summary": "The Q3 2023 earnings report reveals a strong financial performance with a 20% increase in revenue and 15% growth in user engagement, surpassing market expectations. This success is attributed to effective product strategy, market expansion, reduced customer acquisition costs, and improved retention rates.",
-      "tags": [
-        "Financial Performance",
-        "Earnings Report",
-        "Business Growth",
-        "Market Expansion",
-        "Q3 Results"
-      ],
-      "keywords": [
-        "Q3 2023",
-        "revenue increase",
-        "user engagement",
-        "product strategy",
-        "market positioning",
-        "digital services",
-        "new markets",
-        "customer acquisition costs",
-        "retention rates",
-        "cash flow"
-      ],
-      "quarter": "Q3 2023",
-      "growth_rate": "20%"
-    }
+    ```text
+    Type of the response: `<class '__main__.DocumentMetadata'>`
     ```
 
 This native approach is the recommended way to generate structured outputs. It is robust, efficient, and requires less code, allowing you to focus on your application's logic instead of data wrangling.
 
 ## Conclusion: Structured Outputs Are Everywhere
 
-We have covered the why and how of structured outputs, from manual prompting to native API integration. This technique is more than just a convenience; it is a fundamental pattern in AI Engineering. It is the essential bridge connecting the probabilistic, free-form nature of LLMs with the deterministic, structured world of software applications. Whether you are building a simple workflow to summarize articles or a complex agent that analyzes financial data, you will use structured outputs. This ensures reliability and control.
+We have covered the why and how of structured outputs, from manual prompting to native API integration. This technique is a fundamental pattern in AI Engineering. It is the essential bridge connecting the probabilistic, free-form nature of LLMs with the deterministic, structured world of software applications. Whether you are building a simple workflow to summarize articles or a complex agent that analyzes financial data, you will use structured outputs. This ensures reliability and control.
 
 This pattern will be a recurring theme throughout this course. In our next lesson, we will explore the basic ingredients of LLM workflows, where we will see how structured data flows between different components. Later, when we build agents that can take action or reason about the world, structured outputs will be how they parse information and decide what to do next. Mastering this technique is a key step toward building powerful and predictable AI systems.
 
