@@ -5,17 +5,15 @@ In our previous lessons, we laid the groundwork for AI Engineering. We explored 
 ```mermaid
 flowchart LR
     subgraph "Software 3.0"
-        A["LLMs & AI Agents<br/>Probabilistic World<br/>Unstructured Data"]
+        A{"LLMs"}
     end
     
     subgraph "Software 1.0"
-        B["Traditional Applications<br/>Deterministic World<br/>Structured Data"]
+        B{"Traditional Application"}
     end
     
-    A -->|"Unstructured Output<br/>(Free-form text)"| C["The Gap"]
-    C -->|"Structured Input<br/>(JSON, APIs, etc.)"| B
-    
-    C["The Gap<br/><br/>Goal of Structured Outputs:<br/>Bridge Software 3.0 to Software 1.0<br/><br/>Note: Software 2.0 was the<br/>Machine Learning/Deep Learning phase"]
+    A -->|"Unstructured Output"| B
+    B -->|"Structured Input"| A
 ```
 Figure 1: The goal of structured outputs is to fill in the gap between Software 3.0 (LLM workflows & AI Agents) and Software 1.0 (Traditional Applications). Software 2.0 was referred to as the Machine Learning/Deep Learning phase.
 
