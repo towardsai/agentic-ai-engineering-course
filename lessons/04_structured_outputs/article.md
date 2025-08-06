@@ -1,7 +1,4 @@
-# LLM Structured Outputs: A Deep Dive
-### Bridge LLMs to apps with structured data
-
-## Introduction
+# Lesson 4: Structured Outputs
 
 In our previous lessons, we laid the groundwork for AI Engineering. We explored the AI agent landscape, distinguished between rule-based workflows and autonomous agents, and covered context engineering—the art of feeding the right information to a LLM. Now, we are ready to tackle a fundamental challenge: getting reliable information *out* of an LLM.
 
