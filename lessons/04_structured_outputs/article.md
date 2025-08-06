@@ -63,7 +63,7 @@ We will do that with a simple example where we want to extract key details, such
     MODEL_ID = "gemini-2.5-flash"
     ```
 
-    > ![NOTE]
+    > [!NOTE]
     > 💡 In all our examples, we will use Google's [google-genai](https://googleapis.github.io/python-genai/index.html) official Python AI SDK to access their Gemini models. More docs on the package can be found in their [getting started guides](https://ai.google.dev/gemini-api/docs) or [SDK docs](https://googleapis.github.io/python-genai/index.html). When running the code, to ensure that everything works fine, be sure to follow all the steps from the course admin lesson first.
 
 2. We define a sample document for analysis:
