@@ -10,7 +10,7 @@ For an AI Engineer, mastering chaining/routing/orchestration is one of the first
 
 ### Expected Length of the Lesson
 
-**4000 words** (without the titles and references), where we assume that 200-250 words ≈ 1 minute of reading time.
+**5000 words** (without the titles and references), where we assume that 200-250 words ≈ 1 minute of reading time.
 
 ### Theory / Practice Ratio
 
@@ -162,7 +162,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - Higher time to completion, as we have to wait for multiple LLM calls to complete.
     - Some information may be lost after doing multiple steps in a prompt chain (e.g. the first prompt may ask to summarize, while the second prompt may ask to translate, and it may lose some information from the summary while translating).
 
-**Section length:** 500 words
+**Section length:** 400 words
 
 ## Section 3 - Building a Sequential Workflow: FAQ Generation Pipeline
 
@@ -227,7 +227,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources:
 
-- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/main/lessons/05_workflow_patterns/notebook.ipynb)
+- [Notebook code for the lesson](https://github.com/towardsai/course-ai-agents/blob/dev/lessons/05_workflow_patterns/notebook.ipynb)
 
 ## Golden Sources
 

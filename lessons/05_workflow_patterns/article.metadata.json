@@ -1,0 +1,48 @@
+{
+    "config": {
+        "thread_id": "29f521ec-7122-471c-ac25-d9c34dcc0123",
+        "article_id": "05_workflow_patterns",
+        "enable_human_review": null
+    },
+    "num_chars_article": 44545,
+    "num_chars_conclusion": 1011,
+    "num_chars_introduction": 1040,
+    "num_sections": 7,
+    "num_words_article": 4975,
+    "num_words_conclusion": 159,
+    "num_words_introduction": 157,
+    "sections": {
+        "The Challenge with Complex Single LLM Calls": {
+            "num_chars": 5825,
+            "num_words": 769
+        },
+        "The Power of Modularity: Why Chain LLM Calls?": {
+            "num_chars": 3503,
+            "num_words": 420
+        },
+        "Building a Sequential Workflow: FAQ Generation Pipeline": {
+            "num_chars": 7185,
+            "num_words": 896
+        },
+        "Optimizing Sequential Workflows With Parallel Processing": {
+            "num_chars": 5457,
+            "num_words": 567
+        },
+        "Introducing Dynamic Behavior: Routing and Conditional Logic": {
+            "num_chars": 1640,
+            "num_words": 210
+        },
+        "Building a Basic Routing Workflow": {
+            "num_chars": 5764,
+            "num_words": 696
+        },
+        "Orchestrator-Worker Pattern: Dynamic Task Decomposition": {
+            "num_chars": 6942,
+            "num_words": 787
+        }
+    },
+    "seo": {
+        "title": "LLM Workflow Patterns: Monolithic to Modular",
+        "description": "Unlock robust LLM systems! Explore prompt chaining, parallel processing, routing, and orchestrator-worker patterns for scalable, debuggable, and reliable AI applications."
+    }
+}
