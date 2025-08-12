@@ -1,0 +1,8 @@
+- In section "Building a Sequential Workflow: FAQ Generation Pipeline", instead of having just the code output saying that it took 22 seconds to run the sequential workflow, it would be better to have an example of the sequential workflow output as well.
+- In section "Introducing Dynamic Behavior: Routing and Conditional Logic", mention that, with routing, it's then possible to route the models as well for specific tasks, as some models are better at specific tasks than others. Say that it will be covered in later in the course.
+- Edit the Mermaid diagram of the routing section so that the "Classify Intent" node is actually called "Router" node.
+- Expand a bit the code in the "def process_user_query(user_query)" function in the "Orchestrator-Worker Pattern: Dynamic Task Decomposition" section so that it shows more of how its "step 2" is done (where the tasks are dispatched)
+- The "Orchestrator-Worker Pattern: Dynamic Task Decomposition" section should also show the code of the synthetizer and explain it.
+- Don't use the word "embracing" and its derivatives, it's AI slop.
+- Don't use the "—" character, it's AI slop.
+- Don't use the word "crucial" and its derivatives, it's AI slop.
