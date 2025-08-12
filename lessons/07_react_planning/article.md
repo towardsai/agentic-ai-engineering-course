@@ -1,191 +1,217 @@
-# LLM Agents: Think, Plan, Act
-### Give your LLM a brain with ReAct & Plan-and-Execute
+# AI Agents: Think Before You Act
+### Why your AI agent needs to think first
 
-## Introduction: Giving LLMs a Blueprint for Thought
+## Why Your Agent Needs to Think Before It Acts
 
-Large Language Models (LLMs) are incredibly powerful at generating human-like text, but let's be blunt: they don't think. In their raw form, LLMs are next-token predictors, not strategic planners. This becomes painfully obvious when you try to build an autonomous AI agent to handle a complex, multi-step task. Ask a naive agent to do anything requiring structured thought, and it will likely fail, getting lost in a loop of irrelevant actions or hallucinating its way to a dead end.
+Artificial intelligence is transforming how we work, streamlining tasks and enhancing productivity. A major leap in this evolution is the rise of agentic reasoning: an approach that enables AI systems to plan, execute, and adapt like dynamic problem-solvers. This allows AI to break down complex problems, gather information, and respond in context—all while learning and refining its approach.
 
-This limitation raises a critical engineering question: How do we give these models a cognitive architecture to think, plan, and adapt? How do we move beyond simple prompt-response cycles and build agents that can systematically tackle complex problems?
+In the previous lessons, you learned the foundational components for building AI systems. You learned how to give models tools to interact with the world (Lesson 6), how to ensure they return data in a reliable format (Lesson 4), and how to chain these actions together into workflows (Lesson 5). But these ingredients alone are not enough to build a truly autonomous agent.
 
-This article will cut through the hype and dissect two foundational strategies that provide a blueprint for agentic thought: ReAct and Plan-and-Execute. We will explore why LLMs need this external scaffolding. These core patterns provide the structure necessary for building agents that can reason, self-correct, and achieve long-horizon goals. For AI engineers, this isn't just theory; it's the essential toolkit for designing systems that work.
+This article introduces the core concepts of planning and reasoning. We will explore why standard Large Language Models (LLMs) often fall short on complex, multi-step tasks that demand adaptation and foresight.
 
-## The Agent's Dilemma: Why LLMs Struggle with Complex Planning Tasks
+You will learn about the core strategies that give agents their 'thinking' ability, such as ReAct and Plan-and-Execute. These patterns provide a structured way for agents to decompose goals, interact with tools, and even correct their own mistakes, moving beyond simple command-response bots to tackle real-world challenges.
 
-To understand the problem, let's consider a practical scenario: a "Technical Research Assistant Agent." You task it with creating a comprehensive report on the "latest developments in edge AI deployment." A naive approach, simply feeding this goal to a Large Language Model (LLM), would be a disaster. The model might confidently generate a list of "recent breakthroughs" that sound plausible but are entirely fabricated, complete with non-existent paper titles and authors.
+## What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
 
-The LLM would lack any mechanism to search for real academic papers. It could not verify claims against external databases. Furthermore, it would not remember which sources it had already "consulted." The output would be a confident, yet utterly useless, piece of fiction.
+Let's consider a practical example: a "Technical Research Assistant Agent." Your goal is to give it a high-level task, such as "Produce a comprehensive technical report on the latest developments in edge AI deployment." This involves finding recent papers, summarizing their findings, identifying trends, and writing a structured report.
 
-This failure is not a bug; this is how LLMs are designed. An agent is a dynamic, goal-oriented system. However, a standalone LLM lacks the fundamental components to support this behavior. Its architecture inherently limits its ability to handle complex tasks.
+If you give this prompt to a standard Large Language Model (LLM), even one equipped with tools, it will likely fail. The model will try to generate a single, monolithic answer. It might call a search tool to find some papers and then immediately start writing a summary based on the first few results it gets. It treats the entire complex request as one big text generation problem.
 
-First, Large Language Models are fundamentally stateless. They are next-token predictors with a finite context window. This means they have no built-in memory or state-tracking capabilities across multiple interactions. Without an external system to manage what it has done and what it has learned, an LLM is like a researcher with severe short-term memory loss. It constantly forgets which papers it has already read. It cannot build a coherent understanding of a complex problem over time, nor can it track its progress towards a goal [1](https://pmc.ncbi.nlm.nih.gov/articles/PMC11756841/), [2](https://formative.jmir.org/2025/1/e51319), [3](https://pmc.ncbi.nlm.nih.gov/articles/PMC11751060/), [4](https://direct.mit.edu/qss/article/5/3/736/120940/A-critical-review-of-large-language-models).
+This approach breaks down quickly. What if the initial search results are outdated or irrelevant? A non-reasoning model has no mechanism to evaluate the quality of the information it receives and adjust its strategy. It does not break the problem down into logical sub-goals like "find sources," "verify sources," "synthesize findings," and "draft report." It just executes without foresight.
 
-Second, LLMs have no default planning capabilities. They do not spontaneously create and follow a multi-step plan to achieve a distant goal. Their reasoning is impressive but implicit. An engineer must explicitly structure it to be useful for a complex task [5](https://openreview.net/forum?id=jK4dbpEEMo), [6](https://openreview.net/forum?id=kFrqoVtMIy), [7](https://arxiv.org/html/2406.14283v1), [8](https://news.mit.edu/2025/researchers-teach-llms-to-solve-complex-planning-challenges-0402).
+In previous lessons, we explored how tools and structured outputs provide essential building blocks for AI systems. Tools enable an agent to interact with the world and take actions, while structured outputs ensure it returns data in a reliable format. However, for complex tasks where the path forward is not predictable, these components alone are insufficient. The agent needs a deeper reasoning layer to orchestrate these actions, to decide which tool to use next based on previous results, and crucially, to adapt its strategy when unexpected issues arise. Without this reasoning capability, the agent produces superficial outputs and cannot iterate on partial results or correct its course, leading to unreliable and often useless outcomes for any non-trivial challenge [[1]](https://arxiv.org/pdf/2503.13657), [[2]](https://huyenchip.com/2025/01/07/agents.html). To address this, we first "teach" the model to produce a reasoning trace, which means thinking before answering.
 
-This is why traditional solutions fall short. Simple prompting, like our naive research assistant example, cannot handle multi-step dependencies or ensure factual accuracy. Chain-of-Thought (CoT) prompting helps an LLM break down a single complex query into logical steps. However, it remains an internal monologue. CoT does not inherently connect the LLM to the outside world or provide persistent memory of past actions and observations. This static, internal reasoning limits its ability to reactively explore or update knowledge, leading to hallucination and error propagation [9](https://arxiv.org/pdf/2210.03629).
+## Teaching Models to “Think”: Chain-of-Thought and Its Limits
 
-Similarly, action-only approaches lack the abstract reasoning needed to stay focused on the high-level goal. They also struggle to maintain a working memory for long-horizon tasks [9](https://arxiv.org/pdf/2210.03629).
+To fix the failures of non-reasoning models, the first and simplest step is to teach the model to "think" before it acts. The most basic way to do this is with a technique called Chain-of-Thought (CoT) prompting. The idea is simple: you instruct the Large Language Model (LLM) to think step by step, writing out its reasoning process before giving the final answer. It is like asking someone to show their work in a math problem.
 
-Finally, LLMs have no innate ability to interact with the world. They cannot use tools, browse the web, or access a database without an external system enabling these actions [10](https://www.anthropic.com/research/building-effective-agents), [11](https://developer.nvidia.com/blog/introduction-to-llm-agents/), [12](https://ppc.land/content/files/2025/01/Newwhitepaper_Agents2.pdf), [13](https://agentsprotocol.gitbook.io/whitepaper/core-architecture-and-technology-stack).
+Researchers found that for large enough models, simply adding the phrase "think step by step" could dramatically improve performance on complex reasoning tasks [[3]](https://arxiv.org/abs/2201.11903). For our Technical Research Assistant Agent, a CoT prompt might look like this: "Before answering, think step by step about how you will research and verify sources on edge AI deployment. Then provide the final report."
 
-This is why we need an "Orchestrating Agent System," sometimes called an "Agent Core." This is the software loop you, the engineer, build around the LLM. This orchestrator is the true "agent." It manages the overall goal and maintains the agent's state and memory (like a scratchpad). It calls the LLM (the "brain") to make decisions. It also provides the interface to tools and the external environment. Without this orchestrator, you do not have an agent; you just have a powerful but aimless model [10](https://www.anthropic.com/research/building-effective-agents), [11](https://developer.nvidia.com/blog/introduction-to-llm-agents/), [12](https://ppc.land/content/files/2025/01/Newwhitepaper_Agents2.pdf), [13](https://agentsprotocol.gitbook.io/whitepaper/core-architecture-and-technology-stack).
-![An orchestrating agent system has a global plan and a set of hierarchical execution skills.](https://arxiv.org/html/2504.16563v1/x1.png)
+When you use this prompt, the model first generates a reasoning trace. This trace outlines a high-level plan: search for recent papers, read abstracts for relevance, compare claims, and then synthesize the findings into a report. This is a clear improvement, as the model is now performing some level of planning.
 
-Figure 1: An orchestrating agent system provides the control loop and external memory that LLMs lack [14](https://arxiv.org/html/2504.16563v1).
+However, CoT has a major limitation: it mixes the reasoning and the final answer into a single text output. This makes the process difficult to control and parse from an engineering perspective. The model might generate a great initial plan but then deviate from it when writing the final report. There is no clean separation between the "thinking" and the "doing."
 
-## Blueprints for Thinking: Foundational Planning & Reasoning Strategies
+This lack of separation means we cannot easily build an iterative loop where the agent acts on one step of the plan, observes the result, and then uses that observation to inform the next step. The entire process is a single, uninterruptible generation. To gain that level of control and build a truly adaptive agent, we need to more formally separate the two processes.
 
-Once you accept that an external orchestrator is necessary, the next question is how to structure your agent's "thought process." Historically, two foundational strategies emerged to solve this: ReAct and Plan-and-Execute. Understanding these patterns is essential, as they provide the mental models for how agents can reason and act methodically.
+## Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute
 
-### The Birth of ReAct
-Before ReAct, agent design was stuck between two paradigms. On one side, you had Chain-of-Thought (CoT) prompting, which allowed models to "reason" but kept them trapped inside their own heads. This meant they were disconnected from real-world information and prone to hallucination. On the other, you had action-only models that could interact with tools but lacked the high-level reasoning to form a coherent strategy [9](https://arxiv.org/pdf/2210.03629). Researchers at Google saw this gap and proposed ReAct (Reason + Act) to synergize these two functions. The key insight was to create an interleaved process where reasoning informs actions, and the results of those actions (observations) inform the next round of reasoning. This creates a powerful feedback loop that grounds the agent in reality [9](https://arxiv.org/pdf/2210.03629), [15](https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html).
-![A diagram shows that ReAct combines reasoning and acting, while other approaches focus on one or the other.](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuuYg9Pduep9GkUfjloNVOiy3qjpPb017GKlgGEGMaLNu_TCheEeJ7r8Qok6-0BK3KMfLvsN2vSgFQ8xOvnHM9CAb4Ix4I62bcN2oXFWfqAJnGAGbVqbeCyVktu3h9Dyf5ameRe54LEr32Emp0nG52iofpNOTXCxMY12K7fvmDZNPPmfJaT5zo1OBQA/s595/Screen%20Shot%202022-11-08%20at%208.53.49%20AM.png)
+The core idea that unlocks more advanced agentic behavior is the explicit separation of the planning and reasoning process from the action and answering process. Instead of asking the model to think and then answer in one go, we create a system where these are distinct steps [[4]](https://blog.langchain.com/planning-agents/), [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
 
-Figure 2: ReAct combines reasoning and acting, addressing the limitations of approaches that focus on only one.
+This separation is critical for building robust and controllable agents [[6]](https://arxiv.org/html/2404.11584v1). It gives us a clear window into the agent's thought process, allowing us to inspect its plan before it acts. More importantly, it enables the creation of iterative loops. The agent can form a thought, take an action, observe the outcome, and then use that new information to form its next thought. This feedback loop allows an agent to adapt to unexpected results, correct its own mistakes, and handle tasks where the path forward is not known in advance.
 
-### Solution 1: ReAct (Reason + Act)
-The core concept of ReAct is an iterative loop: **Thought -> Action -> Observation**. The Large Language Model (LLM) first generates a thought, which is an explicit piece of reasoning about what it needs to do next. This "Thought" step is crucial; it's where the LLM explicitly articulates its reasoning, allowing you, the engineer, to inspect its decision-making process. This transparency is invaluable for debugging and understanding why an agent behaves the way it does. Based on that thought, it generates an action, like calling a tool. The orchestrator executes this action and feeds the result—the observation—back to the LLM. The "Observation" is the feedback from that action, grounding the agent in reality and informing its next "Thought." This cycle continues until the task is complete.
+Two fundamental patterns implement this separation: ReAct and Plan-and-Execute [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
 
-Let's see how your Technical Research Assistant would use ReAct:
-*   **Thought 1:** "I need to find recent papers on the latest developments in edge AI deployment. I'll start with a broad search to get an overview."
-*   **Action 1:** `Search("latest developments in edge AI deployment 2024 papers")`
-*   **Observation 1:** "[List of 5 search results with titles and snippets]"
-*   **Thought 2:** "The first result, 'Advances in Quantization for Edge AI,' seems highly relevant. I should read its abstract to understand its key contributions."
-*   **Action 2:** `ReadAbstract("Advances in Quantization for Edge AI")`
-*   **Observation 2:** "[Abstract text, mentioning novel 4-bit quantization techniques]"
-*   **Thought 3:** "This paper focuses on quantization, which seems to be a key trend. I should refine my research to find more sources on this specific topic to identify if this is a broader trend. I also need to ensure I'm not missing other major developments."
-*   **Action 3:** `Search("edge AI quantization techniques review 2024")`
-*   **Observation 3:** "[List of 3 new search results, including a survey paper]"
-*   **Thought 4:** "The survey paper looks promising for a comprehensive overview. I will read its full content to understand the current state and future directions of edge AI deployment, especially regarding quantization."
-*   **Action 4:** `ReadFullPaper("Comprehensive Survey of Edge AI Deployment Trends")`
+ReAct (Reason-Act) works by interleaving thoughts, actions, and observations in a tight loop. The agent thinks about what to do, performs an action, sees what happened, and then thinks again [[4]](https://blog.langchain.com/planning-agents/).
 
-This loop continues, with each step building on the last. Your agent's "internal monologue" is made explicit, which is great for debugging and ensuring the agent stays on track. It provides a natural way to integrate tool use and react to new information.
+Plan-and-Execute, on the other hand, involves two distinct phases. First, the agent creates a complete, multi-step plan. Then, it enters an execution phase where it carries out that plan step by step [[4]](https://blog.langchain.com/planning-agents/), [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
+
+Both patterns are built on the same principle of separating thought from action, but they offer different trade-offs in terms of flexibility and predictability. We will now explore each of them in depth.
+
+## ReAct in Depth: The Loop of Thought, Action, and Observation
+
+The ReAct (Reason-Act) framework emerged to bridge the gap between pure reasoning, like in Chain-of-Thought, and pure action-taking. We realize that human intelligence seamlessly combines task-oriented actions with verbal reasoning or "inner speech." You can think of it like how we think to decide what to do next, and our actions provide us with new information that shapes our next thoughts [[7]](https://arxiv.org/pdf/2210.03629). Researchers designed ReAct to mimic this synergistic process in AI agents.
+
+The framework operates on a simple, iterative loop: Thought → Action → Observation. The agent first generates a reasoning trace, which we call a thought, to break down the problem and decide on the next immediate step. Based on that thought, it chooses an action to take, such as calling a tool. The system then receives an observation, which is the result of that action. It feeds this observation back into the context, and the agent generates a new thought to assess its progress and decide what to do next. This cycle repeats until the agent determines the task is complete and produces a final answer.
 ```mermaid
 graph TD
-    A[Start] --> B{User Query};
-    B --> C{Thought Generation};
-    C --> D{Action Generation};
-    D --> E[Execute Action];
-    E --> F[Get Observation];
-    F --> C;
-    C --> G{Final Answer?};
-    G -- No --> D;
-    G -- Yes --> H[End];
-
+    A["Start"] --> B["Thought"]
+    B --> C["Action"]
+    C --> D["Observation"]
+    D --> B
+    B --> E["Final Answer"]
+    E --> F["End"]
 ```
-Figure 3: The cyclical Thought-Action-Observation loop of a ReAct agent.
+Figure 1: The ReAct loop, where the agent iteratively cycles through Thought, Action, and Observation until it can produce a final answer.
 
-### Solution 2: Plan-and-Execute
-The Plan-and-Execute strategy takes a different approach by separating planning from execution into two distinct phases. This framework is designed to address complex, long-term planning tasks [16](https://blog.langchain.com/plan-and-execute-agents/), [17](https://www.promptlayer.com/glossary/plan-and-execute-agents).
+Let's walk through how our Technical Research Assistant Agent uses the ReAct pattern to tackle its task:
 
-1.  **Planning Phase:** First, the LLM creates a complete, high-level plan to achieve the goal. This plan is a sequence of steps that outlines the entire strategy from start to finish. The planning phase is where the LLM acts as a high-level strategist, laying out the entire sequence of operations before any execution begins. This upfront planning can prevent the agent from getting sidetracked or falling into unproductive loops, which can happen with more reactive approaches [17](https://www.promptlayer.com/glossary/plan-and-execute-agents).
-2.  **Execution Phase:** The agent then executes each step of the plan sequentially. While the initial plan provides a strong backbone, a robust Plan-and-Execute agent can also incorporate mechanisms for dynamic re-planning if an execution step fails or new information invalidates part of the original strategy. This explicit separation allows one LLM to focus solely on planning, and another to focus on execution, enhancing reliability and modularity [16](https://blog.langchain.com/plan-and-execute-agents/).
+1.  **Thought:** "I need to find recent, trustworthy sources on edge AI deployment. I'll start by searching academic and industry websites for papers from 2024."
+2.  **Action:** `search("latest developments in edge AI deployment 2024 site:arxiv.org OR site:nature.com")`
+3.  **Observation:** The search returns a list of candidate papers with titles and URLs.
+4.  **Thought:** "The search returned several papers. I need to select the most relevant ones. I'll pick three that are highly cited and one industry report to get a balanced view. I will check their publication dates and and venues to ensure they are credible."
+5.  **Action:** `fetch_and_extract(["paper_url_1", "paper_url_2", "report_url_1"])`
+6.  **Observation:** The tool returns the extracted abstracts and metadata for the selected sources.
+7.  **Thought:** "Now I have the summaries. I will compare their claims about adoption rates. I need to be careful and flag any conflicts in the data."
+8.  **Action:** `summarize_and_compare(extractions)`
+9.  **Observation:** The result shows that Paper A claims a 40% adoption rate, while Paper B claims 25%. There's a conflict.
+10. **Thought:** "A conflict has been detected in the adoption rates. I need to resolve this. I will search for a third-party market analysis to act as a tie-breaker."
+11. **Action:** `search("edge AI deployment adoption market analysis 2024")`
+12. **Observation:** A credible market analysis report is found.
+13. **Thought:** "I have the market report. I will use it to resolve the conflict and then finalize my summary of trends and gaps."
+14. **Final Answer:** The agent generates a structured report, citing all sources and explaining how it resolved the conflicting statistics.
 
-Here's how your research assistant would tackle the same task with a Plan-and-Execute approach:
+### Pros
 
-*   **Planning Phase:**
-    1.  Search for academic papers and industry reports on "edge AI deployment" published in the last 18 months, prioritizing highly cited works.
-    2.  Filter the top 10 most relevant sources based on abstract review and initial relevance scoring.
-    3.  For each selected source, extract and summarize its key findings, focusing on novel techniques, challenges, and future trends.
-    4.  Synthesize all summaries to identify the top 3-5 overarching trends in edge AI deployment, noting any conflicting information.
-    5.  Identify any reported gaps, open problems, or future research directions mentioned across the sources.
-    6.  Structure and write the final report, including an introduction, detailed sections on key trends, an analysis of gaps, and a concluding summary.
+*   **High Interpretability:** The thought process is explicit at every step, making it easy for you to debug and understand why the agent made a certain decision [[7]](https://arxiv.org/pdf/2210.03629). This transparency is crucial for building trust in autonomous systems.
+*   **Natural Error Recovery:** Because the agent observes the outcome of each action, it can naturally detect and recover from errors, like the conflicting data in our example. This makes it well-suited for exploratory tasks where the path is uncertain and unexpected issues may arise [[6]](https://arxiv.org/html/2404.11584v1). The agent can adapt its plan dynamically based on new information.
 
-*   **Execution Phase:** The agent now works through this checklist, executing each step one by one. For example, it would first complete the search, then move on to filtering, then summarizing, and so on. If, during the summarization of a paper, it finds a critical new sub-topic not covered in the initial plan, it might trigger a re-planning step to incorporate additional research on that sub-topic before proceeding.
+### Cons
 
-This strategy is particularly useful for tasks where a high-level approach can be determined upfront. It provides a clear, structured workflow that is less likely to get sidetracked.
+*   **Slower:** The iterative nature, with an LLM call at each "thought" step, can make the process slower and more expensive for you than other approaches [[4]](https://blog.langchain.com/planning-agents/). Each turn incurs latency and token costs.
+*   **Requires Tight Control:** The loop can sometimes get stuck repeating steps or go off-track, requiring well-designed prompts and guardrails (like a maximum number of iterations) to keep it focused [[8]](https://galileo.ai/blog/why-most-ai-agents-fail-and-how-to-fix-them). Without proper termination conditions, an agent might enter an infinite loop.
+
+## Plan-and-Execute in Depth: Structure and Predictability
+
+While ReAct excels at exploratory tasks, its iterative nature can be inefficient for problems with a more predictable structure. An alternative pattern is Plan-and-Execute, which, as its name suggests, separates the process into two distinct phases: first, creating a comprehensive plan, and second, executing that plan.
+
+This approach is often more efficient because it minimizes the number of calls to the main, powerful Large Language Model (LLM). A planner model (typically a large, capable LLM) generates a detailed, step-by-step plan once upfront. Then, an executor—which can be a simpler agent or even just a loop running tool calls—carries out the plan. You only consult the planner again if the plan needs to be updated due to an unexpected issue or a significant deviation from the expected outcome [[4]](https://blog.langchain.com/planning-agents/). This separation of a heavyweight planner from the execution runtime helps reduce latency and cost compared to continuously looping a single LLM after every tool call.
 ```mermaid
 graph TD
-    A[Start] --> B{User Query};
-    B --> C[Planning Phase: LLM generates a multi-step plan];
-    C --> D{Execution Phase};
-    D --> E{Step 1};
-    E --> F{Execute Step 1};
-    F --> G{Step 2};
-    G --> H{Execute Step 2};
-    H --> I[...]
-    I --> J{Final Step};
-    J --> K{Execute Final Step};
-    K --> L[End];
+    A["Start"] --> B{"Planning Phase"}
+    B -- "Creates Plan" --> C_subgraph
+    subgraph C_subgraph ["Execution Phase"]
+        direction LR
+        S1["Step 1"] --> S2["Step 2"]
+        S2 --> S3["Step 3"]
+        S3 --> SN["..."]
+    end
+    C_subgraph --> D{"Execution Successful?"}
+    D -->|"Success"| E["Final Answer"]
+    D -->|"Failure"| B
+    E --> F["End"]
 ```
-Figure 4: The two-phase workflow of a Plan-and-Execute agent.
+Figure 2: The Plan-and-Execute pattern, showing a clear separation between the initial Planning phase and the sequential Execution phase.
 
-### Comparison: When to Use Which
-So, which blueprint is better? It depends entirely on the task you're trying to solve.
+Let's revisit your Technical Research Assistant Agent and see how it would operate using this pattern.
 
-*   **Use ReAct for exploratory or dynamic tasks** where the path forward is uncertain. ReAct excels when your agent needs to react to unpredictable information and adjust its strategy on the fly. Consider a task like "diagnose a complex network issue." This is highly exploratory and unpredictable, making ReAct a strong candidate. Your agent needs to react to diagnostic outputs, error messages, and user input in real-time.
-*   **Use Plan-and-Execute for well-defined or long-horizon tasks** where the overall strategy can be mapped out in advance. Conversely, "generate a quarterly financial report based on provided data" is a well-defined task with clear steps, where Plan-and-Execute would likely be more efficient and reliable. Your agent can map out data extraction, calculation, and report generation steps upfront.
+### Planning Phase
 
-Studies comparing the two have shown that Plan-and-Execute tends to achieve higher task completion accuracy for complex tasks, but at the cost of higher latency and token consumption. ReAct is generally faster and cheaper but may struggle with maintaining focus on a long-term goal. The choice is an engineering trade-off between flexibility and structured execution [18](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
+You first prompt the agent to create a complete plan to fulfill the request. It outputs a structured list of tasks, like this:
 
-## Advanced Capabilities: Goal Decomposition and Self-Correction
+1.  Define the scope and success criteria for the report on "edge AI deployment." This involves understanding the target audience and the desired depth of analysis.
+2.  Execute parallel searches across academic databases (e.g., arXiv) and industry news sites for content from the last 18 months. Use specific keywords to ensure relevance.
+3.  From the search results, select the top 5 academic papers and top 3 industry reports based on relevance, citation count, and source credibility. Prioritize recent and highly influential works.
+4.  For each selected source, extract the abstract, key findings, and any specific data on adoption rates or performance benchmarks. Store this information in a structured format for easy comparison.
+5.  Synthesize the extracted information, comparing findings across sources to identify consistent trends, emerging technologies, and notable conflicts or gaps in the research. Highlight areas of consensus and divergence.
+6.  Draft a detailed outline for the final report, including sections for Introduction, Key Trends, Technical Challenges, Industry Adoption, and Conclusion. Ensure a logical flow and comprehensive coverage.
+7.  Write the full report based on the outline, ensuring all claims are supported by citations and including a methodology section explaining the research process. This ensures transparency and verifiability.
 
-Foundational strategies like ReAct and Plan-and-Execute provide the basic structure for agentic behavior, but building truly robust agents requires more advanced capabilities. Two of the most critical are goal decomposition and self-correction. These are not just add-ons; they are essential for enabling agents to handle real-world complexity and recover from the inevitable errors they will encounter.
+### Execution Phase
 
-### Advanced Capability 1: Goal Decomposition
-At its core, all planning is about breaking down large, vague goals into smaller, concrete actions. We call this goal decomposition. Both ReAct and Plan-and-Execute rely on this, but for complex tasks, this decomposition needs to be hierarchical. Instead of a flat list of steps, the agent builds a tree of goals and sub-goals. Recent research has formalized this with frameworks that use continuously updated global plans and construct subgoal trees to systematically reduce gaps in planning, enabling LLMs to function more effectively on long-horizon tasks [14](https://arxiv.org/html/2504.16563v1), [19](https://arxiv.org/html/2506.21030v1).
+The agent now systematically works through the plan, executing step 1, then step 2, and so on. It stores the results of each step and uses them as input for subsequent steps. For example, the URLs found in step 2 are used in step 3. The system returns to the planning phase only if a step fails completely (e.g., no relevant sources are found) or if a predefined trigger for re-planning is met. This creates a more controlled and predictable workflow, as the main LLM does not constantly re-evaluate every micro-step.
 
-For our Technical Research Assistant, this hierarchical decomposition would look like:
+### Pros
 
-*   **Main Goal:** Create a technical report on edge AI deployment.
-    *   **Sub-Goal 1: Research**
-        *   **Sub-sub-goal 1.1:** Find recent academic papers via search tools.
-        *   **Sub-sub-goal 1.2:** Find industry whitepapers and blog posts.
-        *   **Sub-sub-goal 1.3:** Identify key experts and summarize their recent talks or articles.
-    *   **Sub-Goal 2: Analysis**
-        *   **Sub-sub-goal 2.1:** Synthesize findings from all sources.
-        *   **Sub-sub-goal 2.2:** Identify the top 3 recurring trends.
-    *   **Sub-Goal 3: Writing**
-        *   **Sub-sub-goal 3.1:** Draft the introduction and conclusion.
-        *   **Sub-sub-goal 3.2:** Write the main body detailing the trends.
+*   **Efficiency and Predictability:** For well-defined, multi-step tasks, this pattern is often faster and uses fewer resources because you do not call the powerful planner LLM in every loop. This leads to more stable costs and latency for you. Upfront planning also boosts task completion rates and quality for complex workflows [[4]](https://blog.langchain.com/planning-agents/), [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
+*   **Better for Structured Tasks:** It excels at tasks that you can reliably break down into a sequence of known steps, like data processing pipelines or report generation. The upfront planning ensures a coherent and complete output [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9).
 
-This hierarchical structure allows the agent to maintain focus on the big picture while working on granular tasks. It simplifies planning at each level, as the LLM only needs to reason about the immediate sub-goals rather than the entire complex task at once.
+### Cons
 
-### Advanced Capability 2: Self-Correction
-Real-world tasks are messy. Information can be contradictory, tools can fail, and initial assumptions can be wrong. An agent that cannot detect and recover from these issues is brittle and unreliable. Self-correction is the mechanism that allows an agent to adapt when things go wrong. Frameworks like Reflexion and Self-Refine explore this by having an agent reflect on its actions and feedback to improve its performance iteratively. While these frameworks offer significant improvements, self-correction is most effective when reliable external feedback is available or when models are fine-tuned specifically for this purpose. Relying solely on an LLM's internal self-evaluation can sometimes limit the effectiveness of correction [1](https://pmc.ncbi.nlm.nih.gov/articles/PMC11756841/), [20](https://arxiv.org/pdf/2303.11366), [21](https://reflectedintelligence.com/2025/05/20/self-refine/).
+*   **Rigidity:** The agent is locked into its initial plan. If an unexpected event occurs that the plan did not account for, it can fail without a mechanism for re-planning [[9]](https://www.willowtreeapps.com/craft/building-ai-agents-with-plan-and-execute). This can lead to brittle systems in highly dynamic environments.
+*   **Less Adaptable:** It is not well-suited for highly exploratory problems where the next step depends heavily on the findings of the previous one. The upfront planning might be based on incomplete information, making the initial plan suboptimal or even incorrect.
 
-In our research assistant scenario, self-correction might happen if the agent finds conflicting information:
+## Where This Shows Up in Practice: Deep Research–Style Systems
 
-*   **Observation:** Paper A, from a 2023 conference, claims that 8-bit quantization is the standard for edge devices. However, a 2024 industry blog post claims 4-bit techniques are now widespread.
-*   **Thought (Self-Correction):** "There is a conflict between these two sources. The blog post is more recent, but the paper is a peer-reviewed source. I need to verify which is more accurate or if the landscape has recently changed. I will search for a recent survey paper or a meta-analysis on quantization for edge AI."
-*   **Action:** `Search("review of quantization techniques for edge AI 2024")`
+The theoretical patterns of ReAct and Plan-and-Execute are not just academic exercises. Instead, you will find they form the backbone of sophisticated, real-world AI systems designed for complex analysis and reporting. A prime example is what we call "Deep Research" systems. We use these for tasks like market analysis, scientific literature reviews, or complex financial diligence.
 
-This ability to recognize a problem, reason about a solution, and adjust the plan is what separates a robust agent from a simple script. Self-correction can be triggered by tool errors, conflicting data, or an evaluation step where the agent critiques its own output against the original goal. The "Observation" step in ReAct, for instance, provides crucial feedback that enables this corrective behavior.
+We see these systems operationalize planning and reasoning to tackle long-horizon tasks. These tasks are often too complex for a single LLM call. They start by breaking down a high-level goal, such as "analyze the competitive landscape for quantum computing," into a series of smaller sub-goals [[10]](https://www.glean.com/blog/a-complete-guide-to-agentic-reasoning). This decomposition might involve steps like identifying key companies, finding recent research papers, analyzing patent filings, and summarizing news sentiment.
 
-### Why These Patterns Remain Valuable
-It's tempting to think that as models like GPT-4o become more powerful, they will simply "learn" to plan, making explicit frameworks obsolete. This perspective, however, misunderstands the engineering reality. While models will undoubtedly improve, the fundamental patterns for structuring agentic systems remain critical for several reasons.
+The agent then enters an iterative cycle. This involves searching for information, reading and extracting key data, comparing findings from different sources, and verifying claims [[11]](https://www.ayadata.ai/how-ai-agents-actually-think-planning-reasoning-and-why-it-matters-for-enterprise-ai/). Think of our research assistant agent's process of finding conflicting adoption rates and seeking a third source to verify data. This is a micro-version of what these deep research systems do at scale. They perform many micro-cycles of searching, extracting, verifying statistics, and updating internal notes before synthesizing the final report.
 
-First, they provide essential mental models for you as an AI engineer. Understanding goal decomposition helps you design better prompts and structure the agent's control loop. When an agent fails, an explicit thought process or plan allows you to trace the error back to its source—a faulty reasoning step or an incorrect observation. This transparency is invaluable for debugging. Without it, you are left trying to fix an opaque black box. Forcing the model to externalize its reasoning through these patterns gives you more control and predictability, which is non-negotiable for any production-grade system.
+In practice, many of these systems use a hybrid approach. They might use a Plan-and-Execute pattern to structure the overall workflow. However, they also implement ReAct-like loops within each major step to handle uncertainty and verification [[12]](https://serjhenrique.com/react-wese-plan-and-execute-and-chatdb-architectures-applied-to-question-answer-database-use-case/). This combination gives them both the structure to manage complexity and the flexibility to adapt to new information. This shows you how these foundational patterns are essential for building powerful, reliable agents.
 
-These foundational patterns are not just historical artifacts; they are the building blocks for more sophisticated agent architectures. As we move toward systems with long-term memory and multi-agent coordination, a solid grasp of how a single agent plans, acts, and corrects itself is more important than ever.
+## Modern Reasoning Models: Thinking vs. Answer Streams and Interleaved Thinking
 
-## Conclusion
+As Large Language Models (LLMs) continue to evolve, they are beginning to internalize some of the reasoning structures we have discussed. Instead of relying solely on external frameworks to orchestrate thinking, developers now design modern models with more advanced, built-in reasoning capabilities.
 
-Building autonomous agents that can reliably handle complex tasks is one of the most significant challenges in AI engineering today. As we have seen, simply relying on the raw intelligence of an LLM is not enough. Standalone models are stateless, lack innate planning abilities, and cannot interact with the world without help. To truly harness their power, you need a well-designed external orchestration system.
+One significant development is the separation of "thinking" and "answer" streams at the model level. Some models, like recent versions of Claude, can engage in an explicit "extended thinking" process before delivering a final answer [[13]](https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html), [[14]](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/claude). In this mode, the model generates a private reasoning trace—essentially an internal monologue—where it breaks down the problem, evaluates options, and formulates a plan. This thinking happens behind the scenes. You receive the final, polished answer, though you can inspect the thinking process for debugging or transparency [[13]](https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html).
 
-This article has introduced two of the most foundational blueprints for that system: ReAct and Plan-and-Execute. These strategies provide the essential mental models for structuring an agent's thought process, allowing it to move from a simple goal to a series of coherent actions. ReAct offers flexibility for dynamic tasks, while Plan-and-Execute provides structure for well-defined workflows.
+Another powerful advancement is "interleaved thinking," which is particularly useful for tasks involving tools [[13]](https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html), [[15]](https://platform.openai.com/docs/guides/reasoning). In this architecture, the model does not plan everything upfront. Instead, it can think, call a tool, receive the result, and then think again to process that result before deciding on the next action. This allows for a more dynamic and responsive reasoning flow that closely resembles the ReAct loop but happens more implicitly within the model's own generation process. For example, Claude 3.5 Sonnet can operate a virtual computer, browsing and interacting with applications by interleaving actions with its natural language reasoning [[16]](https://www.anthropic.com/news/3-5-models-and-computer-use). This means the model can chain multiple tool calls with reasoning steps in between, making more nuanced decisions based on intermediate results [[13]](https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html). Models like Claude Opus and Sonnet now feature superior reasoning capabilities and large context windows, supporting this integrated approach to tool use [[17]](https://docs.anthropic.com/en/docs/about-claude/models/overview), [[18]](https://www.anthropic.com/news/claude-3-5-sonnet).
 
-Building on these, advanced capabilities like hierarchical goal decomposition and self-correction are what make an agent robust and adaptable. Understanding these core patterns—how an agent breaks down problems, reasons about its actions, and recovers from failure—is crucial for any engineer aiming to build truly autonomous systems. Regardless of how powerful future models become, these principles of structured reasoning will remain the bedrock of reliable and effective agent design.
+While these advancements make building reasoning agents easier, they do not make the underlying patterns obsolete. As an engineer, understanding the principles of ReAct and Plan-and-Execute remains crucial. These patterns give you a mental model for how the agent should behave. This is essential for designing effective prompts, setting up guardrails, and debugging when things go wrong. Even if the model handles the loop internally, you are still responsible for designing the system that enables and controls it.
+
+## Advanced Agent Capabilities Enabled by Planning: Goal Decomposition and Self-Correction
+
+Effective planning and reasoning unlock more advanced agentic capabilities essential for true autonomy. Two of the most important are goal decomposition and self-correction.
+
+### Goal Decomposition
+
+Goal decomposition is the ability to break a large, complex task into smaller, manageable sub-goals. Instead of simply following a linear plan, a sophisticated agent creates a hierarchy of goals. For our research assistant, the top-level goal is to "produce a report." It might decompose this into sub-goals like "gather data," "analyze data," and "write report." You can further decompose the "gather data" sub-goal into "search academic sources" and "search industry sources."
+
+You can design prompting strategies to explicitly encourage this behavior, leading to more robust and thorough task execution. For instance, you can decompose a complex task into independent components, which simplifies troubleshooting by isolating failures to specific steps. Crafting focused prompts with only the information needed for each subtask reduces distraction and improves accuracy. This also enables the use of smaller, specialized models for sub-tasks, potentially reducing cost and improving efficiency [[19]](https://www.amazon.science/blog/how-task-decomposition-and-smaller-llms-can-make-ai-more-affordable). When you break down complex prompts into smaller, sequential sub-prompts, you improve the LLM's performance by guiding multi-step reasoning and reducing failures on complex instructions [[20]](https://silicondales.com/ai/decomposed-prompting/).
+
+### Self-Correction
+
+Self-correction is the agent's ability to detect when something has gone wrong and update its plan to fix it. This is where the iterative nature of reasoning loops becomes powerful. An agent can identify failures, such as a tool call returning an error, contradictions in information, or low-confidence results. When it detects an issue, it dynamically adjusts its plan.
+
+Let's return to our example of the conflicting adoption rates (40% vs. 25%). A self-correcting agent recognizes this contradiction. Instead of ignoring it or just picking one, it inserts a new sub-goal into its plan: "Verify the correct adoption rate." This might lead it to perform a new search for a more authoritative source, like a market analysis report. Once it resolves the conflict, it proceeds with its original plan, now with more reliable information.
+
+You can induce this process through specific prompting techniques. For example, you can ask the agent to act as a "critic" of its own work, or to always verify facts against trusted sources [[21]](https://galileo.ai/blog/self-evaluation-ai-agents-performance-reasoning-reflection), [[22]](https://www.lionbridge.com/blog/ai-training/ai-self-correction/). Techniques like "CRITIC prompting" involve generating an initial response, performing critical analysis, and then refining the output [[23]](https://relevanceai.com/prompt-engineering/learn-to-use-critic-prompting-for-self-correction-in-ai-responses). Another approach is "self-consistency," where the agent generates multiple reasoning paths and compares the results to flag inconsistencies and select the most reliable answer [[21]](https://galileo.ai/blog/self-evaluation-ai-agents-performance-reasoning-reflection). This iterative refinement significantly improves the accuracy and trustworthiness of the agent's outputs.
+
+Even with powerful models that have some of these capabilities built-in, understanding the underlying patterns of ReAct and Plan-and-Execute is essential. These frameworks give you the tools to design, debug, and control your agents. They provide a clear structure for tracing the agent's behavior—the sequence of thoughts, actions, and observations—ensuring consistency and providing a shared mental model for how the agent is "thinking." This understanding is crucial for building production-grade AI systems that are reliable and maintainable.
+
+## Conclusion: From Theory to Action
+
+In this lesson, we moved from basic actions to intelligent planning and reasoning, the capabilities that truly define an autonomous agent. We've seen that building reliable agents requires more than just giving an LLM access to tools; it requires a structured way for the agent to think, plan, and adapt.
+
+We explored the two foundational patterns for agentic reasoning: the iterative and flexible ReAct, which excels at exploratory tasks, and the structured and predictable Plan-and-Execute, which is better for well-defined workflows. Both are built on the critical principle of separating thought from action, which is the key to control, debuggability, and reliability.
+
+We also saw how these concepts are not just theoretical. They are being implemented in large-scale research systems and are even being built directly into the architecture of modern LLMs. However, even as models become more capable of internal reasoning, these foundational patterns remain vital for you as an engineer. They provide the mental models and control structures needed to build systems that are not just powerful, but also consistent and trustworthy.
+
+Now that you understand the theory, it's time to put it into practice. In Lesson 8, you will implement the ReAct pattern from scratch, building your first true reasoning agent. From there, we will continue to build on this foundation, exploring how to give agents memory in Lesson 9 and how to augment them with advanced knowledge retrieval in Lesson 10.
 
 ## References
 
-- [1] Large language models in health care education: a paradigm shift from traditional to innovative learning (https://pmc.ncbi.nlm.nih.gov/articles/PMC11756841/)
-- [2] The Rise of Large Language Models: A Critical Review of Their Applications, Benefits, and Limitations in Medical Education (https://formative.jmir.org/2025/1/e51319)
-- [3] Large language models in scientific discovery (https://pmc.ncbi.nlm.nih.gov/articles/PMC11751060/)
-- [4] A critical review of large language models for communication research (https://direct.mit.edu/qss/article/5/3/736/120940/A-critical-review-of-large-language-models)
-- [5] Position: Limitations of LLMs Can Be Overcome by Carefully Designed Multi-Agent Collaboration (https://openreview.net/forum?id=jK4dbpEEMo)
-- [6] Can Large Language Models Plan? A Sobering Survey (https://openreview.net/forum?id=kFrqoVtMIy)
-- [7] Large Language Models are not Yet Human-Level General Problem Solvers (https://arxiv.org/html/2406.14283v1)
-- [8] Researchers teach LLMs to solve complex planning challenges (https://news.mit.edu/2025/researchers-teach-llms-to-solve-complex-planning-challenges-0402)
-- [9] ReAct: Synergizing Reasoning and Acting in Language Models (https://arxiv.org/pdf/2210.03629)
-- [10] Building effective AI agents (https://www.anthropic.com/research/building-effective-agents)
-- [11] Introduction to LLM Agents (https://developer.nvidia.com/blog/introduction-to-llm-agents/)
-- [12] The Next Wave of AI: Intelligent Agents (https://ppc.land/content/files/2025/01/Newwhitepaper_Agents2.pdf)
-- [13] Agents Protocol Whitepaper (https://agentsprotocol.gitbook.io/whitepaper/core-architecture-and-technology-stack)
-- [14] Enhancing LLM-Based Agents via Global Planning and Hierarchical Execution (https://arxiv.org/html/2504.16563v1)
-- [15] ReAct: Synergizing Reasoning and Acting in Language Models (https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html)
-- [16] Plan-and-Execute Agents (https://blog.langchain.com/plan-and-execute-agents/)
-- [17] Plan-and-Execute Agents (https://www.promptlayer.com/glossary/plan-and-execute-agents)
-- [18] ReAct vs Plan and Execute: A Practical Comparison of LLM Agent Patterns (https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9)
-- [19] STEP Planner: Constructing cross-hierarchical subgoal tree as an embodied long-horizon task planner (https://arxiv.org/html/2506.21030v1)
-- [20] Reflexion: Language Agents with Verbal Reinforcement Learning (https://arxiv.org/pdf/2303.11366)
-- [21] Self-Refine: Iterative Refinement with Self-Feedback (https://reflectedintelligence.com/2025/05/20/self-refine/)
+- [[1]](https://arxiv.org/pdf/2503.13657) Yao, S., et al. (2025). *A Taxonomy for Multi-Agent LLM Systems*. arXiv.
+- [[2]](https://huyenchip.com/2025/01/07/agents.html) Huyen, C. (2025). *Agents*.
+- [[3]](https://arxiv.org/abs/2201.11903) Wei, J., et al. (2022). *Chain-of-Thought Prompting Elicits Reasoning in Large Language Models*. arXiv.
+- [[4]](https://blog.langchain.com/planning-agents/) LangChain. (2024). *Planning Agents*. LangChain Blog.
+- [[5]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9) Li, J. (2024). *ReAct vs. Plan-and-Execute: A Practical Comparison of LLM Agent Patterns*. DEV Community.
+- [[6]](https://arxiv.org/html/2404.11584v1) Wang, G., et al. (2024). *Architectural theme: Successful goal execution hinges on planning and self-correction*. arXiv.
+- [[7]](https://arxiv.org/pdf/2210.03629) Yao, S., et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models*. arXiv.
+- [[8]](https://galileo.ai/blog/why-most-ai-agents-fail-and-how-to-fix-them) Galileo. (n.d.). *Why Most AI Agents Fail (And How to Fix Them)*.
+- [[9]](https://www.willowtreeapps.com/craft/building-ai-agents-with-plan-and-execute) WillowTree. (2023). *Building AI Agents with Plan and Execute*.
+- [[10]](https://www.glean.com/blog/a-complete-guide-to-agentic-reasoning) Glean. (n.d.). *A Complete Guide to Agentic Reasoning*.
+- [[11]](https://www.ayadata.ai/how-ai-agents-actually-think-planning-reasoning-and-why-it-matters-for-enterprise-ai/) Aya Data. (n.d.). *How AI Agents Actually Think: Planning, Reasoning, and Why It Matters for Enterprise AI*.
+- [[12]](https://serjhenrique.com/react-wese-plan-and-execute-and-chatdb-architectures-applied-to-question-answer-database-use-case/) Henrique, S. (n.d.). *ReAct, Plan and Execute, and ChatDB Architectures Applied to Question-Answer Database Use Case*.
+- [[13]](https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html) Amazon Web Services. (n.d.). *Use extended thinking with Claude on Amazon Bedrock*. AWS Documentation.
+- [[14]](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/claude) Google Cloud. (n.d.). *Use Claude models in Vertex AI*.
+- [[15]](https://platform.openai.com/docs/guides/reasoning) OpenAI. (n.d.). *Reasoning*. OpenAI Documentation.
+- [[16]](https://www.anthropic.com/news/3-5-models-and-computer-use) Anthropic. (2024). *Claude 3.5 Sonnet and computer use*.
+- [[17]](https://docs.anthropic.com/en/docs/about-claude/models/overview) Anthropic. (n.d.). *Models overview*. Anthropic Documentation.
+- [[18]](https://www.anthropic.com/news/claude-3-5-sonnet) Anthropic. (2024). *Introducing Claude 3.5 Sonnet*.
+- [[19]](https://www.amazon.science/blog/how-task-decomposition-and-smaller-llms-can-make-ai-more-affordable) Amazon Science. (2024). *How task decomposition and smaller LLMs can make AI more affordable*.
+- [[20]](https://silicondales.com/ai/decomposed-prompting/) Silicon Dales. (n.d.). *Decomposed Prompting*.
+- [[21]](https://galileo.ai/blog/self-evaluation-ai-agents-performance-reasoning-reflection) Galileo. (n.d.). *Self-Evaluation in AI Agents: Enhancing Performance Through Reasoning and Reflection*.
+- [[22]](https://www.lionbridge.com/blog/ai-training/ai-self-correction/) Lionbridge. (n.d.). *AI Self-Correction*.
+- [[23]](https://relevanceai.com/prompt-engineering/learn-to-use-critic-prompting-for-self-correction-in-ai-responses) Relevance AI. (n.d.). *Learn to Use CRITIC Prompting for Self-Correction in AI Responses*.
