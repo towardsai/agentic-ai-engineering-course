@@ -20,7 +20,13 @@ class Color:
     RESET = "\033[0m"
 
 
-def wrapped(text: Iterable[str] | dict | str, title: str = "", indent: int = 2, width: int = 100, header_color: str = Color.YELLOW) -> None:
+def wrapped(
+    text: Iterable[str] | dict | str,
+    title: str = "",
+    indent: int = 2,
+    width: int = 100,
+    header_color: str = Color.YELLOW,
+) -> None:
     header, separator = __get_header_and_footer(title, width, header_color)
 
     if isinstance(text, str):
@@ -35,16 +41,25 @@ def wrapped(text: Iterable[str] | dict | str, title: str = "", indent: int = 2, 
 
 
 def function_call(
-    function_call: types.FunctionCall, only_name: bool = False, title: str = "", indent: int = 2, width: int = 100, header_color: str = Color.YELLOW, label_color: str = Color.ORANGE
+    function_call: types.FunctionCall | None,
+    only_name: bool = False,
+    title: str = "",
+    indent: int = 2,
+    width: int = 100,
+    header_color: str = Color.YELLOW,
+    label_color: str = Color.ORANGE,
 ) -> None:
     header, footer = __get_header_and_footer(title, width, header_color)
 
     print(header)
-    print(f"{' ' * indent}{label_color}Function Name:{Color.RESET} `{function_call.name}")
-    if only_name is False:
-        print(
-            f"{' ' * indent}{label_color}Function Arguments:{Color.RESET} `{json.dumps(function_call.args, indent=indent)}`"
-        )
+    if function_call:
+        print(f"{' ' * indent}{label_color}Function Name:{Color.RESET} `{function_call.name}")
+        if only_name is False:
+            print(
+                f"{' ' * indent}{label_color}Function Arguments:{Color.RESET} `{json.dumps(function_call.args, indent=indent)}`"  # noqa: E501
+            )
+    else:
+        print(f"{' ' * indent}{label_color}Function Call is missing{Color.RESET}")
     print(footer)
 
 
