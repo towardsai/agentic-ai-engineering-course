@@ -14,6 +14,7 @@
       - "In the early days …", "These aren't just theoretical problems; they are …"
     - Don't use the word "embracing" and its derivatives, it's AI slop.
     - Don't use the word "crucial" and its derivatives, it's AI slop.
+    - When making examples, replace "imagine we have ..." with "suppose we have ...".
 
 ## 2. Important
 - [2] Group 2:
