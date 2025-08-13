@@ -18,17 +18,17 @@
 
 ### Theory / Practice Ratio
 
-<x>% theory - <y%> real-world examples
+<x>% theory - <y>% real-world examples
 
-## Achoring the Lesson in the Course
+## Anchoring the Lesson in the Course
 
 ### Details About the Course
 
-This piece is part of a broader course on AI agents and LLM workflows. The course consists of 3 parts, each with multiple lessons. 
+This piece is part of a broader course on AI agents and LLM workflows. The course consists of 4 parts, each with multiple lessons. 
 
 Thus, it's essential to always anchor this piece into the broader course, understanding where the reader is in its journey. You will be careful to consider the following:
 - The points of view
-- To not reintroduce concepts already thought in the previous lesson.
+- To not reintroduce concepts already taught in the previous lesson.
 - To be careful when talking about concepts introduced only in future lessons
 - To always reference previous and future lessons when discussing topics outside the piece's scope.
 
@@ -80,11 +80,18 @@ In future lessons of the course, we will introduce the following concepts:
 
 **Part 2:**
 
+In this section, you'll move from theory to practice by starting your work on the course's central project: an interconnected research and writing agent system. After a deep dive into agentic design patterns and a comparative look at modern frameworks, we'll focus on LangGraph. You will implement the research agent, equipping it with tools for web scraping and analysis. Then, you'll construct the writing workflow to convert research into polished content. Finally, you'll integrate these components, working on the orchestration of a complete, multi-agent pipeline from start to finish.
+
+Other concepts from Part 2:
 - MCP
 
 **Part 3:**
 
-- evaluations
+With the agent system built, this section focuses on the engineering practices required for production. You will learn to design and implement robust evaluation frameworks to measure and guarantee agent reliability, moving far beyond simple demos. We will cover AI observability, using specialized tools to trace, debug, and understand complex agent behaviors. Finally, you’ll explore optimization techniques for cost and performance and learn the fundamentals of deploying your agent system, ensuring it is scalable and ready for real-world use.
+
+**Part 4:**
+
+In this final part of the course, you will build and submit your own advanced LLM agent, applying what you've learned throughout the previous sections. We provide a complete project template repository, enabling you to either extend our agent pipeline or build your own novel solution. Your project will be reviewed to ensure functionality, relevance, and adherence to course guidelines for the awarding of your course certification.
 </adapt_based_on_your_lesson>
 
 <optional>
@@ -93,14 +100,14 @@ As <x> is the core foundation of AI engineering, we will have to introduce new t
 
 ### Anchoring the Reader in the Educational Journey
 
-Within the course we are teaching the reader multiple topics and concepts. Thus, understanding where the reader is in it's educational journey it's critical for this piece. You have to use only previous introduced concepts, while being reluctant about suing concepts that haven't been introduced yet.
+Within the course we are teaching the reader multiple topics and concepts. Thus, understanding where the reader is in their educational journey is critical for this piece. You have to use only previously introduced concepts, while being reluctant about using concepts that haven't been introduced yet.
 
 When discussing the **concepts introduced in previous lessons** listed in the `Concepts Introduced in Previous Lessons` section, avoid reintroducing them to the reader. Especially don't reintroduce the acronyms. Use them as if the reader already knows what they are. 
 
-Avoid using all the **concepts that haven't been introduced in previous lessons** listed in the `Concepts That Will Be Introduced in Future Lessons` subsection. Whenever another concept requires references to these banned concepts, instead of directly using them, use intuitive analogies and or explanations that are more general and easier to understand, as you would explain them to a 7-year-old. For example:
+Avoid using all the **concepts that haven't been introduced in previous lessons** listed in the `Concepts That Will Be Introduced in Future Lessons` subsection. Whenever another concept requires references to these banned concepts, instead of directly using them, use intuitive analogies or explanations that are more general and easier to understand, as you would explain them to a 7-year-old. For example:
 - If the "tools" concept wasn't introduced yet and you have to talk about agents, refer to them as "actions".
 - If the "routing" concept wasn't introduced yet and you have to talk about it, refer to it as "guiding the workflow between multiple decisions".
-You can use the concepts that haven't been introduced in previous lessons listed in the `Concepts That Will Be Introduced in Future Lessons` subsection, only if we explicitly specify them. Still, even in that case, as the reader doesn't know how that concept works, you are just allowed to use the term, while keeping the explanation extremely high-level and intuitive, as if you were explaining it to a 7-year-old.
+You can use the concepts that haven't been introduced in previous lessons listed in the `Concepts That Will Be Introduced in Future Lessons` subsection only if we explicitly specify them. Still, even in that case, as the reader doesn't know how that concept works, you are only allowed to use the term, while keeping the explanation extremely high-level and intuitive, as if you were explaining it to a 7-year-old.
 Whenever you use a concept from the `Concepts That Will Be Introduced in Future Lessons` subsection, explicitly specify in what lesson it will be explained in more detail, leveraging the particulars from the subsection. If not explicitly specified in the subsection, simply state that we will cover it in future lessons without providing a concrete lesson number. 
 
 In all use cases avoid using acronyms that aren't explicitly stated in the guidelines. Rather use other more accessible synonyms or descriptions that are easier to understand by non-experts.
@@ -123,7 +130,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Lesson Outline 
 
-1. Section 1 - Introduction: ...
+1. Section 1: Introduction
 2. Section 2: ...
 3. Section 3 - Conclusion: ...
 
@@ -138,7 +145,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 ## Section 2: ...
 
 - ...
-- Give step-by-step examples from section `2. <X>`, of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
+- Give step-by-step examples from section `2. <X>` of the provided Notebook. Follow the code flow from the Notebook, highlighting each code cell step by step, while utilizing the markdown/text cells for inspiration.
 Avoid using code from other sections of the Notebook.
 -  **Section length:** <X> words
 

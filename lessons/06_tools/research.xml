@@ -1,11 +1,10 @@
-# Research
-
-## Research Results
-
-<details>
-<summary>What are the recommended ways to implement and register Python functions as agent “tools” using decorators (such as LangChain’s or LangGraph’s @tool), and what open-source examples illustrate this pattern in practice?</summary>
-
-### Source [1]: https://python.langchain.com/docs/concepts/tools/
+<?xml version="1.0" encoding="UTF-8"?>
+<research>
+  <research_results>
+    <query_group>
+      <query><![CDATA[What are the recommended ways to implement and register Python functions as agent “tools” using decorators (such as LangChain’s or LangGraph’s @tool), and what open-source examples illustrate this pattern in practice?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [1]: https://python.langchain.com/docs/concepts/tools/
 
 Query: What are the recommended ways to implement and register Python functions as agent “tools” using decorators (such as LangChain’s or LangGraph’s @tool), and what open-source examples illustrate this pattern in practice?
 
@@ -24,11 +23,8 @@ Once decorated, the tool can be invoked directly, for example with `multiply.inv
 
 -----
 
------
-
------
-
-### Source [3]: https://langchain-opentutorial.gitbook.io/langchain-opentutorial/15-agent/01-tools
+-----]]></source_block>
+        <source_block><![CDATA[### Source [3]: https://langchain-opentutorial.gitbook.io/langchain-opentutorial/15-agent/01-tools
 
 Query: What are the recommended ways to implement and register Python functions as agent “tools” using decorators (such as LangChain’s or LangGraph’s @tool), and what open-source examples illustrate this pattern in practice?
 
@@ -52,11 +48,8 @@ You can then execute these tools using their `.invoke()` method, passing argumen
 
 -----
 
------
-
------
-
-### Source [5]: https://pub.towardsai.net/crafting-langchain-tools-a-complete-guide-to-custom-tool-development-f21fd2f16622
+-----]]></source_block>
+        <source_block><![CDATA[### Source [5]: https://pub.towardsai.net/crafting-langchain-tools-a-complete-guide-to-custom-tool-development-f21fd2f16622
 
 Query: What are the recommended ways to implement and register Python functions as agent “tools” using decorators (such as LangChain’s or LangGraph’s @tool), and what open-source examples illustrate this pattern in practice?
 
@@ -64,14 +57,13 @@ Answer: The article recommends **starting with the `@tool` decorator for prototy
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?</summary>
-
-### Source [6]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [6]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
 
 Query: How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?
 
@@ -79,11 +71,8 @@ Answer: Pydantic models can be used to **enforce and validate the structured out
 
 -----
 
------
-
------
-
-### Source [7]: https://www.leewayhertz.com/structured-outputs-in-llms/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [7]: https://www.leewayhertz.com/structured-outputs-in-llms/
 
 Query: How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?
 
@@ -95,11 +84,8 @@ This approach ensures that even if the LLM’s initial output is inconsistent, t
 
 -----
 
------
-
------
-
-### Source [8]: https://docs.pydantic.dev/latest/concepts/models/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [8]: https://docs.pydantic.dev/latest/concepts/models/
 
 Query: How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?
 
@@ -111,11 +97,8 @@ These validation methods are critical for **transforming unstructured or loosely
 
 -----
 
------
-
------
-
-### Source [9]: https://neo4j.com/blog/developer/agentic-graphrag-for-commercial-contracts/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [9]: https://neo4j.com/blog/developer/agentic-graphrag-for-commercial-contracts/
 
 Query: How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?
 
@@ -123,47 +106,39 @@ Answer: Pydantic is used as a **tool for structured data extraction from LLMs** 
 
 -----
 
------
-
------
-
-### Source [10]: https://pydantic.dev/articles/llm-intro
+-----]]></source_block>
+        <source_block><![CDATA[### Source [10]: https://pydantic.dev/articles/llm-intro
 
 Query: How can Pydantic models be employed to generate and validate structured outputs from large-language-model agents, and what real-world examples show Pydantic being treated as a “tool” for on-demand schemas?
 
 Answer: The official Pydantic site discusses how Pydantic can be employed to **validate structured outputs from language models** such as those from OpenAI. Using Pydantic, developers can define the expected schema for LLM outputs and validate actual responses, ensuring they match the specified model. This helps in writing **reliable code** by catching mismatches and errors early, streamlining the use of LLMs in production environments where consistent structure and correctness are critical for downstream processing and integration.
 
------
-
-</details>
-
-<details>
-<summary>What security risks accompany giving LLM agents a code-execution tool (e.g., Python interpreter) and what sandboxing or isolation strategies do experts recommend to mitigate them?</summary>
-
-### Source [12]: Dida.do
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What security risks accompany giving LLM agents a code-execution tool (e.g., Python interpreter) and what sandboxing or isolation strategies do experts recommend to mitigate them?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [12]: Dida.do
 
 Query: What security risks accompany giving LLM agents a code-execution tool (e.g., Python interpreter) and what sandboxing or isolation strategies do experts recommend to mitigate them?
 
 Answer: Providing LLM agents with code-execution tools like a Python interpreter increases security risks. These risks include **arbitrary code execution** (e.g., using `os.system` or `subprocess`), **resource exhaustion** (e.g., CPU, memory, or disk overload), and **unauthorized file system access**. To mitigate these risks, implementing a secure Python sandbox is recommended. This sandbox should manage resources and create safe execution environments that encapsulate potentially harmful code, preventing it from affecting the broader system.
 
------
-
------
-
-### Source [14]: OWASP
+-----]]></source_block>
+        <source_block><![CDATA[### Source [14]: OWASP
 
 Query: What security risks accompany giving LLM agents a code-execution tool (e.g., Python interpreter) and what sandboxing or isolation strategies do experts recommend to mitigate them?
 
 Answer: The OWASP Top 10 for Large Language Model Applications lists several risks relevant to using LLMs with code-execution tools. **Prompt injection** (LLM01) can lead to unauthorized access and data breaches. **Insecure output handling** (LLM02) can result in code execution that compromises systems. **Excessive agency** (LLM08) is a risk when LLMs are granted unchecked autonomy to execute actions. While OWASP does not detail specific sandboxing strategies, it emphasizes the importance of securing LLM outputs and inputs to prevent these risks.
 
------
-
-</details>
-
-<details>
-<summary>What empirical findings or research analyses describe inefficiencies or failure modes when LLM agents repeatedly call tools in a simple loop, and how do these limitations motivate more advanced reasoning-and-acting patterns like ReAct?</summary>
-
-### Source [15]: https://arxiv.org/pdf/2503.13657
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What empirical findings or research analyses describe inefficiencies or failure modes when LLM agents repeatedly call tools in a simple loop, and how do these limitations motivate more advanced reasoning-and-acting patterns like ReAct?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [15]: https://arxiv.org/pdf/2503.13657
 
 Query: What empirical findings or research analyses describe inefficiencies or failure modes when LLM agents repeatedly call tools in a simple loop, and how do these limitations motivate more advanced reasoning-and-acting patterns like ReAct?
 
@@ -181,11 +156,8 @@ The paper argues that these failure modes motivate the need for advanced *reason
 
 -----
 
------
-
------
-
-### Source [16]: https://arxiv.org/html/2412.01130v2
+-----]]></source_block>
+        <source_block><![CDATA[### Source [16]: https://arxiv.org/html/2412.01130v2
 
 Query: What empirical findings or research analyses describe inefficiencies or failure modes when LLM agents repeatedly call tools in a simple loop, and how do these limitations motivate more advanced reasoning-and-acting patterns like ReAct?
 
@@ -201,14 +173,13 @@ The empirical findings underline the need for reasoning-and-acting patterns that
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?</summary>
-
-### Source [18]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [18]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
 
 Query: Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?
 
@@ -227,11 +198,8 @@ No specific industry case studies are detailed, but the guide emphasizes the imp
 
 -----
 
------
-
------
-
-### Source [19]: https://aman.ai/primers/ai/agents/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [19]: https://aman.ai/primers/ai/agents/
 
 Query: Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?
 
@@ -244,11 +212,8 @@ The examples illustrate how production LLM agents dynamically select the appropr
 
 -----
 
------
-
------
-
-### Source [20]: https://mirascope.com/blog/llm-integration
+-----]]></source_block>
+        <source_block><![CDATA[### Source [20]: https://mirascope.com/blog/llm-integration
 
 Query: Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?
 
@@ -265,11 +230,8 @@ Although no detailed industry case studies are provided in the excerpt, the focu
 
 -----
 
------
-
------
-
-### Source [21]: https://arxiv.org/html/2506.18096v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [21]: https://arxiv.org/html/2506.18096v1
 
 Query: Which categories of external tools are most frequently integrated with production LLM agents (e.g., retrieval-augmented search, web browsing, database querying, code execution), and what industry case studies highlight their effectiveness?
 
@@ -284,14 +246,13 @@ Industry case studies are not directly cited, but academic examples (e.g., CoSea
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?</summary>
-
-### Source [22]: https://arxiv.org/html/2506.08837v1
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [22]: https://arxiv.org/html/2506.08837v1
 
 Query: What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?
 
@@ -305,11 +266,8 @@ The paper distinguishes between general best practices (like sandboxing and user
 
 -----
 
------
-
------
-
-### Source [23]: https://dida.do/blog/setting-up-a-secure-python-sandbox-for-llm-agents
+-----]]></source_block>
+        <source_block><![CDATA[### Source [23]: https://dida.do/blog/setting-up-a-secure-python-sandbox-for-llm-agents
 
 Query: What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?
 
@@ -323,11 +281,8 @@ The primary goal is to build execution environments that strictly manage what co
 
 -----
 
------
-
------
-
-### Source [24]: https://huggingface.co/docs/smolagents/en/tutorials/secure_code_execution
+-----]]></source_block>
+        <source_block><![CDATA[### Source [24]: https://huggingface.co/docs/smolagents/en/tutorials/secure_code_execution
 
 Query: What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?
 
@@ -344,11 +299,8 @@ The documentation advises that security comes at the cost of greater setup compl
 
 -----
 
------
-
------
-
-### Source [25]: https://amirmalik.net/2025/03/07/code-sandboxes-for-llm-ai-agents
+-----]]></source_block>
+        <source_block><![CDATA[### Source [25]: https://amirmalik.net/2025/03/07/code-sandboxes-for-llm-ai-agents
 
 Query: What security and sandboxing strategies do experts recommend when granting an LLM agent access to a code-execution tool (e.g., a Python interpreter in a Jupyter-style sandbox)?
 
@@ -365,14 +317,13 @@ This source stresses that while simple methods like `eval()` are unsafe, modern 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?</summary>
-
-### Source [27]: https://www.weka.io/learn/guide/ai-ml/retrieval-augmented-generation/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [27]: https://www.weka.io/learn/guide/ai-ml/retrieval-augmented-generation/
 
 Query: How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?
 
@@ -387,11 +338,8 @@ This framework allows agents to **access up-to-date, contextually relevant knowl
 
 -----
 
------
-
------
-
-### Source [28]: https://www1.hkexnews.hk/app/sehk/2025/107494/documents/sehk25062703133.pdf
+-----]]></source_block>
+        <source_block><![CDATA[### Source [28]: https://www1.hkexnews.hk/app/sehk/2025/107494/documents/sehk25062703133.pdf
 
 Query: How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?
 
@@ -399,11 +347,8 @@ Answer: Retrieval-Augmented Generation is described as a **knowledge access tool
 
 -----
 
------
-
------
-
-### Source [29]: https://www.purestorage.com/knowledge/what-is-retrieval-augmented-generation.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [29]: https://www.purestorage.com/knowledge/what-is-retrieval-augmented-generation.html
 
 Query: How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?
 
@@ -417,11 +362,8 @@ This architecture allows generative AI agents to **answer questions, summarize i
 
 -----
 
------
-
------
-
-### Source [30]: https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview
+-----]]></source_block>
+        <source_block><![CDATA[### Source [30]: https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview
 
 Query: How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?
 
@@ -435,11 +377,8 @@ A production example is Microsoft's **Azure AI Search**, which serves as the inf
 
 -----
 
------
-
------
-
-### Source [31]: https://www.k2view.com/what-is-retrieval-augmented-generation
+-----]]></source_block>
+        <source_block><![CDATA[### Source [31]: https://www.k2view.com/what-is-retrieval-augmented-generation
 
 Query: How does Retrieval-Augmented Generation (RAG) function as a “knowledge access tool” in modern agent frameworks, and what production examples demonstrate agentic RAG in action?
 
@@ -452,14 +391,13 @@ This practical approach enables agents to **overcome the limitations of static m
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?</summary>
-
-### Source [32]: https://python.langchain.com/docs/concepts/tools/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [32]: https://python.langchain.com/docs/concepts/tools/
 
 Query: How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?
 
@@ -484,11 +422,8 @@ This approach is recommended for most scenarios, though LangChain also supports 
 
 -----
 
------
-
------
-
-### Source [33]: https://itnext.io/the-mcp-revolution-transforming-agents-with-mcp-2f053da01e8c
+-----]]></source_block>
+        <source_block><![CDATA[### Source [33]: https://itnext.io/the-mcp-revolution-transforming-agents-with-mcp-2f053da01e8c
 
 Query: How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?
 
@@ -501,11 +436,8 @@ Answer: The **@mcp.tool decorator** in the MCP project provides similar function
 
 -----
 
------
-
------
-
-### Source [34]: https://python.langchain.com/docs/how_to/custom_tools/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [34]: https://python.langchain.com/docs/how_to/custom_tools/
 
 Query: How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?
 
@@ -532,11 +464,8 @@ This pattern allows for rapid tool development and robust schema generation dire
 
 -----
 
------
-
------
-
-### Source [35]: https://langchain-ai.github.io/langgraph/how-tos/tool-calling/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [35]: https://langchain-ai.github.io/langgraph/how-tos/tool-calling/
 
 Query: How is LangGraph’s @tool (or similar) decorator used to auto-generate JSON schemas and register functions as tools, and what open-source examples illustrate this pattern in practice?
 
@@ -559,14 +488,13 @@ This approach is core to how LangGraph integrates tool functions into agent-base
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?</summary>
-
-### Source [36]: https://www.business-standard.com/technology/tech-news/microsoft-brings-copilot-ai-powered-web-search-mode-on-bing-how-it-works-125022500477_1.html
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [36]: https://www.business-standard.com/technology/tech-news/microsoft-brings-copilot-ai-powered-web-search-mode-on-bing-how-it-works-125022500477_1.html
 
 Query: What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?
 
@@ -576,11 +504,8 @@ Google is reportedly working on a similar "AI Mode" for its Search platform, aim
 
 -----
 
------
-
------
-
-### Source [37]: https://gaper.io/perplexity-ai-vs-google-gemini-vs-chatgpt/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [37]: https://gaper.io/perplexity-ai-vs-google-gemini-vs-chatgpt/
 
 Query: What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?
 
@@ -592,11 +517,8 @@ Both platforms demonstrate real-world applications where LLM agents are directly
 
 -----
 
------
-
------
-
-### Source [38]: https://support.microsoft.com/en-us/topic/copilot-in-bing-our-approach-to-responsible-ai-45b5eae8-7466-43e1-ae98-b48f8ff8fd44
+-----]]></source_block>
+        <source_block><![CDATA[### Source [38]: https://support.microsoft.com/en-us/topic/copilot-in-bing-our-approach-to-responsible-ai-45b5eae8-7466-43e1-ae98-b48f8ff8fd44
 
 Query: What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?
 
@@ -606,11 +528,8 @@ Responses are delivered as traditional web links, AI-generated summaries, images
 
 -----
 
------
-
------
-
-### Source [39]: https://www.byteplus.com/en/topic/560528
+-----]]></source_block>
+        <source_block><![CDATA[### Source [39]: https://www.byteplus.com/en/topic/560528
 
 Query: What real-world applications integrate web-search or browsing tools into LLM agents (e.g., Bing Copilot, Perplexity AI, or Google’s Search-enabled Gemini) to fetch up-to-date information for users?
 
@@ -622,14 +541,13 @@ Answer: **Perplexity AI** is highlighted as a platform focused on delivering fac
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?</summary>
-
-### Source [40]: https://pydantic.dev/articles/llm-validation
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [40]: https://pydantic.dev/articles/llm-validation
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -641,11 +559,8 @@ The approach allows for the enforcement of both strict, schema-based constraints
 
 -----
 
------
-
------
-
-### Source [41]: https://arxiv.org/html/2505.03049v2
+-----]]></source_block>
+        <source_block><![CDATA[### Source [41]: https://arxiv.org/html/2505.03049v2
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -653,11 +568,8 @@ Answer: Pydantic models are utilized to exchange structured atomic information b
 
 -----
 
------
-
------
-
-### Source [42]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [42]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -667,11 +579,8 @@ This validation step can be performed immediately after parsing the LLM’s resp
 
 -----
 
------
-
------
-
-### Source [43]: https://dylancastillo.co/posts/agentic-workflows-langgraph.html
+-----]]></source_block>
+        <source_block><![CDATA[### Source [43]: https://dylancastillo.co/posts/agentic-workflows-langgraph.html
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -681,11 +590,8 @@ For example, a node might evaluate text appropriateness by invoking an LLM with 
 
 -----
 
------
-
------
-
-### Source [44]: https://pydantic.dev/articles/llm-intro
+-----]]></source_block>
+        <source_block><![CDATA[### Source [44]: https://pydantic.dev/articles/llm-intro
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -693,11 +599,8 @@ Answer: Pydantic models provide a mechanism for validating structured outputs fr
 
 -----
 
------
-
------
-
-### Source [135]: https://pydantic.dev/articles/llm-validation
+-----]]></source_block>
+        <source_block><![CDATA[### Source [135]: https://pydantic.dev/articles/llm-validation
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -720,11 +623,8 @@ If the model receives an output that violates the rule (e.g., contains objection
 
 -----
 
------
-
------
-
-### Source [136]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [136]: https://xebia.com/blog/enforce-and-validate-llm-output-with-pydantic/
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -743,11 +643,8 @@ If the LLM outputs an invalid value for `difficulty`, such as `"Unknown"`, Pydan
 
 -----
 
------
-
------
-
-### Source [137]: https://blog.kusho.ai/from-chaos-to-order-structured-json-with-pydantic-and-instructor-in-llms-part-ii/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [137]: https://blog.kusho.ai/from-chaos-to-order-structured-json-with-pydantic-and-instructor-in-llms-part-ii/
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -761,11 +658,8 @@ This setup ensures that the LLM not only produces structured JSON outputs but al
 
 -----
 
------
-
------
-
-### Source [138]: https://www.deeplearning.ai/short-courses/pydantic-for-llm-workflows/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [138]: https://www.deeplearning.ai/short-courses/pydantic-for-llm-workflows/
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -773,11 +667,8 @@ Answer: Official training materials highlight that Pydantic models are central i
 
 -----
 
------
-
------
-
-### Source [139]: https://dev.to/devasservice/a-practical-guide-on-structuring-llm-outputs-with-pydantic-50b4
+-----]]></source_block>
+        <source_block><![CDATA[### Source [139]: https://dev.to/devasservice/a-practical-guide-on-structuring-llm-outputs-with-pydantic-50b4
 
 Query: In current LLM workflows, how are Pydantic models leveraged to validate and enforce structured outputs, and what examples show them being exposed to the model as callable “tools”?
 
@@ -791,14 +682,13 @@ The article emphasizes that structured validation with Pydantic is crucial in pr
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?</summary>
-
-### Source [45]: https://www.projectpro.io/article/llm-limitations/1045
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [45]: https://www.projectpro.io/article/llm-limitations/1045
 
 Query: What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?
 
@@ -813,11 +703,8 @@ To **overcome these gaps**, researchers introduce "tools"—such as function cal
 
 -----
 
------
-
------
-
-### Source [46]: https://arxiv.org/html/2504.14872v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [46]: https://arxiv.org/html/2504.14872v1
 
 Query: What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?
 
@@ -830,11 +717,8 @@ Researchers justify the introduction of tools (including function calling and AP
 
 -----
 
------
-
------
-
-### Source [47]: https://memgraph.com/blog/llm-limitations-query-enterprise-data
+-----]]></source_block>
+        <source_block><![CDATA[### Source [47]: https://memgraph.com/blog/llm-limitations-query-enterprise-data
 
 Query: What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?
 
@@ -848,11 +732,8 @@ AI researchers introduce tools (function calling, APIs) to bridge these gaps. Th
 
 -----
 
------
-
------
-
-### Source [48]: https://www.edpb.europa.eu/system/files/2025-04/ai-privacy-risks-and-mitigations-in-llms.pdf
+-----]]></source_block>
+        <source_block><![CDATA[### Source [48]: https://www.edpb.europa.eu/system/files/2025-04/ai-privacy-risks-and-mitigations-in-llms.pdf
 
 Query: What fundamental limitations prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of “tools” (function calling, APIs) to overcome these gaps?
 
@@ -865,14 +746,13 @@ The introduction of these modular tools (including function calling and APIs) is
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How can a developer implement LLM function (tool) calling entirely from scratch in Python—defining JSON schemas, parsing the model’s function call, executing the function, and returning results—without relying on LangChain or similar frameworks?</summary>
-
-### Source [49]: https://python.langchain.com/docs/how_to/function_calling/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How can a developer implement LLM function (tool) calling entirely from scratch in Python—defining JSON schemas, parsing the model’s function call, executing the function, and returning results—without relying on LangChain or similar frameworks?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [49]: https://python.langchain.com/docs/how_to/function_calling/
 
 Query: How can a developer implement LLM function (tool) calling entirely from scratch in Python—defining JSON schemas, parsing the model’s function call, executing the function, and returning results—without relying on LangChain or similar frameworks?
 
@@ -892,11 +772,8 @@ This process allows you to build your own tool-calling pipeline from scratch, re
 
 -----
 
------
-
------
-
-### Source [51]: https://github.com/rasbt/LLMs-from-scratch
+-----]]></source_block>
+        <source_block><![CDATA[### Source [51]: https://github.com/rasbt/LLMs-from-scratch
 
 Query: How can a developer implement LLM function (tool) calling entirely from scratch in Python—defining JSON schemas, parsing the model’s function call, executing the function, and returning results—without relying on LangChain or similar frameworks?
 
@@ -913,14 +790,13 @@ The repository does not include a function-calling pipeline out of the box, but 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?</summary>
-
-### Source [59]: https://www.promptingguide.ai/techniques/react
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [59]: https://www.promptingguide.ai/techniques/react
 
 Query: Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?
 
@@ -935,11 +811,8 @@ Empirical results show ReAct outperforms baseline agents that lack explicit reas
 
 -----
 
------
-
------
-
-### Source [60]: https://aman.ai/primers/ai/agents/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [60]: https://aman.ai/primers/ai/agents/
 
 Query: Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?
 
@@ -954,11 +827,8 @@ This reflective workflow has been shown to notably enhance output relevance and 
 
 -----
 
------
-
------
-
-### Source [61]: https://www.autonoly.com/blog/685e784a08412e725c1d0f4c/chain-of-thought-react-and-reflection-the-complete-guide-to-ai-agent-reasoning-patterns
+-----]]></source_block>
+        <source_block><![CDATA[### Source [61]: https://www.autonoly.com/blog/685e784a08412e725c1d0f4c/chain-of-thought-react-and-reflection-the-complete-guide-to-ai-agent-reasoning-patterns
 
 Query: Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?
 
@@ -981,11 +851,8 @@ By embedding this meta-cognitive loop, agents can break out of naive patterns, l
 
 -----
 
------
-
------
-
-### Source [62]: https://arxiv.org/html/2507.02097v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [62]: https://arxiv.org/html/2507.02097v1
 
 Query: Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?
 
@@ -995,11 +862,8 @@ True agentic behavior is defined by an internal loop of **observe → decide →
 
 -----
 
------
-
------
-
-### Source [63]: https://www.promptingguide.ai/techniques/reflexion
+-----]]></source_block>
+        <source_block><![CDATA[### Source [63]: https://www.promptingguide.ai/techniques/reflexion
 
 Query: Which studies or technical reports analyze failure modes where LLM agents repeatedly invoke tools in naive loops, and how do their findings motivate more sophisticated patterns such as ReAct or Chain-of-Thought with reflection?
 
@@ -1008,14 +872,13 @@ Answer: Reflexion is presented as a paradigm for improving agentic behavior by c
 This self-improving design directly targets the failure mode of naive, repeated tool invocation; by reflecting on past actions and their outcomes, agents become capable of breaking out of unproductive cycles and adopting more sophisticated, context-aware strategies—demonstrating the practical motivation for the Reflexion (reflection) pattern in agent design[5].
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the most common categories of external tools integrated into production LLM agents (e.g., retrieval/RAG, web search, database querying, code execution), and what documented industry case studies illustrate their practical benefits?</summary>
-
-### Source [64]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common categories of external tools integrated into production LLM agents (e.g., retrieval/RAG, web search, database querying, code execution), and what documented industry case studies illustrate their practical benefits?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [64]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
 
 Query: What are the most common categories of external tools integrated into production LLM agents (e.g., retrieval/RAG, web search, database querying, code execution), and what documented industry case studies illustrate their practical benefits?
 
@@ -1032,11 +895,8 @@ No specific industry case studies are provided, but the guide notes that proprie
 
 -----
 
------
-
------
-
-### Source [65]: https://www.leewayhertz.com/advanced-rag/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [65]: https://www.leewayhertz.com/advanced-rag/
 
 Query: What are the most common categories of external tools integrated into production LLM agents (e.g., retrieval/RAG, web search, database querying, code execution), and what documented industry case studies illustrate their practical benefits?
 
@@ -1058,11 +918,8 @@ While the article doesn’t cite specific industry deployments by name, it detai
 
 -----
 
------
-
------
-
-### Source [66]: https://mirascope.com/blog/llm-integration
+-----]]></source_block>
+        <source_block><![CDATA[### Source [66]: https://mirascope.com/blog/llm-integration
 
 Query: What are the most common categories of external tools integrated into production LLM agents (e.g., retrieval/RAG, web search, database querying, code execution), and what documented industry case studies illustrate their practical benefits?
 
@@ -1078,14 +935,13 @@ Real-world examples are referenced in general terms, such as applications for au
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?</summary>
-
-### Source [68]: https://docs.x.ai/docs/guides/function-calling
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [68]: https://docs.x.ai/docs/guides/function-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1101,11 +957,8 @@ When the LLM returns a response, the developer checks if the output contains a t
 
 -----
 
------
-
------
-
-### Source [69]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [69]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1120,11 +973,8 @@ Key points include the need for robust code to handle possible LLM errors in arg
 
 -----
 
------
-
------
-
-### Source [70]: https://www.promptingguide.ai/applications/function_calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [70]: https://www.promptingguide.ai/applications/function_calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1138,11 +988,8 @@ Answer: To implement LLM function calling:
 
 -----
 
------
-
------
-
-### Source [71]: https://platform.openai.com/docs/guides/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [71]: https://platform.openai.com/docs/guides/function-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1157,11 +1004,8 @@ Answer: The official OpenAI guide for function calling details a step-by-step wo
 [The process emphasizes robust parsing and error handling, as malformed JSON or incorrect arguments may be returned by the model. All exchanges are structured as a sequence of messages, with clear separation between user input, model output, function call, and function result.][5]
 -----
 
------
-
------
-
-### Source [97]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [97]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1177,11 +1021,8 @@ The process is essentially: prompt > parse response > execute function > return 
 
 -----
 
------
-
------
-
-### Source [98]: https://www.promptingguide.ai/applications/function_calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [98]: https://www.promptingguide.ai/applications/function_calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1197,11 +1038,8 @@ This process enables the LLM to act as an orchestrator, determining function cal
 
 -----
 
------
-
------
-
-### Source [99]: https://friendli.ai/blog/llm-function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [99]: https://friendli.ai/blog/llm-function-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1217,11 +1055,8 @@ This architecture transforms LLMs into intelligent agents, with your code servin
 
 -----
 
------
-
------
-
-### Source [100]: https://community.openai.com/t/how-does-function-calling-actually-work-for-the-assistants-api/641440
+-----]]></source_block>
+        <source_block><![CDATA[### Source [100]: https://community.openai.com/t/how-does-function-calling-actually-work-for-the-assistants-api/641440
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1237,11 +1072,8 @@ This process is robust but requires careful validation and error handling to pro
 
 -----
 
------
-
------
-
-### Source [121]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [121]: https://blog.christoolivier.com/p/llms-and-functiontool-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1259,11 +1091,8 @@ This approach works with any LLM, even those that do not natively support functi
 
 -----
 
------
-
------
-
-### Source [122]: https://www.promptingguide.ai/applications/function_calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [122]: https://www.promptingguide.ai/applications/function_calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1302,11 +1131,8 @@ This approach is compatible with any LLM and provides a standard method for conn
 
 -----
 
------
-
------
-
-### Source [123]: https://www.apideck.com/blog/llm-tool-use-and-function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [123]: https://www.apideck.com/blog/llm-tool-use-and-function-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1322,11 +1148,8 @@ This process allows the LLM to offload specific tasks to code or external APIs a
 
 -----
 
------
-
------
-
-### Source [124]: https://friendli.ai/blog/llm-function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [124]: https://friendli.ai/blog/llm-function-calling
 
 Query: How can a developer implement LLM function calling from scratch in Python by defining JSON schemas, parsing the model's output, and executing the corresponding function, without using a library like LangChain or Gemini's native tooling?
 
@@ -1342,14 +1165,13 @@ Care should be taken to validate the arguments, as LLMs might generate invalid o
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?</summary>
-
-### Source [72]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [72]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1361,11 +1183,8 @@ To mitigate these risks, the source recommends **strong prompt isolation**, **in
 
 -----
 
------
-
------
-
-### Source [73]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
+-----]]></source_block>
+        <source_block><![CDATA[### Source [73]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1377,11 +1196,8 @@ To address these issues, robust **input/output sanitization**, **strict access c
 
 -----
 
------
-
------
-
-### Source [74]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [74]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1399,11 +1215,8 @@ Answer: The OWASP Top 10 for Large Language Model Applications identifies severa
 
 -----
 
------
-
------
-
-### Source [75]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [75]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1418,11 +1231,8 @@ Recommended mitigation strategies include:
 
 -----
 
------
-
------
-
-### Source [76]: https://isc.upenn.edu/security/LLM-guide
+-----]]></source_block>
+        <source_block><![CDATA[### Source [76]: https://isc.upenn.edu/security/LLM-guide
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1436,11 +1246,8 @@ To mitigate such threats, the guidance emphasizes:
 
 These practices collectively reduce the likelihood and impact of attacks that exploit the LLM’s access to code execution tools.
 
------
-
------
-
-### Source [106]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
+-----]]></source_block>
+        <source_block><![CDATA[### Source [106]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1458,11 +1265,8 @@ These practices help maintain control over what the LLM can do with its code exe
 
 -----
 
------
-
------
-
-### Source [107]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
+-----]]></source_block>
+        <source_block><![CDATA[### Source [107]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1478,11 +1282,8 @@ Answer: **Key security risks related to LLM code execution:**
 
 -----
 
------
-
------
-
-### Source [108]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [108]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1500,11 +1301,8 @@ Answer: **OWASP identifies these top risks for LLMs with code execution:**
 
 -----
 
------
-
------
-
-### Source [109]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [109]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1521,11 +1319,8 @@ Answer: **Security risks with LLM code execution tools:**
 
 -----
 
------
-
------
-
-### Source [110]: https://arxiv.org/html/2412.15004v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [110]: https://arxiv.org/html/2412.15004v1
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1541,11 +1336,8 @@ Answer: While the full text is not visible, the abstract highlights several risk
 
 -----
 
------
-
------
-
-### Source [130]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
+-----]]></source_block>
+        <source_block><![CDATA[### Source [130]: https://www.legitsecurity.com/aspm-knowledge-base/llm-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1553,11 +1345,8 @@ Answer: Primary security risks when giving an LLM agent access to a code executi
 
 -----
 
------
-
------
-
-### Source [131]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
+-----]]></source_block>
+        <source_block><![CDATA[### Source [131]: https://www.cobalt.io/blog/llm-failures-large-language-model-security-risks
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1565,11 +1354,8 @@ Answer: LLM security failures relevant to code execution tools include **privacy
 
 -----
 
------
-
------
-
-### Source [132]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [132]: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1577,11 +1363,8 @@ Answer: The OWASP Top 10 for LLM Applications highlights **Prompt Injection** (L
 
 -----
 
------
-
------
-
-### Source [133]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [133]: https://www.exabeam.com/explainers/ai-cyber-security/llm-security-top-10-risks-and-7-security-best-practices/
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
@@ -1589,24 +1372,20 @@ Answer: A primary security concern is **insecure output handling**—LLM-generat
 
 -----
 
------
-
------
-
-### Source [134]: https://isc.upenn.edu/security/LLM-guide
+-----]]></source_block>
+        <source_block><![CDATA[### Source [134]: https://isc.upenn.edu/security/LLM-guide
 
 Query: What are the primary security risks when giving an LLM agent access to a code execution tool, such as a Python interpreter, and what specific sandboxing or isolation strategies are recommended to mitigate these threats?
 
 Answer: Information security risks when allowing LLMs access to code execution tools include **data leakage**, **generation of flawed or malicious code**, and **potential for incorrect responses**. LLMs can inadvertently leak confidential information if user data is retained or used for further training. Generated code may be insecure or contain vulnerabilities, requiring **human review** to catch potential issues from malicious or erroneous inputs. The guidance emphasizes the need for **careful oversight**, **strict access controls**, and **sanitization** of both inputs and outputs when deploying LLMs with sensitive or critical systems.
 
------
-
-</details>
-
-<details>
-<summary>What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?</summary>
-
-### Source [77]: https://arxiv.org/html/2507.08034v1
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [77]: https://arxiv.org/html/2507.08034v1
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1614,11 +1393,8 @@ Answer: The integration of external tools with LLMs is methodically categorized 
 
 -----
 
------
-
------
-
-### Source [78]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
+-----]]></source_block>
+        <source_block><![CDATA[### Source [78]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1626,11 +1402,8 @@ Answer: Integrating external tools and APIs with LLMs typically involves functio
 
 -----
 
------
-
------
-
-### Source [79]: https://arxiv.org/pdf/2507.08034
+-----]]></source_block>
+        <source_block><![CDATA[### Source [79]: https://arxiv.org/pdf/2507.08034
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1638,11 +1411,8 @@ Answer: The framework described in this paper, Athena, manages APIs for external
 
 -----
 
------
-
------
-
-### Source [81]: https://www.getdynamiq.ai/post/llm-agents-explained-complete-guide-in-2025
+-----]]></source_block>
+        <source_block><![CDATA[### Source [81]: https://www.getdynamiq.ai/post/llm-agents-explained-complete-guide-in-2025
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1650,11 +1420,8 @@ Answer: Modern LLM agent frameworks are pivotal for integrating external tools. 
 
 -----
 
------
-
------
-
-### Source [111]: https://arxiv.org/html/2507.08034v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [111]: https://arxiv.org/html/2507.08034v1
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1662,11 +1429,8 @@ Answer: The integration of external tools with large language models (LLMs) can 
 
 -----
 
------
-
------
-
-### Source [112]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
+-----]]></source_block>
+        <source_block><![CDATA[### Source [112]: https://www.mercity.ai/blog-post/guide-to-integrating-tools-and-apis-with-language-models
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1674,11 +1438,8 @@ Answer: This guide details practical methods for integrating tools and APIs with
 
 -----
 
------
-
------
-
-### Source [113]: https://arxiv.org/pdf/2507.08034
+-----]]></source_block>
+        <source_block><![CDATA[### Source [113]: https://arxiv.org/pdf/2507.08034
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1686,11 +1447,8 @@ Answer: The Athena framework enables LLMs to use external tools via managed APIs
 
 -----
 
------
-
------
-
-### Source [115]: https://www.getdynamiq.ai/post/llm-agents-explained-complete-guide-in-2025
+-----]]></source_block>
+        <source_block><![CDATA[### Source [115]: https://www.getdynamiq.ai/post/llm-agents-explained-complete-guide-in-2025
 
 Query: What are the most common categories of external tools integrated with production LLM agents, such as web search, database querying, and code execution, and what are some documented industry case studies that illustrate their practical benefits?
 
@@ -1703,14 +1461,13 @@ Answer: This guide outlines the most common frameworks for building LLM agents t
 
 These frameworks support **web search, database querying, code execution, and API interactions**. Documented use cases include knowledge management in legal and research sectors, enterprise data workflows, and automated report generation—demonstrating practical benefits such as improved efficiency, accuracy, and the ability to handle tasks that require real-time or external data.
 
------
-
-</details>
-
-<details>
-<summary>How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?</summary>
-
-### Source [82]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [82]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1723,11 +1480,8 @@ Key points:
 
 -----
 
------
-
------
-
-### Source [83]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [83]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1742,11 +1496,8 @@ There is no explicit mention of native parallel or sequential orchestration at t
 
 -----
 
------
-
------
-
-### Source [84]: https://ai.google.dev/gemini-api/docs/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [84]: https://ai.google.dev/gemini-api/docs/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1760,11 +1511,8 @@ Thus, Gemini supports compositional workflows through repeated request/response 
 
 -----
 
------
-
------
-
-### Source [85]: https://firebase.google.com/docs/ai-logic/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [85]: https://firebase.google.com/docs/ai-logic/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1774,11 +1522,8 @@ This approach naturally supports **sequential composition**: the model can reaso
 
 -----
 
------
-
------
-
-### Source [86]: https://www.philschmid.de/gemini-function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [86]: https://www.philschmid.de/gemini-function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1788,11 +1533,8 @@ Additionally, Gemini offers **OpenAI compatible API endpoints**, allowing develo
 
 -----
 
------
-
------
-
-### Source [125]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [125]: https://codelabs.developers.google.com/codelabs/gemini-function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1800,11 +1542,8 @@ Answer: Modern LLM APIs like Google's Gemini support function calling by allowin
 
 -----
 
------
-
------
-
-### Source [126]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [126]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1812,11 +1551,8 @@ Answer: To use function calling in Gemini (as integrated on Vertex AI), develope
 
 -----
 
------
-
------
-
-### Source [127]: https://ai.google.dev/gemini-api/docs/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [127]: https://ai.google.dev/gemini-api/docs/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1824,11 +1560,8 @@ Answer: The Gemini API allows developers to define function declarations and pas
 
 -----
 
------
-
------
-
-### Source [128]: https://firebase.google.com/docs/ai-logic/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [128]: https://firebase.google.com/docs/ai-logic/function-calling
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1836,11 +1569,8 @@ Answer: When using function calling with Gemini via Firebase AI Logic, the proce
 
 -----
 
------
-
------
-
-### Source [129]: https://www.youtube.com/watch?v=mVXrdvXplj0
+-----]]></source_block>
+        <source_block><![CDATA[### Source [129]: https://www.youtube.com/watch?v=mVXrdvXplj0
 
 Query: How do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -1848,14 +1578,13 @@ Answer: According to the Gemini API overview, function calling is enabled by pro
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?</summary>
-
-### Source [87]: https://www.projectpro.io/article/llm-limitations/1045
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [87]: https://www.projectpro.io/article/llm-limitations/1045
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1863,11 +1592,8 @@ Answer: Large language models (LLMs) are fundamentally limited in accessing real
 
 -----
 
------
-
------
-
-### Source [88]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [88]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1875,11 +1601,8 @@ Answer: LLMs face significant challenges when tasked with **processing planetary
 
 -----
 
------
-
------
-
-### Source [89]: https://direct.mit.edu/opmi/article/doi/10.1162/opmi_a_00160/124234/The-Limitations-of-Large-Language-Models-for
+-----]]></source_block>
+        <source_block><![CDATA[### Source [89]: https://direct.mit.edu/opmi/article/doi/10.1162/opmi_a_00160/124234/The-Limitations-of-Large-Language-Models-for
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1887,11 +1610,8 @@ Answer: LLMs are fundamentally distinguished from human conversational agents by
 
 -----
 
------
-
------
-
-### Source [90]: https://arxiv.org/html/2412.04503v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [90]: https://arxiv.org/html/2412.04503v1
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1899,11 +1619,8 @@ Answer: LLMs are **pre-trained on large, static datasets**, typically through un
 
 -----
 
------
-
------
-
-### Source [91]: https://uit.stanford.edu/service/techtraining/ai-demystified/llm
+-----]]></source_block>
+        <source_block><![CDATA[### Source [91]: https://uit.stanford.edu/service/techtraining/ai-demystified/llm
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1911,11 +1628,8 @@ Answer: LLMs have several core limitations: they can **generate biased or incorr
 
 -----
 
------
-
------
-
-### Source [116]: https://www.projectpro.io/article/llm-limitations/1045
+-----]]></source_block>
+        <source_block><![CDATA[### Source [116]: https://www.projectpro.io/article/llm-limitations/1045
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1923,11 +1637,8 @@ Answer: Large language models (LLMs) face several fundamental limitations. One m
 
 -----
 
------
-
------
-
-### Source [117]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [117]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1935,11 +1646,8 @@ Answer: LLMs are currently not optimized for large-scale, real-time data ingesti
 
 -----
 
------
-
------
-
-### Source [118]: https://www.intuitivedataanalytics.com/gne-blogs/the-limitations-and-challenges-of-large-language-models-llms/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [118]: https://www.intuitivedataanalytics.com/gne-blogs/the-limitations-and-challenges-of-large-language-models-llms/
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1947,11 +1655,8 @@ Answer: LLMs fundamentally lack **real-time awareness** and cannot update their 
 
 -----
 
------
-
------
-
-### Source [119]: https://arxiv.org/html/2412.04503v1
+-----]]></source_block>
+        <source_block><![CDATA[### Source [119]: https://arxiv.org/html/2412.04503v1
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1959,25 +1664,21 @@ Answer: LLMs are pre-trained on massive datasets, typically comprised of publicl
 
 -----
 
------
-
------
-
-### Source [120]: https://uit.stanford.edu/service/techtraining/ai-demystified/llm
+-----]]></source_block>
+        <source_block><![CDATA[### Source [120]: https://uit.stanford.edu/service/techtraining/ai-demystified/llm
 
 Query: What are the fundamental limitations that prevent large language models from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
 Answer: LLMs are limited by their training data and can generate **biased or incorrect information** if presented with queries outside their knowledge cutoff. The training and deployment processes do not include mechanisms for real-time learning or external action execution. During deployment, models may be optimized for performance, but they remain fundamentally disconnected from live data sources and external environments. This limitation means LLMs cannot autonomously update themselves or interact with the world beyond generating text. To overcome these gaps, researchers have introduced external tools that enable LLMs to access live information, execute actions, or retrieve data from outside databases. These integrations are necessary to make LLMs relevant for applications requiring up-to-date information or direct external interaction, as their native architecture is not designed for such capabilities[5].
 -----
 
------
-
-</details>
-
-<details>
-<summary>What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?</summary>
-
-### Source [92]: https://www.projectpro.io/article/llm-limitations/1045
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [92]: https://www.projectpro.io/article/llm-limitations/1045
 
 Query: What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1987,11 +1688,8 @@ To overcome these gaps, researchers introduce **'tools'**—external plugins, AP
 
 -----
 
------
-
------
-
-### Source [93]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
+-----]]></source_block>
+        <source_block><![CDATA[### Source [93]: https://blog.gdeltproject.org/large-language-models-llms-planetary-scale-realtime-data-current-limitations/
 
 Query: What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -1999,11 +1697,8 @@ Answer: Current state-of-the-art LLMs face substantial challenges in processing 
 
 -----
 
------
-
------
-
-### Source [94]: https://www.decodable.co/blog/llms-need-real-time-data-to-deliver-contextual-results
+-----]]></source_block>
+        <source_block><![CDATA[### Source [94]: https://www.decodable.co/blog/llms-need-real-time-data-to-deliver-contextual-results
 
 Query: What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -2011,11 +1706,8 @@ Answer: LLMs inherently lack **real-time awareness** and **business-specific con
 
 -----
 
------
-
------
-
-### Source [95]: https://learnprompting.org/docs/basics/pitfalls
+-----]]></source_block>
+        <source_block><![CDATA[### Source [95]: https://learnprompting.org/docs/basics/pitfalls
 
 Query: What are the fundamental limitations of large language models that prevent them from accessing real-time information or executing external actions on their own, and how do AI researchers justify the introduction of 'tools' to overcome these gaps?
 
@@ -2023,14 +1715,13 @@ Answer: LLMs possess **limited knowledge** because their training data is fixed 
 
 -----
 
------
-
-</details>
-
-<details>
-<summary>In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?</summary>
-
-### Source [101]: https://atamel.dev/posts/2024/08-06_deepdive_function_calling_gemini/
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+    <query_group>
+      <query><![CDATA[In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?]]></query>
+      <source_blocks>
+        <source_block><![CDATA[### Source [101]: https://atamel.dev/posts/2024/08-06_deepdive_function_calling_gemini/
 
 Query: In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -2038,11 +1729,8 @@ Answer: Gemini's function calling can handle both **parallel and sequential (com
 
 -----
 
------
-
------
-
-### Source [102]: https://discuss.ai.google.dev/t/function-calling-multiple-function-results/60678
+-----]]></source_block>
+        <source_block><![CDATA[### Source [102]: https://discuss.ai.google.dev/t/function-calling-multiple-function-results/60678
 
 Query: In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -2050,11 +1738,8 @@ Answer: Gemini's API enables **multiple function calls per prompt**, and develop
 
 -----
 
------
-
------
-
-### Source [103]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [103]: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
 
 Query: In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -2062,11 +1747,8 @@ Answer: Vertex AI supports **parallel function calling** for Gemini models. For 
 
 -----
 
------
-
------
-
-### Source [105]: https://ai.google.dev/gemini-api/docs/function-calling
+-----]]></source_block>
+        <source_block><![CDATA[### Source [105]: https://ai.google.dev/gemini-api/docs/function-calling
 
 Query: In what ways do modern LLM APIs, such as Google's Gemini or OpenAI's, handle parallel and sequential (compositional) function calling, and what are the key differences in their implementation?
 
@@ -2074,24 +1756,18 @@ Answer: The official Gemini API documentation details **parallel function callin
 
 -----
 
------
-
-</details>
-
-
-## Sources Scraped From Research Results
-
-<details>
-<summary>(no content)</summary>
-
-(no content)
-
-</details>
-
-<details>
-<summary>Comprehensive Guide to Integrating Tools and APIs with Language Models</summary>
-
-# Comprehensive Guide to Integrating Tools and APIs with Language Models
+-----]]></source_block>
+      </source_blocks>
+    </query_group>
+  </research_results>
+  <sources_scraped>
+    <scraped_source>
+      <title><![CDATA[(no content)]]></title>
+      <content><![CDATA[(no content)]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Comprehensive Guide to Integrating Tools and APIs with Language Models]]></title>
+      <content><![CDATA[# Comprehensive Guide to Integrating Tools and APIs with Language Models
 
 With a sudden rise of LLMs like GPT-4, we are seeing a massive rise in productivity. Language models have more utility than ever. Everyone is using them and they are everywhere. This raises the need to integrate LLMs with external tools and APIs. ChatGPT with extensions solves this to some extent, but not fully.
 
@@ -2349,14 +2025,11 @@ Latency is a significant challenge when integrating tools with LLMs. The time it
 
 ### Trust
 
-This is not a huge issue, but if you are using the model to generate code or to act on your behalf, you need to trust the model. If the model, for example, replies incorrectly or deletes the wrong files from your folder, it can cause major problems. This can simply be fixed by making sure there is a human in the loop and reviewing the steps taken by the LLM.
-
-</details>
-
-<details>
-<summary>Introduction</summary>
-
-## Introduction
+This is not a huge issue, but if you are using the model to generate code or to act on your behalf, you need to trust the model. If the model, for example, replies incorrectly or deletes the wrong files from your folder, it can cause major problems. This can simply be fixed by making sure there is a human in the loop and reviewing the steps taken by the LLM.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Introduction]]></title>
+      <content><![CDATA[## Introduction
 
 Large Language Models (LLMs) excel in generating text but often struggle to produce structured output. By leveraging [Pydantic](https://docs.pydantic.dev/latest/)'s type validation and prompt engineering, we can enforce and validate the output generated by LLMs.
 
@@ -2587,14 +2260,11 @@ difficulty
 
 ## Conclusion
 
-By using Pydantic and prompt engineering, you can enforce and validate the output of LLMs. This provides you with greater control of the LLM output and allow you to build more robust AI systems.
-
-</details>
-
-<details>
-<summary><h1 id="retrieval-augmented-generation-everything-you-need-to-know-about-rag-in-ai">Retrieval Augmented Generation: Everything You Need to Know About RAG in AI</h1></summary>
-
-<h1 id="retrieval-augmented-generation-everything-you-need-to-know-about-rag-in-ai">Retrieval Augmented Generation: Everything You Need to Know About RAG in AI</h1>
+By using Pydantic and prompt engineering, you can enforce and validate the output of LLMs. This provides you with greater control of the LLM output and allow you to build more robust AI systems.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[<h1 id="retrieval-augmented-generation-everything-you-need-to-know-about-rag-in-ai">Retrieval Augmented Generation: Everything You Need to Know About RAG in AI</h1>]]></title>
+      <content><![CDATA[<h1 id="retrieval-augmented-generation-everything-you-need-to-know-about-rag-in-ai">Retrieval Augmented Generation: Everything You Need to Know About RAG in AI</h1>
 <p>October 24, 2024</p>
 <p><img src="https://www.weka.io/wp-content/uploads/files/2024/10/Retrieval-Augmented-Generation_featured-image.jpg" alt=""></p>
 <h2 id="what-is-rag-in-ai">What is RAG in AI?</h2>
@@ -2810,14 +2480,11 @@ By using Pydantic and prompt engineering, you can enforce and validate the outpu
 <li><strong>Test for latency and efficiency.</strong> Ensure that the retrieval component is optimized for low-latency searches and that the generative model can process results efficiently. Consider using techniques like approximate nearest neighbor (ANN) searches to speed up retrieval. Balancing accuracy with speed is essential for smooth user experiences.</li>
 <li><strong>Ensure data privacy and security.</strong> Any RAG system that deals with sensitive data such as medical records or financial information must ensure that its knowledge store is encrypted, control access to it, and implement privacy-preserving methods to prevent data breaches and protect user privacy.</li>
 <li><strong>Evaluate responsiveness to ambiguous queries.</strong> Ensure the system can manage ambiguous or incomplete retrieval augmented generation prompts and queries by retrieving multiple potential contexts or prompting users for clarification.</li>
-</ul>
-
-</details>
-
-<details>
-<summary>As large language models become more integrated into computational systems, their role in enhancing application efficiency and accuracy grows. However, this expanded capability brings new risks when executing autonomously generated code.</summary>
-
-As large language models become more integrated into computational systems, their role in enhancing application efficiency and accuracy grows. However, this expanded capability brings new risks when executing autonomously generated code.
+</ul>]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[As large language models become more integrated into computational systems, their role in enhancing application efficiency and accuracy grows. However, this expanded capability brings new risks when executing autonomously generated code.]]></title>
+      <content><![CDATA[As large language models become more integrated into computational systems, their role in enhancing application efficiency and accuracy grows. However, this expanded capability brings new risks when executing autonomously generated code.
 
 This blog post explores how to establish a secure Python sandbox for LLM agents. We will cover the threats involved with LLM-generated code and introduce a sandbox solution using gVisor and Jupyter Notebook.
 
@@ -3033,14 +2700,11 @@ The following limitation of the demo should be addressed before it can be used i
 
 The demo solution includes features like easy deployment, framework-agnostic integration, and scalability through Kubernetes. It effectively isolates execution environments using gVisor, ensuring robust security with minimal performance overhead. However, some limitations need addressing for production use, such as optimizing Jupyter kernel management, enabling authentication and authorization, and enforcing strong network security controls.
 
-By leveraging code sandboxes teams can build advanced LLM solutions with high agency, allowing these applications to autonomously execute tasks while minimizing security risks. As the technology behind LLMs continues to advance, keeping pace with robust and flexible security measures will be essential for utilizing their full potential in innovative and impactful ways.
-
-</details>
-
-<details>
-<summary>Overview</summary>
-
-## Overview
+By leveraging code sandboxes teams can build advanced LLM solutions with high agency, allowing these applications to autonomously execute tasks while minimizing security risks. As the technology behind LLMs continues to advance, keeping pace with robust and flexible security measures will be essential for utilizing their full potential in innovative and impactful ways.]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Overview]]></title>
+      <content><![CDATA[## Overview
 
 The **tool** abstraction in LangChain associates a Python **function** with a **schema** that defines the function's **name**, **description** and **expected arguments**.
 
@@ -3240,14 +2904,11 @@ See the following resources for more information:
 - [How to pass run time values to tools](https://python.langchain.com/docs/how_to/tool_runtime/)
 - [All LangChain tool how-to guides](https://docs.langchain.com/docs/how_to/#tools)
 - [Additional how-to guides that show usage with LangGraph](https://langchain-ai.github.io/langgraph/how-tos/tool-calling/)
-- Tool integrations, see the [tool integration docs](https://docs.langchain.com/docs/integrations/tools/).
-
-</details>
-
-<details>
-<summary>Introduction</summary>
-
-Introduction
+- Tool integrations, see the [tool integration docs](https://docs.langchain.com/docs/integrations/tools/).]]></content>
+    </scraped_source>
+    <scraped_source>
+      <title><![CDATA[Introduction]]></title>
+      <content><![CDATA[Introduction
 Large Language Models (LLMs) excel in generating text but often struggle to produce structured output. By leveraging Pydantic‘s type validation and prompt engineering, we can enforce and validate the output generated by LLMs.
 All code examples in this blog post are written in Python. The LLM used is OpenAI’s gpt-3.5-turbo.
 
@@ -3432,17 +3093,13 @@ validated_response = ThoughtAnswerResponse.model_validate_json(response)
 ```
 
 Conclusion
-By using Pydantic and prompt engineering, you can enforce and validate the output of LLMs. This provides you with greater control of the LLM output and allow you to build more robust AI systems.
-
-</details>
-
-
-## Code Sources
-
-<details>
-<summary>Repository analysis for https://github.com/towardsai/course-ai-agents/blob/dev/lessons/06_tools/notebook.ipynb</summary>
-
-# Repository analysis for https://github.com/towardsai/course-ai-agents/blob/dev/lessons/06_tools/notebook.ipynb
+By using Pydantic and prompt engineering, you can enforce and validate the output of LLMs. This provides you with greater control of the LLM output and allow you to build more robust AI systems.]]></content>
+    </scraped_source>
+  </sources_scraped>
+  <code_sources>
+    <code_source>
+      <title><![CDATA[Repository analysis for https://github.com/towardsai/course-ai-agents/blob/dev/lessons/06_tools/notebook.ipynb]]></title>
+      <content><![CDATA[# Repository analysis for https://github.com/towardsai/course-ai-agents/blob/dev/lessons/06_tools/notebook.ipynb
 
 ## Summary
 Repository: towardsai/course-ai-agents
@@ -4751,15 +4408,14 @@ Running tools in a loop is powerful for multi-step tasks, but this approach has 
 This limitation leads us to more sophisticated patterns like **ReAct** (Reasoning and Acting), which explicitly interleaves reasoning steps with tool calls, allowing the agent to think through problems more deliberately. We will explore ReAct patterns in the next lesson.
 """
 
-</details>
 
-
-## YouTube Video Transcripts
-
-<details>
-<summary>Hello everybody. Welcome to The Neural Maze. (The video shows a GitHub page for a repository named 'agentic_patterns'. A large diagram titled "Agentic Patterns" is visible, showing four patterns: Reflection Pattern, Tool Use Pattern, Planning Pattern, and MultiAgent Pattern.) So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we are going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.</summary>
-
-Hello everybody. Welcome to The Neural Maze. (The video shows a GitHub page for a repository named 'agentic_patterns'. A large diagram titled "Agentic Patterns" is visible, showing four patterns: Reflection Pattern, Tool Use Pattern, Planning Pattern, and MultiAgent Pattern.) So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we are going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.
+]]></content>
+    </code_source>
+  </code_sources>
+  <youtube_video_transcripts>
+    <youtube_transcript>
+      <title><![CDATA[Hello everybody. Welcome to The Neural Maze. (The video shows a GitHub page for a repository named 'agentic_patterns'. A large diagram titled "Agentic Patterns" is visible, showing four patterns: Reflection Pattern, Tool Use Pattern, Planning Pattern, and MultiAgent Pattern.) So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we are going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.]]></title>
+      <content><![CDATA[Hello everybody. Welcome to The Neural Maze. (The video shows a GitHub page for a repository named 'agentic_patterns'. A large diagram titled "Agentic Patterns" is visible, showing four patterns: Reflection Pattern, Tool Use Pattern, Planning Pattern, and MultiAgent Pattern.) So in today's video we are going to keep working on the project of implementing the four agentic patterns from scratch that we started a week ago when we implemented the reflection pattern. So today we are going to move into the second pattern that is the tool pattern. And before we begin, I'm pretty sure that you're already familiar with this pattern in a practical sense.
 
 [00:30:00]
 What I mean by this is that you have probably used in the past tools in LangChain, in LlamaIndex or in Crew AI. (The speaker navigates through browser tabs showing documentation pages for "Tools" in LangChain, LlamaIndex, and crewAI.) And the thing is that in today's video, I'm not going to teach you how to use these tools in specific frameworks. I'm just going to teach you how these tools work under the hood. And I think that's really insightful because if we really understand how things work under the hood, I think it's much easier for us to learn how to apply them in the proper way.
@@ -4876,14 +4532,11 @@ I mean, it's not like the agent redirected us to some broken URLs. I mean, the U
 [23:30:00]
 And and this is everything for today. I'm working on the next videos of this series, the video about the planning pattern and the video about the multi-agent pattern. I think you are also going to to enjoy uh those ones. And but yeah, this is everything for today. I hope you have enjoyed the video. Subscribe to the channel if you haven't and if you like the content. Click the like button if you you have enjoyed this video. And I'll see you in the next video. (The video ends with an outro showing "THE NEURAL MAZE" logo.)
 
-*The speaker details the VS Code implementation, explaining how to automatically generate tool signatures from Python functions, create tool objects, and build a ToolAgent that can intelligently select and execute the correct tool, then use the result to formulate a natural language response.*
-
-</details>
-
-<details>
-<summary>(The video starts with a man in a black t-shirt and glasses standing in front of a black background. The text "IBM Technology" is in the top-left corner.)</summary>
-
-(The video starts with a man in a black t-shirt and glasses standing in front of a black background. The text "IBM Technology" is in the top-left corner.)
+*The speaker details the VS Code implementation, explaining how to automatically generate tool signatures from Python functions, create tool objects, and build a ToolAgent that can intelligently select and execute the correct tool, then use the result to formulate a natural language response.*]]></content>
+    </youtube_transcript>
+    <youtube_transcript>
+      <title><![CDATA[(The video starts with a man in a black t-shirt and glasses standing in front of a black background. The text "IBM Technology" is in the top-left corner.)]]></title>
+      <content><![CDATA[(The video starts with a man in a black t-shirt and glasses standing in front of a black background. The text "IBM Technology" is in the top-left corner.)
 
 So what is tool calling? Tool calling is a powerful technique where you make the LLM context-aware of real-time data, such as databases or APIs. Typically, you use tool calling via a chat interface. So you would have your client application in one hand, and then the LLM on the other side.
 
@@ -4942,17 +4595,13 @@ When you use embedded tool calling, the LLM will no longer hallucinate as the li
 
 (The video ends with a solid blue screen with the IBM logo in the bottom-left corner.)
 
-*Embedded tool calling introduces a library layer that manages tool definitions and execution, preventing LLM hallucinations and incorrect calls by handling the interaction, retrying failed executions, and directly returning the final data to the application.*
-
-</details>
-
-
-## Additional Sources Scraped
-
-<details>
-<summary>agentic-design-patterns-part-3-tool-use</summary>
-
-Tool Use, in which an LLM is given functions it can request to call for gathering information, taking action, or manipulating data, is a key design pattern of [AI agentic workflows](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S). You may be familiar with LLM-based systems that can perform a web search or execute code. Indeed, some large, consumer-facing LLMs already incorporate these features. But Tool Use goes well beyond these examples.
+*Embedded tool calling introduces a library layer that manages tool definitions and execution, preventing LLM hallucinations and incorrect calls by handling the interaction, retrying failed executions, and directly returning the final data to the application.*]]></content>
+    </youtube_transcript>
+  </youtube_video_transcripts>
+  <additional_sources>
+    <additional_source>
+      <title><![CDATA[agentic-design-patterns-part-3-tool-use]]></title>
+      <content><![CDATA[Tool Use, in which an LLM is given functions it can request to call for gathering information, taking action, or manipulating data, is a key design pattern of [AI agentic workflows](https://www.deeplearning.ai/the-batch/how-agents-can-improve-llm-performance/?utm_campaign=The%20Batch&utm_source=hs_email&utm_medium=email&_hsenc=p2ANqtz--9ARMthd09q0ABUi-abo6BH62BLbcwPo13LrXs9hUezs-L050Ay7b_rHdWuRIqBVOD6k_S). You may be familiar with LLM-based systems that can perform a web search or execute code. Indeed, some large, consumer-facing LLMs already incorporate these features. But Tool Use goes well beyond these examples.
 
 If you prompt an online LLM-based chat system, “What is the best coffee maker according to reviewers?”, it might decide to carry out a web search and download one or more web pages to gain context. Early on, LLM developers realized that relying only on a pre-trained transformer to generate output tokens is limiting, and that giving an LLM a tool for web search lets it do much more. With such a tool, an LLM is either fine-tuned or prompted (perhaps with few-shot prompting) to generate a special string like _{tool: web-search, query: "coffee maker reviews"}_ to request calling a search engine. (The exact format of the string depends on the implementation.) A post-processing step then looks for strings like these, calls the web search function with the relevant parameters when it finds one, and passes the result back to the LLM as additional input context for further processing.
 
@@ -4960,14 +4609,11 @@ Similarly, if you ask, “If I invest $100 at compound 7% interest for 12 years,
 
 But Tool Use in agentic workflows now goes much further. Developers are using functions to search different sources (web, Wikipedia, arXiv, etc.), to interface with productivity tools (send email, read/write calendar entries, etc.), generate or interpret images, and much more. We can prompt an LLM using context that gives detailed descriptions of many functions. These descriptions might include a text description of what the function does plus details of what arguments the function expects. And we’d expect the LLM to automatically choose the right function to call to do a job. Further, systems are being built in which the LLM has access to hundreds of tools. In such settings, there might be too many functions at your disposal to put all of them into the LLM context, so you might use heuristics to pick the most relevant subset to include in the LLM context at the current step of processing. This technique, which is described in the Gorilla paper cited below, is reminiscent of how, if there is too much text to include as context, retrieval augmented generation (RAG) systems offer heuristics for picking a subset of the text to include.
 
-Early in the history of LLMs, before widespread availability of large multimodal models (LMMs)  like LLaVa, GPT-4V, and Gemini, LLMs could not process images directly, so a lot of work on Tool Use was carried out by the computer vision community. At that time, the only way for an LLM-based system to manipulate an image was by calling a function to, say, carry out object recognition or some other function on it. Since then, practices for Tool Use have exploded. GPT-4’s function calling capability, released in the middle of last year, was a significant step toward a general-purpose implementation. Since then, more and more LLMs are being developed to be similarly facile with Tool Use.
-
-</details>
-
-<details>
-<summary>arxiv-org</summary>
-
-In this work, we propose a new method for LLMs to better leverage tools in multi-step reasoning. Our method, Chain-of-Abstraction (CoA), trains LLMs to first decode reasoning chains with abstract placeholders, and then call domain tools to reify each reasoning chain by filling in specific knowledge. This planning with abstract chains enables LLMs to learn more general reasoning strategies, which are robust to shifts of domain knowledge (e.g., math results) relevant to different reasoning questions. It also allows LLMs to perform decoding and calling of external tools in parallel, which avoids the inference delay caused by waiting for tool responses. In mathematical reasoning and Wiki QA domains, we show that our method consistently outperforms previous chain-of-thought and tool-augmented baselines on both in-distribution and out-of-distribution test sets, with an average $\\sim 6 %$ absolute QA accuracy improvement. LLM agents trained with our method also show more efficient tool use, with inference speed being on average ${ \\sim } 1 . 4 \\times$ faster than baseline tool-augmented LLMs.
+Early in the history of LLMs, before widespread availability of large multimodal models (LMMs)  like LLaVa, GPT-4V, and Gemini, LLMs could not process images directly, so a lot of work on Tool Use was carried out by the computer vision community. At that time, the only way for an LLM-based system to manipulate an image was by calling a function to, say, carry out object recognition or some other function on it. Since then, practices for Tool Use have exploded. GPT-4’s function calling capability, released in the middle of last year, was a significant step toward a general-purpose implementation. Since then, more and more LLMs are being developed to be similarly facile with Tool Use.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[arxiv-org]]></title>
+      <content><![CDATA[In this work, we propose a new method for LLMs to better leverage tools in multi-step reasoning. Our method, Chain-of-Abstraction (CoA), trains LLMs to first decode reasoning chains with abstract placeholders, and then call domain tools to reify each reasoning chain by filling in specific knowledge. This planning with abstract chains enables LLMs to learn more general reasoning strategies, which are robust to shifts of domain knowledge (e.g., math results) relevant to different reasoning questions. It also allows LLMs to perform decoding and calling of external tools in parallel, which avoids the inference delay caused by waiting for tool responses. In mathematical reasoning and Wiki QA domains, we show that our method consistently outperforms previous chain-of-thought and tool-augmented baselines on both in-distribution and out-of-distribution test sets, with an average $\\sim 6 %$ absolute QA accuracy improvement. LLM agents trained with our method also show more efficient tool use, with inference speed being on average ${ \\sim } 1 . 4 \\times$ faster than baseline tool-augmented LLMs.
 
 # 1 Introduction
 
@@ -5135,14 +4781,11 @@ As with mathematical reasoning, CoA agents also perform more efficient inference
 
 # 6 Conclusion
 
-In this work, we propose to decouple the general reasoning of LLM agents from specialized knowledge obtained via external tools. Our method, chain-of-abstraction (CoA), encourages LLMs to learn the planning of abstract multi-step reasoning, which are more robust to out-of-distribution knowledge shifts. CoA also achieves a more efficient pipeline for tool usage that significantly improves the speed of tool-augmented multi-step reasoning. The simple, yet effective, implementations of our method on two diverse tasks (i.e., math reasoning and open-domain QA) demonstrate its potential for being adapted to new reasoning scenarios.
-
-</details>
-
-<details>
-<summary>building-ai-agents-from-scratch-part-1-tool-use</summary>
-
-### What is an AI Agent?
+In this work, we propose to decouple the general reasoning of LLM agents from specialized knowledge obtained via external tools. Our method, chain-of-abstraction (CoA), encourages LLMs to learn the planning of abstract multi-step reasoning, which are more robust to out-of-distribution knowledge shifts. CoA also achieves a more efficient pipeline for tool usage that significantly improves the speed of tool-augmented multi-step reasoning. The simple, yet effective, implementations of our method on two diverse tasks (i.e., math reasoning and open-domain QA) demonstrate its potential for being adapted to new reasoning scenarios.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[building-ai-agents-from-scratch-part-1-tool-use]]></title>
+      <content><![CDATA[### What is an AI Agent?
 
 In it’s simplest high level definition, an AI agent is an application that uses LLM at the core as it’s reasoning engine to decide on the steps it needs to take to solve for users intent. It is usually depicted similar to the picture bellow and is composed of multiple building blocks:
 
@@ -5921,14 +5564,11 @@ As expected! First query uses the tool, while the second does not.
 
 - How to wrap python functions to be provided as tools to the Agent.
 - How to craft a system prompt that uses the tool definitions in planning the execution.
-- How to implement the agent that executes on the plan.
-
-</details>
-
-<details>
-<summary>efficient-tool-use-with-chain-of-abstraction-reasoning</summary>
-
-# Efficient Tool Use with Chain-of-Abstraction Reasoning
+- How to implement the agent that executes on the plan.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[efficient-tool-use-with-chain-of-abstraction-reasoning]]></title>
+      <content><![CDATA[# Efficient Tool Use with Chain-of-Abstraction Reasoning
 
 Silin Gao1,2∗, Jane Dwivedi-Yu2, Ping Yu2, Xiaoqing Ellen Tan2,
 
@@ -6525,14 +6165,11 @@ _Preprint_, arXiv:2210.03629.
 - Zhuang et al. (2023)  
 Yuchen Zhuang, Xiang Chen, Tong Yu, Saayan Mitra, Victor Bursztyn, Ryan A Rossi, Somdeb Sarkhel, and Chao Zhang. 2023.  
 Toolchain\*: Efficient action space navigation in large language models with a\* search.  
-_arXiv preprint arXiv:2310.13227_.
-
-</details>
-
-<details>
-<summary>function-calling-openai-api</summary>
-
-# Function calling
+_arXiv preprint arXiv:2310.13227_.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[function-calling-openai-api]]></title>
+      <content><![CDATA[# Function calling
 
 Enable models to fetch data and take actions.
 
@@ -7694,14 +7331,11 @@ When the model has finished calling the functions an event of type `response.fun
 | --- | --- |
 | `response_id` | The id of the response that the function call belongs to |
 | `output_index` | The index of the output item in the response. This respresents the individual function calls in the response. |
-| `item` | The function call item that includes a `name`, `arguments` and `id` field. |
-
-</details>
-
-<details>
-<summary>function-calling-with-the-gemini-api-google-ai-for-developer</summary>
-
-Function calling lets you connect models to external tools and APIs.
+| `item` | The function call item that includes a `name`, `arguments` and `id` field. |]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[function-calling-with-the-gemini-api-google-ai-for-developer]]></title>
+      <content><![CDATA[Function calling lets you connect models to external tools and APIs.
 Instead of generating text responses, the model determines when to call specific
 functions and provides the necessary parameters to execute real-world actions.
 This allows the model to act as a bridge between natural language and real-world
@@ -8315,15 +7949,13 @@ tasks into smaller, more focused function sets.
 - Only a [subset of the OpenAPI\\
 schema](https://ai.google.dev/api/caching#FunctionDeclaration) is supported.
 - Supported parameter types in Python are limited.
-- Automatic function calling is a Python SDK feature only.
+- Automatic function calling is a Python SDK feature only.]]></content>
+    </additional_source>
+    <additional_source>
+      <title><![CDATA[react-vs-plan-and-execute-a-practical-comparison-of-llm-agen]]></title>
+      <content><![CDATA[I have analyzed the provided markdown and the article guidelines. The markdown content is a detailed comparison of the ReAct and Plan-and-Execute agent patterns. However, the article guidelines for this lesson state that ReAct is a concept to be introduced in a future lesson (Lesson 7), and the current lesson should only briefly mention it as a solution to the limitations of simple tool-calling loops.
 
-</details>
-
-<details>
-<summary>react-vs-plan-and-execute-a-practical-comparison-of-llm-agen</summary>
-
-I have analyzed the provided markdown and the article guidelines. The markdown content is a detailed comparison of the ReAct and Plan-and-Execute agent patterns. However, the article guidelines for this lesson state that ReAct is a concept to be introduced in a future lesson (Lesson 7), and the current lesson should only briefly mention it as a solution to the limitations of simple tool-calling loops.
-
-Therefore, the entire body of the provided markdown content is irrelevant to the specified lesson plan and falls outside the scope defined by the guidelines. As the task is to *only remove* irrelevant content, and all the core content of the provided markdown is irrelevant, the correct output is an empty string.
-
-</details>
+Therefore, the entire body of the provided markdown content is irrelevant to the specified lesson plan and falls outside the scope defined by the guidelines. As the task is to *only remove* irrelevant content, and all the core content of the provided markdown is irrelevant, the correct output is an empty string.]]></content>
+    </additional_source>
+  </additional_sources>
+</research>

@@ -1,9 +1,48 @@
 {
-    "num_chars": 31626,
-    "num_words": 3936,
+    "config": {
+        "thread_id": "9f36d10a-cf89-4915-bc1d-e721421635f9",
+        "article_id": "06_tools",
+        "enable_human_review": null
+    },
+    "num_chars_article": 46558,
+    "num_chars_conclusion": 613,
+    "num_chars_introduction": 478,
     "num_sections": 7,
+    "num_words_article": 5300,
+    "num_words_conclusion": 104,
+    "num_words_introduction": 76,
+    "sections": {
+        "Understanding why agents need tools": {
+            "num_chars": 2909,
+            "num_words": 315
+        },
+        "Implementing tool calls from scratch": {
+            "num_chars": 14458,
+            "num_words": 1729
+        },
+        "Implementing a tool calling framework from scratch": {
+            "num_chars": 6729,
+            "num_words": 725
+        },
+        "Implementing production-level tool calls with Gemini": {
+            "num_chars": 5708,
+            "num_words": 652
+        },
+        "Using Pydantic models as tools for on-demand structured outputs": {
+            "num_chars": 4416,
+            "num_words": 478
+        },
+        "The downsides of running tools in a loop": {
+            "num_chars": 5166,
+            "num_words": 592
+        },
+        "Going through popular tools used within the industry": {
+            "num_chars": 2382,
+            "num_words": 311
+        }
+    },
     "seo": {
-        "title": "LLM Agents: Tools for Action",
-        "description": "Unlock LLM agent power! Learn to build, use, & automate tools for real-world action. Cut the hype, master function calling, and transform LLMs from text to action."
+        "title": "LLMs: Master Tool Calling",
+        "description": "Unlock LLM potential! Learn to implement, debug & monitor AI apps with external systems. Master tool calling from scratch, use production APIs & chain tools for complex problems."
     }
 }
