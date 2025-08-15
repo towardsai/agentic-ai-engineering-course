@@ -657,16 +657,16 @@ Instead of forcing a structured output at every step, an agent can use unstructu
 ```mermaid
 sequenceDiagram
     participant Agent as AI Agent
-    participant Tool1 as Web Search Tool
+    participant Tool1 as GDrive Tool
     participant Tool2 as Summarizer Tool
     participant PydanticTool as Pydantic Extraction Tool
-    
-    Agent->>Tool1: Call(query="latest news on AI")
-    Tool1-->>Agent: Return(articles)
-    Agent->>Tool2: Call(text=articles)
-    Tool2-->>Agent: Return(summary)
-    Agent->>PydanticTool: Call(text=summary)
-    PydanticTool-->>Agent: Return(structured_json)
+
+    Agent->>Tool1: Call(query="summarize doc from GDrive")
+    Tool1-->>Agent: Return(document)
+    Agent->>Tool2: Call(text=document)
+    Tool2-->>Agent: Return(summary, tags, keywords)
+    Agent->>PydanticTool: Call(summary=summary, tags=tags, keywords=keywords)
+    PydanticTool-->>Agent: Return(Pydantic Object)
 ```
 *Figure 3: An agent using multiple tools sequentially, with the final step being a Pydantic tool for structured data extraction.*
 
