@@ -93,22 +93,31 @@ To see multimodal LLMs in action, we will walk through some practical examples u
 graph TD
     subgraph "Base64 + Database Flow"
         CB["Client"]
-        DB_B[(\"Database\")]
-        CB --> DB_B: "1. Fetch Base64 Data"
-        DB_B --> CB: "2. Base64 Data"
-        CB --> LLM_API["LLM API"]: "3. Send Base64 Data"
+        DB_B[("Database")]
+        LLM_API_B["LLM API"]
+        CB --> DB_B
+        DB_B --> CB
+        CB --> LLM_API_B
     end
 
     subgraph "URL + Data Lake Flow"
         CU["Client"]
-        DB_U[(\"Database\")]
+        DB_U[("Database")]
         DL["Data Lake"]
-        CU --> DB_U: "1. Fetch URL"
-        DB_U --> CU: "2. URL"
-        CU --> LLM_API: "3. Send URL"
-        LLM_API --> DL: "4. Fetch Data (using URL)"
-        DL --> LLM_API: "5. Multimodal Data"
+        LLM_API_U["LLM API"]
+        CU --> DB_U
+        DB_U --> CU
+        CU --> LLM_API_U
+        LLM_API_U --> DL
+        DL --> LLM_API_U
     end
+
+    %% Apply styling to match the image exactly
+    classDef defaultStyle fill:#2d2d2d,stroke:#e0e0e0,stroke-width:1px,color:#ffffff
+    classDef subgraphStyle fill:#2d2d2d,stroke:#87ceeb,stroke-width:1px
+    classDef nodeStyle fill:#2d2d2d,stroke:#e0e0e0,stroke-width:1px,color:#ffffff
+
+    class CB,CU,DB_B,DB_U,LLM_API_B,LLM_API_U,DL nodeStyle
 ```
 *Figure 9: Comparison of data flow for Base64 vs. URL-based multimodal data handling.*
 
@@ -482,12 +491,12 @@ A generic multimodal RAG architecture for text and images involves two main pipe
 graph TD
     subgraph Ingestion Pipeline
         direction LR
-        Img[Image] --> MME1[Multimodal Embedding Model] --> VDB[(Vector Database)];
+        Img[Images] --> MME1[Multimodal Embedding Model] --> IE[Image Embeddings] --> VDB[(Vector Database)];
     end
 
     subgraph Retrieval Pipeline
         direction LR
-        Query[Text Query] --> MME2[Multimodal Embedding Model] --> Search{Similarity Search};
+        Query[Text Query] --> MME2[Multimodal Embedding Model] --> QE[Query Text Embedding] --> Search{Similarity Search};
         VDB --> Search;
         Search --> Results[Top-K Images];
     end
@@ -576,46 +585,49 @@ Now, let us get to the code.
     image_embeddings = embed_with_multimodal_model(image_bytes)
     ```
     Here is our implementation using the description workaround:
-    ```python
-    import numpy as np
-    from typing import cast
-    
-    def generate_image_description(image_bytes: bytes) -> str:
-        try:
-            img = PILImage.open(io.BytesIO(image_bytes))
-            prompt = "Describe this image in detail for semantic search purposes."
-            response = client.models.generate_content(model=MODEL_ID, contents=[prompt, img])
-            return response.text.strip() if response and response.text else ""
-        except Exception:
-            return ""
 
-    def embed_text_with_gemini(content: str) -> np.ndarray | None:
-        try:
-            result = client.models.embed_content(model="gemini-embedding-001", contents=[content])
-            return np.array(result.embeddings[0].values) if result and result.embeddings else None
-        except Exception:
-            return None
-    
-    def create_vector_index(image_paths: list[Path]) -> list[dict]:
-        vector_index = []
-        for image_path in image_paths:
-            image_bytes = cast(bytes, load_image_as_bytes(image_path, format="WEBP"))
-            image_description = generate_image_description(image_bytes)
-            image_embedding = embed_text_with_gemini(image_description)
-    
-            if image_embedding is not None:
-                vector_index.append({
-                    "content": image_bytes,
-                    "filename": image_path,
-                    "description": image_description,
-                    "embedding": image_embedding,
-                })
-        return vector_index
-    
-    image_paths = list(Path("images").glob("*.jpeg"))
-    vector_index = create_vector_index(image_paths)
-    ```
-    After calling the `create_vector_index` function, we successfully create seven embeddings under the `vector_index` variable. The first element in our `vector_index` has keys for `content`, `filename`, `description`, and `embedding`. The `embedding` is a 3072-dimensional vector, and its description begins with "This image is a page from a technical or scientific document...".
+```python
+def create_vector_index(image_paths: list[Path]) -> list[dict]:
+    vector_index = []
+    for image_path in image_paths:
+        image_bytes = cast(bytes, load_image_as_bytes(image_path, format="WEBP"))
+        image_description = generate_image_description(image_bytes)
+        image_embedding = embed_text_with_gemini(image_description)
+
+        if image_embedding is not None:
+            vector_index.append({
+                "content": image_bytes,
+                "filename": image_path,
+                "description": image_description,
+                "embedding": image_embedding,
+            })
+    return vector_index
+
+image_paths = list(Path("images").glob("*.jpeg"))
+vector_index = create_vector_index(image_paths)
+```
+
+After calling the `create_vector_index` function, we successfully create seven embeddings under the `vector_index` variable. The first element in our `vector_index` has keys for `content`, `filename`, `description`, and `embedding`. The `embedding` is a 3072-dimensional vector, and its description begins with "This image is a page from a technical or scientific document...".
+
+```python
+def generate_image_description(image_bytes: bytes) -> str:
+    try:
+        img = PILImage.open(io.BytesIO(image_bytes))
+        prompt = "Describe this image in detail for semantic search purposes."
+        response = client.models.generate_content(model=MODEL_ID, contents=[prompt, img])
+        return response.text.strip() if response and response.text else ""
+    except Exception:
+        return ""
+```
+
+```python
+def embed_text_with_gemini(content: str) -> np.ndarray | None:
+    try:
+        result = client.models.embed_content(model="gemini-embedding-001", contents=[content])
+        return np.array(result.embeddings[0].values) if result and result.embeddings else None
+    except Exception:
+        return None
+```
 
 3.  Next, we define our `search_multimodal` function. This function takes a text query, embeds it, and then calculates the cosine similarity against all the embeddings in our `vector_index` to find the top `k` results.
     ```python
@@ -673,14 +685,15 @@ Now, we integrate our RAG system into a ReAct agent, bringing together the core 
 We will build a ReAct agent that uses our `search_multimodal` function as a tool. The agent's task is to answer a question that requires finding a specific image and reasoning about its content. This creates a complete, albeit simple, agentic RAG workflow.
 ```mermaid
 graph TD
-    A[User Query] --> B{ReAct Agent};
+    A[User Query] --> B{**ReAct Agent**};
     B --> C{Thought: Need to find an image};
-    C --> D[Action: Call `multimodal_search_tool`];
-    D --> E[(Vector Index)];
-    E --> F[Observation: Retrieved Image];
-    F --> B;
-    B --> G{Thought: Analyze image};
-    G --> H[Final Answer];
+    C --> D[Generate Query];
+    D --> E[Action: Call multimodal_search_tool()];
+    E --> F[(Vector Index)];
+    F --> G[Observation: Retrieved Image];
+    G --> B;
+    B --> H{Thought: Analyze image};
+    H --> I[Final Answer];
 ```
 *Figure 22: The workflow of our multimodal ReAct agent.*
 
