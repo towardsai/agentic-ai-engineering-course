@@ -13,7 +13,7 @@ pip install agentic-ai-engineering-course
 ### Environment Utilities
 
 ```python
-from lessons.utils import load
+from utils import load
 
 # Load environment variables from .env file
 load()
@@ -25,7 +25,7 @@ load(dotenv_path="path/to/.env", required_env_vars=["API_KEY", "SECRET"])
 ### Pretty Print Utilities
 
 ```python
-from lessons.utils import wrapped, function_call, Color
+from utils import wrapped, function_call, Color
 
 # Pretty print text with custom formatting
 wrapped("Hello World", title="My Message", header_color=Color.BLUE)

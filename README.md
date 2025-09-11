@@ -25,19 +25,15 @@ First, make sure you have **Git** and the **`uv`** package manager installed.
 
 #### 2\. Clone the Repository
 
-Use the following command to clone the course repository. It uses a fine-grained GitHub token to provide read-only access to the exercises.
-
-```bash
-GITHUB_TOKEN="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" && git clone https://oauth2:${GITHUB_TOKEN}@github.com/towardsai/course-ai-agents.git
-```
+Clone the course repository as described in the admin lesson of the course. It uses a fine-grained GitHub token to provide read-only access to its contents.
 
 #### 3\. Set Up the Virtual Environment
 
-Navigate into the cloned repository's root directory and run `uv sync`. This will create a virtual environment (`.venv` folder) and install all the necessary packages defined in the `pyproject.toml` file.
+Navigate into the cloned repository's root directory and run `uv sync --group dev`. This will create a virtual environment (`.venv` folder) and install all the necessary packages defined in the `pyproject.toml` file.
 
 ```bash
 cd course-ai-agents
-uv sync
+uv sync --group dev
 ```
 
 #### 4\. Configure Your API Key
@@ -47,17 +43,30 @@ The course notebooks use Google's Gemini models. To use them, you'll need to get
 1.  Copy the example environment file: `cp .env.example .env`
 2.  Open the new `.env` file and replace the placeholder text with your actual `GOOGLE_API_KEY`.
 
-#### 5\. Launch Jupyter Notebooks
+#### 5. Launch Jupyter Notebooks
 
-Now you can launch the notebooks. You have two options:
+The code exercises are in the form of Jupyter Notebooks (`.ipynb` files). You can run them using the classic browser interface or a modern code editor like VS Code.
 
-  - **Web Browser:** Run the following commands in your terminal to create a Jupyter kernel and launch the user interface in your browser:
+**Option A: Run in your Web Browser**
 
+1.  First, create a Jupyter kernel that points to your new virtual environment:
     ```bash
     uv run ipython kernel install --user --name="ai-agents-course"
+    ```
+2.  Launch the Jupyter Notebook interface:
+    ```bash
     uv run jupyter notebook
     ```
+3.  This will open a new tab in your browser. Navigate to a lesson's notebook file.
+4.  Once the notebook is open, click on **Kernel > Change kernel** in the top menu and select `"ai-agents-course"` from the list.
 
-    Once open, navigate to the `lessons` directory and select the `ai-agents-course` kernel.
+**Option B: Run in VS Code**
 
-  - **VS Code:** Install the [official Jupyter extension](https://code.visualstudio.com/docs/datascience/jupyter-notebooks). Open the course folder in VS Code, and when you open a notebook, select the Python environment from `.venv/bin/python` to run the code.
+1.  Make sure you have the official [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) installed from the marketplace.
+2.  Open the `course-ai-agents` project folder in VS Code.
+3.  Open any `notebook.ipynb` file from the `lessons` directory.
+4.  Click on the **“Select Kernel”** button in the top-right of the editor.
+5.  Choose **“Python Environments”** from the list of options.
+6.  Select the virtual environment from the cloned repository, which will be located at `.venv/bin/python`.
+
+You are now ready to run the code cells in the notebook
