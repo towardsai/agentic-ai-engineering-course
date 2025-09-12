@@ -1,30 +1,52 @@
 [project]
-name = "lessons"
-version = "0.0.1"
-description = "The lessons of the AI Engineering course."
-readme = "README.md"
-requires-python = ">=3.13"
+name = "agentic-ai-engineering-course"
+version = "0.1.15"
+description = "Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML."
+readme = "README_PACKAGE.md"
+requires-python = ">=3.12.11"
+authors = [
+    {name = "Paul Iusztin", email = "p.b.iusztin@gmail.com"},
+    {name = "Fabio chiusano", email = "chiusanofabio94@gmail.com"},
+    {name = "Omar solano", email = "omarsolano27@gmail.com"}
+
+]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["ai", "agents", "llm-workflows"]
 dependencies = [
+    "chromadb>=1.0.20",
     "google-genai>=1.21.1",
-    "ipykernel>=6.29.5",
     "langchain>=0.3.26",
     "langchain-community>=0.3.27",
-    "langchain-google-genai>=2.1.7",
+    "langchain-google-genai>=2.0.0",
     "langgraph>=0.5.3",
     "matplotlib>=3.10.3",
-    "notebook>=7.4.5",
+    "mem0ai>=0.1.116",
     "pillow>=11.3.0",
     "pydantic>=2.11.7",
     "python-dotenv>=1.1.0",
     "scikit-learn>=1.7.0",
+    "requests==2.32.4",
+    "google-ai-generativelanguage==0.6.15",
 ]
+
+[project.urls]
+Homepage = "https://github.com/towardsai/agentic-ai-engineering-course"
+Repository = "https://github.com/towardsai/agentic-ai-engineering-course"
+Issues = "https://github.com/towardsai/agentic-ai-engineering-course/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["lessons"]
+packages = ["lessons/utils"]
 
 [tool.ruff]
 target-version = "py312"
@@ -39,3 +61,9 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["lessons"]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "notebook>=7.4.5",
+]
