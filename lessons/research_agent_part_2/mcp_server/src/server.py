@@ -1,0 +1,65 @@
+"""Main MCP server implementation with research tools."""
+
+from argparse import ArgumentParser
+
+from fastmcp import FastMCP
+
+from .config.settings import settings
+from .routers.prompts import register_mcp_prompts
+from .routers.resources import register_mcp_resources
+from .routers.tools import register_mcp_tools
+from .utils.logging_utils import configure_logging
+from .utils.opik_utils import configure_opik
+
+# Configure logging
+configure_logging()
+
+# ============================================================================
+# MAIN EXECUTION AND EXPORT FUNCTIONS
+# ============================================================================
+
+
+def create_mcp_server() -> FastMCP:
+    """
+    Create and configure the MCP server instance.
+
+    This function can be imported to get a configured MCP server
+    for use with in-memory transport in clients.
+
+    Returns:
+        FastMCP: Configured MCP server instance
+    """
+    # Create the FastMCP server instance
+    mcp = FastMCP(
+        name=settings.server_name,
+        version=settings.version,
+    )
+
+    # Register all MCP endpoints
+    register_mcp_tools(mcp)
+    register_mcp_resources(mcp)
+    register_mcp_prompts(mcp)
+
+    return mcp
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description="MCP Server for Nova Research Agent")
+    parser.add_argument(
+        "--transport",
+        "-t",
+        type=str,
+        choices=["stdio", "streamable-http"],
+        default="streamable-http",
+        help="The transport protocol to use for the MCP server.",
+    )
+    args = parser.parse_args()
+
+    # Initialize Opik monitoring if configured
+    if configure_opik():
+        print(f"📊 Opik monitoring enabled for project: {settings.opik_project_name}")
+    else:
+        print("📊 Opik monitoring disabled (missing configuration)")
+
+    mcp = create_mcp_server()
+    mcp.run(transport=args.transport)
