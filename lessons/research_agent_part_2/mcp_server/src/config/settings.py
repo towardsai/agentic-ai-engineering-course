@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     # LLM Configuration
     youtube_transcription_model: str = Field(default="gemini-2.5-flash", description="Model for YouTube transcription")
     scraping_model: str = Field(default="gemini-2.5-flash", description="Model for web scraping")
-    query_generation_model: str = Field(default="gpt-5", description="Model for query generation")
-    source_selection_model: str = Field(default="gpt-5-mini", description="Model for source selection")
+    query_generation_model: str = Field(default="gemini-2.5-pro", description="Model for query generation")
+    source_selection_model: str = Field(default="gemini-2.5-flash", description="Model for source selection")
 
     # API Keys
     google_api_key: SecretStr | None = Field(
