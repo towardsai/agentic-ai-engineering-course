@@ -1,6 +1,6 @@
 [project]
 name = "agentic-ai-engineering-course"
-version = "0.1.15"
+version = "0.1.17"
 description = "Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML."
 readme = "README_PACKAGE.md"
 requires-python = ">=3.12.11"
@@ -34,6 +34,10 @@ dependencies = [
     "scikit-learn>=1.7.0",
     "requests==2.32.4",
     "google-ai-generativelanguage==0.6.15",
+    "fastmcp>=2.12.0",
+    "opik>=1.7.42",
+    "gitingest>=0.1.5",
+    "firecrawl-py>=2.7.1",
 ]
 
 [project.urls]
