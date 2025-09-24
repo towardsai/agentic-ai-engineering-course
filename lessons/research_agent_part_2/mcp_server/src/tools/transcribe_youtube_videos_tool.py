@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 async def transcribe_youtube_videos_tool(research_directory: str) -> Dict[str, Any]:
     """
-    Transcribe YouTube video URLs from GUIDELINES_JSON_FILE using Gemini 2.5 Pro.
+    Transcribe YouTube video URLs from GUIDELINES_JSON_FILE using an LLM.
 
     Reads the GUIDELINES_JSON_FILE file and processes each URL listed
     under 'youtube_videos_urls'. Each video is transcribed, and the results are

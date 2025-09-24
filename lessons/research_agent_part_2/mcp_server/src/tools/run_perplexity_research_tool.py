@@ -53,7 +53,7 @@ async def run_perplexity_research_tool(research_directory: str, queries: List[st
     """
     Run Perplexity research queries for the research folder.
 
-    Executes the provided queries using Perplexity's Sonar-Pro model and appends
+    Executes the provided queries using Perplexity and appends
     the results to perplexity_results.md in the research directory. Each query
     result includes the answer and source citations.
 

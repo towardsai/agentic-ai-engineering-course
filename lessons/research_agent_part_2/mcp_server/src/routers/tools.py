@@ -141,7 +141,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
     @mcp.tool()
     async def transcribe_youtube_urls(research_directory: str) -> Dict[str, Any]:
         """
-        Transcribe YouTube video URLs from GUIDELINES_FILENAMES_FILE using Gemini 2.5 Pro.
+        Transcribe YouTube video URLs from GUIDELINES_FILENAMES_FILE using an LLM.
 
         Reads the GUIDELINES_FILENAMES_FILE file and processes each URL listed
         under 'youtube_videos_urls'. Each video is transcribed, and the results are
@@ -230,7 +230,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Automatically select high-quality sources from Perplexity results.
 
-        Uses GPT-4.1 to evaluate each source in perplexity_results.md for trustworthiness,
+        Uses an LLM to evaluate each source in perplexity_results.md for trustworthiness,
         authority, and relevance based on the article guidelines. Writes the comma-separated
         IDs of accepted sources to perplexity_sources_selected.md and saves a filtered
         markdown file perplexity_results_selected.md containing only the accepted sources.
