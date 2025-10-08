@@ -1,0 +1,36 @@
+{
+    "config": {
+        "thread_id": "723c4090-d7ad-41a0-be2c-811498d0c08e",
+        "article_id": "12_central_project",
+        "enable_human_review": null
+    },
+    "num_chars_article": 26486,
+    "num_chars_conclusion": 1508,
+    "num_chars_introduction": 2454,
+    "num_sections": 4,
+    "num_words_article": 3237,
+    "num_words_conclusion": 225,
+    "num_words_introduction": 353,
+    "sections": {
+        "The Build vs. Buy Trade-off: Why Not Just Use Off-the-Shelf Tools?": {
+            "num_chars": 4531,
+            "num_words": 669
+        },
+        "Why LLMs Still Struggle at Writing (and How to Fix It Manually)": {
+            "num_chars": 4264,
+            "num_words": 615
+        },
+        "Two Agents, Two Philosophies (MCP vs. LangGraph)": {
+            "num_chars": 3211,
+            "num_words": 325
+        },
+        "Agents Design": {
+            "num_chars": 5977,
+            "num_words": 688
+        }
+    },
+    "seo": {
+        "title": "AI Agents: Build vs. Buy Guide",
+        "description": "Build vs. Buy AI Agents: Steerable research with MCP, reliable writing with LangGraph. Master LLM workflows & ban 'AI slop' for quality content."
+    }
+}
