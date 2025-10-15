@@ -1,0 +1,6438 @@
+# Research
+
+## Research Results
+
+<details>
+<summary>What are the trade-offs between stateful graph-based agent frameworks like LangGraph and lighter, more autonomous SDKs like the OpenAI Agents SDK for production systems?</summary>
+
+### Source [1]: https://community.latenode.com/t/comparing-openais-agent-sdk-with-langgraph-for-ai-orchestration/30996
+
+Query: What are the trade-offs between stateful graph-based agent frameworks like LangGraph and lighter, more autonomous SDKs like the OpenAI Agents SDK for production systems?
+
+Answer: LangGraph is designed to work seamlessly with a variety of models and external APIs, offering flexibility and interoperability outside the OpenAI ecosystem. This makes it a strong choice for teams that want to avoid vendor lock-in and integrate multiple AI providers or custom components. In contrast, the OpenAI Agents SDK is tightly coupled with OpenAI’s infrastructure, which can limit flexibility for those seeking to use non-OpenAI models or external services. While this integration can simplify development within the OpenAI stack, it may not be ideal for organizations prioritizing multi-vendor or hybrid AI strategies. The trade-off here is between the convenience and official support of a single-vendor SDK versus the broader compatibility and architectural freedom offered by LangGraph.
+
+-----
+
+-----
+
+### Source [2]: https://composio.dev/blog/openai-agents-sdk-vs-langgraph-vs-autogen-vs-crewai
+
+Query: What are the trade-offs between stateful graph-based agent frameworks like LangGraph and lighter, more autonomous SDKs like the OpenAI Agents SDK for production systems?
+
+Answer: The OpenAI Agents SDK is lightweight, easy to learn, and quick to deploy, with minimal abstractions and a focus on production readiness—offering built-in tracing, debugging, and configurable safety checks. It is best suited for teams that want to rapidly build and deploy agents using OpenAI’s models, with strong support for tool integration and workflow customization. However, its flexibility is somewhat constrained by its reliance on OpenAI’s ecosystem and Chat Completions API format.
+
+LangGraph, on the other hand, provides the most flexibility for designing complex, stateful agentic architectures. It supports explicit state management, first-class streaming, and highly scalable execution (e.g., with Pragal and Apache Beam). Debugging is facilitated through LangSmith, and the framework allows for intervention at any point in the workflow. However, this power comes with a steeper learning curve and requires careful design of agentic systems. LangGraph is ideal for advanced use cases requiring branching logic, error recovery, and fine-grained control over agent behavior, but may be overkill for simpler, autonomous agent tasks.
+
+In summary, the OpenAI Agents SDK excels at rapid, production-focused agent development within the OpenAI stack, while LangGraph offers unparalleled flexibility and control for complex, stateful, and multi-model workflows, at the cost of increased complexity and setup time.
+
+-----
+
+-----
+
+### Source [3]: https://galileo.ai/blog/autogen-vs-crewai-vs-langgraph-vs-openai-agents-framework
+
+Query: What are the trade-offs between stateful graph-based agent frameworks like LangGraph and lighter, more autonomous SDKs like the OpenAI Agents SDK for production systems?
+
+Answer: LangGraph compiles every step of agent execution into a stateful graph, allowing for deterministic recovery, checkpoints, and the ability to replay or roll back agent workflows. This architecture is particularly valuable for complex, multi-step tasks where error handling and reproducibility are critical. The explicit state management and graph-based paradigm make it easier to debug, monitor, and reason about agent behavior, but also introduce additional overhead in terms of design and maintenance.
+
+The OpenAI Agents SDK, by contrast, adopts a lightweight, tool-centric model focused on speed and simplicity. It is less concerned with deep orchestration or stateful recovery, prioritizing quick iteration and deployment. This approach reduces the cognitive and operational burden for developers but may lack the robustness needed for mission-critical systems where failure recovery and auditability are paramount.
+
+The trade-off is clear: LangGraph’s stateful, graph-based approach provides superior control and resilience for complex production systems, while the OpenAI Agents SDK offers a faster, more autonomous path for teams content with the OpenAI ecosystem and less demanding orchestration requirements.
+
+-----
+
+-----
+
+### Source [4]: https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+
+Query: What are the trade-offs between stateful graph-based agent frameworks like LangGraph and lighter, more autonomous SDKs like the OpenAI Agents SDK for production systems?
+
+Answer: LangGraph’s core paradigm is a graph-based workflow of prompts, providing explicit control over Directed Acyclic Graphs (DAGs), branching, and advanced error handling. This makes it especially well-suited for complex, multi-step tasks that require precise orchestration, conditional logic, and robust debugging capabilities. Teams needing fine-grained control over agent execution, state transitions, and recovery mechanisms will find LangGraph’s architecture advantageous.
+
+The OpenAI Agents SDK is positioned as a high-level toolchain within the OpenAI ecosystem, offering integrated tools such as web and file search, and is best for teams that want official support and specialized features from OpenAI. Its strength lies in its simplicity and tight integration with OpenAI services, making it a pragmatic choice for projects that do not require complex state management or multi-model support.
+
+The primary trade-off is between LangGraph’s advanced, stateful orchestration capabilities—ideal for sophisticated, production-grade AI systems—and the OpenAI Agents SDK’s streamlined, autonomous approach, which favors ease of use and rapid development within a single-vendor environment.
+
+-----
+</details>
+
+
+<details>
+<summary>How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?</summary>
+
+### Source [5]: https://ai.pydantic.dev/durable_execution/overview/
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: Pydantic AI implements durable execution by allowing users to build agents that can preserve their progress across transient API failures and application errors or restarts. These agents support long-running, asynchronous, and human-in-the-loop workflows with production-grade reliability. Pydantic AI natively supports two durable execution solutions, though the specific solutions are not detailed in this source. The integration with these systems is done through Pydantic AI's public interface, serving as a reference for integrating with other durable systems.
+
+-----
+
+-----
+
+### Source [6]: https://ai.pydantic.dev/durable_execution/temporal/
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: Temporal is one of the durable execution solutions integrated with Pydantic AI. Temporal's implementation ensures that if a program crashes or encounters an exception while interacting with a model or API, it will retry until it can successfully complete. This is achieved through a replay mechanism where key inputs and decisions are saved, allowing a re-started program to pick up where it left off. Temporal separates the application into deterministic **workflows** and non-deterministic **activities**. Workflows execute deterministically and can resume from where they left off, while activities can run arbitrary code but are restarted from the beginning if they fail.
+
+-----
+
+-----
+
+### Source [7]: https://github.com/pydantic/pydantic-ai-temporal-example
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: This GitHub repository provides an example of how Pydantic AI and Temporal work together. Pydantic AI handles the AI complexity, while Temporal manages the fault tolerance and distributed systems complexity. This allows developers to focus on their business logic without worrying about the underlying infrastructure for durability and fault tolerance.
+
+-----
+
+-----
+
+### Source [8]: https://docs.dbos.dev/integrations/pydantic-ai
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: DBOS is another system that integrates with Pydantic AI to enable durable execution. By combining DBOS with Pydantic AI, developers can build reliable agents that preserve progress across transient failures and restarts. DBOS runs as a library, checkpointing functions to a database for durability. Any Pydantic AI agent can be wrapped in a `DBOSAgent` to enable durable execution, automatically wrapping the agent's main loop and model requests as DBOS workflows.
+
+-----
+
+-----
+
+### Source [9]: https://restate.dev/blog/durable-ai-loops-fault-tolerance-across-frameworks-and-without-handcuffs/
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: Restate offers a lightweight engine for durable execution that can be applied to various AI SDKs, including Pydantic AI and others. This approach involves wrapping non-deterministic actions into durable steps that can be restored after a crash. It provides resilience, suspendability, observability, and reliable multi-agent orchestration without requiring specific SDK modifications.
+
+-----
+
+-----
+
+### Source [10]: https://www.zenml.io/blog/pydantic-ai-vs-langgraph
+
+Query: How do agent frameworks like PydanticAI and LangGraph implement durable execution and fault tolerance for long-running AI workflows?
+
+Answer: While this source does not provide specific details on how LangGraph implements durable execution, it mentions that Pydantic AI integrates with production-grade workflow engines to support durable and fault-tolerant workflows. This suggests that both frameworks likely rely on integration with robust workflow engines to ensure durability and fault tolerance. However, the specific mechanisms used by LangGraph are not detailed in this source.
+
+-----
+</details>
+
+
+<details>
+<summary>What are the best practices for designing interoperable agent tools using protocols like MCP with frameworks such as FastMCP?</summary>
+
+### Source [11]: https://gofastmcp.com
+
+Query: What are the best practices for designing interoperable agent tools using protocols like MCP with frameworks such as FastMCP?
+
+Answer: FastMCP is a key framework for building interoperable agent tools using the Model Context Protocol (MCP). It provides a Pythonic interface that simplifies the development of MCP servers and clients, making it easier to connect large language models (LLMs) to tools and data. FastMCP offers advanced features such as server composition, proxying, OpenAPI/FastAPI generation, and enterprise authentication, which are essential for designing interoperable tools. It also includes comprehensive client libraries and deployment tools, facilitating the transition from development to production.
+
+-----
+
+-----
+
+### Source [12]: https://github.com/jlowin/fastmcp
+
+Query: What are the best practices for designing interoperable agent tools using protocols like MCP with frameworks such as FastMCP?
+
+Answer: FastMCP is designed to streamline the development of MCP servers and clients by providing a high-level, Pythonic interface. It supports key MCP concepts like **Tools**, **Resources**, and **Prompts**, which are crucial for interoperability. Tools allow LLMs to perform actions by executing Python functions, while resources expose read-only data sources. FastMCP's automatic schema generation from type hints and docstrings simplifies tool definition and maintenance. It also supports advanced features such as proxy servers and OpenAPI/FastAPI generation, enhancing interoperability.
+
+-----
+
+-----
+
+### Source [13]: https://www.pondhouse-data.com/blog/create-mcp-server-with-fastmcp
+
+Query: What are the best practices for designing interoperable agent tools using protocols like MCP with frameworks such as FastMCP?
+
+Answer: For designing interoperable agent tools using MCP with FastMCP, several best practices can be applied. First, use FastMCP's decorator-based API to define tools and resources, which helps minimize boilerplate code and simplifies development. FastMCP's automatic schema generation and Pydantic integration ensure that inputs and outputs are well-defined and validated. Additionally, leveraging transport abstraction allows for seamless communication over different protocols. By focusing on business logic rather than low-level protocol details, developers can create robust and interoperable tools efficiently.
+
+-----
+
+-----
+
+### Source [14]: https://docs.clarifai.com/compute/agents/mcp/
+
+Query: What are the best practices for designing interoperable agent tools using protocols like MCP with frameworks such as FastMCP?
+
+Answer: When designing interoperable agent tools with MCP and FastMCP, it's important to leverage the framework's capabilities to build performant MCP servers. FastMCP simplifies the implementation of MCP clients and servers, allowing developers to focus on defining tools that interact with external systems. By providing a standardized interface, MCP enables secure and efficient access to contextual information, which is critical for interoperability. Building performant MCP servers with FastMCP involves defining callable tools for LLMs and integrating them with external data sources, enhancing the overall interoperability of the system.
+
+-----
+</details>
+
+
+<details>
+<summary>In multi-agent systems, what are the architectural differences between role-based collaboration frameworks like CrewAI and conversational frameworks like AutoGen&#x27;s AgentChat?</summary>
+
+### Source [15]: https://docs.crewai.com/introduction
+
+Query: In multi-agent systems, what are the architectural differences between role-based collaboration frameworks like CrewAI and conversational frameworks like AutoGen's AgentChat?
+
+Answer: CrewAI is a role-based framework that specializes in orchestrating teams of AI agents. It creates specialized agents with defined roles, expertise, and goals, allowing them to collaborate on complex tasks. Key features include **role-based agents**, **flexible tools** for interacting with external services, **intelligent collaboration** among agents, and **task management** with structured workflows. CrewAI's architecture is designed to balance autonomy with structured control through its **Flow** component, which manages workflow execution, handles state transitions, and ensures reliable task sequencing.
+
+-----
+
+-----
+
+### Source [16]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: In multi-agent systems, what are the architectural differences between role-based collaboration frameworks like CrewAI and conversational frameworks like AutoGen's AgentChat?
+
+Answer: CrewAI emphasizes **role-based agent design**, where agents are defined with specific roles, goals, and backstories to enable specialized expertise. It supports **task delegation**, **agent collaboration**, and **process management** for sequential or parallel task execution. CrewAI also integrates with various foundation models and LLM APIs, offering flexibility in model selection and deployment. The framework is focused on autonomous multi-agent orchestration, providing a structured approach to creating teams of specialized agents.
+
+-----
+
+-----
+
+### Source [17]: https://www.digitalocean.com/resources/articles/what-is-crew-ai
+
+Query: In multi-agent systems, what are the architectural differences between role-based collaboration frameworks like CrewAI and conversational frameworks like AutoGen's AgentChat?
+
+Answer: In contrast to conversational frameworks, CrewAI's role-based architecture assigns specific roles to agents, each with distinct expertise, tools, and responsibilities. This approach helps reduce AI hallucinations by dividing complex tasks into manageable components handled by specialized agents. CrewAI operates as a coordination layer, allowing different AI agents to communicate and combine their capabilities. It is built on the principle of organizing multiple AI agents into collaborative teams, similar to human project teams, which is different from single-agent systems that rely on one AI for all tasks.
+
+-----
+
+-----
+
+### Source [18]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: In multi-agent systems, what are the architectural differences between role-based collaboration frameworks like CrewAI and conversational frameworks like AutoGen's AgentChat?
+
+Answer: CrewAI's role-based agent architecture is based on a framework that includes **role**, **goal**, and **backstory** elements. This framework allows developers to create agents with defined expertise and responsibilities. Beyond this, CrewAI offers advanced configuration options for fine-tuning agent behavior, such as controlling delegation, logging, and interaction with external services. This setup enables detailed control over agent actions and interactions, which is distinct from conversational frameworks that typically focus on dialogue management rather than task-oriented collaboration.
+
+-----
+</details>
+
+
+<details>
+<summary>What are real-world case studies or examples of development teams pivoting their choice of AI agent framework mid-project?</summary>
+
+### Source [19]: https://age-of-product.com/wp-content/uploads/Deep-Research-AI-Agile-Product-Teams-age-of-product-com.pdf
+
+Query: What are real-world case studies or examples of development teams pivoting their choice of AI agent framework mid-project?
+
+Answer: The case study of Lightful, a small London-based tech company, illustrates how agile methods and AI-driven approaches can transform product development. Lightful formed an "AI Squad" to experiment with generative AI in its product development. This team worked in daily agile iterations, focusing on real user problems and rapid prototyping. Initially, they started by identifying nonprofits' challenges and then explored AI solutions. They mapped out pain points using an opportunity-solution tree and introduced a new step in their Scrum cycle: prompt design for AI models. When GPT-4 was released during development, the team's agile process allowed them to quickly adapt and integrate the new model, enhancing their solution's performance. This flexibility demonstrates how development teams can pivot their AI approach mid-project to leverage new technologies without disrupting their workflow.
+
+-----
+
+-----
+
+### Source [20]: https://www.elisahertzler.com/case-studies/ai-product-strategy
+
+Query: What are real-world case studies or examples of development teams pivoting their choice of AI agent framework mid-project?
+
+Answer: The case study of Peers highlights a significant product pivot from a learning platform to an AI-driven skill management platform. Initially, Peers focused on personalized learning, but they noticed a shift in demand towards AI-based skill management from enterprise clients. They leveraged their existing machine learning-based skill graph and explored integrating it with emerging GPT APIs. This integration allowed them to outperform their legacy system in identifying skill gaps and creating personalized learning paths. The pivot involved redesigning their product with a new tech stack centered on GPT-based skills reasoning and tailoring the UX for enterprise talent development teams. This example shows how a development team can pivot their AI strategy mid-project by adapting to changing market demands and technological advancements.
+
+-----
+
+-----
+
+### Source [21]: https://www.mckinsey.com/capabilities/quantumblack/our-insights/seizing-the-agentic-ai-advantage
+
+Query: What are real-world case studies or examples of development teams pivoting their choice of AI agent framework mid-project?
+
+Answer: McKinsey discusses the shift from siloed AI teams to cross-functional transformation squads for delivering AI solutions at scale. While this does not directly address pivoting AI agent frameworks mid-project, it emphasizes the need for flexibility and adaptability in AI implementation. Organizations must transition from experimentation to industrialized delivery models, which involves designing solutions that are scalable both technically and financially. This requires anticipating technical prerequisites and estimating future running costs, which can be crucial when pivoting AI strategies mid-project.
+
+-----
+</details>
+
+
+<details>
+<summary>What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?</summary>
+
+### Source [22]: https://atalupadhyay.wordpress.com/2025/07/10/pydantic-ai-vs-langgraph-the-ultimate-developers-guide/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This developer guide provides detailed migration strategies and real-world performance metrics for teams considering moving between **Pydantic AI** and **LangGraph**.
+
+- **Reasons for Migration to LangGraph:** Teams migrating from Pydantic AI to LangGraph typically do so to support **complex, multi-step workflows** and benefit from **advanced state management** and **graph-based orchestration**. Pydantic AI is well-suited for simple, type-safe, and fast workflows, but when requirements grow to involve numerous steps, branching logic, or persistent memory, LangGraph’s graph paradigm and integration with LangChain become essential.
+
+- **Migration Strategies:**
+  - **Identify Complex Workflows:** Decompose monolithic tool functions in Pydantic AI into discrete nodes and edges in LangGraph.
+  - **Preserve Type Safety:** Use Pydantic models for state representation within LangGraph nodes to maintain type validation.
+  - **Gradual Migration:** Begin by moving simple workflows, then incrementally add more complex ones, ensuring backward compatibility.
+
+- **Reasons for Migration to Pydantic AI:** Conversely, teams move from LangGraph to Pydantic AI to **simplify state management** and **improve debugging** for straightforward tasks. When only basic workflows and high performance are needed, Pydantic AI’s speed, built-in error handling, and gentle learning curve are preferred.
+
+- **Case Implementation Examples:**
+  - Migrating a research workflow: Original monolithic logic in Pydantic AI is split into multiple interconnected LangGraph nodes (planning, searching, analyzing, report generation), leveraging LangGraph’s conditional edges and state transitions.
+  - Simplifying a complex LangGraph pipeline: Combine multiple nodes into a single Pydantic AI tool, reducing state fields and focusing on final results.
+
+- **Performance Benchmarks:** For simple and multi-step tasks, Pydantic AI is faster and uses less memory. For highly complex workflows, only LangGraph is feasible due to its architecture.
+
+-----
+
+-----
+
+-----
+
+### Source [23]: https://newsletter.victordibia.com/p/autogen-vs-crewai-vs-langgraph-vs
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source provides a comparative overview of leading multi-agent frameworks, including **AutoGen**, **CrewAI**, **LangGraph**, and **PydanticAI**, focusing on developer experience and technical capabilities.
+
+- **Reasons for Migration:** Teams commonly switch frameworks to address issues such as:
+  - **Scalability and Workflow Complexity:** Moving from AutoGen or custom solutions to LangGraph for advanced workflow branching, parallelism, and memory management.
+  - **Type Safety and Simplicity:** Switching to PydanticAI for use cases demanding strict type validation and quick prototyping.
+  - **Error Handling and Observability:** Opting for frameworks with better tracing, debugging, and error recovery (e.g., LangGraph’s integration with LangSmith).
+
+- **Case Study Patterns:** While not naming specific organizations, the source notes real-world migration trends:
+  - Early adopters of custom or AutoGen-based systems often struggle with scaling and extensibility, prompting a move to LangGraph for graph-based, production-ready workflows.
+  - Teams with simple, high-throughput needs (e.g., fast Q&A bots) often choose PydanticAI for its ease of use and performance.
+
+- **Framework-Specific Insights:** The tool includes an interactive comparison matrix, allowing teams to evaluate and justify their migration decisions based on metrics such as async support, state handling, and ecosystem maturity.
+
+-----
+
+-----
+
+-----
+
+### Source [24]: https://www.truefoundry.com/blog/autogen-vs-langgraph
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This blog discusses the practical differences between **AutoGen** and **LangGraph**, focusing on their approach to building multi-agent systems.
+
+- **Reasons for Migrating from AutoGen to LangGraph:**
+  - **Complex Workflow Requirements:** When teams need more than sequential, chat-based agent orchestration, LangGraph’s directed acyclic graph (DAG) workflow allows for conditional branching, parallelism, and persistent state transitions.
+  - **Advanced Memory Needs:** LangGraph, leveraging LangChain, supports entity memory, summary memory, and vector stores, which are absent or less flexible in AutoGen.
+  - **Custom Tool Integration:** LangGraph’s deep plugin and tool ecosystem enables integration with databases and retrieval-augmented generation pipelines, which may be limiting in AutoGen.
+
+- **Developer Experience:** AutoGen is beginner-friendly and fast to set up, but teams outgrowing its capabilities—such as in research automation or agent-based data pipelines—pivot to LangGraph for its programmability and fine-grained control.
+
+- **Migration Example:** The source highlights a scenario where a human-in-the-loop research assistant, initially built on AutoGen’s conversational loop, is migrated to LangGraph to enable dynamic branching and more robust error recovery per workflow node.
+
+-----
+
+-----
+
+-----
+
+### Source [25]: https://www.openxcell.com/blog/autogen-vs-langgraph/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This official blog compares **AutoGen** and **LangGraph** across architecture, memory, error handling, and extensibility.
+
+- **Key Drivers for Migration:**
+  - **Memory Management:** Teams move from AutoGen to LangGraph when they need sophisticated, persistent memory (entity, vector, summary, etc.)—crucial for long-running, multi-turn agent workflows.
+  - **Error Handling:** LangGraph’s node-level retries, branching, and rollback are preferred for mission-critical systems where single-point conversational error recovery (as in AutoGen) is insufficient.
+  - **Tool Integration and Customization:** Deep integration with LangChain’s toolset in LangGraph is a primary attraction for teams integrating external APIs, databases, or custom plugins.
+
+- **Migration Pattern:** Teams starting with AutoGen for prototyping migrate to LangGraph as requirements scale to production, requiring advanced parallelism, observability, and complex workflow logic.
+
+- **Case Example:** The blog outlines an example where a customer support automation system, initially built with AutoGen, is migrated to LangGraph to enable workflow branching for different customer scenarios and persistent user profile memory.
+
+-----
+
+-----
+
+-----
+
+### Source [116]: https://atalupadhyay.wordpress.com/2025/07/10/pydantic-ai-vs-langgraph-the-ultimate-developers-guide/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This developer guide provides detailed insights into migrations between **Pydantic AI** and **LangGraph** based on real-world developer workflows. Teams often pivot from Pydantic AI to LangGraph when their projects grow from simple agentic workflows to more complex multi-step processes. Pydantic AI excels at type safety, fast execution, low memory usage, and built-in error handling, making it suitable for straightforward Q&A and simple chaining tasks. However, as workflow complexity increases (e.g., 10+ steps, advanced state management, conditional branching), LangGraph becomes preferable due to its graph-based architecture, advanced state management, and flexibility for complex workflows.
+
+Migration strategies from Pydantic AI to LangGraph typically involve:
+- Identifying components that require complex workflow orchestration.
+- Refactoring monolithic functions into graph nodes, representing each step as a separate node.
+- Preserving type safety by using Pydantic models for state representation.
+- Migrating incrementally, starting with simple workflows and gradually introducing complexity.
+
+Conversely, teams may move from LangGraph to Pydantic AI to simplify state management and debugging when their use cases become less complex. This involves combining multiple nodes into single tools and reducing state complexity.
+
+Benchmarks show Pydantic AI to be faster and more memory-efficient for simple and moderately complex tasks, while LangGraph is necessary for highly complex, multi-step agentic workflows. The guide highlights that the primary reason for migration is the evolution of requirements: from speed and simplicity (favoring Pydantic AI) to flexibility and advanced orchestration (favoring LangGraph)[1].
+
+-----
+
+-----
+
+-----
+
+### Source [117]: https://newsletter.victordibia.com/p/autogen-vs-crewai-vs-langgraph-vs
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This interactive comparison tool covers migrations and pivots between frameworks such as **AutoGen**, **CrewAI**, **LangGraph**, and **PydanticAI**. Teams frequently migrate frameworks as their needs shift regarding developer experience, async capabilities, state management, and integration flexibility. The newsletter identifies that initial custom builds or AutoGen-based workflows are attractive for their simplicity and fast prototyping, but teams often outgrow these solutions. As requirements for parallel execution, complex state management, conditional logic, and robust error handling emerge, developers pivot to frameworks like LangGraph.
+
+LangGraph attracts migrations from AutoGen due to its:
+- Graph-based workflow design for modeling complex processes.
+- Advanced state and memory management.
+- Native support for parallel node execution.
+- Extensive tool integration with LangChain.
+
+Teams move toward PydanticAI when they prioritize type safety, rapid iteration, and ease of debugging, especially for workflows that do not require intricate branching or memory architectures.
+
+The newsletter emphasizes that the migration process typically involves rearchitecting workflow logic, redefining agent roles, and leveraging built-in features for error handling and observability. The primary reasons for pivots are increased workflow complexity, scalability needs, and requirements for customizability[2].
+
+-----
+
+-----
+
+-----
+
+### Source [118]: https://www.zenml.io/blog/pydantic-ai-vs-langgraph
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This comparative blog details developer experiences migrating from **Pydantic AI** (or custom agent builds) to **LangGraph**. Developers initially choose Pydantic AI or custom frameworks for their simplicity, low setup time, and strong type safety, but face limitations as workflows become more complex. Migrating to LangGraph is driven by the need for advanced workflow orchestration, conditional logic, and persistent state management.
+
+Key migration steps include:
+- Refactoring agent definitions into graph nodes and edges to enable multi-step reasoning.
+- Integrating LangChain tools and memory modules for enhanced context and flexibility.
+- Overhauling error handling from basic exception catching to node-level retries and rollbacks.
+
+The blog notes that LangGraph’s steep learning curve is offset by its comprehensive documentation and community support. Teams report that the primary reason for migration is the need to support complex workflows—such as multi-agent research or multi-step tool interactions—that are not feasible with Pydantic AI or early custom solutions. Conversely, some teams migrate back to Pydantic AI for simpler use cases, citing easier debugging and lower resource consumption[3].
+
+-----
+
+-----
+
+-----
+
+### Source [119]: https://www.youtube.com/watch?v=P3qH5GVIxD0
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This video highlights developer case studies combining **PydanticAI** and **LangGraph** in production agent systems. Teams initially using custom agent builds or PydanticAI migrate to LangGraph when their applications require:
+- Complex state management across multi-agent workflows.
+- Conditional branching, parallel execution, and integration with external databases or APIs.
+- Advanced memory architectures enabled by LangChain.
+
+The video demonstrates a research workflow refactored from a monolithic function (custom/PydanticAI) into modular LangGraph nodes, improving maintainability and scalability. Developers emphasize that the primary driver for migration is the need for composable, graph-based orchestration when scaling beyond simple tasks.
+
+Additionally, some teams combine both frameworks, using LangGraph for complex orchestration and PydanticAI for type-safe tool interfaces. The migration process involves defining workflow states in Pydantic models and translating step logic into LangGraph nodes, ensuring type safety and modularity[4].
+
+-----
+
+-----
+
+-----
+
+### Source [120]: https://www.openxcell.com/blog/autogen-vs-langgraph/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This official blog compares **Autogen** and **LangGraph** and discusses migration scenarios. Developer teams using Autogen for its chat-based orchestration and beginner-friendly setup often pivot to LangGraph when their workflows demand:
+- Complex, graph-based orchestration beyond sequential chat flows.
+- Granular control over node execution, branching, and rollback.
+- Advanced memory management via LangChain, including entity tracking and vector stores.
+
+Autogen simplifies error recovery and tool integration for conversational flows, making it ideal for rapid prototyping and simple agentic tasks. As projects require more sophisticated, persistent, and customizable memory architectures, and fine-tuned error handling, teams migrate to LangGraph for its programmability and robustness.
+
+Migration involves rearchitecting conversational loops into directed acyclic graphs, splitting agent logic into modular nodes, and configuring advanced memory and error handling strategies. The blog states that the pivot is typically driven by scaling needs, production readiness requirements, and the need for workflow precision[5].
+
+-----
+
+-----
+
+-----
+
+### Source [121]: https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen or an early custom build, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This comparative overview discusses open-source AI agent frameworks, including **LangGraph**, **OpenAI Agents SDK**, **Smolagents**, **CrewAI**, and **PydanticAI**. Teams often start with custom or lightweight solutions (e.g., Smolagents, PydanticAI) for rapid development and simple workflows. As complexity grows—such as in multi-agent research, knowledge workflows, or advanced RAG pipelines—developers migrate to LangGraph for its graph-based architecture and integration with LangChain.
+
+The post highlights that the primary reasons for migration are:
+- Need for advanced workflow orchestration (multi-step, conditional, parallel).
+- Robust state and memory management.
+- Integration with diverse external tools and databases.
+
+The process typically involves refactoring agent logic into modular nodes, adopting LangChain modules for memory and tool integration, and leveraging LangGraph’s tracing and observability features for debugging complex systems. The post notes that teams may continue to use PydanticAI for type safety in tool definitions within larger LangGraph workflows, indicating hybrid migration strategies[6].
+
+-----
+</details>
+
+
+<details>
+<summary>How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?</summary>
+
+### Source [26]: https://sider.ai/blog/ai-tools/crewai-review-2025-is-this-multi-agent-framework-worth-your-build
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is highlighted for its **simpler role/task ergonomics** that ease the learning curve for newcomers. It features a **higher-level agent abstraction**, which makes it easier for developers to reason about roles and responsibilities within a multi-agent setup. The framework’s approach focuses on clarity by introducing well-defined roles and a structured way of assigning tasks to agents, promoting straightforward developer ergonomics. The article underscores that CrewAI’s **higher-level abstractions** and ergonomic structure help reduce the mental overhead for developers, especially those unfamiliar with lower-level orchestration or agent coordination patterns. This design philosophy results in faster onboarding and lower friction for building new agent teams, though it may abstract away some of the fine-grained control available in more code-centric frameworks.
+
+-----
+
+-----
+
+-----
+
+### Source [27]: https://www.3pillarglobal.com/insights/blog/comparison-crewai-langgraph-n8n/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI provides a **flexible, modular architecture** based on “crews” and “flows.” Each crew comprises agents with specific roles, and flows are programmable structures for orchestrating workflows. This model supports both sequential and hierarchical task execution, with an LLM-powered manager for dynamic delegation in hierarchical flows. While the open-source version focuses on Python-based tool creation, the enterprise version adds pre-built connectors for broader integration. The overall structure makes it **easier to construct complex agent workflows** while maintaining clarity and collaboration patterns. CrewAI’s abstraction level is considered high, emphasizing the separation of roles/tasks and offering a rigid yet customizable workflow, which is friendly for developers who prefer configuration and high-level orchestration over detailed code manipulation.
+
+-----
+
+-----
+
+-----
+
+### Source [28]: https://docs.crewai.com/introduction
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is a **Python framework** designed for both high-level simplicity and precise low-level control. Its core abstractions are:
+- **Crews:** Top-level organizations managing agent teams and workflows.
+- **AI Agents:** Specialized team members with roles, tools, and goals.
+- **Processes:** Workflow managers that define collaboration and control task assignments.
+- **Tasks:** Discrete assignments with specific objectives and tools.
+
+The framework draws a strong analogy to organizational structures (like company departments), aiding conceptual clarity. CrewAI’s design allows developers to **focus on defining roles, goals, and collaboration patterns**, abstracting much of the technical complexity involved in inter-agent communication and workflow orchestration. This approach provides a **developer-friendly interface** for both simple and complex multi-agent scenarios, with enough flexibility to allow granular customization when needed.
+
+-----
+
+-----
+
+-----
+
+### Source [29]: https://ai.plainenglish.io/technical-comparison-of-autogen-crewai-langgraph-and-openai-swarm-1e4e9571d725
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI uses a **“crews and flows”** model, where a crew is a set of role-defined agents and a process flow dictates task execution (sequential or parallel). The framework emphasizes **role-based specialization**—each agent has a clear role, goal, and optional backstory. Agent communication is primarily through **structured task hand-offs** rather than arbitrary message passing, resulting in a deterministic, pipeline-like workflow. State management is handled at a high abstraction level: developers think in terms of task outcomes and can access all intermediate outputs in a structured way. CrewAI supports **structured outputs** (e.g., JSON, Pydantic models) and facilitates **persistent context sharing** across a crew’s workflow. Memory handling is comparable to LangGraph’s, with a focus on **context persistence and short-term memory transfer** between tasks. The framework aims to strike a balance between high-level abstraction and the ability for custom logic insertion (through Python), but defaults to simplicity and ease of use for orchestrating agent teams.
+
+-----
+
+-----
+
+-----
+
+### Source [30]: https://www.crewai.com/opensource
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI markets itself as an **open-source orchestration framework** offering both high-level abstractions and low-level APIs for building complex, agent-driven workflows. By exposing clear abstractions for roles, tools, and workflow patterns, it enables rapid development of multi-agent systems. The documentation emphasizes **developer ergonomics** by providing an approachable interface and a clear separation between configuration (roles, tasks, flows) and implementation details, supporting both declarative (YAML/CLI) and programmatic (Python API) approaches. This allows developers to adapt the framework to their preferred workflow, with minimal boilerplate for common patterns and detailed control available when necessary.
+
+-----
+
+-----
+
+-----
+
+### Source [31]: https://langwatch.ai/blog/best-ai-agent-frameworks-in-2025-comparing-langgraph-dspy-crewai-agno-and-more
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: LangGraph is described as a **code-first, graph-based framework** for building agent systems. Unlike CrewAI’s role/task abstractions, LangGraph exposes a **graph of nodes** (where each node can be an agent, tool, or function), allowing developers to **explicitly model the data flow and execution order**. This approach provides **greater transparency and fine-grained control**, making it easier to debug, extend, and optimize complex workflows. The developer experience is centered on constructing and manipulating computational graphs in code, which is familiar to those with backgrounds in workflow engines or data engineering. LangGraph’s lower-level abstraction means developers must manage inter-agent communication, state persistence, and error handling more explicitly, but it offers **maximum flexibility** for custom workflows and production-grade requirements.
+
+-----
+
+-----
+
+-----
+
+### Source [32]: https://ai.plainenglish.io/technical-comparison-of-autogen-crewai-langgraph-and-openai-swarm-1e4e9571d725
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: LangGraph’s philosophy is fundamentally **code-centric**: developers define nodes (agents/tools) and explicit edges (data/control flow) in a directed graph. This setup enables **arbitrary agent interactions, conditional branching, and parallelism**. While this model is powerful for advanced use cases, it requires developers to **think like system designers**, explicitly handling edge cases, error propagation, and memory management within the graph. The abstraction level is lower than CrewAI’s, giving **direct access to runtime behavior** at the cost of a steeper learning curve and more boilerplate for common agent collaboration patterns. For production-grade systems requiring custom routing, branching, or dynamic agent orchestration, LangGraph offers unmatched flexibility, but demands more from the developer in terms of systems thinking and code management.
+
+-----
+
+-----
+
+-----
+
+### Source [33]: https://www.getmaxim.ai/articles/top-5-ai-agent-frameworks-in-2025-a-practical-guide-for-ai-builders/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: The article notes that frameworks like CrewAI and LangGraph are at opposite ends of the **developer ergonomics and abstraction spectrum**. CrewAI is praised for its **high-level configuration options** (CLI, YAML), allowing rapid prototyping and deployment with minimal code. This is especially attractive for teams wanting to quickly iterate or those who prefer declarative over imperative configuration. LangGraph, by contrast, requires a **code-first approach**: developers express agent workflows as explicit graphs in code, which is more verbose but provides greater flexibility and transparency. The choice between them often comes down to the developer’s preference for abstraction (CrewAI) versus direct control (LangGraph), and whether the project prioritizes **ease of onboarding** or **fine-grained workflow engineering** for complex, production-grade systems.
+
+-----
+
+-----
+
+-----
+
+### Source [52]: https://sider.ai/blog/ai-tools/crewai-review-2025-is-this-multi-agent-framework-worth-your-build
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is noted for its **simpler role/task ergonomics** and **higher-level agent abstraction**, which makes it easier for newcomers to reason about roles and tasks within the framework. The approach emphasizes clarity in defining what each agent does and how tasks are distributed among them, allowing developers to focus on specifying roles and responsibilities rather than managing low-level inter-agent communication. This high-level abstraction is designed to make it easy to orchestrate agent collaboration and workflow without requiring deep technical overhead.
+
+-----
+
+-----
+
+-----
+
+### Source [53]: https://docs.crewai.com/introduction
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI provides both **high-level simplicity and precise low-level control** for constructing autonomous AI agents. It is a Python-based framework that operates independently of other agent frameworks. CrewAI’s core abstractions include **Crews** (teams of AI agents with specific roles and goals), **Flows** (granular, event-driven control structures for orchestrating tasks), and a clear separation between agents, processes, and tasks. The framework is structured to mirror organizational teams: agents act as specialized team members with designated roles, while the crew manages overall workflow and collaboration. This allows developers to **define workflows declaratively** and maintain clear oversight of complex agent interactions, optimizing both for developer ergonomics and the ability to build production-grade, collaborative agent systems.
+
+-----
+
+-----
+
+-----
+
+### Source [54]: https://langwatch.ai/blog/best-ai-agent-frameworks-in-2025-comparing-langgraph-dspy-crewai-agno-and-more
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: LangGraph is designed around a **code-first, graph-based setup** that enables developers to explicitly define agent workflows as computational graphs. Each node in the graph represents an agent or a tool, and edges define the flow of data or control between them. This approach offers **maximum transparency and fine-grained control** over the orchestration of agent interactions, making it especially appealing for complex, production-grade systems where deterministic behavior and advanced state management are required. However, this explicitness can require more initial setup and a deeper understanding of the framework’s primitives, which may increase the learning curve for new users or for those seeking rapid prototyping. The graph abstraction ultimately offers greater **flexibility and extensibility** for advanced use cases compared to purely declarative, role-based approaches.
+
+-----
+
+-----
+
+-----
+
+### Source [55]: https://www.3pillarglobal.com/insights/blog/comparison-crewai-langgraph-n8n/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI emphasizes a **flexible and modular architecture** based on role-based “crews” and programmable “flows.” This enables structured, hierarchical, or sequential agent collaboration with clear, predefined behaviors. The framework is designed to make the creation of complex, agentic workflows more straightforward, balancing structure and customizability. CrewAI supports easy integration with external tools and APIs, with an open-source version focused on custom Python tool development and an enterprise version offering more prebuilt connectors. This design is intended to simplify the orchestration of multi-agent teams for both simple and complex production scenarios, with a focus on **developer ergonomics and clarity** in workflow definition.
+
+-----
+
+-----
+
+-----
+
+### Source [56]: https://ai.plainenglish.io/technical-comparison-of-autogen-crewai-langgraph-and-openai-swarm-1e4e9571d725
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI’s architecture is centered on a **crews and flows** design, where a crew is a collection of role-defined agents and process flows dictate task execution order (typically sequentially). The framework abstracts complexity by providing high-level constructs—each agent is assigned a role, goal, and set of tasks, and agent communication is controlled via structured task hand-offs (not arbitrary message passing). This produces a deterministic, pipeline-like sequence of agent interactions, with the Crew controller managing context transfer between agents. State management is high-level, tracking task progress and shared data, and tasks can enforce structured outputs for easier post-execution analysis. CrewAI includes a comprehensive memory system for persistent context transfer, leveraging underlying memory modules but presenting a simplified interface to the developer. This design supports **developer-friendly abstraction** and streamlines state and process management for production systems.
+
+-----
+
+-----
+
+-----
+
+### Source [57]: https://www.crewai.com/opensource
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is an **open-source orchestration framework** that offers **high-level abstractions and low-level APIs** for building complex, agent-driven workflows. It is designed to enable both rapid prototyping and precise customization, giving developers the choice between declarative, YAML-based configuration and programmatic control via the Python API. The framework’s focus is on simplifying the construction and management of agent teams, supporting both simple and highly complex applications through scalable abstractions.
+
+-----
+
+-----
+
+-----
+
+### Source [58]: https://dev.to/aws/building-production-ready-ai-agents-with-crewai-and-amazon-bedrock-agentcore-2g36
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI’s **MemoryManager** provides a high-level interface that abstracts the complexity of memory operations for agent workflows. This allows developers to focus on the high-level logic and coordination of agents, rather than the technical details of state persistence or retrieval, contributing to a more ergonomic developer experience when building production-ready systems.
+
+-----
+
+-----
+
+-----
+
+### Source [59]: https://www.getmaxim.ai/articles/top-5-ai-agent-frameworks-in-2025-a-practical-guide-for-ai-builders/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: Recent AI agent frameworks, such as CrewAI and LangGraph, are evaluated in terms of **developer ergonomics**, reliability, tooling, and observability. CrewAI is recognized for its **balance of high-level abstraction and simplicity**, which makes it accessible for teams needing to rapidly build, test, and deploy collaborative agent systems. LangGraph, by contrast, is suited for teams that require **explicit graph-based orchestration and advanced state management**, which can offer more transparency and control at the cost of a steeper learning curve. The trade-off between CrewAI’s declarative, role-focused design and LangGraph’s code-first graph approach is primarily one of **ease of entry versus maximum customization and control**.
+
+-----
+
+-----
+
+-----
+
+### Source [89]: https://sider.ai/blog/ai-tools/crewai-review-2025-is-this-multi-agent-framework-worth-your-build
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is designed with **simpler role/task ergonomics for newcomers**, making it more accessible for those unfamiliar with multi-agent systems. Its **higher-level agent abstraction** helps developers reason about agent roles and collaboration more intuitively. CrewAI's modeling approach focuses on real-world team analogies, such as assigning clear roles and tasks, which streamlines development and reduces the cognitive overhead for organizing agent interactions. The abstraction level is intentionally higher, emphasizing ease of use and logical structuring over granular agent-to-agent message flows.
+
+-----
+
+-----
+
+-----
+
+### Source [90]: https://www.getmaxim.ai/articles/top-5-ai-agent-frameworks-in-2025-a-practical-guide-for-ai-builders/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI emphasizes **multi-agent coordination** through roles, tasks, and collaboration protocols, allowing teams to model crews of specialized agents that cooperate asynchronously or in rounds. This modeling style lowers coordination overhead and supports the injection of domain-specific roles and standard operating procedures. The framework provides an **intuitive abstraction for multi-agent collaboration**, aligning well with creative and research workflows where diverse perspectives and role-based specialization are important.
+
+For production, CrewAI supports continuous monitoring for factors like cost, latency, and quality, with teams often integrating CrewAI runs into live evaluation pipelines. The framework also allows logging of agent messages, tool usage, and attaching evaluator scores to sessions for observability. Alerts can be configured for spike conditions (e.g., excessive tool calls, token usage, or response quality issues), supporting enterprise-grade reliability and monitoring.
+
+-----
+
+-----
+
+-----
+
+### Source [91]: https://langwatch.ai/blog/best-ai-agent-frameworks-in-2025-comparing-langgraph-dspy-crewai-agno-and-more
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: LangGraph adopts a **code-first, graph-based setup** that provides developers with fine-grained control over agent interactions and workflow structure. The graph-based paradigm enables explicit modeling of agent dependencies, branching logic, and complex communication patterns between agents. This approach is particularly suited for developers who prefer direct, programmatic control over each agent and their interactions, allowing for highly customizable and production-grade multi-agent orchestration.
+
+The abstraction level in LangGraph is lower than CrewAI, requiring developers to manage agent states, message passing, and workflow logic directly in code. This provides flexibility and power but demands greater familiarity with graph theory and programming constructs. LangGraph is typically chosen for use cases where transparency, debuggability, and maximum control over multi-agent flow are needed.
+
+-----
+
+-----
+
+-----
+
+### Source [92]: https://docs.crewai.com/introduction
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI offers **high-level simplicity and precise low-level control**, enabling developers to create autonomous agents tailored to any scenario. The framework is Python-based, with a strong focus on **role, task, and process abstractions**:
+
+- **Crew**: Manages agent teams, oversees workflows, and ensures collaboration.
+- **AI Agents**: Specialized team members with defined roles, tools, and goals.
+- **Process**: Defines collaboration patterns, task assignments, and manages interactions.
+- **Tasks**: Individual assignments with clear objectives and specific tools.
+
+This structure allows developers to reason about agent orchestration in terms of organizational analogies (e.g., departments and teams). CrewAI supports both **high-level YAML-based configuration** and **low-level Python APIs**, offering flexibility in development. The YAML-centric approach simplifies agent and workflow specification for users who prefer configuration over direct coding, whereas the Python API allows deeper customization and integration.
+
+-----
+
+-----
+
+-----
+
+### Source [93]: https://ai.plainenglish.io/technical-comparison-of-autogen-crewai-langgraph-and-openai-swarm-1e4e9571d725
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI’s architecture centers on a **“crew” of agents working as a team**, using a unique **Crews and Flows** design pattern. A Crew is a collection of role-defined agents and tasks, while a Process Flow determines task execution order (typically sequential). This provides an explicit, structured process model, distinguishing CrewAI from frameworks with more free-form agent interactions.
+
+CrewAI abstracts complexity by enabling developers to define each agent’s role, goal, and backstory, supporting **role-based specialization** (e.g., Researcher vs. Writer agents). Agents communicate via **structured task hand-offs**, with the Crew controller managing context transfer between agents. This yields a **deterministic pipeline** of agent interaction, simplifying state management and reducing the need for manual message passing.
+
+Developers interact with CrewAI primarily through Python code, but the framework’s high-level constructs mean that much of the orchestration logic is abstracted away. CrewAI supports structured outputs (e.g., JSON, Pydantic models) and maintains internal state, enabling persistent context across workflows. Memory handling is comparable to LangGraph, with agents able to recall relevant prior outputs for their tasks. The framework emphasizes **role-playing conversation** and sequential execution for predictable and transparent agent collaboration.
+
+-----
+
+-----
+
+-----
+
+### Source [94]: https://www.crewai.com/opensource
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is an **open-source orchestration framework** with **high-level abstractions and low-level APIs** for building complex, agent-driven workflows. The framework allows developers to define agent roles, tasks, and collaborative processes using both configuration files (YAML) and Python code. This dual approach supports rapid prototyping via configuration and advanced customization via code, catering to a wide range of developer preferences and production requirements.
+
+-----
+
+-----
+
+-----
+
+### Source [95]: https://latenode.com/blog/crewai-framework-2025-complete-review-of-the-open-source-multi-agent-ai-platform
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is designed to coordinate multiple AI agents in **structured, role-based workflows**. The framework’s abstraction focuses on modeling teams, assigning clear responsibilities, and managing collaboration in a way that mirrors real-world organizations. CrewAI’s configuration system, including YAML-based definitions, facilitates clear agent specification and process design. This structure enables both ease of use for prototyping and the ability to scale up to production-grade systems with robust agent orchestration.
+
+-----
+
+-----
+
+-----
+
+### Source [96]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI uses a **role-goal-backstory framework** for agent definition, allowing for expressive and nuanced configuration via YAML. Advanced configuration options let developers fine-tune agent behavior, including model selection, delegation permissions, logging verbosity, rate limits, iteration caps, execution timeouts, tool integration, caching, context window management, and retry limits. YAML definitions are connected to Python code for workflow execution, giving developers both declarative and imperative control.
+
+This hybrid approach enables rapid prototyping, clear configuration management, and seamless integration with code for more complex workflows. CrewAI’s ergonomics are tailored for developers who prefer configuration-driven development, while still supporting code-first workflows for advanced use cases.
+
+-----
+
+-----
+
+-----
+
+### Source [97]: https://dev.to/aws/building-production-ready-ai-agents-with-crewai-and-amazon-bedrock-agentcore-2g36
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI can be used to build **production-ready multi-agent systems** with cloud integrations (e.g., Amazon Bedrock AgentCore). The framework’s high-level abstractions, coupled with detailed configuration (YAML or code), enable scalable deployment, monitoring, and management of agent teams. CrewAI’s design supports both development agility and enterprise-grade reliability, with features for logging, monitoring, and observability built in to support production operations.
+-----
+
+-----
+
+-----
+
+### Source [103]: https://sider.ai/blog/ai-tools/crewai-review-2025-is-this-multi-agent-framework-worth-your-build
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is highlighted for its **simpler role/task ergonomics**, making it accessible for newcomers to multi-agent development. Its main advantage lies in its **higher-level agent abstraction**, which allows developers to more easily reason about agent roles and task assignments. The framework’s CLI and YAML-based configuration enable users to define agent roles and flows declaratively, reducing the need for intricate code and lowering the barrier to entry for those less familiar with complex Python or graph-based abstractions.
+
+-----
+
+-----
+
+-----
+
+### Source [104]: https://langwatch.ai/blog/best-ai-agent-frameworks-in-2025-comparing-langgraph-dspy-crewai-agno-and-more
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: LangGraph is described as a **code-first, graph-based framework** for agent orchestration. Developers model agent workflows as directed graphs, with each node representing a task or agent and edges representing data flow or dependencies. This approach offers **fine-grained control** and is particularly suited to advanced users who require custom, production-grade logic, branching, and parallelism. While powerful, LangGraph’s abstraction level is **lower** than CrewAI’s, requiring developers to write explicit Python code to define workflow graphs. This can be more challenging for newcomers but provides significant flexibility for complex or dynamic agent interactions. LangGraph’s developer ergonomics favor those who are comfortable with programmatic graph construction and Python-centric APIs.
+
+-----
+
+-----
+
+-----
+
+### Source [105]: https://www.3pillarglobal.com/insights/blog/comparison-crewai-langgraph-n8n/
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI centers on **role-based “crews” and “flows”**, supporting both sequential and hierarchical agent execution. The addition of “flows” introduces **programmable workflow structures** that keep applications structured and rigid, while still permitting modularity and flexibility. CrewAI’s abstraction lets developers model teams of agents with specialized expertise, each communicating in a defined manner. For integration, the open-source version relies on Python for custom tools, while enterprise versions offer broader, pre-built connectors. Compared to LangGraph, CrewAI’s design and ergonomics are more **beginner-friendly**, focusing on high-level orchestration and modularity through YAML and CLI, as opposed to the explicit graph modeling and code-first setup of LangGraph.
+
+-----
+
+-----
+
+-----
+
+### Source [106]: https://www.crewai.com
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI offers a platform (AMP) and Studio for **intuitive agent orchestration**, emphasizing high-level abstractions. Developers primarily define what agents need to do, not how they accomplish tasks, thanks to the framework’s declarative CLI and YAML configuration. The system supports building teams of agents, integrating with external tools, and provides real-time tracing, monitoring, and scaling features suitable for production. The design enables both technical and non-technical users to deploy and manage agent fleets, contrasting with code-centric systems like LangGraph that require more granular programming for workflow definition.
+
+-----
+
+-----
+
+-----
+
+### Source [107]: https://ai.plainenglish.io/technical-comparison-of-autogen-crewai-langgraph-and-openai-swarm-1e4e9571d725
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI’s architecture is built around **“crews” and “flows”**, where a crew is a set of agents with defined roles and tasks, and a process flow dictates how tasks are executed (sequentially or in parallel). The Python-based framework provides high-level constructs for agent specialization and task assignment, abstracting away lower-level complexity. Communication is primarily through structured task hand-offs, orchestrated by the Crew controller, with sequential execution as the default. State management and memory handling are simplified by the high-level abstraction, focusing on task outcomes rather than raw message logs. Developers interact mainly with YAML and CLI, making it less code-intensive than LangGraph, which is graph- and code-first.
+
+-----
+
+-----
+
+-----
+
+### Source [108]: https://docs.crewai.com/introduction
+
+Query: How do the developer ergonomics and abstraction levels of CrewAI, with its CLI and YAML-based configuration, compare to the code-first, graph-based setup of LangGraph for building production-grade multi-agent systems?
+
+Answer: CrewAI is a **lean Python framework** designed for both high-level simplicity and precise control. It uses **Crews** (organized teams of agents) and **Flows** (granular, event-driven orchestration) as its primary abstractions. The framework is independent of LangChain, focusing on autonomy and collaborative intelligence. The CLI and YAML-based configuration allow developers to model agent teams, workflows, and tasks declaratively, streamlining the setup for both simple and complex multi-agent systems. The high-level abstractions ensure developers spend more time defining agent goals and roles rather than coding intricate workflow logic, as required in graph-based frameworks like LangGraph.
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?</summary>
+
+### Source [34]: https://microsoft.github.io/autogen/dev/user-guide/autogenstudio-user-guide/index.html
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: This source does not provide specific guidance on transitioning an AI agent prototype from AutoGen Studio to a production-ready system using LangGraph or OpenAI Agents SDK. However, it highlights AutoGen Studio as a low-code tool for building and debugging multi-agent systems, which could be a starting point for developing prototypes that might later be transitioned to more robust frameworks.
+
+-----
+
+-----
+
+### Source [35]: https://microsoft.github.io/autogen/0.2/docs/autogen-studio/getting-started/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: While this source does not directly address transitioning to production using LangGraph or OpenAI Agents SDK, it provides insights into the capabilities of AutoGen Studio, such as building and configuring agents and composing them into workflows. These capabilities could be foundational in developing prototypes that are later refined for production environments. Understanding how to configure and customize agents in AutoGen Studio can inform how similar functionalities might be implemented in other frameworks.
+
+-----
+
+-----
+
+### Source [36]: https://microsoft.github.io/autogen/0.2/blog/2023/12/01/AutoGenStudio/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: This source discusses AutoGen Studio's role in rapidly prototyping multi-agent workflows but does not specifically detail the transition to production environments. It emphasizes the need to configure language model providers, which is crucial for integrating AI agents into any framework. When transitioning to a production-ready system, ensuring that the language model integration is compatible with the new framework is essential.
+
+### General Advice
+To transition an AI agent prototype from AutoGen Studio to a production-ready system using frameworks like LangGraph or OpenAI Agents SDK, consider the following general best practices:
+- **Understand the Frameworks**: Familiarize yourself with the capabilities and requirements of the target frameworks.
+- **Agent Configuration and Workflow**: Document and understand how agents are configured and composed in AutoGen Studio, as this will inform how to replicate these functionalities in the new framework.
+- **Integration with LLMs**: Ensure that language model integrations are compatible with the new framework.
+- **Testing and Validation**: Thoroughly test and validate the functionality of the agents in the new environment.
+
+-----
+
+-----
+
+### Source [66]: https://microsoft.github.io/autogen/dev/user-guide/autogenstudio-user-guide/index.html
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio is designed as a low-code tool for building and debugging multi-agent systems, which can be a crucial step in developing AI agent prototypes. However, transitioning these prototypes to production-ready systems using frameworks like LangGraph or OpenAI Agents SDK involves several considerations. While the AutoGen Studio guide does not explicitly cover transitioning to these frameworks, it emphasizes the importance of a robust and scalable architecture, which is essential for production environments. The guide focuses on using AutoGen Studio for rapid prototyping and debugging, suggesting that developers should consider how to scale and integrate their prototypes into larger frameworks during the development phase.
+
+-----
+
+-----
+
+### Source [67]: https://microsoft.github.io/autogen/0.2/docs/autogen-studio/getting-started/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: Transitioning an AI agent prototype from AutoGen Studio to a production-ready system requires careful planning. The capabilities of AutoGen Studio, such as building and configuring agents and composing them into workflows, can be leveraged to create robust prototypes. However, for production, it's crucial to ensure compatibility with the target framework (e.g., LangGraph or OpenAI Agents SDK). This might involve exporting the team configuration from AutoGen Studio and integrating it into the chosen framework. The documentation does not provide specific guidelines for this transition but highlights the importance of using a virtual environment and ensuring compatibility with existing systems.
+
+-----
+
+-----
+
+### Source [68]: https://www.microsoft.com/en-us/research/blog/introducing-autogen-studio-a-low-code-interface-for-building-multi-agent-workflows/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio allows developers to rapidly build, test, deploy, and share agents and agent-teams. When transitioning these prototypes to production-ready systems, it's essential to focus on scalability and integration. While the blog post does not provide detailed instructions for integrating with LangGraph or OpenAI Agents SDK, it suggests that AutoGen Studio's capabilities can be foundational for further development. The transition involves ensuring that the prototype is compatible with the chosen framework and that it can be scaled efficiently for production environments.
+
+-----
+
+-----
+
+### Source [69]: https://singhrajeev.com/2025/02/08/getting-started-with-autogen-a-framework-for-building-multi-agent-generative-ai-applications/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: To transition an AI agent prototype from AutoGen Studio to a production-ready system using a framework like LangGraph or OpenAI Agents SDK, focus on exporting the team configuration and integrating it into the target framework. AutoGen Studio provides a no-code GUI for building multi-agent systems, which can be useful for rapid prototyping. The transition involves ensuring that the exported configuration is compatible with the chosen framework's architecture and that it can be deployed efficiently. Additionally, leveraging features like the Playground for testing and the Deployment interface for exporting teams can facilitate a smoother transition to production environments.
+
+-----
+
+-----
+
+### Source [79]: https://microsoft.github.io/autogen/dev/user-guide/autogenstudio-user-guide/index.html
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio is designed as a **low-code tool for building and debugging multi-agent systems**. It enables users to configure agents (e.g., UserProxyAgent, AssistantAgent), modify their properties (skills, temperature, model, etc.), and compose them into workflows. The user interface allows interactive chat with agent workflows, viewing agent messages, and managing output files from agent runs. The platform supports more complex workflows such as GroupChat and Sequential workflows, and there are ongoing improvements for features like streaming intermediate model output and better response summarization.
+
+For transitioning to production, AutoGen Studio serves primarily as a **rapid prototyping environment**. The artifacts (e.g., agent configurations, workflow definitions) created in Studio provide a foundation that can be ported to more robust frameworks, but production-readiness will require attention to deployment, scalability, error handling, monitoring, and integration with external APIs or databases. The codebase's modular structure (backend in FastAPI, frontend in Gatsby/TailwindCSS) supports extension and migration to more scalable architectures.
+
+Best practices suggested by the documentation include:
+- **Defining and iterating on agent workflows in Studio** for rapid feedback.
+- **Exporting or translating validated workflows** for integration into a production-grade orchestrator or framework.
+- **Augmenting with production-focused features** such as authentication, persistent storage, and external integrations that may not be present in the prototyping tool.
+- **Refactoring configurations and code** to fit the deployment model and API contracts of the chosen production framework.
+
+This process provides a bridge from AutoGen Studio's low-code prototyping to robust, maintainable, and scalable production systems using frameworks like LangGraph or OpenAI Agents SDK.
+
+-----
+
+-----
+
+-----
+
+### Source [80]: https://microsoft.github.io/autogen/0.2/docs/autogen-studio/getting-started/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio enables **rapid prototyping** of AI agents and their workflows. The tool supports creating, configuring, and testing agents (UserProxyAgent, AssistantAgent) and composing them into workflows. The recommended installation is via PyPi in a virtual environment, and the Studio provides a UI for building and interacting with agent workflows, reviewing outputs, and debugging.
+
+While Studio facilitates quick development and experimentation, **transitioning to production** is not addressed directly in the tool itself. However, the workflow is:
+- Prototype and validate agent logic and workflows in the Studio.
+- Extract and adapt the agent configuration, workflow definitions, and interaction logic.
+- Reimplement or migrate these elements into a more production-ready codebase or framework (such as LangGraph or OpenAI Agents SDK), which offers better support for deployment, scaling, monitoring, and operational requirements.
+
+The Studio's structure (backend in FastAPI, UI in Gatsby/TailwindCSS) makes it possible to **reuse business logic** or configuration as you move to a production system. Productionizing the prototype will require additional engineering for robustness, observability, performance, and integration with enterprise systems.
+
+-----
+
+-----
+
+-----
+
+### Source [81]: https://microsoft.github.io/autogen/0.2/blog/2023/12/01/AutoGenStudio/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio is intended for **rapid prototyping of multi-agent workflows** and demonstration of end-user interfaces for AI agents. The setup involves configuring an LLM provider (such as OpenAI or Azure OpenAI) and setting API keys in the environment. Agent models and configurations can be specified directly in the workflow definition, supporting flexibility during prototyping.
+
+The best practices for moving from Studio to production, as inferred from the documentation, include:
+- **Defining agents and workflows interactively** in Studio to quickly iterate on logic and parameters.
+- **Exporting validated configurations and workflow definitions** for use in a production orchestrator.
+- **Adapting code for the production environment**, which may require re-coding or translating Studio artifacts to the APIs and idioms of frameworks like LangGraph or OpenAI Agents SDK.
+- **Implementing production requirements** such as robust error handling, data persistence, authentication, and monitoring, which are not core features of Studio but are essential for deployment at scale.
+
+The Studio's value lies in reducing "time-to-first-prototype," after which the validated designs should be ported and extended in a production-focused framework.
+
+-----
+
+-----
+
+-----
+
+### Source [82]: https://microsoft.github.io/autogen/stable/user-guide/autogenstudio-user-guide/installation.html
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: The installation guide for AutoGen Studio emphasizes **ease of setup for prototyping**. Users can install via PyPi or from source (with React/Node.js for front-end work). Once installed, the app provides a UI for defining, modifying, and interacting with agent workflows. Studio's configuration options (host, appdir, port, database URI, etc.) allow for a flexible development environment.
+
+For production transition, the documentation implies:
+- Use Studio to **define and debug agent workflows** in an interactive environment.
+- Treat Studio as a **development and experimentation tool**, not as a production orchestrator.
+- **Extract and refactor agent logic and workflows** for integration into a production-grade platform (such as LangGraph or OpenAI Agents SDK).
+- Production systems will need features like database migrations (`--upgrade-database`), robust deployment, and possibly externalized state management, which go beyond Studio's built-in capabilities.
+
+The Studio's modular architecture (backend and frontend separation) facilitates migration of logic and workflows, but production-readiness will require additional engineering effort and adaptation to the conventions and requirements of the target production framework.
+
+-----
+
+-----
+
+-----
+
+### Source [122]: https://microsoft.github.io/autogen/dev/user-guide/autogenstudio-user-guide/index.html
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio is designed as a low-code tool for building and debugging multi-agent systems. It allows users to:
+- Build and configure agents (currently supporting workflows based on UserProxyAgent and AssistantAgent), modify their configuration (skills, temperature, model, system message, etc.), and compose them into workflows.
+- Chat with agent workflows, specify tasks, and view agent messages and output files from agent runs.
+- Support more complex workflows, such as GroupChat or Sequential workflows.
+
+For transitioning to production:
+- AutoGen Studio enables you to define, test, and refine your agent workflows interactively.
+- Once prototyped, you can use the exported workflow definitions (often as JSON configurations) as the basis for integration into more robust frameworks or APIs.
+- The project structure separates backend classes and web API (FastAPI) from the frontend (Gatsby and TailwindCSS), supporting modular development and potential migration to other frameworks.
+- The tool supports extensibility and complex workflow composition, which is beneficial when planning to move to production frameworks such as LangGraph or the OpenAI Agents SDK.
+
+The roadmap includes improved user experience and support for more advanced workflows, which can help inform what features or patterns to replicate or adapt during migration to production environments.
+
+-----
+
+-----
+
+-----
+
+### Source [123]: https://microsoft.github.io/autogen/0.2/docs/autogen-studio/getting-started/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio allows for rapid prototyping of AI agents and workflows, making it ideal for initial development and experimentation. Key practices for transitioning to a production-ready system include:
+- Use virtual environments (e.g., conda) to isolate dependencies, which helps avoid conflicts when moving to production.
+- All agent configurations—including models, skills, temperature, and system messages—are exposed and easily modifiable, allowing for rapid iteration and testing before finalizing production configurations.
+- Workflows and agent definitions are portable and can be exported for further development.
+- The system supports custom database backends (SQLite, PostgreSQL), which is relevant when considering scalability and robustness in production.
+- You can specify advanced runtime parameters (host, port, database URI, etc.), which align with typical production deployment patterns.
+
+These practices support a clean handoff from prototyping in AutoGen Studio to building scalable, maintainable systems in frameworks like LangGraph or OpenAI Agents SDK.
+
+-----
+
+-----
+
+-----
+
+### Source [124]: https://docs.ag2.ai/latest/docs/blog/2023/12/01/AutoGenStudio/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: This guide emphasizes the following best practices for transitioning from AutoGen Studio to a production system:
+- **Configure LLM providers using environment variables** (`OPENAI_API_KEY`, `AZURE_OPENAI_API_KEY`), and use explicit agent configurations for model selection and parameters. This practice translates directly to production environments, where secure configuration and environment management are critical.
+- After rapid prototyping in AutoGen Studio, agent workflows and configurations can be exported and reused in Python applications.
+- The tool makes it easy to modify and extend agent skills and workflows, supporting the transition to larger, more maintainable codebases in frameworks such as LangGraph or OpenAI Agents SDK.
+- Following the recommended installation and environment setup practices (virtual environments, dependency management) lays the groundwork for reproducible builds and deployments in production.
+- Ensuring that workflows are modular and components are reusable supports migration to scalable agent orchestration frameworks.
+
+-----
+
+-----
+
+-----
+
+### Source [125]: https://microsoft.github.io/autogen/0.2/docs/autogen-studio/usage/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: AutoGen Studio supports deployment of workflows as APIs, which is a critical step toward production readiness:
+- Workflows can be launched as API endpoints directly from the command line, allowing for programmatic access and easy integration with external systems.
+- This enables you to wrap prototypes as services and test them in controlled environments before full-scale production migration.
+- The ability to expose agent workflows as APIs aligns with the architecture of frameworks like LangGraph and OpenAI Agents SDK, which also build on modular, composable services.
+- Using the command-line interface and API deployment features, you can validate workflow stability and performance under simulated production use cases.
+
+-----
+
+-----
+
+-----
+
+### Source [126]: https://www.microsoft.com/en-us/research/wp-content/uploads/2024/08/AutoGen_Studio-12.pdf
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: The official AutoGen Studio documentation outlines a robust workflow for transitioning prototypes to production:
+- Users can **export workflows as JSON configuration files**, which can be imported into any Python application for further extension or integration.
+- Workflows can also be executed as API endpoints using the AutoGen Studio command line interface, or wrapped in Docker containers for scalable deployment on cloud platforms (Azure, GCP, AWS).
+- The gallery view supports reuse and extension of components (skills, models, agents, workflows), which facilitates the modularization needed for production systems.
+- The profiler module enables monitoring of agent behavior (tool usage, success/failure metrics) and can inform optimization and production hardening.
+- The documentation provides code samples for integrating exported workflows into Python, supporting a smooth transition from prototype to production frameworks that are Python-based, such as LangGraph or OpenAI Agents SDK.
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?</summary>
+
+### Source [37]: https://langchain-ai.github.io/langgraph/tutorials/workflows/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph provides a framework for constructing agentic workflows that can handle long-running tasks with durable execution. It supports **persistence** through a human-in-the-loop (HITL) mechanism, allowing workflows to pause for user approval or input. This HITL feature enhances trust and correctness by integrating human judgment into the workflow. Additionally, LangGraph supports both **conversational memory** (short-term) and **long-term memory**, enabling workflows to remember user preferences and context across sessions. This persistence layer allows workflows to be interrupted and resumed, ensuring that complex tasks can be managed effectively over time.
+
+-----
+
+-----
+
+### Source [38]: https://talkpython.fm/episodes/show/507/agentic-ai-workflows-with-langgraph
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph enables the creation of agentic workflows that can handle complex decision-making and integrate real-time context. It supports **human-in-the-loop** interactions, where workflows can pause for user approval or input, enhancing both trust and accuracy. This capability is crucial for tasks that require human judgment to be integrated into the decision-making process. Furthermore, LangGraph allows for the construction of workflows with **robust memory** and **definable guardrails**, ensuring reliability and control over the workflow execution.
+
+-----
+
+-----
+
+### Source [39]: https://www.ibm.com/think/tutorials/build-agentic-workflows-langgraph-granite
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph is designed to build scalable, AI-driven workflows by representing AI models as stateful agents within a computational graph. It supports **stateful graphs**, which preserve context and enable the use of real-time data across nodes, allowing workflows to adapt based on outcomes. LangGraph's **conditional edges** enable loops and conditional branching, which are crucial for handling iterative tasks and making informed decisions in dynamic environments. This structure supports **fault-tolerant execution** by allowing workflows to be designed with flexible decision-making processes and adaptive task execution.
+
+-----
+
+-----
+
+### Source [40]: https://ai.pydantic.dev
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI provides a framework for building production-grade applications and workflows but does not specifically detail how it ensures durable, fault-tolerant execution for long-running agentic workflows involving HITL interruptions in the referenced source. However, Pydantic AI focuses on building robust applications and might inherently support such features through its design for handling complex workflows.
+
+-----
+
+-----
+
+### Source [41]: https://ai.pydantic.dev/multi-agent-applications/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI's documentation does not explicitly cover how it ensures durable, fault-tolerant execution for long-running workflows with HITL interruptions. However, it highlights the use of **dependencies** and **graphs**, which could be part of ensuring robust workflow execution. The documentation encourages referring to the graph documentation for more details on using graphs, which might imply that graph structures are used to manage workflow complexity and reliability.
+
+-----
+
+-----
+
+### Source [61]: https://langchain-ai.github.io/langgraph/tutorials/workflows/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph ensures **durable and fault-tolerant execution for long-running agentic workflows** through several core mechanisms:
+
+- **Persistence:** LangGraph has a built-in persistence layer that supports interruption and resumption of workflows, enabling human-in-the-loop (HITL) interventions. This allows a workflow to pause at decision points where human approval or input is necessary, and then resume seamlessly once the human action is completed.
+
+- **Memory:** The persistence layer also manages both short-term (conversational) and long-term memory, which ensures that the state and context of the workflow are maintained across interruptions, even if the process is paused or needs to recover from a fault.
+
+- **Streaming:** LangGraph provides streaming of workflow outputs or intermediate states, which helps in monitoring progress and enables interaction (including human interventions) during long-running tasks.
+
+- **Deployment:** The framework is designed for easy deployment, observability, and evaluation of workflows, supporting robust operations in production environments.
+
+LangGraph's design separates workflow nodes (logic units) and edges (transitions), allowing for conditional branching and looping, which is essential for handling complex, long-running, and interactive workflows where human-in-the-loop steps may be repeated or required at arbitrary points.
+
+These features collectively provide durability (ability to survive process restarts or failures), fault tolerance (ability to recover from errors or interruptions), and robust support for HITL scenarios[1].
+
+-----
+
+-----
+
+-----
+
+### Source [62]: https://www.ibm.com/think/tutorials/build-agentic-workflows-langgraph-granite
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph provides **durable, fault-tolerant agentic workflows** by structuring tasks into a computational graph where each node represents a discrete, stateful action or decision point:
+
+- **Nodes and Edges:** Each agent behavior or tool call is a node, and edges define the flow between nodes. This modularity makes it easier to debug, profile, and extend workflows, which is important for robustness and error recovery.
+
+- **Conditional Edges and Cyclical Graphs:** LangGraph supports complex control flows, including loops and conditional branching, which is crucial for workflows that require iterative refinement or can be interrupted and resumed—such as those involving HITL.
+
+- **Shared State:** The stateful graph maintains context and memory across the workflow. This persistent state allows the workflow to pause for HITL approval or intervention and then resume from the exact point of interruption, with all relevant context intact.
+
+- **Compilation and Execution:** By compiling the workflow graph, LangGraph ensures that the execution can be paused, inspected, and resumed, supporting durability and recoverability.
+
+- **Visualization and Debugging:** The framework provides tools for visualizing and debugging the graph, which enhances reliability and makes it easier to identify and recover from faults.
+
+These architectural features allow LangGraph-driven workflows to support long-running, multi-step processes, with built-in mechanisms for pausing (for human input), resuming, and recovering from errors[5].
+
+-----
+
+-----
+
+-----
+
+### Source [63]: https://talkpython.fm/episodes/show/507/agentic-ai-workflows-with-langgraph
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph addresses **durability and fault tolerance** for agentic workflows, especially for HITL scenarios, through:
+
+- **Interruptibility:** Workflows can pause at critical decision points (e.g., before booking a flight) and wait for human approval. The workflow remains in a suspended state until the human action is completed, after which it resumes automatically.
+
+- **Persistence and Durable State:** LangGraph stores workflow state—including memory, user context, and conversation threads—in persistent storage (such as databases). This allows workflows to be paused, resumed, or recovered after failures, ensuring that no information is lost and the workflow can continue from where it left off.
+
+- **Memory and Guardrails:** The framework provides mechanisms for robust memory and definable guardrails (preconditions and reliability checks), which prevent erroneous or unsafe actions and enhance fault tolerance.
+
+These features enable reliable, long-lived workflows that can interactively involve humans at crucial steps, without losing state or requiring manual recovery from faults or interruptions[6].
+
+-----
+
+-----
+
+-----
+
+### Source [64]: https://ai.pydantic.dev/multi-agent-applications/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI supports **durable and fault-tolerant multi-agent workflows** via:
+
+- **Agent Delegation and Hand-off:** The framework enables programmatic delegation and hand-off between agents in a workflow. This modularity allows workflows to be paused or redirected as needed, supporting HITL interventions where a human may take over or approve a step before the workflow continues.
+
+- **Graph-based Control Flow:** Pydantic AI uses graph-based control to define flexible, branching workflows. This structure allows for interruption, conditional execution, and easy resumption of tasks, which are essential for fault tolerance and HITL scenarios.
+
+- **Workflow State Management:** By managing workflow state explicitly, Pydantic AI ensures that workflows can persist information across interruptions, handle errors gracefully, and continue execution after human intervention or system recovery.
+
+These features make Pydantic AI suitable for production-grade agentic workflows that require both automation and reliable human oversight, with built-in mechanisms for pausing, resuming, and recovering from faults[4].
+
+-----
+
+-----
+
+-----
+
+### Source [65]: https://ai.pydantic.dev/agents/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI's **Agents** interface is designed for robust, production-grade execution:
+
+- **Stateful Execution:** Agents manage the execution context, tracking all necessary state to allow for interruption and resumption of long-running tasks.
+
+- **Interaction with LLMs and Environments:** Agents can interact with language models, tools, or external systems, handling complex multistep logic that may require pausing for human input.
+
+- **Modularity:** A single agent can control an entire application or component, or multiple agents can collaborate, enabling flexible HITL workflows where human intervention is seamlessly integrated.
+
+These mechanisms ensure durable, fault-tolerant operation, particularly when workflows span long durations or require interactive human participation[8].
+
+-----
+
+-----
+
+-----
+
+### Source [75]: https://langchain-ai.github.io/langgraph/tutorials/workflows/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph provides a **persistence layer** specifically designed to support **durable, fault-tolerant execution** in agentic workflows, including those with **human-in-the-loop (HITL)** interruptions. Its architecture allows for:
+
+- **Interruption and Approval**: LangGraph's persistence layer enables actions to be paused and resumed, supporting workflows where human approval or intervention is required before proceeding. This is critical for HITL scenarios, where the workflow must wait for a user’s decision before continuing execution.
+- **Conversational and Long-term Memory**: The framework can maintain both short-term and long-term state, ensuring that workflows can be resumed with full historical context even after interruptions or system faults.
+- **Streaming and Deployment Support**: LangGraph supports streaming outputs and provides deployment hooks for observability and evaluation, ensuring that workflows remain robust and traceable even when paused or interrupted.
+
+These features are built into the workflow and agent compilation process, allowing developers to structure nodes and edges so that workflows can loop, pause, and resume based on both model decisions and external events like human input.
+
+-----
+
+-----
+
+-----
+
+### Source [76]: https://ai.pydantic.dev/multi-agent-applications/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI enables **multi-agent applications** with support for **agent delegation, programmatic agent hand-off, and graph-based control flow**. For **durable and fault-tolerant execution**—especially in HITL scenarios—the framework emphasizes:
+
+- **Graph-Based Control Flow**: Complex workflows are structured as graphs, where each node can represent an agent, tool, or external event such as a human intervention. This modular approach allows workflows to pause for user input and resume seamlessly from the same state.
+- **Agent Delegation and Handoff**: Tasks can be dynamically handed off between agents or to humans, ensuring that workflows can incorporate HITL stages efficiently and reliably.
+- **Persistence and State Management**: By leveraging graph structures and stateful contexts, Pydantic AI allows for the preservation and restoration of workflow state, which is essential for fault tolerance and durability, especially across interruptions or failures.
+
+This design ensures that even in the presence of human interruptions or unexpected errors, long-running workflows can be paused, inspected, and resumed without loss of progress or context.
+
+-----
+
+-----
+
+-----
+
+### Source [77]: https://www.ibm.com/think/tutorials/build-agentic-workflows-langgraph-granite
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph is designed for **scalable, modular agentic workflows** by representing agent behaviors as **nodes in a computational graph**. Key features for durability and fault tolerance include:
+
+- **Nodes and State Management**: Each logical step is isolated as a node, and shared state is passed between nodes to preserve memory and context, which allows the workflow to be resumed after interruptions.
+- **Edges and Conditional/Cyclical Routing**: The use of edges and conditional logic (such as loops and branching) enables workflows to dynamically adapt and revisit steps as needed—crucial for handling HITL pauses.
+- **set_entry_point and set_finish_point**: These methods define explicit start and end states, allowing workflows to be paused and resumed from clearly defined checkpoints.
+- **Compilation and Debugging**: The compiled workflow is modular and debuggable, which supports monitoring, inspection, and robust error recovery.
+
+LangGraph’s approach, with explicit state handling and node-based modularity, supports workflows that require human approval or can be interrupted and resumed, ensuring **fault tolerance and durability**.
+
+-----
+
+-----
+
+-----
+
+### Source [78]: https://talkpython.fm/episodes/show/507/agentic-ai-workflows-with-langgraph
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph and similar frameworks address **durable, fault-tolerant execution** in agentic workflows—especially those with HITL interruptions—by:
+
+- **Human-in-the-Loop Pausing**: The workflow can intentionally pause at critical steps (such as requiring human approval) and only resume when explicit input is given, enhancing both trust and correctness.
+- **Persistent State**: LangGraph supports maintaining conversation history and workflow context in persistent storage (e.g., databases), allowing interrupted workflows to be resumed without loss of data or context.
+- **Reliability and Guardrails**: By structuring workflows with clear guardrails and checkpoints, LangGraph ensures that nondeterministic agent actions can be validated or overridden by humans, minimizing the risk of unanticipated failures and supporting robust, long-running execution.
+
+This enables the building of agentic applications that can be stopped and started as user input or business logic dictates, without risking incomplete or inconsistent workflow outcomes.
+
+-----
+
+-----
+
+-----
+
+### Source [109]: https://docs.langchain.com/oss/python/langgraph/workflows-agents
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph enables **durable, fault-tolerant agentic workflows** by structuring logic as a graph, where each node represents a step in the process. For long-running or human-in-the-loop (HITL) tasks, LangGraph provides several core mechanisms:
+
+- **Persistence for HITL:** LangGraph's persistence layer supports interruptions and approvals, which is essential for HITL scenarios. The workflow can pause, await human input (such as approval or correction), and then resume execution where it left off. This enables workflows to survive process restarts and user intervention without losing state.
+  
+- **Memory and State Management:** The system maintains both conversational memory (short-term) and long-term memory across nodes. This allows workflows to retain context over extended interactions, including cases where human input is needed after a delay.
+  
+- **Streaming and Observability:** LangGraph supports streaming outputs and exposes workflow state at each step, allowing for real-time progress updates and debugging during long or interrupted tasks.
+  
+- **Deployment and Recovery:** The framework is designed with deployment in mind, offering features for robust execution, monitoring, and recovery from failures, including the ability to track, resume, and audit execution flows.
+  
+LangGraph also provides tools for visualizing workflow state and execution, which can aid in debugging and validating the correct handling of interruptions and resumptions in agentic workflows.
+
+-----
+
+-----
+
+-----
+
+### Source [110]: https://langchain-ai.github.io/langgraph/tutorials/workflows/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph models agentic workflows by defining logic as nodes and routing between them through conditional edges. For tasks requiring **human-in-the-loop interruptions**, LangGraph enables:
+
+- **Conditional Routing:** The framework uses conditional edge functions to decide, at runtime, whether the workflow should proceed automatically, perform a tool/action, or pause for human input. For example, if an LLM determines a HITL step is necessary, the workflow can transition to a waiting state, then resume after human intervention.
+  
+- **Stateful Execution:** The state (held in objects like `MessagesState`) is persisted and passed between nodes. This ensures all context, including messages, tool calls, and human responses, is retained across interruptions and restarts.
+  
+- **Pre-built Patterns:** LangGraph offers pre-built agent patterns (such as React-style agents) that inherently support loops, conditional actions, and explicit handling of HITL steps, simplifying the creation of fault-tolerant, interruptible workflows.
+  
+- **Resumability:** By persisting the execution state at each step, LangGraph ensures that workflows can be paused (e.g., waiting on human input) and safely resumed even after process crashes or restarts.
+  
+These features collectively support long-running, agentic workflows that can reliably incorporate human oversight, corrections, or approvals at any stage.
+
+-----
+
+-----
+
+-----
+
+### Source [111]: https://ai.pydantic.dev
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI is a Python framework for building **production-grade agentic applications and workflows**. While the homepage focuses on high-level goals, it emphasizes:
+
+- **Reliability and Durability:** The framework aims to help developers create robust systems that can handle real-world interruptions and edge cases, which is essential for long-running or human-interrupted workflows.
+  
+- **Workflow Structuring:** Pydantic AI supports modeling workflows as agents and graphs, which is foundational for managing stateful, persistent execution across multiple steps and actors, including humans.
+
+-----
+
+-----
+
+-----
+
+### Source [112]: https://ai.pydantic.dev/agents/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: In Pydantic AI, **agents** serve as the main abstraction for interacting with LLMs and orchestrating workflows. Relevant features for durable, HITL-compatible workflows include:
+
+- **Agent State and Control:** Each agent maintains its own state, which can include the history of interactions, intermediate results, and pending actions. This persistent state supports resuming workflows after interruptions.
+  
+- **Human-in-the-Loop (HITL) Support:** Agents can be explicitly designed to pause for human input, store the current execution context, and later resume the task when human feedback is received.
+  
+- **Delegation and Hand-off:** Agents can hand off tasks to other agents or external actors (such as humans), enabling modular, fault-tolerant workflows where control can be passed and reclaimed as needed.
+
+-----
+
+-----
+
+-----
+
+### Source [113]: https://ai.pydantic.dev/graph/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI introduces **graphs and finite state machines (FSMs)** for modeling complex workflows, which are critical for ensuring durability and fault tolerance, especially in HITL cases:
+
+- **Graph-Based Execution:** Each step (node) in the workflow can represent an automated task or a human interaction. Edges between nodes define the flow, supporting both sequential and conditional (branching or looping) logic.
+  
+- **State Preservation:** State is explicitly managed and passed through the workflow graph, ensuring that context (including pending HITL steps) is preserved across interruptions, process failures, or manual interventions.
+  
+- **Debuggability and Swappability:** The modular graph structure allows for isolating, debugging, and swapping individual workflow steps, making it easier to implement and maintain robust HITL workflows.
+  
+- **Entry and Finish Points:** The framework lets developers define explicit entry and finish points for workflows, making it straightforward to pause, resume, or recover execution at any step, which is vital for long-running or human-interrupted workflows.
+
+-----
+
+-----
+
+-----
+
+### Source [114]: https://ai.pydantic.dev/multi-agent-applications/
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: Pydantic AI also supports **multi-agent patterns**, which are relevant for HITL and durable execution:
+
+- **Agent Delegation:** Tasks can be dynamically assigned to different agents, including both automation and human agents, allowing workflows to adapt to interruptions or recover from failures.
+  
+- **Graph-Based Control Flow:** By using a graph structure, workflows can be paused, rerouted, or resumed at any node, supporting robust handling of HITL interruptions and fault tolerance.
+  
+- **Programmatic Hand-off:** The framework allows for explicit, programmatic hand-off between agents and humans, ensuring that state and context are preserved and execution can be resumed seamlessly after human intervention.
+
+-----
+
+-----
+
+-----
+
+### Source [115]: https://www.ibm.com/think/tutorials/build-agentic-workflows-langgraph-granite
+
+Query: How do frameworks like PydanticAI and LangGraph ensure durable, fault-tolerant execution for long-running agentic workflows, particularly for tasks involving human-in-the-loop (HITL) interruptions?
+
+Answer: LangGraph is described as a **framework for scalable, AI-driven workflows** that models AI agents as stateful nodes within a graph. For durable, HITL-compatible execution, it provides:
+
+- **Node-Based Modularity:** Each node can represent either an automated step or a human-required action, and state is passed between nodes, preserving context and progress.
+  
+- **Conditional and Cyclical Routing:** Workflows can loop or branch conditionally, allowing the system to revisit steps as needed (e.g., after human review or correction).
+  
+- **Stateful Execution:** The workflow state acts as shared memory, enabling the workflow to adapt based on real-time inputs—including human intervention—without losing progress.
+  
+- **Entry and Finish Points:** Developers can define clear start and end nodes, making it straightforward to pause for human-in-the-loop steps and resume execution from the correct point.
+  
+- **Fault Tolerance:** By modeling workflows as graphs with explicit state transitions and persistent state, LangGraph supports resilient execution that can recover from failures, interruptions, or human interventions.
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>What are the key architectural differences between CrewAI&#x27;s distinct &#x27;Crews&#x27; (for autonomous collaboration) and &#x27;Flows&#x27; (for deterministic orchestration) and how does this duality compare to LangGraph&#x27;s unified graph-based approach to defining both agentic and workflow-based logic?</summary>
+
+### Source [42]: https://docs.crewai.com/introduction
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI offers a Python framework with two distinct architectural paradigms: **Crews** and **Flows**. 
+
+- **Crews** focus on *autonomous collaboration* by organizing teams of specialized AI agents, each with clearly defined roles, tools, and goals. The Crew structure mimics a company with departments (e.g., Sales, Engineering), where agents work together, sharing insights and delegating tasks to accomplish complex objectives. Crews are designed for adaptive, dynamic problem-solving in scenarios requiring agent autonomy, collaboration, and self-directed task execution.
+- **Flows** introduce a layer of *deterministic orchestration*. Flows allow developers to specify granular, event-driven workflows with precise control over execution paths, state transitions, conditional logic, and loops. Flows can manage task sequencing, reliably execute processes, and inject "pockets of agency" as needed—balancing automation with intelligence. Flows can natively integrate Crews, combining autonomy with exacting control.
+
+This dual architecture allows CrewAI users to choose between or blend autonomous agent collaboration (Crews) and deterministic, structured automation (Flows), depending on the requirements of their task or workflow.
+
+-----
+
+-----
+
+-----
+
+### Source [43]: https://github.com/crewAIInc/crewAI
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: Crews in CrewAI enable **natural, autonomous decision-making** between agents, dynamic task delegation, and specialized roles with defined goals and expertise. Each agent within a Crew can autonomously collaborate, communicate, and make decisions without human intervention, supporting dynamic workflows and complex problem-solving. The Crew structure is designed to optimize intelligent collaboration, with agents sharing insights and coordinating execution to achieve shared objectives.
+
+-----
+
+-----
+
+-----
+
+### Source [44]: https://www.crewai.com/crewai-flows
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI distinguishes between **Crews** and **Flows** as follows:
+
+- **Crews**: Designed for autonomous collaboration, enabling agents to work together dynamically on shared objectives.
+- **Flows**: Add structured automation and precise control, supporting conditional logic, dynamic state management, and event-driven execution.
+
+Flows provide deterministic orchestration, allowing developers to design predictable, multi-step processes. By integrating Crews into Flows, users can inject agency into specific workflow stages, achieving a balance between autonomy and control.
+
+-----
+
+-----
+
+-----
+
+### Source [45]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI's architecture is centered on **role-based agent design** and **task delegation**:
+
+- **Crews** allow for autonomous teams of specialized agents, each with defined roles and expertise. These agents collaborate and communicate independently, mirroring human team structures but operating without human mediation.
+- **Flows** (referenced as "flows-and-crews" architecture) seamlessly integrate with external systems and models, supporting structured workflows, observability, and compliance guardrails.
+
+CrewAI's dual model is well-suited for scenarios that require both autonomous collaboration (Crews) and the deterministic, reliable execution of structured workflows (Flows). This separation of concerns enables organizations to address complex, multi-agent tasks with flexibility and precision.
+
+-----
+
+-----
+
+-----
+
+### Source [46]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: Crews in CrewAI are engineered for **adaptive problem-solving** where autonomous collaboration is essential. Flows, by contrast, provide **deterministic, event-driven orchestration**. Flows enable developers to define explicit execution paths, manage states, and control task triggers, ensuring reliable and predictable workflow automation. This separation allows for sophisticated multi-agent systems that combine the adaptive capabilities of Crews with the structured, controllable processes of Flows.
+
+-----
+
+-----
+
+-----
+
+### Source [47]: https://dev.to/vishva_ram/crewai-crews-flows-the-complete-guide-to-ai-workflow-orchestration-328n
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI's **Crews** represent groups of agents with specialized roles, clear goals, and individual toolsets, collaborating autonomously to solve complex tasks. This enables efficient task decomposition and adaptive multi-agent teamwork.
+
+**Flows** serve as the orchestration layer, empowering developers to construct structured, event-driven workflows. Flows can chain together multiple Crews and tasks, manage state transitions, and precisely control execution. The combination of Crews and Flows supports advanced AI workflow orchestration, allowing for both autonomous agent collaboration and deterministic process control within the same framework.
+
+-----
+
+-----
+
+-----
+
+### Source [98]: https://docs.crewai.com/introduction
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI is a Python framework designed for autonomous multi-agent orchestration, featuring two core components: **Crews** and **Flows**.  
+- **Crews**: Focus on autonomy and collaborative intelligence, allowing the creation of teams of AI agents, each with specialized roles, tools, and goals. Crews behave like departments in an organization, overseeing collaboration, managing workflows, and delivering outcomes. Agents are empowered to make autonomous decisions, delegate tasks, and interact using designated tools.
+- **Flows**: Provide **structured, event-driven control** over workflow execution. Flows allow granular automation, managing execution paths, state transitions, task sequencing, and reliable execution. They support conditional logic, loops, and dynamic state management. Flows natively integrate with Crews, balancing agent autonomy with deterministic orchestration, enabling workflow automation with precise control over each step.
+
+Key architectural distinction:
+- **Crews** optimize for autonomous collaboration—agents interact with each other to achieve complex goals.
+- **Flows** optimize for deterministic orchestration—offering fine-grained control over how tasks and agent interactions are sequenced and managed.
+
+This duality allows developers to combine **high autonomy** (Crews) with **exact control** (Flows), whereas approaches like LangGraph typically unify both agentic and workflow logic under a single graph-based paradigm.
+
+-----
+
+-----
+
+-----
+
+### Source [99]: https://www.crewai.com/crewai-flows
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI distinguishes between **autonomous Crews** and **structured Flows**.  
+- **Crews**: Enable agents to collaborate autonomously, solving problems that require adaptive, role-based teamwork.
+- **Flows**: Add deterministic, event-driven automation, with precise control over task sequencing, conditional logic, and dynamic state management. Flows are built for reliability and efficiency, handling complex orchestration needs such as conditional branching and real-time adaptation.
+
+Architectural highlights:
+- Crews are best for scenarios requiring adaptive, autonomous agent collaboration.
+- Flows are best for scenarios demanding strict, step-by-step control over agent and task execution, supporting granular orchestration and automation.
+
+Both components are designed to work together, allowing developers to leverage autonomous intelligence where needed and deterministic structure where reliability is paramount.
+
+-----
+
+-----
+
+-----
+
+### Source [100]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI provides a **role-based implementation** for autonomous multi-agent orchestration:
+- **Crews**: Facilitate agent collaboration by grouping agents with specialized roles and expertise, enabling autonomous decision-making and task delegation. Agents communicate and share information without human mediation, mirroring human team structures.
+- **Task delegation**: Built-in mechanisms assign tasks based on agent capabilities.
+- **Process management**: Supports both sequential and parallel workflows, allowing for flexible collaboration patterns.
+
+Flows and Crews are integrated:
+- **Flows-and-crews architecture**: Seamlessly combines autonomous agent teams (Crews) with deterministic workflow orchestration (Flows), allowing organizations to balance adaptive intelligence with structured automation.
+
+This separation makes CrewAI suitable for complex problems needing both autonomous collaboration and reliable, orchestrated execution.
+
+-----
+
+-----
+
+-----
+
+### Source [101]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: Crews in CrewAI are designed for **autonomous collaboration**, ideal for adaptive problem-solving where agents need to interact and make decisions independently.  
+Flows provide **deterministic, event-driven automation**, enabling developers to specify exact sequences of actions, including conditional logic and state management.
+
+- **Crews**: Use when the problem requires agents to work together, adapt, and share insights.
+- **Flows**: Use when you need controlled, predictable workflows with detailed orchestration of agent actions.
+
+This dual architecture allows CrewAI to handle both agentic intelligence and strict workflow requirements, unlike unified graph-based approaches that may blend these distinctions.
+
+-----
+
+-----
+
+-----
+
+### Source [102]: https://dev.to/vishva_ram/crewai-crews-flows-the-complete-guide-to-ai-workflow-orchestration-328n
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration) and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI’s architecture centers on **Crews** and **Flows**:
+- **Crews**: Teams of specialized AI agents, each with specific roles and tools, collaborating to accomplish complex objectives. Agents operate autonomously, breaking down tasks and executing them efficiently via teamwork.
+- **Flows**: The orchestration layer, providing event-driven workflows that chain together Crews and tasks with precise control. Flows manage state, execution order, and enable multi-step, structured automation, leveraging the collaborative power of Crews.
+
+The duality enables developers to build both adaptive, agentic systems (Crews) and tightly controlled, automated workflows (Flows), offering more flexibility and control than unified graph-based models.
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>What are the architectural differences between CrewAI&#x27;s &#x27;Crews&#x27; for autonomous collaboration and &#x27;Flows&#x27; for deterministic orchestration, and how does this duality compare to LangGraph&#x27;s unified graph-based approach?</summary>
+
+### Source [48]: https://docs.crewai.com/introduction
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI is built as a Python framework independent from LangChain and other agent frameworks, focusing on both high-level simplicity and low-level control for autonomous AI agent development. 
+
+- **Crews** are designed for **autonomous collaboration** among AI agents, where each agent has a specific role, tools, and goals. The architecture mirrors a company structure, with a Crew acting as the top-level organization that manages teams of AI agents, oversees workflows, ensures collaboration, and delivers outcomes. Agents autonomously delegate tasks, use tools, and make decisions, all within defined collaboration patterns managed by the Process component.
+
+- **Flows** provide **deterministic, event-driven workflow orchestration**. Flows offer precise control over execution, handling conditional logic, loops, and dynamic state management. Flows natively support Crews, allowing integration of autonomous collaboration within structured processes. Key distinctions include:
+  - Flows manage execution paths, state transitions, and task sequencing.
+  - Events trigger specific workflow actions and enable conditional branching.
+  - States maintain workflow execution context and persist data for resumability and integrity.
+
+- **Duality**: This two-layer approach allows developers to balance agent autonomy (Crews) with deterministic orchestration and fine control (Flows).
+
+There is no mention of LangGraph in this section, but the CrewAI approach is characterized by a clear separation: Crews for intelligent collaboration and Flows for precise, deterministic orchestration, with seamless integration between both layers.
+
+-----
+
+-----
+
+-----
+
+### Source [49]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI is an open-source framework for autonomous multi-agent orchestration, emphasizing **role-based agent design** and **task delegation**. 
+
+- **Crews**: Teams of specialized autonomous agents are defined with specific roles, goals, and expertise. Agents communicate, share knowledge, and autonomously assign tasks based on capabilities. This mirrors human team structures, emphasizing explicit collaboration and problem decomposition.
+
+- **Process Management**: CrewAI supports structured workflows (sequential or parallel) for autonomous task execution, allowing clear dependencies between tasks and orchestration of multi-agent collaboration.
+
+- **Flows and Crews Architecture**: AWS highlights the "flows-and-crews" architecture, which integrates these collaborative teams (Crews) with structured workflow automation (Flows). This separation enables organizations to assign agents to tasks based on specialization, while Flows ensure reliable, deterministic, and traceable execution.
+
+- **Comparison to LangGraph**: No explicit comparison to LangGraph is made, but CrewAI's approach distinctly separates autonomous collaboration (Crews) from deterministic orchestration (Flows), unlike a unified graph-based system.
+
+-----
+
+-----
+
+-----
+
+### Source [50]: https://dev.to/vishva_ram/crewai-crews-flows-the-complete-guide-to-ai-workflow-orchestration-328n
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI is described as a framework for orchestrating **role-playing autonomous AI agents**, with a dual architecture:
+
+- **CrewAI Crews**: These are groups of specialized AI agents, each with a role, goal, and set of tools, collaborating autonomously to achieve a common objective. This layer enables adaptive, flexible, and intelligent problem-solving, where each agent contributes its expertise to the collective goal.
+
+- **CrewAI Flows**: Flows serve as the orchestration layer, providing a robust, event-driven framework for building and managing AI workflows. Flows connect multiple tasks, manage state, and precisely control execution, chaining together Crews and tasks within structured automations. This makes it possible to design multi-step, reliable, and scalable AI processes.
+
+- **Architectural Duality**: The **duality** comes from the separation of concerns: Crews handle autonomous, collaborative intelligence, while Flows offer deterministic, controllable workflow orchestration. The two layers can be combined, allowing developers to inject autonomy where needed within otherwise deterministic flows.
+
+- **Comparison to LangGraph**: Although LangGraph is not detailed here, the text alludes to CrewAI's approach being modular—separating autonomy (Crews) from orchestration (Flows)—in contrast to frameworks that unify both aspects into a single graph-based abstraction.
+
+-----
+
+-----
+
+-----
+
+### Source [51]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: Crews in CrewAI provide **autonomous collaboration** for adaptive problem-solving among agents with specialized roles. Flows, in contrast, offer **deterministic, event-driven orchestration** of tasks, ensuring structured and reliable workflow execution.
+
+- **Crews**: Enable agents to self-organize, delegate, and collaborate to solve complex tasks, maximizing flexibility and intelligence.
+
+- **Flows**: Add the capability for precise, rule-based automation, managing conditional logic, state, and task sequencing. Flows can invoke Crews as part of a larger workflow, integrating autonomous intelligence within a deterministic structure.
+
+- **Architectural Difference**: The separation of Crews and Flows allows developers to choose between, or combine, autonomous and deterministic paradigms.
+
+- **LangGraph Comparison**: While not deeply described here, LangGraph is stated to provide a **unified graph-based approach**, treating both agent interactions and workflow logic as nodes and edges in a graph. This contrasts with CrewAI's explicit separation between autonomy (Crews) and orchestration (Flows), offering more modular design but less abstraction than LangGraph's single graph model.
+
+-----
+
+-----
+
+-----
+
+### Source [70]: https://docs.crewai.com/introduction
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI is a Python framework designed for building autonomous, collaborative AI agent teams ("Crews") and supporting deterministic workflow orchestration ("Flows"). **Crews** optimize for autonomy and collaborative intelligence by allowing developers to assemble AI agents with specific roles, tools, and goals, organized akin to departments in a company. Each agent operates with a defined role and can autonomously make decisions, delegate tasks, and leverage custom tools. The architecture includes:
+- **Crew**: The top-level team that manages agents, oversees workflows, and ensures collaborative outcomes.
+- **AI Agents**: Specialized, role-based entities capable of autonomous action, task delegation, and tool use.
+- **Process**: Workflow management system that defines collaboration patterns, manages task assignments, and controls interactions.
+- **Tasks**: Discrete assignments with clear objectives, feeding into the overall process.
+
+**Flows**, on the other hand, provide event-driven control for deterministic orchestration. They allow granular automation, managing execution paths, state transitions, task sequencing, and incorporating conditional logic and loops. Flows can operate independently or integrate with Crews, striking a balance between high autonomy (Crews) and precise, deterministic control (Flows). This dual architecture enables developers to combine adaptive, collaborative intelligence with strict workflow automation, depending on scenario requirements.
+
+In contrast, **LangGraph’s approach** (while not fully detailed in this source) is implied to be a unified, graph-based model where state transitions and workflow control are managed within a single framework, rather than separating collaboration and orchestration into distinct constructs as CrewAI does.
+
+-----
+
+-----
+
+-----
+
+### Source [71]: https://www.crewai.com/crewai-flows
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: Crews in CrewAI are focused on **autonomous agent collaboration**, where agents interact, share information, and coordinate to solve complex problems without predefined, rigid workflows. **Flows** introduce a layer of structured automation on top of Crews, adding deterministic control mechanisms such as conditional logic, event triggers, state management, and precise sequencing of tasks. This dual system allows developers to leverage both adaptive, multi-agent problem solving (Crews) and rigorous, reliable workflow automation (Flows) within the same ecosystem. Flows can operate standalone or enhance Crews by injecting deterministic steps where needed.
+
+-----
+
+-----
+
+-----
+
+### Source [72]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI is architected for **autonomous multi-agent orchestration** using a role-based, team-oriented model. Each agent is defined with a specialized role, goals, and expertise, supporting task delegation and inter-agent collaboration. The framework enables both **sequential and parallel workflows** through structured process management, mirroring human team dynamics. Tasks are assigned based on agent capabilities, and dependencies are clearly established for complex, multi-step problem-solving. The "flows-and-crews" architecture integrates seamlessly with external systems (such as Amazon Bedrock), providing reference blueprints for real-world applications.
+
+The duality in CrewAI (Crews vs. Flows) is highlighted: Crews handle autonomous, collaborative problem decomposition, while Flows bring **deterministic, event-driven orchestration**. This separation contrasts with unified models (like LangGraph’s), where workflow and agent collaboration are fused into a single, graph-based structure.
+
+-----
+
+-----
+
+-----
+
+### Source [73]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: Crews in CrewAI enable **autonomous collaboration** among agents, allowing for flexible, adaptive problem-solving where agents can delegate, communicate, and make decisions without a rigid pre-determined sequence. In contrast, **Flows** are designed for deterministic, event-driven orchestration, providing precise control over task execution, state transitions, and conditional branching. This makes Flows suitable for scenarios where reliability, repeatability, and strict sequencing are essential.
+
+The duality of Crews and Flows in CrewAI stands in contrast to approaches like **LangGraph**, which uses a single, unified graph-based model to represent both agent behaviors and workflow control. In LangGraph, the entire process—including agent collaboration and deterministic orchestration—is encoded as a graph of state transitions, rather than being split into separate paradigms for autonomy and orchestration as in CrewAI.
+
+-----
+
+-----
+
+-----
+
+### Source [74]: https://docs.crewai.com/concepts/collaboration
+
+Query: What are the architectural differences between CrewAI's 'Crews' for autonomous collaboration and 'Flows' for deterministic orchestration, and how does this duality compare to LangGraph's unified graph-based approach?
+
+Answer: CrewAI's **collaboration model** is implemented through Crews, where agents are granted the ability to delegate tasks and ask questions of each other (enabled via the `allow_delegation=True` setting). This provides agents with tools to:
+- **Delegate Work**: Assign tasks to teammates based on expertise.
+- **Ask Question**: Directly query other agents for information relevant to their roles.
+
+This architecture fosters a dynamic, team-based approach to problem-solving, where agents autonomously leverage collective expertise. Deterministic orchestration (as achieved via Flows) is handled separately, allowing the system designer to choose between highly autonomous, emergent team behavior (Crews) and precisely controlled, state-driven task flows (Flows).
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?</summary>
+
+### Source [60]: https://www.sevensquaretech.com/autogen-vs-langgraph-ai-workflow/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: Seven Square Tech reports direct experience helping clients migrate from AutoGen to LangGraph, specifically mentioning healthtech and eCommerce platforms. According to their case studies, these migrations resulted in **immediate improvements in debugging time and runtime stability**. The primary reasons for these pivots centered on production readiness and scalability concerns.
+
+The company explains that when clients ask which framework is better, the answer depends on the type of product being built and the level of control and scalability required. Their experience indicates that **LangGraph is preferred for production-ready multi-agent systems in 2025** due to its state machine model, LangSmith observability capabilities, and inherent scalability. In contrast, AutoGen was found to be better suited for early-stage experiments or AI simulations focused on conversational workflows.
+
+A critical advantage driving these migrations was **LangGraph's integration with LangSmith**, which provides detailed observability to track token usage, agent paths, errors, and performance metrics. This observability proved invaluable for debugging AI agent workflows and optimizing production systems at scale. While AutoGen can handle lightweight production use cases, the framework lacks the robustness and modularity that LangGraph offers for large-scale workflows.
+
+The migration decision often came down to complexity handling capabilities. LangGraph excels with high-complexity structured logic and observability, while AutoGen is optimized for low to moderate complexity scenarios. For teams moving beyond rapid prototyping into production deployments requiring world-class debugging tools and runtime stability, the pivot to LangGraph delivered measurable operational improvements in their healthtech and eCommerce implementations.
+
+-----
+
+-----
+
+### Source [83]: https://www.truefoundry.com/blog/autogen-vs-langgraph
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source does not provide specific examples of teams migrating from AutoGen to LangGraph or PydanticAI. However, it discusses the differences between AutoGen and LangGraph, highlighting their design philosophies and best-fit scenarios. AutoGen is designed for multi-agent conversations, focusing on LLM-to-LLM and human-in-the-loop interactions, while LangGraph takes a more workflow-centric, graph-based approach. This comparison suggests that teams might choose to migrate based on the need for more complex workflow management or robust production-grade deployments.
+
+-----
+
+-----
+
+### Source [84]: https://www.bighub.ai/blog/the-evolution-of-ai-agents-frameworks-from-autogen-to-langgraph
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source also does not provide specific case studies of migrations but notes LangGraph's evolution as a powerful, modular solution for complex workflows. It suggests that teams might migrate to LangGraph for its ability to handle intricate workflows, indicating a potential reason for pivoting could be the need for more sophisticated workflow management.
+
+-----
+
+-----
+
+### Source [85]: https://yodaplus.com/blog/crewai-autogen-langgraph-building-hybrid-pipelines-in-ai/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source provides an example use case involving financial advisors driven by AI but does not specifically discuss migrations from AutoGen to LangGraph or PydanticAI. It highlights how multiple frameworks can be integrated to build hybrid pipelines, suggesting that teams might consider migrating or integrating frameworks based on their specific needs for complex problem-solving.
+
+-----
+
+-----
+
+### Source [86]: https://www.rapidinnovation.io/post/how-to-integrate-langgraph-with-autogen-crewai-and-other-frameworks
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source discusses integrating LangGraph with AutoGen and other frameworks for complex problem-solving. It presents a case study where AutoGen and LangGraph are used together to develop a chatbot that can handle customer inquiries across multiple domains. While it does not directly address migrations, it shows how teams can leverage both frameworks for enhanced capabilities, suggesting that integration might be a preferred approach over migration.
+
+-----
+
+-----
+
+### Source [87]: https://dev.to/foxgem/ai-agent-memory-a-comparative-analysis-of-langgraph-crewai-and-autogen-31dp
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source provides a comparative analysis of memory management in LangGraph, CrewAI, and AutoGen but does not specifically discuss migrations between these frameworks. It highlights LangGraph's advanced memory management capabilities, which could be a reason for teams to consider migrating if they require more sophisticated memory handling.
+
+-----
+
+-----
+
+### Source [88]: https://www.openxcell.com/blog/autogen-vs-langgraph/
+
+Query: What are some real-world examples or developer case studies of teams migrating from one AI agent framework, like AutoGen, to another, such as LangGraph or PydanticAI, and what were the primary reasons for the pivot?
+
+Answer: This source compares AutoGen and LangGraph across various dimensions but does not provide specific examples of migrations. It notes that LangGraph offers advanced features like customizable memory architectures and robust error handling, which could be reasons for teams to migrate if they need more complex workflow capabilities.
+
+-----
+</details>
+
+
+<details>
+<summary>What are the practical applications and trade-offs of the core primitives in the OpenAI Agents SDK—specifically Agents, Tools, Guardrails, Handoffs, and Sessions—when building production-grade AI systems?</summary>
+
+### Source [127]: https://openai.github.io/openai-agents-python/
+
+Query: What are the practical applications and trade-offs of the core primitives in the OpenAI Agents SDK—specifically Agents, Tools, Guardrails, Handoffs, and Sessions—when building production-grade AI systems?
+
+Answer: The OpenAI Agents SDK provides a minimal set of core primitives designed for production-grade agentic AI systems. The key primitives are:
+
+- **Agents**: These are LLMs configured with specific instructions and equipped with tools. Practical applications include orchestrating complex tasks, chaining tool calls, and executing workflows that require multiple steps. The trade-off is that while the abstraction is minimal and easy to learn, it may require more manual structuring for highly specialized workflows.
+
+- **Tools**: Any Python function can be exposed as a tool, with automatic schema generation and Pydantic-based validation. This allows rapid integration of business logic, APIs, or external systems. The ease of use is high, but the developer is responsible for ensuring tool correctness and handling edge cases.
+
+- **Guardrails**: These enable validation of agent inputs and outputs, running in parallel with agents and allowing early termination if checks fail. In production, this is crucial for safety and robustness, but may introduce additional complexity in validation design and performance overhead.
+
+- **Handoffs**: This primitive lets agents delegate tasks to other agents, supporting modular and scalable multi-agent architectures. It enables decomposition of complex workflows but increases the need for careful orchestration and monitoring.
+
+- **Sessions**: Sessions manage conversation history automatically across agent runs, removing the need for manual state management. This simplifies development of conversational or iterative agent systems but may require careful tuning for memory usage and privacy compliance.
+
+Additional features include built-in tracing for debugging and workflow visualization, as well as support for evaluation and fine-tuning. The SDK is designed to be both “out of the box” and highly customizable, supporting quick prototyping and production deployment. The main trade-off is between simplicity and the need for manual control for advanced use cases[1].
+
+-----
+
+-----
+
+-----
+
+### Source [128]: https://platform.openai.com/docs/guides/agents-sdk
+
+Query: What are the practical applications and trade-offs of the core primitives in the OpenAI Agents SDK—specifically Agents, Tools, Guardrails, Handoffs, and Sessions—when building production-grade AI systems?
+
+Answer: The official OpenAI documentation reiterates the core primitives and their applications:
+
+- **Agents**: LLMs with instructions and tools, enabling complex automation and task execution. Agents handle an agent loop that repeatedly calls tools and interacts with the LLM until a task is complete. Practical use includes building conversational bots, workflow automators, and intelligent assistants.
+
+- **Tools**: Python functions exposed as callable tools, automatically validated. This allows seamless integration with external APIs and business processes, but places responsibility for correctness and error management on the developer.
+
+- **Handoffs**: Facilitate coordination and task delegation between agents, allowing for modular design and multi-agent collaboration. The trade-off is the increased complexity in managing agent interactions and dependencies.
+
+- **Guardrails**: Run input and output validations in parallel, enabling early exits on failure. Guardrails are essential for safety, compliance, and reliability in production, but can add latency and require comprehensive validation logic.
+
+- **Sessions**: Maintain conversation state across multiple agent invocations, supporting multi-turn dialogues and iterative workflows. This removes manual state management overhead but may introduce challenges in memory optimization and long-term data retention.
+
+- **Tracing**: Built-in tracing allows visualization, debugging, and monitoring of workflows—valuable for production reliability and iterative improvement. The SDK is Python-first, leveraging native language features and keeping abstractions minimal for rapid learning and adoption.
+
+Trade-offs center on balancing the SDK’s minimalistic abstraction (for flexibility and ease of learning) against the need for greater manual orchestration in complex scenarios[2].
+
+-----
+
+-----
+
+-----
+
+### Source [129]: https://github.com/openai/openai-agents-python
+
+Query: What are the practical applications and trade-offs of the core primitives in the OpenAI Agents SDK—specifically Agents, Tools, Guardrails, Handoffs, and Sessions—when building production-grade AI systems?
+
+Answer: The GitHub documentation provides further technical insights:
+
+- **Agents**: Defined as LLMs configured with instructions, tools, guardrails, and handoffs. This modularity allows for a wide range of production workflows, from simple deterministic tasks to complex, iterative, or multi-agent processes.
+
+- **Handoffs**: Treated as specialized tool calls for transferring control between agents. This pattern supports scalable, collaborative workflows, but requires thoughtfulness in managing agent hierarchies and error propagation.
+
+- **Guardrails**: Offer configurable safety checks for validating both inputs and outputs, helping enforce business logic, compliance, and prevent undesired behaviors. However, comprehensive guardrail design can be complex and may impact system throughput if overly strict or computationally expensive.
+
+- **Sessions**: Provide automatic conversation history management, supporting context persistence and continuity in user interactions, which is critical for user experience in production systems. The trade-off is potential challenges with state management, resource usage, and session expiration policies.
+
+- **Tracing**: Built-in tracing aids in debugging, monitoring, and workflow optimization, which are essential for maintaining production reliability and traceability.
+
+Overall, the SDK is designed for flexibility, provider-agnostic deployment, and support for a variety of LLMs. The trade-off for this flexibility is that developers must take responsibility for orchestration, safety, and robustness at the workflow level[8].
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>How does PydanticAI&#x27;s design philosophy, particularly its use of typed models for inputs/outputs and dependency injection, create a &quot;FastAPI for agents&quot; developer experience, and what are the trade-offs of this approach?</summary>
+
+### Source [130]: https://ai.pydantic.dev
+
+Query: How does PydanticAI's design philosophy, particularly its use of typed models for inputs/outputs and dependency injection, create a "FastAPI for agents" developer experience, and what are the trade-offs of this approach?
+
+Answer: PydanticAI is a Python agent framework explicitly designed to bring the "FastAPI feeling" to GenAI application and agent development. The creators built it with one simple aim after finding that despite virtually every Python agent framework and LLM library using Pydantic Validation, nothing gave them the same ergonomic experience when they began using LLMs in Pydantic Logfire. FastAPI revolutionized web development by offering an innovative and ergonomic design built on the foundation of Pydantic Validation and modern Python features like type hints, and PydanticAI seeks to replicate this philosophy for AI agents[2].
+
+The framework is designed to help developers quickly, confidently, and painlessly build production-grade applications and workflows with Generative AI[2]. The design philosophy emphasizes being fully type-safe, providing IDEs and AI coding agents with as much context as possible for auto-completion and type checking. This moves entire classes of errors from runtime to write-time, creating what they describe as a "Rust-like" feel where "if it compiles, it works"[3].
+
+Key features that contribute to this developer experience include structured responses using Pydantic to validate and structure model outputs, ensuring consistent responses. The framework offers a dependency injection system to provide data and services to an agent's components, enhancing testability and iterative development. It supports streamed responses with immediate validation, allowing for rapid and accurate results[7].
+
+The framework also integrates powerful evaluation capabilities to systematically test and evaluate agentic system performance, human-in-the-loop tool approval for certain tool calls requiring authorization, and durable execution for building agents that preserve progress across failures[3].
+
+-----
+
+-----
+
+### Source [131]: https://dev.to/yashddesai/pydanticai-a-comprehensive-guide-to-building-production-ready-ai-applications-20me
+
+Query: How does PydanticAI's design philosophy, particularly its use of typed models for inputs/outputs and dependency injection, create a "FastAPI for agents" developer experience, and what are the trade-offs of this approach?
+
+Answer: PydanticAI's design revolves around several core concepts that reflect its FastAPI-inspired philosophy. Agents serve as the primary interface for interacting with Large Language Models and act as containers for various components including system prompts, function tools, structured result types, dependency types, and LLM models. Agents are designed for reusability and are typically instantiated once and reused throughout an application[7].
+
+System prompts can be static (defined at agent creation) or dynamic (defined by functions that can access runtime information such as dependencies via the RunContext object). A single agent can use both types, which are appended in order at runtime. This flexibility allows developers to combine compile-time and runtime configuration in a type-safe manner[7].
+
+Key features that create the FastAPI-like experience include model agnosticism (supporting OpenAI, Anthropic, Gemini, Ollama, Groq, and Mistral), type safety designed to work seamlessly with static type checkers like mypy and pyright, and Python-centric design that leverages familiar Python control flow and agent composition. The framework uses structured responses via Pydantic to validate model outputs and provides a dependency injection system to enhance testability and iterative development[7].
+
+The trade-off of this approach is that it's designed for production-grade applications, which means it may have a steeper learning curve for beginners compared to simpler frameworks. The heavy use of Python generics and type hints, particularly in advanced features like pydantic-graph, is explicitly not designed to be beginner-friendly[6].
+
+-----
+
+-----
+
+### Source [132]: https://ai.pydantic.dev/dependencies/
+
+Query: How does PydanticAI's design philosophy, particularly its use of typed models for inputs/outputs and dependency injection, create a "FastAPI for agents" developer experience, and what are the trade-offs of this approach?
+
+Answer: The dependency system in PydanticAI follows the framework's design philosophy of using existing best practices in Python development rather than inventing esoteric patterns. This matching of Pydantic AI's design philosophy means the dependency injection system tries to leverage familiar Python conventions, making it more intuitive for developers already experienced with modern Python development patterns[8].
+
+-----
+
+-----
+
+### Source [133]: https://adasci.org/a-practioners-guide-to-pydanticai-agents/
+
+Query: How does PydanticAI's design philosophy, particularly its use of typed models for inputs/outputs and dependency injection, create a "FastAPI for agents" developer experience, and what are the trade-offs of this approach?
+
+Answer: PydanticAI combines Pydantic's data validation capabilities with AI-powered functionality to structure LLM outputs and increase reliability. It bridges the gap between unstructured text outputs of language models and the structured data that applications require. Users can use Pydantic models to determine the expected LLM output schema and verify that responses generated via LLM are in the required format, ensuring consistency with expected structure, types, and constraints[9].
+
+The framework provides tools for formatting prompts to guide LLMs toward generating outputs matching required schemas. It integrates seamlessly with frameworks like LangChain, OpenAI's API, and other LLM providers, handling the inherent unpredictability in generated responses. When models generate responses that don't match the required schema, PydanticAI can automatically retry with refined prompts or apply correction strategies[9].
+
+The agent architecture follows a loop of observation, thought, and actions where each observation is parsed into a validated Pydantic model, the agent uses an LLM to reason about observations with validated thoughts, and executes actions from predefined tools with validated inputs and outputs. The tool system allows integration of external capabilities like API calls and database queries, with tools wrapped in Pydantic models defining input parameters and return values[9].
+
+The trade-off is that PydanticAI uses retry logic with exponential backoff, content filtering, and model-specific optimization techniques to maximize successful validation rates, which adds complexity but makes error-handling more efficient and reliable for production environments[9].
+
+-----
+</details>
+
+
+<details>
+<summary>What are real-world case studies or developer experiences of pivoting their choice of AI agent framework mid-project, particularly detailing the initial choice, the problems encountered, and the reasons for migrating to a different framework like LangGraph, FastMCP, or PydanticAI?</summary>
+
+### Source [134]: https://www.multimodal.dev/post/useful-ai-agent-case-studies
+
+Query: What are real-world case studies or developer experiences of pivoting their choice of AI agent framework mid-project, particularly detailing the initial choice, the problems encountered, and the reasons for migrating to a different framework like LangGraph, FastMCP, or PydanticAI?
+
+Answer: This source provides a set of detailed case studies on the adoption and pivoting of AI agent frameworks in real-world applications. While it does not specifically mention LangGraph, FastMCP, or PydanticAI, it highlights general patterns in framework migration:
+
+- **Initial Choices & Rationale:** Developers often select frameworks based on popularity, perceived flexibility, or integration with existing tech stacks. For instance, some teams began with popular orchestration tools because of their large community and plug-and-play agent modules.
+- **Problems Encountered:** Common issues include scalability bottlenecks, poor observability, limited support for custom agent logic, and difficulties in integrating novel workflows. As projects grew in complexity, some frameworks failed to support advanced multi-agent coordination or robust error handling.
+- **Reasons for Migration:** Teams migrated to more specialized frameworks when they required:
+  - Enhanced support for multi-agent communication.
+  - More transparent debugging and monitoring tools.
+  - Better compatibility with evolving LLM APIs and dynamic task graphs.
+  - Lower operational costs and improved performance at scale.
+
+Several case studies document cost reductions, faster support cycles, and improved ROI after migration. Although specific frameworks are not named, the experiences illustrate the importance of choosing agent frameworks with robust workflow management, modularity, and scalability for dynamic, enterprise-grade AI solutions.
+
+-----
+
+-----
+
+-----
+
+### Source [135]: https://arxiv.org/html/2510.04852v2
+
+Query: What are real-world case studies or developer experiences of pivoting their choice of AI agent framework mid-project, particularly detailing the initial choice, the problems encountered, and the reasons for migrating to a different framework like LangGraph, FastMCP, or PydanticAI?
+
+Answer: In the FreshBrew benchmark paper, the authors detail empirical experiences evaluating multiple AI agent frameworks on real-world Java code migration tasks:
+
+- **Initial Framework Selection:** The study began by employing state-of-the-art, LLM-driven agentic frameworks for autonomous repository-level code migration. These included both custom and existing agentic orchestration systems designed to leverage large language models for automating codebase modernization.
+- **Problems Encountered:** Major issues identified during the evaluation included:
+  - *Reward hacking*: Agents optimized for proximate reward signals (such as passing tests with reduced coverage or skipping problematic files) rather than true code correctness.
+  - Inconsistent support for preserving program semantics and test coverage.
+  - Highly variable performance and cost across different agent frameworks.
+- **Reasons for Migration:** The need for rigorous, reproducible evaluation and trustworthy migration outcomes led to the development of the FreshBrew benchmark. This benchmark required new agentic evaluation protocols and robust integrity checks, highlighting limitations in existing frameworks when applied to complex migration tasks.
+
+The empirical study found that some agentic frameworks succeeded in automating migration for a subset of projects, but many required switching to custom or more reliable frameworks to avoid reward hacking and ensure semantic integrity. The insights provided a foundation for benchmarking and migrating to agent frameworks better suited for trustworthy, large-scale code modernization.
+
+-----
+
+-----
+
+-----
+
+### Source [136]: https://research.aimultiple.com/agentic-ai/
+
+Query: What are real-world case studies or developer experiences of pivoting their choice of AI agent framework mid-project, particularly detailing the initial choice, the problems encountered, and the reasons for migrating to a different framework like LangGraph, FastMCP, or PydanticAI?
+
+Answer: This source presents several real-life examples of agentic AI framework usage and pivots in modernization and migration projects:
+
+- **Initial Choices:** Organizations often start with established rule-based or single-agent frameworks due to ease of integration and lower initial complexity.
+- **Problems Encountered:** As requirements shift towards more complex, autonomous migration (e.g., legacy COBOL to Java), limitations arise:
+  - Inability to handle multi-stage, multi-agent orchestration.
+  - Lack of autonomous adaptation to code or infrastructure changes.
+  - Scalability and integration challenges with legacy systems.
+- **Reasons for Migration:** The need for autonomous, multi-agent coordination prompted teams to adopt advanced frameworks supporting dynamic task allocation, error recovery, and learning from feedback. For example, Persistent used a multi-agent framework to autonomously migrate code, enabling parallelization and robust error handling not achievable with the initial setup.
+
+The migration to more advanced frameworks was driven by the necessity to automate complex, interdependent tasks, ensure semantic correctness, and support evolving modernization goals. The source does not specifically mention LangGraph, FastMCP, or PydanticAI, but it illustrates decision criteria and migration rationales relevant to such frameworks.
+
+-----
+
+-----
+
+-----
+
+### Source [137]: https://www.ibm.com/think/insights/reimagining-application-modernization-migration-agentic
+
+Query: What are real-world case studies or developer experiences of pivoting their choice of AI agent framework mid-project, particularly detailing the initial choice, the problems encountered, and the reasons for migrating to a different framework like LangGraph, FastMCP, or PydanticAI?
+
+Answer: IBM details its approach to agentic AI-driven application migration and modernization, emphasizing structured framework pivots:
+
+- **Initial Frameworks:** Organizations often begin modernization projects using manual processes or legacy automation tools. These frameworks typically lack dynamic adaptation and multi-agent capabilities.
+- **Problems Encountered:** Common issues necessitating migration include:
+  - Inflexibility in adapting to changing project goals.
+  - Inability to orchestrate complex, multi-step migrations autonomously.
+  - Bottlenecks in resource allocation and error recovery.
+- **Reasons for Migrating:** IBM’s agentic method provides:
+  - Autonomous execution of repetitive and low-value tasks.
+  - Dynamic adaptation to evolving requirements.
+  - Enhanced accuracy through continuous self-assessment and learning.
+  - Improved decision-making and resource optimization.
+  - Proactive risk reduction and simplified processes.
+
+Clients migrate to IBM’s agentic frameworks to achieve greater speed, precision, and resilience in migration projects. The process typically involves strategic setup, intelligent discovery and analysis, blueprinting, and automated realization—phases that require increasingly sophisticated agentic orchestration.
+
+While not naming LangGraph, FastMCP, or PydanticAI directly, the source outlines the motivations and outcomes of pivoting to agentic frameworks capable of handling real-world migration and modernization complexities.
+
+-----
+
+-----
+</details>
+
+
+<details>
+<summary>What are the key architectural differences between CrewAI&#x27;s distinct &#x27;Crews&#x27; (for autonomous collaboration) and &#x27;Flows&#x27; (for deterministic orchestration), and how does this duality compare to LangGraph&#x27;s unified graph-based approach to defining both agentic and workflow-based logic?</summary>
+
+### Source [138]: https://docs.crewai.com/introduction
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: CrewAI introduces two distinct architectural paradigms: **Crews** and **Flows**, each designed for specific use cases and offering different levels of control and autonomy.
+
+**Crews** are modeled after human teams, where each AI agent is assigned a specialized role, set of tools, and individual goals. The Crew, as the top-level organizational unit, manages these agents, oversees their workflows, and ensures collaboration toward a common objective. Agents within a Crew can make autonomous decisions, delegate tasks, and interact dynamically, mirroring the way departments in a company work together under leadership. The process component within Crews defines collaboration patterns, controls task assignments, manages inter-agent interactions, and ensures efficient execution. This setup is optimized for scenarios requiring adaptive, autonomous collaboration among specialized agents, such as research, writing, and analysis teams.
+
+**Flows**, in contrast, provide a structured, event-driven orchestration layer. While Crews excel at autonomous, collaborative problem-solving, Flows offer granular control over workflow execution. Flows manage execution paths, handle state transitions, sequence tasks, and ensure reliable, deterministic outcomes. They support conditional logic, loops, and dynamic state management, making them suitable for scenarios where precise, repeatable automation is required. Flows can integrate with Crews, injecting pockets of autonomous agency into otherwise deterministic workflows, thus balancing high autonomy with exacting control.
+
+The duality in CrewAI allows developers to choose between autonomous, collaborative teams (Crews) and deterministic, orchestrated workflows (Flows), or to combine both as needed. This contrasts with frameworks like LangGraph, which use a unified graph-based approach to define both agentic and workflow logic within a single model. CrewAI’s separation emphasizes clear architectural boundaries between autonomous collaboration and deterministic orchestration, offering flexibility in designing complex AI systems.
+
+-----
+
+-----
+
+### Source [139]: https://github.com/crewAIInc/crewAI
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: This source focuses on the collaborative and autonomous aspects of Crews in CrewAI. Crews enable natural, autonomous decision-making between agents, dynamic task delegation, and collaboration among agents with specialized roles, defined goals, and expertise. The framework is built to orchestrate role-playing autonomous agents, allowing them to work together to achieve complex objectives without requiring human intervention for every decision. The emphasis is on the emergent behavior that arises from the interaction of multiple autonomous agents, each contributing their specialized capabilities to the crew’s overall mission.
+
+-----
+
+-----
+
+### Source [140]: https://www.crewai.com
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: The main site reiterates that CrewAI allows users to build crews of AI agents that autonomously interact with enterprise applications and use tools to automate workflows and tasks, with or without writing code. It highlights the practical utility of assembling agents into teams that can operate independently to achieve business goals, emphasizing ease of use and integration with existing systems.
+
+-----
+
+-----
+
+### Source [141]: https://www.ibm.com/think/topics/crew-ai
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: IBM’s overview notes that crewAI facilitates agent collaboration by allowing users to assemble agents into teams (crews) that work together to execute a common goal or task, with an emphasis on autonomous behavior. This reinforces the idea that Crews are about enabling groups of agents to collaborate autonomously toward shared objectives, much like human teams.
+
+-----
+
+-----
+
+### Source [142]: https://www.crewai.com/crewai-flows
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: This source explains that while Crews enable autonomous collaboration, Flows add structured automation with precise control. Flows handle conditional logic and dynamic state management, offering a way to orchestrate tasks in a deterministic, repeatable manner. This architectural separation allows users to design systems where autonomous agents (Crews) can be embedded within larger, controlled workflows (Flows), combining the strengths of both paradigms.
+
+-----
+
+-----
+
+### Source [143]: https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/crewai.html
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: AWS’s documentation details CrewAI as an open-source framework focused on autonomous multi-agent orchestration, with a strong emphasis on role-based coordination and task delegation. Agents are defined with specific roles, goals, and expertise, and tasks are delegated autonomously based on agent capabilities. The framework supports both sequential and parallel workflows, with built-in mechanisms for inter-agent communication and knowledge sharing. CrewAI’s process management enables structured workflows, and the framework is flexible in its integration with various foundation models and LLM APIs. The documentation also highlights CrewAI’s emerging support for multimodal interactions.
+
+CrewAI is particularly suited for complex problems requiring specialized, role-based expertise and explicit collaboration between agents. The role-based approach mirrors human organizational structures, making it intuitive for business stakeholders. The documentation does not explicitly contrast CrewAI’s duality with LangGraph’s unified approach but emphasizes CrewAI’s focus on clear separation of concerns between agent roles and workflow management.
+
+-----
+
+-----
+
+### Source [144]: https://www.firecrawl.dev/blog/crewai-multi-agent-systems-tutorial
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: This tutorial clarifies that Crews in CrewAI are designed for autonomous collaboration in scenarios requiring adaptive problem-solving, while Flows provide deterministic, event-driven orchestration. This distinction allows developers to choose the right level of autonomy and control for their use case, with Crews handling complex, unpredictable tasks and Flows managing structured, repeatable processes.
+
+-----
+
+-----
+
+### Source [145]: https://dev.to/vishva_ram/crewai-crews-flows-the-complete-guide-to-ai-workflow-orchestration-328n
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: This guide elaborates on the core concepts of CrewAI, describing Crews as groups of specialized AI agents with defined roles, goals, and tools, collaborating autonomously to achieve complex objectives. Flows, introduced as a newer feature, serve as the orchestration layer, enabling the creation and management of structured, event-driven workflows. Flows connect multiple tasks, manage state, and control execution precisely, allowing developers to design multi-step processes that leverage CrewAI’s capabilities. The guide emphasizes that Crews and Flows can be combined, with Flows orchestrating the high-level sequence of operations and Crews handling the autonomous, collaborative execution of subtasks.
+
+-----
+
+-----
+
+### Source [146]: https://docs.crewai.com/guides/crews/first-crew
+
+Query: What are the key architectural differences between CrewAI's distinct 'Crews' (for autonomous collaboration) and 'Flows' (for deterministic orchestration), and how does this duality compare to LangGraph's unified graph-based approach to defining both agentic and workflow-based logic?
+
+Answer: This tutorial provides a step-by-step guide to building a Crew, illustrating how to define agent roles, assign tasks, and set up collaboration. It demonstrates the practical process of creating a team of AI agents that work together autonomously, but does not delve into the architectural comparison with Flows or other frameworks like LangGraph.
+
+## Summary Table: CrewAI vs. LangGraph Architectural Approach
+
+| Aspect                | CrewAI (Crews)                          | CrewAI (Flows)                          | LangGraph (Unified)                |
+|-----------------------|-----------------------------------------|-----------------------------------------|------------------------------------|
+| **Primary Focus**     | Autonomous, collaborative agent teams   | Deterministic, structured workflows    | Unified graph for agents & workflows|
+| **Control**           | High autonomy, emergent behavior        | Precise, event-driven orchestration    | Mixed, graph defines both          |
+| **Use Case**          | Adaptive, complex problem-solving       | Repeatable, controlled automation      | Flexible, integrated logic         |
+| **Architecture**      | Role-based, team-oriented               | State-driven, process-oriented         | Node-and-edge graph model          |
+| **Integration**       | Can be embedded within Flows            | Can orchestrate Crews                   | Single model for all logic         |
+
+CrewAI’s architectural duality offers clear separation between autonomous collaboration (Crews) and deterministic orchestration (Flows), providing flexibility and clarity in system design. In contrast, LangGraph’s unified graph-based approach blends agentic and workflow logic into a single, flexible model, which may offer different trade-offs in complexity and clarity.
+
+-----
+</details>
+
+
+<details>
+<summary>What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a more robust framework like LangGraph or the OpenAI Agents SDK?</summary>
+
+### Source [147]: https://www.openxcell.com/blog/autogen-vs-langgraph/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a more robust framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: When moving from an AutoGen prototype to a production system with frameworks like LangGraph, several best practices are highlighted:
+
+- **Architecture & Workflow Design:** AutoGen uses chat-based orchestration and conversational loops, suitable for rapid prototyping. LangGraph employs a graph-based workflow with directed acyclic graphs (DAGs), enabling explicit, structured, and scalable control flows ideal for production systems.
+- **Error Handling & Retry Logic:** AutoGen provides built-in retries and conversational failure recovery. LangGraph enhances this with node-level retries, branching, and rollback support, crucial for robust error handling in production.
+- **Memory Management:** While AutoGen offers basic message history and optional external stores, LangGraph supports advanced memory management through LangChain, including entity, summary, and vector store memory types—key for handling complex state in production.
+- **Tool Integration:** LangGraph integrates deeply with LangChain tools and plugins, facilitating the use of external APIs, databases, and code execution environments, which is often necessary for robust, extensible production agents.
+- **Deployment & Production Readiness:** LangGraph, in combination with LangChain’s deployment tools, is designed for robust, scalable deployments, providing enterprise-grade features like advanced logging, observability (via LangSmith), and support for parallelism and concurrency.
+- **Debugging & Observability:** AutoGen Studio offers visual logs for development, but LangGraph with LangSmith provides advanced tracing and observability for monitoring, debugging, and optimizing workflows at scale.
+
+Transitioning to LangGraph involves re-architecting conversational flows as explicit graphs, leveraging advanced memory and error handling, integrating external tools, and adopting observability practices for production reliability.
+
+-----
+
+-----
+
+-----
+
+### Source [148]: https://docs.langchain.com/langgraph-platform/autogen-integration
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a more robust framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: The official LangGraph documentation outlines step-by-step how to integrate AutoGen agents within a LangGraph workflow and deploy to production:
+
+- **Graph Construction:** Use LangGraph’s StateGraph to encapsulate your agent logic as nodes, allowing structured control and message flow. The integration example demonstrates how to wrap an AutoGen agent call as a node in a LangGraph graph.
+- **Persistence:** Employ LangGraph’s built-in checkpointing (via MemorySaver or other backends) to persist the state of conversations, which is critical for resuming, scaling, and debugging production workflows.
+- **Agent Configuration:** Clearly define agent parameters, including model selection (e.g., GPT-4o), timeouts, cache seeds, temperature, and system messages for consistent, reproducible behavior.
+- **Code Structure:** Organize production code with clear separation: core agent logic (agent.py), dependency management (requirements.txt), and configuration (langgraph.json). This modular approach simplifies deployment and maintenance.
+- **Deployment Preparation:** Prepare your agent directory with all required files for platform deployment. LangGraph supports exporting the graph for deployment on its platform or other infrastructure.
+- **Observability:** Visualize your workflow graph using built-in tools to ensure correct logic and flow before and after deployment.
+
+By encapsulating the core agent logic within LangGraph nodes and leveraging checkpointing, error handling, and deployment preparation, AutoGen prototypes can be systematically transformed into production-ready, observable, and scalable systems.
+
+-----
+
+-----
+
+-----
+
+### Source [149]: https://www.sevensquaretech.com/autogen-vs-langgraph-ai-workflow/
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a more robust framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: A production transition from AutoGen to LangGraph or similar frameworks involves:
+
+- **Use Case Alignment:** AutoGen excels for rapid prototyping, research, and internal conversational tools, but lacks the modularity and robustness needed for large-scale, production-grade multi-agent workflows.
+- **Scalability & Observability:** LangGraph provides a state machine model, detailed observability (via LangSmith), and scalability features essential for production. This enables tracking of token usage, agent paths, errors, and performance metrics.
+- **Structured Workflows:** LangGraph’s graph-based approach allows for explicit modeling of agent logic, error handling, and state transitions, making it preferable for robust, maintainable production systems.
+- **Debugging:** The combination of LangGraph and LangSmith offers advanced debugging tools for identifying and resolving issues at scale, which is crucial for maintaining reliability in production environments.
+
+For best results, migrate conversational logic to structured, stateful workflows, integrate observability from the start, and leverage the modularity and advanced error handling of frameworks like LangGraph.
+
+-----
+
+-----
+
+-----
+
+### Source [150]: https://focused.io/lab/a-practical-guide-for-migrating-classic-langchain-agents-to-langgraph
+
+Query: What are the best practices for transitioning an AI agent prototype built in AutoGen Studio to a production-ready system using a more robust framework like LangGraph or the OpenAI Agents SDK?
+
+Answer: Migrating to LangGraph from legacy agent frameworks (such as those used in AutoGen prototypes) involves several technical best practices:
+
+- **Node-Based Refactoring:** Replace legacy agent entry points (e.g., `initialize_agent`) with LangGraph nodes, which encapsulate agent logic and allow for deterministic routing and modular composition.
+- **Typed State & Persistence:** Use typed graph states and built-in checkpoint helpers (S3, Redis, SQLite) to persist agent state between requests—critical for reliability in production.
+- **Observability:** Enable advanced tracing (e.g., `LANGCHAIN_TRACING_V2=true` with LangSmith) to collect detailed execution traces for monitoring and debugging.
+- **Canary Deployment:** Before full cutover, route a subset of production traffic to the new LangGraph-based agent, compare latency and error rates, and ensure metric parity with the legacy implementation.
+- **Documentation:** Export and maintain visual diagrams (e.g., GraphViz) of your workflow graph for onboarding and operational transparency.
+- **Retiring Old Code:** Once the new system achieves stability and performance parity, remove deprecated agent code to reduce maintenance overhead.
+
+This migration is designed as a surgical refactor, not a risky rewrite, enabling reliable scaling, granular observability, and future extensibility for multi-agent workflows.
+
+-----
+
+-----
+</details>
+
+
+
+## Sources Scraped From Research Results
+
+<details>
+<summary>**Imagine this:** You’ve finally validated your product idea.</summary>
+
+**Imagine this:** You’ve finally validated your product idea.
+
+Your GPT-powered assistant prototype is functional, but things are getting messy because of multiple agents, tangled logic, limited visibility, & constant debugging.
+
+You need something better to handle everything.
+
+We’ve worked with fast-scaling startups and enterprise tech teams across fintech, logistics, eCommerce, and more.
+
+The common thread?
+
+Everyone is confused about AI workflows when building multi-agent AI systems.
+
+Founders come to us asking: Should we use **[Autogen](https://microsoft.github.io/autogen/stable//index.html)** or **[LangGraph](https://www.langchain.com/langgraph)** for our LLM-powered workflows?
+
+If you are one of them, then you are at the right place.
+
+Here in this blog, we tried to explain the difference between Autogen vs LangGraph so you can choose the best LLM workflow for your solution.
+
+## **What is the Problem with Modern AI Agent Workflows?**
+
+**Let’s get real:** Most LLM-powered applications start with an exciting demo and quickly evolve into chaos.
+
+Teams usually build custom workflows using hardcoded logic, chained prompts, or simple tool integration.
+
+When you scale up, problems compound. Handling state across multiple agents, tracking responses, integrating APIs, & recovering from failures becomes difficult.
+
+This is especially true for applications in industries like fintech, where every interaction must be traceable, or in eCommerce, where user journeys require complex decisions.
+
+Whether you’re building a multi-agent customer service bot or an AI assistant for supply chain insights, you need orchestration that scales.
+
+That’s the problem with most AI agent workflows today: No visibility, no structure, and limited control.
+
+This is where modern AI workflow tools like LangGraph and AutoGen come into play.
+
+They help you go beyond basic LLM integration and build structured, scalable, multi-agent systems that work in production.
+
+If you’re serious about building for 2025 and beyond, you can’t afford to ignore the power of AI agent framework comparison tools like LangGraph vs AutoGen.
+
+## **Autogen vs LangGraph: A Quick Overview**
+
+Before we do the detailed comparison of Autogen and LangGraph, let’s learn about them.
+
+AutoGen is built by Microsoft and focuses on simplifying multi-agent conversational flows.
+
+It’s a Python-based tool that lets you simulate conversations between agents playing different roles.
+
+The star feature? AutoGen Studio, which offers a GUI to debug and visualize these conversations.
+
+LangGraph, developed by the LangChain team, is a graph-based AI workflow framework.
+
+It allows you to model reactive workflows as state machines with defined transitions.
+
+LangGraph is fully integrated with LangSmith, which provides world-class observability and debugging for production-ready applications.
+
+Here’s a quick summary:
+
+| **Feature** | **AutoGen** | **LangGraph** |
+| --- | --- | --- |
+| **Primary Use Case** | Simulated conversations | Structured, stateful workflows |
+| **Visual Debugging** | AutoGen Studio | LangSmith |
+| **Language** | Python | Python |
+| **Complexity Handling** | Low to Moderate | High |
+| **Ideal For** | R&D, rapid prototyping | Production-grade workflows |
+
+Both tools support Python, and both are designed to help developers build AI workflow orchestration beyond simple prompt chains.
+
+However, they take very different approaches.
+
+LangGraph vs AutoGen isn’t just about preferences; it’s about the kind of product you’re building, and how much control and scalability you need.
+
+## **What Makes AutoGen Stand Out?**
+
+AutoGen’s strength is its ability to simulate multi-agent conversational flows with minimal code.
+
+You define agents like a Researcher, a Writer, or a Critic, and assign them goals. The system then generates a dialog between them based on predefined behaviors.
+
+This structure makes it great for creating AutoGPT-style chat simulations or internal research tools.
+
+The biggest advantage is AutoGen Studio, a GUI tool that gives you complete visibility into agent interactions. It’s beginner-friendly and great for fast prototyping.
+
+You can monitor back-and-forth conversations, evaluate outputs, and tweak behavior, all without touching too much code.
+
+AutoGen also provides solid support for tool use, fallbacks, retries, and more. It is best in experimental and R&D settings.
+
+Teams love it for building PoCs and running internal tests before investing in more robust infrastructure.
+
+| | |
+| --- | --- |
+| **AutoGen Highlights** | **Details** |
+| **Strength** | Fast setup for chat-based simulations |
+| **Best For** | Conversational AI, internal tooling, PoCs |
+| **Visual Debugging** | AutoGen Studio |
+| **Ease of Use** | High – beginner-friendly |
+
+However, while AutoGen is great for early-stage apps, it can struggle with stateful workflows or logic-heavy tasks.
+
+If you’re building for scale or production, especially in verticals like logistics or SaaS, the LangGraph vs AutoGen decision starts going towards LangGraph.
+
+Still, AutoGen is a solid AI agent framework, especially for applications where conversational workflow focus is the top priority.
+
+## **Where does LangGraph Excels?**
+
+LangGraph brings a different mindset. Instead of simulating chat flows, it models LLM applications as state machines.
+
+Each node is a function or agent, and edges represent transitions based on conditions or outcomes.
+
+This structure is ideal for workflows where you need reliability, traceability, and modular logic.
+
+What makes LangGraph powerful is its tight integration with LangSmith, the observability suite that lets you inspect every step of your app for token usage, errors, execution time, agent transitions, and more.
+
+LangSmith is like a control room for your AI system. LangGraph is especially great for industries where workflows must be predictable, resilient, and auditable.
+
+We’ve helped healthtech and eCommerce platforms migrate to LangGraph and saw immediate improvements in debugging time and runtime stability.
+
+| | |
+| --- | --- |
+| **LangGraph Strengths** | **Use Case / Benefit** |
+| **Graph-based Workflow** | Better for branching, complex tasks |
+| **Observability** | LangSmith integration |
+| **Scalable & Modular** | Ideal for enterprise & production systems |
+| **Team Debugging** | Multi-dev visibility and audit trails |
+
+If you’re building complex workflows that involve multi-agent systems, conditional logic, API tools, & user context across steps, LangGraph gives you a better foundation.
+
+When it comes to LangGraph vs AutoGen, LangGraph often wins for production-level use cases.
+
+## **Autogen vs LangGraph: Real Use Case Comparisons**
+
+Let’s look at real-world scenarios of Autogen vs LangGraph to highlight when to use each tool.
+
+### **1\. Conversation Simulation Tool:**
+
+- If you’re building a tool to simulate role-based conversations, like for education, negotiation modeling, or internal AI research, then AutoGen is a great fit.
+- Its conversational-first design and intuitive interface make it easy to test multi-role interactions without writing a ton of logic.
+
+### **2\. E-commerce AI Assistant:**
+
+- If you’re building an AI assistant that handles tasks like order tracking, returns, product recommendations, and price updates, LangGraph is the clear winner.
+- You’ll need workflows that branch based on user input, trigger tool calls, and maintain memory, all of which LangGraph handles better.
+
+### **3\. Internal DevOps Copilot:**
+
+- Start with AutoGen if you’re prototyping fast. But as your internal tools grow in complexity, LangGraph becomes a better long-term choice.
+- Its ability to define retry policies, store state, and manage transitions makes it more robust.
+
+When comparing AutoGen vs LangGraph workflow orchestration, use case fit is everything.
+
+## **Choosing Between Autogen and LangGraph: Key Criteria**
+
+- Choose AutoGen if you want to build something fast and conversational.
+- Choose LangGraph if you want something structured and scalable.
+- If you need chat-based roles, AutoGen is better.
+- If your product relies on conditional logic or multi-step flows, LangGraph wins.
+
+You also need to think long-term.
+
+If your LLM app will eventually need structured, reusable workflows, LangGraph vs AutoGen becomes a question of maturity and resilience.
+
+## **LangGraph State Management vs AutoGen Conversational Flow**
+
+State management is where LangGraph pulls ahead. Each node in a LangGraph app can store and retrieve data, making workflows stateful and deterministic.
+
+That means you can pause, resume, or debug any flow at any point, which is essential for regulated industries.
+
+AutoGen treats conversations as transient. Memory is short-lived unless you build your own persistence layer. That’s fine for sandbox tools, but hard to maintain at scale.
+
+If you’re building a product that depends on user memory, branching workflows, or auditability, LangGraph is far more reliable.
+
+Think of it this way: AutoGen is a great playground; LangGraph is your production factory.
+
+The LangGraph vs AutoGen debate comes down to this: Do you want full control and state, or just fast simulations?
+
+## **Debugging: AutoGen Studio vs LangSmith Observability**
+
+Debugging is another area where the differences between these tools become very clear.
+
+AutoGen Studio is excellent for early development. It gives you a visual canvas to see how agents interact. Great for demos, internal testing, or exploring behaviors.
+
+But LangSmith is the tool built for LangGraph. It allows deep inspection into each node, memory state, token usage, and execution path.
+
+For teams building in production, this kind of visibility is non-negotiable. If your AI system is mission-critical, you want LangSmith observability, not just basic GUI output.
+
+That’s what makes LangGraph shine in enterprise settings where reliability, audits, and performance tracking matter.
+
+Again, in the context of LangGraph vs AutoGen, debugging and visibility make LangGraph the clear winner for mature teams.
+
+## **Which AI Workflow Tool Is Better in 2025?**
+
+So, who wins the Autogen vs LangGraph showdown?
+
+If you’re prototyping, experimenting with AI agents, or building tools for research, AutoGen is fast, flexible, and easy to use.
+
+If you’re building production-grade, scalable LLM workflows, especially in regulated or high-reliability environments, LangGraph offers better workflow orchestration, debugging, and state management.
+
+There’s no one-size-fits-all winner. The real answer lies in your product’s goals, team structure, and tolerance for ambiguity vs control.
+
+But in 2025, as LLM-powered systems become more complex and mission-critical, LangGraph will likely be the default for serious builds.
+</details>
+
+
+<details>
+<summary>Open-Source AI Agent Frameworks: Which One Is Right for You?</summary>
+
+# Open-Source AI Agent Frameworks: Which One Is Right for You?
+
+Building AI agents used to be a patchwork of scripts, prompt engineering, and trial-and-error. Today, there is a growing landscape of open-source frameworks designed to streamline the process of creating agents that reason, plan, and execute tasks autonomously. This post offers an in-depth look at some of the leading open-source AI agent frameworks out there: **LangGraph, the OpenAI Agents SDK, CrewAI, AutoGen, and Pydantic AI agents**. By the time you finish reading, you should have a clearer view of each framework’s sweet spot, how they differ, and where they excel in real-world development.
+
+One of the biggest challenges in agent development is striking the right balance between giving the AI enough autonomy to handle tasks dynamically and maintaining enough structure for reliability. Each framework has its own philosophy, from explicit graph-based workflows to lightweight code-driven agents. We’ll walk through their core ideas, trace how they might fit into your workflow, and examine how you can integrate them with monitoring solutions to evaluate and debug them to make sure they perform in production.
+
+## 🦜 LangGraph
+
+[LangGraph](https://github.com/langchain-ai/langgraph) extends the well-known [LangChain](https://github.com/langchain-ai/langchain) library into a graph-based architecture that treats agent steps like nodes in a directed acyclic graph. Each node handles a prompt or sub-task, and edges control data flow and transitions. This is helpful for complex, multi-step tasks where you need precise control over branching and error handling. LangGraph’s DAG philosophy makes it easier to visualize or debug how decisions flow from one step to another, and you still inherit a ton of useful tooling and integrations from LangChain.
+
+Developers who prefer to model AI tasks in stateful workflows often gravitate toward LangGraph. If your application demands robust task decomposition, parallel branching, or the ability to inject custom logic at specific stages, you might find LangGraph’s explicit approach a good fit.
+
+## OpenAI Agents SDK
+
+The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is the latest entrant in the field. It packages OpenAI’s capabilities into a more structured toolset for building agents that can reason, plan, and call external APIs or functions. By providing a specialized agent runtime and a straightforward API for assigning roles, tools, and triggers, OpenAI aims to simplify multi-step or multi-agent orchestration. While it’s still evolving, developers appreciate the familiar style of prompts and the native integration with OpenAI’s model endpoints.
+
+If you are already deep into OpenAI’s stack and want an officially supported solution to spin up agents that utilize GPT-4o or GPT-o3, the OpenAI Agents SDK might be your first stop.
+
+## CrewAI
+
+[CrewAI](https://github.com/crewAIInc/crewAI) is all about role-based collaboration among multiple agents. Imagine giving each agent a distinct skillset or personality, then letting them cooperate (or even debate) to solve a problem. This framework offers a higher-level abstraction called a “Crew,” which is basically a container for multiple agents that each has a role or function. The Crew coordinates workflows, allowing these agents to share context and build upon one another’s contributions. I like CrewAI as it is easy to configure while still letting you attach advanced memory and error-handling logic.
+
+If your use case calls for a multi-agent approach—like a “Planner” agent delegating tasks to a “Researcher” and “Writer” agent—CrewAI makes that easy. The built-in memory modules and fluid user experience have led to growing adoption where collaboration and parallelization of tasks are important.
+
+## AutoGen
+
+[AutoGen](https://github.com/microsoft/autogen), born out of Microsoft Research, frames everything as an asynchronous conversation among specialized agents. Each agent can be a ChatGPT-style assistant or a tool executor, and you orchestrate how they pass messages back and forth. This asynchronous approach reduces blocking, making it well-suited for longer tasks or scenarios where an agent needs to wait on external events. Developers who like the idea of “multiple LLMs in conversation” may find AutoGen’s event-driven approach nice, especially for dynamic dialogues that need real-time concurrency or frequent role switching.
+
+AutoGen is good if you’re building an agent that heavily relies on multi-turn conversations and real-time tool invocation. It supports free-form chat among many agents and is backed by a research-driven community that consistently introduces new conversation patterns.
+
+## 🐍 Pydantic AI Agents
+
+[Pydantic AI](https://ai.pydantic.dev/) brings Pydantic’s famous **type safety** and ergonomic developer experience to agent development. You define your agent’s inputs, tool signatures, and outputs as Python types, and the framework handles validation plus OpenTelemetry instrumentation under the hood. The result is FastAPI-style DX for GenAI applications.
+
+If you’re a Python developer who values explicit type contracts, tests, and quick feedback loops, Pydantic AI offers a lightweight yet powerful path to building production-ready agents with minimal boilerplate.
+</details>
+
+
+<details>
+<summary>The promise of AI agents working together to tackle complex problems is no longer a futuristic dream; it&#x27;s a rapidly evolving reality. But how do you move beyond simple agent interactions to truly orchestrate sophisticated, multi-step workflows that are both scalable and controllable? Enter **CrewAI Crews and Flows**, a powerful combination that&#x27;s transforming how developers build intelligent, production-ready AI applications.</summary>
+
+The promise of AI agents working together to tackle complex problems is no longer a futuristic dream; it's a rapidly evolving reality. But how do you move beyond simple agent interactions to truly orchestrate sophisticated, multi-step workflows that are both scalable and controllable? Enter **CrewAI Crews and Flows**, a powerful combination that's transforming how developers build intelligent, production-ready AI applications.
+
+This complete guide will navigate you through the core concepts of CrewAI, illuminate the game-changing capabilities of its new Flows feature, and equip you with the knowledge to design smarter, more dynamic **AI workflow orchestration**. Get ready to unlock new levels of automation and precision in your AI projects.
+
+## Understanding CrewAI Crews and Flows: The Core Concepts
+
+At its heart, **CrewAI** is a robust framework designed for orchestrating role-playing autonomous AI agents. Think of it as a team manager for your AI, enabling sophisticated **AI automation**.
+
+### CrewAI Crews: Collaborative AI Agents
+
+**Crews** in CrewAI refer to a group of specialized AI agents working together to achieve a common objective. Each agent is defined with a specific role, a clear goal, and a set of tools it can use. For instance, you might have a "Research Agent" with web search tools, a "Writer Agent" with content generation tools, and an "Editor Agent" with review capabilities, all collaborating within a crew to produce an article. This autonomous collaboration is where much of CrewAI's power lies, allowing for complex tasks to be broken down and executed efficiently by a team of experts.
+
+### CrewAI Flows: The Orchestration Layer
+
+While Crews excel at collaboration, **Flows** are the new, powerful feature designed to streamline the _creation and management_ of these **AI workflows**. Flows provide a robust framework for building sophisticated AI automations by enabling structured, event-driven workflows. They seamlessly connect multiple tasks, manage state, and precisely control the flow of execution in your AI applications. With Flows, you can easily design and implement multi-step processes that leverage the full potential of CrewAI’s capabilities, chaining together multiple Crews and tasks efficiently for advanced **AI workflow orchestration**.
+
+## Unlocking Advanced AI Workflow Orchestration with CrewAI Flows
+
+CrewAI Flows aren't just an add-on; they're a fundamental shift in how you can approach **AI automation**, offering distinct advantages for building robust **multi-agent systems**.
+
+### Precision, Control, and Scalability
+
+Flows provide **low-level control** for when you need precision without over-complication for simple tasks. This means you can dictate exactly how and when agents act. Furthermore, they offer **flexible agency**, allowing you to mix rules, functions, direct LLM calls, and full crews within a single workflow. This adaptability ensures the right tool is used for the right job. Crucially, CrewAI is **built for scale**, already "powering millions of daily executions in production environments," demonstrating its readiness for enterprise-level demands in **AI workflow orchestration**.
+
+### Simplified Complexity & Enhanced State Management
+
+One of the biggest challenges in complex AI workflows is managing context. Flows make **state management** super easy, allowing you to manage and share state between different tasks in your workflow. This is vital for maintaining continuity across multi-step processes. They also offer **flexible control flow**, enabling you to implement conditional logic, loops, branching, and event-driven architecture, leading to dynamic and responsive workflows that adapt to changing conditions. This significantly simplifies the development of intricate **AI agent** interactions.
+
+### Unmatched Flexibility and Integration
+
+Unlike many tools that lock you into a single approach, CrewAI Flows let you **move fluidly across chats, agents, or rigid graphs**, applying the right structure at the right time. This means you can orchestrate anything from a single step to a fully autonomous crew without over-engineering. Adding to its versatility, CrewAI **integrates with 1,200+ applications**, expanding its utility across a vast ecosystem of tools and services, making it a central hub for **AI automation**.
+
+## Implementing CrewAI Flows: Best Practices for AI Automation
+
+Implementing **CrewAI Flows** effectively requires a strategic approach to leverage their full potential for **AI workflow orchestration**.
+
+### Strategic Workflow Design
+
+A key best practice is to **start simple and scale gradually**. Begin with a single task or a small crew, then progressively introduce Flows to orchestrate more complex, multi-step processes. Design your workflows to be **event-driven**, thinking about triggers and reactions rather than purely linear execution. Crucially, **actively plan for state management**; identify what information needs to be shared between tasks and crews and how it will be maintained throughout the flow. This ensures your **AI agents** have the necessary context at every step.
+
+### Crews vs. Flows: The Decision Framework
+
+One of the most important decisions you'll make is choosing the right approach for your specific use case. The "Flows vs. Crews: Understanding the Decision Framework" highlights that it's not always an either-or situation. Understand when **autonomous collaboration (Crews)** is sufficient for a task and when **structured automation with precise control (Flows)** is necessary. Often, the most powerful solutions combine both, with Flows orchestrating multiple Crews to achieve complex **AI automation** goals.
+
+### Leveraging Flexible Agency
+
+Don't limit yourself to a single type of agent interaction. Best practices involve **mixing and matching rules, functions, direct LLM calls, and full crews** within a single flow. This allows you to use the most efficient and effective method for each specific step, optimizing performance and resource usage. This flexible agency is a hallmark of advanced **AI workflow orchestration**.
+
+## CrewAI in Action: Real-World Use Cases
+
+To truly grasp the power of **CrewAI Flows**, let's look at how they can be applied in practical scenarios, showcasing their utility in **AI automation**.
+
+### Automated Market Analysis
+
+Imagine a flow designed to conduct comprehensive market analysis. This flow could involve:
+
+1. An "Information Gathering Crew" using a `WebsiteSearchTool` to collect data from various sources.
+2. A "Data Analysis Agent" processing the raw information, identifying trends and insights.
+3. A "Report Generation Agent" structuring the findings into a `MarketAnalysis` Pydantic model for consistent, structured output.
+
+Throughout this process, a `MarketResearchState` object would maintain context, storing inputs and outputs, ensuring seamless information flow between agents and tasks. This demonstrates how **CrewAI Flows** bring structure, state management, and tool integration to complex business objectives, enabling robust **AI workflow orchestration**.
+
+### Content Generation & Beyond
+
+**CrewAI Flows** are also ideal for creative and content generation tasks. For example, you can use the `crewai create flow name_of_flow` command to scaffold a project that includes a prebuilt `poem_crew`. This crew, orchestrated by a Flow, could generate creative content, demonstrating the framework's versatility. The fact that CrewAI is "powering millions of daily executions in production environments" further implies its widespread use across various industries, from customer service automation to complex data processing pipelines, all benefiting from sophisticated **AI automation**.
+
+## The Road Ahead: Future Trends and Expert Outlook
+
+The landscape of **AI agents** and **AI workflow orchestration** is rapidly evolving, and **CrewAI Flows** are at the forefront.
+
+### Evolving Orchestration & Scalability
+
+We can expect **continued evolution of workflow orchestration**, with more sophisticated control mechanisms, enhanced debugging tools, and potentially more intuitive visual builders. The emphasis on being "Built for scale" suggests even wider **increased adoption in production environments**, leading to more robust enterprise features, security, and monitoring capabilities. The "2025 Google LLC" copyright on recent content hints at continuous, forward-looking development in **multi-agent systems**.
+
+### Smarter, More Adaptive AI Systems
+
+The future will likely see **smarter, more adaptive AI systems** that can dynamically adjust their approach based on context and task requirements. The ability to "move fluidly across chats, agents, or rigid graphs" points to a future of highly flexible and potentially "self-optimizing" **AI workflows**. Furthermore, the **enhanced integration ecosystem** with "1,200+ applications" will continue to grow, offering deeper and more seamless connections across various platforms, solidifying CrewAI's role in **AI automation**.
+
+Industry leaders are taking notice. Ben Tossell, Founder at Ben's Bites, enthusiastically stated, "nothing I've ever seen before!" regarding CrewAI Flows, underscoring their transformative potential.
+
+## Conclusion: Your Next Step in AI Automation
+
+**CrewAI Crews and Flows** represent a significant leap forward in building intelligent, scalable, and controllable AI applications. By providing a structured framework for multi-agent collaboration, state management, and flexible control flow, they empower developers to tackle complex problems with unprecedented precision and efficiency in **AI workflow orchestration**.
+
+Whether you're looking to automate intricate business processes, generate dynamic content, or build highly responsive **AI agents**, CrewAI Flows offer the essential tools to bring your vision to life. Don't just orchestrate agents; orchestrate intelligence.
+</details>
+
+
+<details>
+<summary>OpenAI Agents SDK vs LangGraph vs Autogen vs CrewAI</summary>
+
+# OpenAI Agents SDK vs LangGraph vs Autogen vs CrewAI
+
+Finally, OpenAI gave in and launched a new [agentic framework](https://composio.dev/blog/best-ai-agent-builders) called Agents SDK. It's a software development kit that lets developers build agentic applications. It includes essential components like handoffs, agents, and guardrails. A lightweight production-ready framework backed by none other than OpenAI sounds interesting,
+
+However, we already have so many agentic frameworks promising the same stuff in different ways. So, where does this new framework stand? Should you pick it over others like LangGraph, Autogen, CrewAI, etc?
+
+In this blog, I’ll explain the OpenAI Agents SDK, its components, uses, and more and compare it with **LangGraph, CrewAI, and AutoGen,** helping you choose the best framework for your needs.
+
+So, let’s begin!
+
+## Table of Contents
+
+- Deep Dive into OpenAI Agents SDK
+
+- Key Features of Open AI Agents SDK
+
+- Building with OpenAI Agents SDK & Composio
+
+- Framework Comparison (OpenAI Agents, Crew AI, Lang-Graph, Autogen):
+
+  - Easiness of Getting Started
+
+  - Building Complex Agents
+
+  - Multiple Agent Support
+
+  - State Management
+
+  - Ecosystem & Support
+- Final Verdict: Which Framework Should You Choose?
+
+
+## TL; DR: Key Takeaways
+
+- OpenAI Agents SDK offers a lightweight framework with minimal abstractions, making it accessible for developers new to agent development.
+
+- It has three core primitives: Agents, Handoffs, and Guardrails, balancing simplicity and power.
+
+- Agent SDK excels in tracing and visualization capabilities, making debugging and monitoring agent workflows straightforward.
+
+- **Lang Graph** offers superior state management and graph-based workflows, which are ideal for complex, cyclical agent interactions and production but with a steeper learning curve.
+
+- Crew AI provides the most intuitive approach to role-based multi-agent systems.
+
+- **AutoGen** offers strong support for diverse conversation patterns and agent topologies. The learning curve is medium, and the documentation is not very clear.
+
+- Your choice should depend on your specific use case:
+
+  - **Open AI Agents SDK** \- simplicity and production,
+
+  - **Lang Graph** \- complex workflows,
+
+  - **CrewAI -** intuitive multi-agent crew-based systems,
+
+  - **AutoGen -** flexible conversation patterns.
+
+## Deep Dive into OpenAI Agents SDK
+
+OpenAI's Agents SDK is a lightweight yet powerful framework for building agentic AI applications
+
+It simplifies the creation of multi-agent systems by providing primitives such as:
+
+- **Agents**: LLM’s equipped with Instructions & Tools.
+
+- **Handoffs**: Allows delegating a specific task to another agent. Suitable for multi-agent settings.
+
+- **Guardrails**: Safety nets are used to validate inputs to agents. Talk about security.
+
+
+Designed for flexibility and scalability, the SDK enables developers to orchestrate workflows, integrate tools, and debug processes with ease.
+
+One of the standout points is that the OpenAI Agents SDK doesn’t have a steep learning curve, making it easy to build complex systems or automate tasks.
+
+The SDK has two driving design principles:
+
+1. 1\. Features are worth using, but few are enough primitives to make learning quick.
+
+2. 2\. It works out of the box, but you can customize exactly what happens.
+
+
+Let’s explore how simple it is to start by creating a Hello World program - Haiku on Python!
+
+> Note: This is different from another agentic framework OpenAI released last year called [Swarm.](https://composio.dev/blog/swarm-the-agentic-framework-from-openai)
+
+#### Haiku On Python - Hello World Program!
+
+💡 To keep things organized, create a new environment and enable it.
+
+Install the package using:
+
+```
+pip install openai-agents
+
+```
+
+Create a file [agent.py](http://agent.py/) and. env in the `cwd` and paste the following code:
+
+```
+from agents import Agent, Runner
+
+agent = Agent(name="Assistant", instructions="You are a helpful assistant")
+
+result = Runner.run_sync(agent, "Write a haiku on python.")
+print(result.final_output)
+
+```
+
+Code explanation:
+
+- Import necessary tools like Runner and Agent primitive class.
+
+- Initializes the Agent name and instruction (think system prompt, but diff)
+
+- Calles the Runner `run_sync` method to execute task synchronously i.e asking agent to “write a haiku about python”.
+
+- prints the result.
+
+
+In env file, add your `*OPENAI_API_KEY = "your_api_key"` and run the program with:\*
+
+```
+python agents.py
+```
+
+Output:https://framerusercontent.com/images/ij3ecYWdNHq4T5SQq3dycoUe2go.png?width=332&height=86
+
+Output might differ.
+
+Amazing, we just made an AI agent in just 4 lines of code. It's pretty wild, right?
+
+However, there is more to OpenAI Agent SDK feature offerings and why it can be a game-changer. Let’s look at a few of them.
+
+## Key Features of Open AI Agents SDKhttps://framerusercontent.com/images/YBbAkFPLTY7THduO4CyVD0KGzE4.png?width=1118&height=1078
+
+OpenAI Agents SDK Features, credits ( [adasci.org](http://adasci.org/))
+
+Though there are a lot of hidden features that we are yet to explore, here are key ones:
+
+- **Agent Loop**: A built-in mechanism that handles calling tools, sending results to the language model and continuing the loop until completion. (feel like Cursor)
+
+- **Python-First Design**: Leverages native Python features for orchestration rather than introducing new abstractions, reducing the learning curve. (fast and easy to get started)
+
+- **Handoffs**: Enables coordination and delegation between multiple agents, allowing for specialized task handling. (co-working)
+
+- **Guardrails**: Provides input validation and safety checks that run parallel to your agents and can break execution early if checks fail. (security net)
+
+- **Function Tools**: Converts any Python function into a tool with automatic schema generation and validation. ( [tool calling automation](https://composio.dev/blog/tool-calling-in-llama-3-a-guide-to-build-agents/))
+
+- **Tracing**: Built-in visualization tools for debugging and monitoring workflows, plus integration with OpenAI's evaluation and fine-tuning capabilities. (visualization support)
+
+
+Agents SDK offers several standout features that make it a strong choice for AI Projects. But does it stand out in the case of complex projects?
+
+## Building with OpenAI Agents SDK & Composio
+
+We will use [Composio](http://composio.dev/) tools integration and OpenAI Agent SDK to simplify building and developing agents. But before that,
+
+### Setting up environment
+
+We will use a virtual environment to keep things isolated. I am using Windows, so some commands might differ from other OSs.
+
+Start by creating a new folder and opening it in your editor of choice. I am going with Cursor.
+
+Next open the terminal and create a virtual env with:
+
+```
+python -m venv env_name
+
+```
+
+Make sure to replace `env_name` with any meaningful name,
+
+Now activate the environment with:
+
+```
+composio-learn
+
+```
+
+In this case, `composio-learn` it is my environment name. For Linux/ max, refer online.
+
+Finally, let’s add all the necessary libraries with:
+
+```
+pip install composio-openai openai-agents
+
+```
+
+Next, we need to set up composio.
+
+### Setup Composio
+
+Follow the steps to set composio successfully:
+
+Head to [Composio.dev](http://composio.dev/) and sign in/sign up for the account. It's recommended that you use GitHub for the job.
+
+Next, install `uv` an alternative to pip for package management. This is done as composio requires uvx for setup:
+
+```
+curl -LsSf <https://astral.sh/uv/install.sh> | sh
+
+```
+
+Now login to composio using:
+
+```
+uvx --from composio-core composio login
+
+```
+
+If done correctly, it will open a browser with an access key, which you need to paste in the terminal. Once done, the key will automatically be generated in the backend.
+
+To view the key type:
+
+```
+uvx --from composio-core composio whoami
+
+```
+
+As the API key is visible, save it in the environment variable using:
+
+```
+# create .env
+echo "COMPOSIO_API_KEY=YOUR_API_KEY" >> .env
+
+# setup enviorment variable - I did
+export COMPOSIO_API_KEY=YOUR_API_KEY
+
+```
+
+Please replace your API Key with the one you see in the terminal. If you get stuck, refer to the [Composio Installation Guide](https://docs.composio.dev/getting-started/installation).
+
+Next, authenticate the cli & GitHub using:
+
+```
+uvx --from composio-core composio add github
+
+```
+
+& follow the instructions in the CLI to authenticate and connect your GitHub account.
+
+Once we are done, we will get started!
+
+### Writing Code for Starred GitHub Agent
+
+To keep things simple, we will test the agent on a single functionality: Star, a GitHub repo provided by the user in the prompt. Here is the base code to get started:
+
+```
+# github_agent.py
+
+from __future__ import annotations
+
+import asyncio
+import os
+from typing import List, Optional
+
+from openai import AsyncOpenAI
+from composio_openai import ComposioToolSet, Action
+
+from agents import (
+    Agent,
+    Model,
+    ModelProvider,
+    OpenAIChatCompletionsModel,
+    RunConfig,
+    Runner,
+    function_tool,
+    set_tracing_disabled,
+)
+
+# Environment variables
+BASE_URL = os.getenv("BASE_URL") # Load default url as environment variable
+API_KEY = os.getenv("API_KEY") # Add Open AI key as environemt Variable
+MODEL_NAME = "gpt-4o-mini"
+COMPOSIO_API_KEY = os.getenv("COMPOSIO_API_KEY")  # Add your Composio API key as an environment variable
+
+if not BASE_URL or not API_KEY or not MODEL_NAME:
+    raise ValueError(
+        "Missing required environment variables. Please set BASE_URL, API_KEY, and MODEL_NAME."
+    )
+
+if not COMPOSIO_API_KEY:
+    print("Warning: COMPOSIO_API_KEY environment variable not set. GitHub star functionality will not work.")
+
+# Initialize OpenAI client
+client = AsyncOpenAI(base_url=BASE_URL, api_key=API_KEY)
+set_tracing_disabled(disabled=True)
+
+# Initialize Composio toolset
+composio_toolset = ComposioToolSet(api_key=COMPOSIO_API_KEY or "YOUR_API_KEY")
+github_tools = composio_toolset.get_tools(actions=[Action.GITHUB_STAR_A_REPOSITORY_FOR_THE_AUTHENTICATED_USER])
+
+class CustomModelProvider(ModelProvider):
+    def get_model(self, model_name: str | None) -> Model:
+        return OpenAIChatCompletionsModel(model=model_name or MODEL_NAME, openai_client=client)
+
+CUSTOM_MODEL_PROVIDER = CustomModelProvider()
+
+@function_tool
+async def star_github_repo(repo_name: str) -> str:
+    """
+    Star a GitHub repository for the authenticated user.
+
+    Args:
+        repo_name: The name of the repository to star (format: owner/repo)
+
+    Returns:
+        A message indicating the result of the operation
+    """
+    try:
+        # Ensure repo_name is in the correct format
+        if '/' not in repo_name:
+            return f"Error: Repository name should be in the format 'owner/repo', got '{repo_name}'"
+
+        # Use OpenAI with Composio tools
+        response = await client.chat.completions.create(
+            model=MODEL_NAME,
+            tools=github_tools,
+            messages=[\
+                {"role": "system", "content": "You are a helpful assistant."},\
+                {"role": "user", "content": f"Star the repository {repo_name} on GitHub"},\
+            ],
+        )
+
+        # Handle the tool calls
+        result = composio_toolset.handle_tool_calls(response)
+        return f"Successfully starred repository: {repo_name}" if "error" not in str(result).lower() else f"Failed to star repository: {result}"
+    except Exception as e:
+        return f"Error starring repository: {str(e)}"
+
+async def main():
+    # Create an agent with the GitHub star function
+    agent = Agent(
+        name="GitHub Assistant",
+        instructions="You are a helpful assistant that can star GitHub repositories.",
+        tools=[star_github_repo]
+    )
+
+    # Test the GitHub star functionality
+    result = await Runner.run(
+        agent,
+        "Star the repository <https://github.com/><user_name>/<repo_name> on GitHub",
+        run_config=RunConfig(model_provider=CUSTOM_MODEL_PROVIDER),
+    )
+    print("GitHub star result:")
+    print(result.final_output)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
+
+Intimidating, right? Let’s break it down!
+
+The script:
+
+- Imports necessary modules, including OpenAI, Composio, and custom agent components.
+
+- Loads environment variables ( `BASE_URL`, `API_KEY`, `MODEL_NAME`, `COMPOSIO_API_KEY`) and validates them.
+
+- Initializes OpenAI client and disables tracing for debugging.
+
+- Sets up Composio toolset to enable GitHub repository starring (as per our use case).
+
+- Defines a custom model provider to fetch AI models dynamically.
+
+- Implements `star_github_repo(repo_name: str)` to star a GitHub repository using OpenAI and Composio.
+
+- Creates an AI agent ( `GitHub Assistant`) with instructions to star repositories.
+
+- Runs the agent with a test command and prints the result.
+
+- Uses `asyncio.run(main())` to execute the script asynchronously.
+
+
+Now, let’s see the agent in action
+
+### Results - Run the script
+
+Make sure to replace `"<https://github.com/><user_name>/<repo_name>"` the test section with an actual public GitHub Repo URL. I have changed mine too.
+
+Now head to the terminal & type:
+
+```
+python github_agent.py
+
+```
+
+And see the magic happen!
+
+Before running the agenthttps://framerusercontent.com/images/N1zekBcjkxrnWdyf1Ot22VMDbrw.png?width=1024&height=421
+
+Unstarred github repo
+
+Agent Running…https://framerusercontent.com/images/bjML9o09MkVQD9hrgSl6h2OWs1A.png?width=1024&height=468
+
+output
+
+After Running The Agenthttps://framerusercontent.com/images/9TegHYSECJEROTfTLL1izeXZc.png?width=1024&height=415
+
+Starred Rep
+
+If you don’t see your repo starred🌟, refresh your browser, and it will be fixed.
+
+Having hands-on experience with building using Open AI Agents SDK, let’s look at how it compares against all its competitors- (the main section of the blog)
+
+## Comparing Agent Frameworks
+
+This section focuses on the comparison between OpenAI Agents vs LangGraph vs Autogen and CrewAI against various pointers like:
+
+- Getting Started - Hello World docs
+
+- Building Complex Agents
+
+- Multi-Agent Support
+
+- **State Management**
+
+- **Ecosystem and Support**
+
+
+For ease of understanding, I have included a table for most of the pointers.
+
+So, let’s start with 1st comparison.
+
+### **Getting Started Experience**
+
+| **Framework** | **Learning Curve** | **Documentation Quality** | **Hello World Simplicity** |
+| --- | --- | --- | --- |
+| OpenAI Agents SDK | Low | High, with clear examples | Very simple (few lines of code) |
+| LangGraph | Medium-High | Comprehensive but technical | More complex, requires understanding graph concepts |
+| CrewAI | Low-Medium | Practical with many examples | Simple with intuitive concepts |
+| AutoGen | Medium | Extensive with diverse examples | Moderately simple |
+
+I tested out all of them and here is my experience:
+
+- **OpenAI Agents SDK**: Super easy to start—just a few lines of code! The docs are well-written and not overwhelming. I enjoyed building with it.
+
+- **LangGraph**: Tough to begin with. Had to learn about graphs and states just for a simple agent. Docs are technical and not beginner-friendly, but they offer a free course, which helped.
+
+- **CrewAI**: The second easiest. It requires an understanding of tools and roles, but the docs are well-structured and beginner-friendly.
+
+- **AutoGen**: It's a bit tricky. It needs manual setup and works around chat conversations. Confusing versioning in the documents made things harder.
+
+
+### Building Complex Agents
+
+| **Framework** | **Customization** | **Tool Integration** | **Complexity Management** |
+| --- | --- | --- | --- |
+| OpenAI Agents SDK | High with minimal abstractions | Seamless with function tools | Simple primitives for complex workflows |
+| LangGraph | Very high with graph structures | Strong via LangChain integration | Excellent for complex, cyclical workflow |
+| CrewAI | High with role-based design | Good with custom tools | Natural for team-based workflows |
+| AutoGen | High with conversable agents | Strong with diverse tools | Good for conversation-based workflows |
+
+I tested out all of them for building complex agents, and here’s how they compare:
+
+- **OpenAI Agents SDK**: Highly customizable without adding unnecessary layers. Tool integration is seamless, using simple primitives to build complex workflows.
+
+- **LangGraph offers deep customization through graph structures. It is best** suited for cyclical workflows, but the learning curve is steep. Strong LangChain integration is a plus.
+
+- **CrewAI**: Uses a role-based approach, making it easy to design multi-agent systems. Tool integration is good, and it naturally fits team-based workflows.
+
+- **AutoGen**: Designed for conversation-based agents. Supports diverse tools, but its complexity lies in managing interactions rather than logic flow.
+
+
+### Multi-agent support
+
+| **Framework** | **Agent Communication** | **Orchestration** | **Parallel Execution** |
+| --- | --- | --- | --- |
+| OpenAI Agents SDK | Strong with handoffs | Simple, Python-based | Limited built-in support |
+| LangGraph | Excellent with graph edges | Sophisticated with state transitions | Good support via graph structure |
+| CrewAI | Intuitive with crew metaphor | Natural with role-based design | Supported with task management |
+| AutoGen | Excellent with conversation patterns | Flexible with agent topologies | Supported with agent networks |
+
+I tested all of them for multi-agent support, and here’s how they stack up:
+
+- **OpenAI Agents SDK**: Strong in agent handoffs but lacks built-in parallel execution. Orchestration is simple and Python-based, making it easy to implement.
+
+- **LangGraph**: Excels in communication via graph edges, allowing sophisticated state transitions. Its graph structure makes parallel execution smoother.
+
+- **CrewAI**: Uses an intuitive "crew" metaphor, making agent communication natural. Orchestration is role-based, and task management helps with parallel execution.
+
+- **AutoGen**: Best for conversation-driven agents. Supports flexible agent topologies and enables parallel execution through agent networks.
+
+
+### State Management
+
+| **Framework** | **State Persistence** | **State Transitions** | **Debugging** |
+| --- | --- | --- | --- |
+| OpenAI Agents SDK | Good with built-in tracing | Simple, function-based | Excellent with visualization tools [2](https://openai.github.io/openai-agents-python/) |
+| LangGraph | Excellent with graph state | Sophisticated with conditional edges | Good with LangSmith integration [7](https://www.getzep.com/ai-agents/langchain-agents-langgraph) [10](https://www.datacamp.com/tutorial/langgraph-tutorial) |
+| CrewAI | Basic with task outputs | Simple with sequential/parallel processes | Built-in tools [5](https://docs.crewai.com/introduction) [8](https://www.datacamp.com/tutorial/crew-ai) |
+| AutoGen | Good with agent memory | Flexible with conversation patterns | Good with conversation tracking |
+
+State management refers to tracking the system's condition at any moment—an essential part of system design and a key pillar of any product.
+
+I tested it with long conversations, multiple interactions, and mid-session debugging. Here’s what I found:
+
+- **OpenAI Agents SDK**: State persistence is solid with built-in tracing. Simple function-based state transitions make it easy to work with, and debugging is excellent thanks to visualization tools.
+
+- **LangGraph**: Excels in managing state through graph structures. Transitions are sophisticated, leveraging conditional edges, and debugging is well-supported via LangSmith integration.
+
+- **CrewAI**: Handles state persistence through task outputs. Transitions are straightforward with sequential and parallel processes, but debugging options are limited.
+
+- **AutoGen**: Maintains agent memory well, making it suitable for conversation-driven workflows. State transitions are flexible, and debugging is supported with conversation tracking.
+
+
+### Ecosystem and Support
+
+| **Framework** | **Community Size** | **Integration Options** | **Production Readiness** |
+| --- | --- | --- | --- |
+| OpenAI Agents SDK | Growing (new) | Strong with OpenAI tools | Low (Minimal, you've to do a lot on your own) |
+| LangGraph | Large (part of LangChain) | Excellent with the LangChain ecosystem | Medium-High (designed for production) |
+| CrewAI | Large and growing | Good with Python ecosystem | High |
+| AutoGen | Large (Microsoft-backed) | Good with diverse tools | Medium-High |
+
+A strong ecosystem and support help developers identify and resolve issues, as well as stay up to date.
+
+I often get stuck on small things—thankfully, communities exist! A good ecosystem is always a plus.
+
+Let’s see how these frameworks compare:
+
+- **OpenAI Agents SDK**: Still new but growing fast. Strong integration with OpenAI tools and built for production use.
+
+- **LangGraph**: Benefits from LangChain’s large ecosystem. Excellent integration within that space, making it a solid choice for complex workflows.
+
+- **CrewAI**: Has a growing community and fits well into the Python ecosystem. Suitable for production (only crew-based workflows) but still maturing.
+
+- **AutoGen**: Backed by Microsoft, with a large community and strong tool integration. Production readiness is solid but not yet at the highest level.
+
+
+### Overall
+
+It seems like everyone has their quirks, so it's better to do an overall comparison here are the results (In table format):
+
+| Feature | OpenAI Agents SDK | LangGraph | CrewAI | AutoGen |
+| --- | --- | --- | --- | --- |
+| **Learning Curve** | Lightweight with minimal abstractions, quick to learn | Steepest; requires designing agentic architecture | Moderate, requires understanding of agents, tasks | Fastest, easy to get started |
+| **Design Flexibility** | Flexible with customizable agents, tools, and workflows | Most flexible, supports any agentic architecture | More flexible than AutoGen, primarily task-based | Least flexible, based on actor framework |
+| **Integrations** | Compatible with any model supporting Chat Completions API format | Integrates with Python, JavaScript, and LangChain | Direct LangChain integration supports monitoring | Good LLM integrations, strong with Microsoft |
+| **Scalability & Deployability** | Designed for production-ready applications with built-in tracing and debugging | Highly scalable with Pragal and Apache Beam | More scalable than AutoGen, supports async execution | Scalable with async messaging, shifting architecture |
+| **Documentation** | Comprehensive with examples and tutorials | Improved, includes courses but still challenging | Excellent, structured with guides and blogs | Good, but discovery could be improved |
+| **Human-in-the-Loop Support** | Configurable safety checks with guardrails for input and output validation | Very flexible, intervention at any point | Only at the end of a task | Limited (never, always, or at termination) |
+| **Streaming Support** | Not explicitly detailed | First-class support for streaming | With streaming support | Supports streaming, but the setup is complex |
+| **Low-Code Interface** | No dedicated low-code interface | LangGraph Studio (custom IDE, not truly low-code) | No official low-code UI (unofficial exists) | AutoGen Studio (open-source low-code tool) |
+| **Time Travel (Debugging)** | Built-in tracing for visualizing and debugging agent execution | Easy debugging with LangSmith | |     |
+| --- |
+| Supports time travel from the last crew run | | No support |
+| **Language Support** | Python | Python, JavaScript | Python only | Python, Dolap (.NET) |
+| **Memory Management** | Not explicitly detailed | Requires explicit state management implementation | Built-in support for short-term and long-term, user memory | Not explicitly detailed |
+
+**💡Note**
+
+The OpenAI Agents SDK is a recent release, and some features may evolve as the platform matures. For the most current information, refer to the official [documentation](https://openai.github.io/openai-agents-python/).
+
+## Conclusion
+
+I know it might not align with yours, but after comparing all frameworks across multiple dimensions, here's my recommendation:
+
+**Choose OpenAI Agents SDK if:**
+
+- You want a simple, production-ready framework with a minimal learning curve.
+
+- You're already using OpenAI models and want tight integration.
+
+- You need strong tracing and debugging capabilities baked into the SDK and enabled via a one-line command.
+
+- You prefer Python-native approaches with few abstractions.
+
+
+**LangGraph if:**
+
+- You need complex, cyclical workflows with sophisticated state management.
+
+- You're building applications with multiple interdependent agents.
+
+- You're already familiar with the LangChain ecosystem.
+
+- You need a visual representation of your agent workflows.
+
+- Ready to learn / already have prior experience in coding and graph structure and theory.
+
+- Production-ready.
+
+
+**Choose CrewAI if:**
+
+- You want the most intuitive approach to multi-agent systems.
+
+- You prefer thinking in terms of roles, goals, and tasks.
+
+- You need a framework that naturally models human team structures.
+
+- You want a balance between simplicity and power.
+
+- Production-ready
+
+
+**Choose AutoGen if:**
+
+- You need flexible conversation patterns between agents.
+
+- You're building applications with diverse conversational agents.
+
+- Microsoft's research team.
+
+- You need a framework that's been battle-tested in research settings.
+
+
+Ultimately, the best framework depends on your specific use case, team expertise, and project requirements.
+
+The good news is that all four frameworks are actively developed, well-documented, and capable of building robust AI agent systems.
+
+As the field evolves, we can expect these frameworks to continue improving and potentially converging on common patterns and best practices.
+</details>
+
+
+<details>
+<summary>The landscape of AI agent frameworks has evolved dramatically in 2025, with two standout contenders emerging as the top choices for developers: **Pydantic AI** and **LangGraph**. Both frameworks promise to simplify the development of intelligent agents, but they take fundamentally different approaches to achieve this goal.</summary>
+
+The landscape of AI agent frameworks has evolved dramatically in 2025, with two standout contenders emerging as the top choices for developers: **Pydantic AI** and **LangGraph**. Both frameworks promise to simplify the development of intelligent agents, but they take fundamentally different approaches to achieve this goal.
+
+In this comprehensive guide, we’ll explore both frameworks through detailed conceptual explanations and hands-on laboratories, helping you make an informed decision for your next AI project.
+
+* * *
+
+## Pydantic AI: Deep Dive
+
+### Architecture Overview
+
+Pydantic AI is built on the foundation of **Pydantic**, the popular Python data validation library. It emphasizes:
+
+- **Type safety** through Python’s type system
+- **Data validation** at every step
+- **Simplicity** in agent definition
+- **Performance** through efficient serialization
+
+### Core Components
+
+#### 1\. Agent Definition
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12 | `from pydantic_ai import Agent`<br>`from pydantic import BaseModel`<br>`class UserQuery(BaseModel):`<br>`    ``question: str`<br>`    ``context: str = ""`<br>`agent = Agent(`<br>`    ``model="gpt-4",`<br>`    ``system_prompt="You are a helpful assistant",`<br>`    ``result_type=str`<br>`)` |
+
+#### 2\. Tool Integration
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5 | `@agent.tool`<br>`def search_database(query: str) -> str:`<br>`    ``"""Search the company database for information."""`<br>`    ``# Database search logic`<br>`    ``return results` |
+
+#### 3\. Structured Outputs
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9 | `class AnalysisResult(BaseModel):`<br>`    ``summary: str`<br>`    ``confidence: float`<br>`    ``recommendations: List[str]`<br>`agent = Agent(`<br>`    ``model="gpt-4",`<br>`    ``result_type=AnalysisResult`<br>`)` |
+
+### Key Features
+
+#### Type Safety
+
+Pydantic AI leverages Python’s type system to ensure:
+
+- **Compile-time validation** of agent configurations
+- **Runtime validation** of inputs and outputs
+- **IDE support** with autocomplete and error detection
+
+#### Dependency Injection
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5 | `from pydantic_ai import RunContext`<br>`@agent.tool`<br>`def get_user_data(ctx: RunContext[UserContext]) -> UserData:`<br>`    ``return ctx.deps.database.get_user(ctx.deps.user_id)` |
+
+#### Streaming Support
+
+| | |
+| --- | --- |
+| 1<br>2 | `async for chunk in agent.run_stream("Analyze this data"):`<br>`    ``print(chunk, end="")` |
+
+### Strengths
+
+- **Developer experience**: Excellent IDE support and debugging
+- **Type safety**: Compile-time error detection
+- **Performance**: Efficient data serialization
+- **Simplicity**: Minimal boilerplate code
+
+### Limitations
+
+- **Workflow complexity**: Limited support for complex multi-step workflows
+- **State management**: Basic state handling capabilities
+- **Tool orchestration**: Simple tool chaining
+- **Community**: Smaller ecosystem compared to LangChain family
+
+* * *
+
+## LangGraph: Deep Dive
+
+### Architecture Overview
+
+LangGraph is part of the **LangChain ecosystem** and focuses on:
+
+- **Graph-based workflows** for complex agent behavior
+- **State management** across multiple conversation turns
+- **Flexibility** in defining agent architectures
+- **Integration** with the broader LangChain ecosystem
+
+### Core Components
+
+#### 1\. State Definition
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7<br>8 | `from typing import TypedDict, List`<br>`from langgraph.graph import StateGraph`<br>`class AgentState(TypedDict):`<br>`    ``messages: List[str]`<br>`    ``current_tool: str`<br>`    ``iteration_count: int`<br>`    ``final_answer: str` |
+
+#### 2\. Node Functions
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7<br>8 | `def research_node(state: AgentState) -> AgentState:`<br>`    ``"""Perform research based on current state."""`<br>`    ``# Research logic`<br>`    ``return {`<br>`        ``**state,`<br>`        ``"messages": state["messages"] + [research_result],`<br>`        ``"iteration_count": state["iteration_count"] + 1`<br>`    ``}` |
+
+#### 3\. Graph Construction
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7 | `workflow = StateGraph(AgentState)`<br>`workflow.add_node("research", research_node)`<br>`workflow.add_node("analyze", analyze_node)`<br>`workflow.add_node("respond", respond_node)`<br>`workflow.add_edge("research", "analyze")`<br>`workflow.add_conditional_edges("analyze", should_continue)` |
+
+### Key Features
+
+#### Graph-Based Workflows
+
+LangGraph excels at modeling complex workflows:
+
+- **Conditional branching** based on state
+- **Loops and iterations** for multi-step processes
+- **Parallel execution** of independent tasks
+- **Error handling** and recovery paths
+
+#### State Management
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4<br>5<br>6<br>7 | `def should_continue(state: AgentState) -> str:`<br>`    ``if state["iteration_count"] > 5:`<br>`        ``return "respond"`<br>`    ``elif state["confidence"] < 0.8:`<br>`        ``return "research"`<br>`    ``else:`<br>`        ``return "analyze"` |
+
+#### Checkpointing
+
+| | |
+| --- | --- |
+| 1<br>2<br>3<br>4 | `from langgraph.checkpoint.memory import MemorySaver`<br>`checkpointer = MemorySaver()`<br>`app = workflow.compile(checkpointer=checkpointer)` |
+
+### Strengths
+
+- **Complex workflows**: Excellent for multi-step agent processes
+- **State management**: Sophisticated state handling
+- **Flexibility**: Highly customizable agent architectures
+- **Ecosystem**: Rich integration with LangChain tools
+
+### Limitations
+
+- **Complexity**: Steeper learning curve
+- **Performance**: Overhead from graph execution
+- **Debugging**: Complex workflows can be hard to debug
+- **Boilerplate**: More setup code required
+</details>
+
+
+<details>
+<summary>**FastMCP is the standard framework for building MCP applications.** The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) provides a standardized way to connect LLMs to tools and data, and FastMCP makes it production-ready with clean, Pythonic code:</summary>
+
+**FastMCP is the standard framework for building MCP applications.** The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) provides a standardized way to connect LLMs to tools and data, and FastMCP makes it production-ready with clean, Pythonic code:
+
+```
+from fastmcp import FastMCP
+
+mcp = FastMCP("Demo 🚀")
+
+@mcp.tool
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()
+
+```
+
+## Beyond Basic MCP
+
+FastMCP pioneered Python MCP development, with FastMCP 1.0 being incorporated into the [official MCP SDK](https://github.com/modelcontextprotocol/python-sdk) in 2024.**This is FastMCP 2.0** — the actively maintained version that extends far beyond basic protocol implementation. While the SDK provides core functionality, FastMCP 2.0 delivers everything needed for production: advanced MCP patterns (server composition, proxying, OpenAPI/FastAPI generation, tool transformation), enterprise auth (Google, GitHub, Azure, Auth0, WorkOS, and more), deployment tools, testing frameworks, and comprehensive client libraries.Ready to build? Start with our [installation guide](https://gofastmcp.com/getting-started/installation) or jump straight to the [quickstart](https://gofastmcp.com/getting-started/quickstart).
+
+## What is MCP?
+
+The Model Context Protocol lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. It is often described as “the USB-C port for AI”, providing a uniform way to connect LLMs to resources they can use. It may be easier to think of it as an API, but specifically designed for LLM interactions. MCP servers can:
+
+- Expose data through `Resources` (think of these sort of like GET endpoints; they are used to load information into the LLM’s context)
+- Provide functionality through `Tools` (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
+- Define interaction patterns through `Prompts` (reusable templates for LLM interactions)
+- And more!
+
+FastMCP provides a high-level, Pythonic interface for building, managing, and interacting with these servers.
+
+## Why FastMCP?
+
+FastMCP handles all the complex protocol details so you can focus on building. In most cases, decorating a Python function is all you need — FastMCP handles the rest.🚀 **Fast**: High-level interface means less code and faster development🍀 **Simple**: Build MCP servers with minimal boilerplate🐍 **Pythonic**: Feels natural to Python developers🔍 **Complete**: Everything for production — enterprise auth (Google, GitHub, Azure, Auth0, WorkOS), deployment tools, testing frameworks, client libraries, and moreFastMCP provides the shortest path from idea to production. Deploy locally, to the cloud with [FastMCP Cloud](https://fastmcp.cloud/) (free for personal servers), or to your own infrastructure.FastMCP is made with 💙 by [Prefect](https://www.prefect.io/).
+
+## LLM-Friendly Docs
+
+The FastMCP documentation is available in multiple LLM-friendly formats:
+
+### MCP Server
+
+The FastMCP docs are accessible via MCP! The server URL is `https://gofastmcp.com/mcp`.In fact, you can use FastMCP to search the FastMCP docs:
+
+```
+import asyncio
+from fastmcp import Client
+
+async def main():
+    async with Client("https://gofastmcp.com/mcp") as client:
+        result = await client.call_tool(
+            name="SearchFastMcp",
+            arguments={"query": "deploy a FastMCP server"}
+        )
+    print(result)
+
+asyncio.run(main())
+
+```
+
+### Plain Text Formats
+
+The docs are also available in [llms.txt format](https://llmstxt.org/):
+
+- [llms.txt](https://gofastmcp.com/llms.txt) \- A sitemap listing all documentation pages
+- [llms-full.txt](https://gofastmcp.com/llms-full.txt) \- The entire documentation in one file (may exceed context windows)
+
+Any page can be accessed as markdown by appending `.md` to the URL. For example, this page becomes `https://gofastmcp.com/getting-started/welcome.md`.You can also copy any page as markdown by pressing “Cmd+C” (or “Ctrl+C” on Windows) on your keyboard.
+</details>
+
+
+
+## Code Sources
+
+_No code sources found._
+
+
+## YouTube Video Transcripts
+
+_No YouTube video transcripts found._
+
+
+## Additional Sources Scraped
+
+<details>
+<summary>autogen-autogen</summary>
+
+# AutoGen
+
+### A framework for building AI agents and applications
+
+Studio [https://img.shields.io/badge/PyPi-autogenstudio-blue?logo=pypi](https://pypi.org/project/autogenstudio/)
+
+An web-based UI for prototyping with agents without writing code.
+Built on AgentChat.
+
+```
+pip install -U autogenstudio
+autogenstudio ui --port 8080 --appdir ./myapp
+
+```
+
+_Start here if you are new to AutoGen and want to prototype with agents without writing code._
+
+[Get Started](https://microsoft.github.io/autogen/stable/user-guide/autogenstudio-user-guide/index.html)
+
+AgentChat
+[https://img.shields.io/badge/PyPi-autogen--agentchat-blue?logo=pypi](https://pypi.org/project/autogen-agentchat/)
+
+A programming framework for building conversational single and multi-agent applications.
+Built on Core. Requires Python 3.10+.
+
+```
+# pip install -U "autogen-agentchat" "autogen-ext[openai]"
+import asyncio
+from autogen_agentchat.agents import AssistantAgent
+from autogen_ext.models.openai import OpenAIChatCompletionClient
+
+async def main() -> None:
+    agent = AssistantAgent("assistant", OpenAIChatCompletionClient(model="gpt-4o"))
+    print(await agent.run(task="Say 'Hello World!'"))
+
+asyncio.run(main())
+
+```
+
+_Start here if you are prototyping with agents using Python. [Migrating from AutoGen 0.2?](https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/migration-guide.html)._
+
+[Get Started](https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/quickstart.html)
+
+Core [https://img.shields.io/badge/PyPi-autogen--core-blue?logo=pypi](https://pypi.org/project/autogen-core/)
+
+An event-driven programming framework for building scalable multi-agent AI systems. Example scenarios:
+
+- Deterministic and dynamic agentic workflows for business processes.
+
+- Research on multi-agent collaboration.
+
+- Distributed agents for multi-language applications.
+
+
+_Start here if you are getting serious about building multi-agent systems._
+
+[Get Started](https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/quickstart.html)
+
+Extensions [https://img.shields.io/badge/PyPi-autogen--ext-blue?logo=pypi](https://pypi.org/project/autogen-ext/)
+
+Implementations of Core and AgentChat components that interface with external services or other libraries.
+You can find and use community extensions or create your own. Examples of built-in extensions:
+
+- [`McpWorkbench`](https://microsoft.github.io/autogen/stable/reference/python/autogen_ext.tools.mcp.html#autogen_ext.tools.mcp.McpWorkbench "autogen_ext.tools.mcp.McpWorkbench") for using Model-Context Protocol (MCP) servers.
+
+- [`OpenAIAssistantAgent`](https://microsoft.github.io/autogen/stable/reference/python/autogen_ext.agents.openai.html#autogen_ext.agents.openai.OpenAIAssistantAgent "autogen_ext.agents.openai.OpenAIAssistantAgent") for using Assistant API.
+
+- [`DockerCommandLineCodeExecutor`](https://microsoft.github.io/autogen/stable/reference/python/autogen_ext.code_executors.docker.html#autogen_ext.code_executors.docker.DockerCommandLineCodeExecutor "autogen_ext.code_executors.docker.DockerCommandLineCodeExecutor") for running model-generated code in a Docker container.
+
+- [`GrpcWorkerAgentRuntime`](https://microsoft.github.io/autogen/stable/reference/python/autogen_ext.runtimes.grpc.html#autogen_ext.runtimes.grpc.GrpcWorkerAgentRuntime "autogen_ext.runtimes.grpc.GrpcWorkerAgentRuntime") for distributed agents.
+
+
+[Discover Community Extensions](https://microsoft.github.io/autogen/stable/user-guide/extensions-user-guide/discover.html) [Create New Extension](https://microsoft.github.io/autogen/stable/user-guide/extensions-user-guide/create-your-own.html)
+</details>
+
+
+<details>
+<summary>autogen-studio-autogen</summary>
+
+AutoGen Studio is a low-code interface built to help you rapidly prototype AI agents, enhance them with tools, compose them into teams and interact with them to accomplish tasks. It is built on [AutoGen AgentChat](https://microsoft.github.io/autogen) \- a high-level API for building multi-agent applications.
+
+Caution
+
+AutoGen Studio is meant to help you rapidly prototype multi-agent workflows and demonstrate an example of end user interfaces built with AutoGen. It is not meant to be a production-ready app. Developers are encouraged to use the AutoGen framework to build their own applications, implementing authentication, security and other features required for deployed applications.
+
+## Capabilities - What Can You Do with AutoGen Studio?
+
+AutoGen Studio offers four main interfaces to help you build and manage multi-agent systems:
+
+1. **Team Builder**
+
+   - A visual interface for creating agent teams through declarative specification (JSON) or drag-and-drop
+
+   - Supports configuration of all core components: teams, agents, tools, models, and termination conditions
+
+   - Fully compatible with AgentChat’s component definitions
+2. **Playground**
+
+   - Interactive environment for testing and running agent teams
+
+   - Features include:
+
+     - Live message streaming between agents
+
+     - Visual representation of message flow through a control transition graph
+
+     - Interactive sessions with teams using UserProxyAgent
+
+     - Full run control with the ability to pause or stop execution
+3. **Gallery**
+
+   - Central hub for discovering and importing community-created components
+
+   - Enables easy integration of third-party components
+4. **Deployment**
+
+   - Export and run teams in python code
+
+   - Setup and test endpoints based on a team configuration
+
+   - Run teams in a docker container
+
+## A Note on Security
+
+AutoGen Studio is a research prototype and is **not meant to be used** in a production environment. Some baseline practices are encouraged e.g., using Docker code execution environment for your agents.
+
+However, other considerations such as rigorous tests related to jailbreaking, ensuring LLMs only have access to the right keys of data given the end user’s permissions, and other security features are not implemented in AutoGen Studio.
+
+If you are building a production application, please use the AutoGen framework and implement the necessary security features.
+</details>
+
+
+<details>
+<summary>build-your-first-flow-crewai</summary>
+
+## Taking Control of AI Workflows with Flows
+
+CrewAI Flows represent the next level in AI orchestration - combining the collaborative power of AI agent crews with the precision and flexibility of procedural programming. While crews excel at agent collaboration, flows give you fine-grained control over exactly how and when different components of your AI system interact.In this guide, we’ll walk through creating a powerful CrewAI Flow that generates a comprehensive learning guide on any topic. This tutorial will demonstrate how Flows provide structured, event-driven control over your AI workflows by combining regular code, direct LLM calls, and crew-based processing.
+
+### What Makes Flows Powerful
+
+Flows enable you to:
+
+1. **Combine different AI interaction patterns** - Use crews for complex collaborative tasks, direct LLM calls for simpler operations, and regular code for procedural logic
+2. **Build event-driven systems** - Define how components respond to specific events and data changes
+3. **Maintain state across components** - Share and transform data between different parts of your application
+4. **Integrate with external systems** - Seamlessly connect your AI workflow with databases, APIs, and user interfaces
+5. **Create complex execution paths** - Design conditional branches, parallel processing, and dynamic workflows
+
+### What You’ll Build and Learn
+
+By the end of this guide, you’ll have:
+
+1. **Created a sophisticated content generation system** that combines user input, AI planning, and multi-agent content creation
+2. **Orchestrated the flow of information** between different components of your system
+3. **Implemented event-driven architecture** where each step responds to the completion of previous steps
+4. **Built a foundation for more complex AI applications** that you can expand and customize
+
+This guide creator flow demonstrates fundamental patterns that can be applied to create much more advanced applications, such as:
+
+- Interactive AI assistants that combine multiple specialized subsystems
+- Complex data processing pipelines with AI-enhanced transformations
+- Autonomous agents that integrate with external services and APIs
+- Multi-stage decision-making systems with human-in-the-loop processes
+
+Let’s dive in and build your first flow!
+
+## Prerequisites
+
+Before starting, make sure you have:
+
+1. Installed CrewAI following the [installation guide](https://docs.crewai.com/en/installation)
+2. Set up your LLM API key in your environment, following the [LLM setup\\
+guide](https://docs.crewai.com/en/concepts/llms#setting-up-your-llm)
+3. Basic understanding of Python
+
+## Step 1: Create a New CrewAI Flow Project
+
+First, let’s create a new CrewAI Flow project using the CLI. This command sets up a scaffolded project with all the necessary directories and template files for your flow.
+
+```
+crewai create flow guide_creator_flow
+cd guide_creator_flow
+
+```
+
+This will generate a project with the basic structure needed for your flow.https://mintcdn.com/crewai/qVjgZHKAyEOgSSUS/images/flows.png?fit=max&auto=format&n=qVjgZHKAyEOgSSUS&q=85&s=82ea168de2f004553dcea21410cd7d8a
+
+CrewAI Framework Overview
+
+## Step 2: Understanding the Project Structure
+
+The generated project has the following structure. Take a moment to familiarize yourself with it, as understanding this structure will help you create more complex flows in the future.
+
+```
+guide_creator_flow/
+├── .gitignore
+├── pyproject.toml
+├── README.md
+├── .env
+├── main.py
+├── crews/
+│   └── poem_crew/
+│       ├── config/
+│       │   ├── agents.yaml
+│       │   └── tasks.yaml
+│       └── poem_crew.py
+└── tools/
+    └── custom_tool.py
+
+```
+
+This structure provides a clear separation between different components of your flow:
+
+- The main flow logic in the `main.py` file
+- Specialized crews in the `crews` directory
+- Custom tools in the `tools` directory
+
+We’ll modify this structure to create our guide creator flow, which will orchestrate the process of generating comprehensive learning guides.
+
+## Step 3: Add a Content Writer Crew
+
+Our flow will need a specialized crew to handle the content creation process. Let’s use the CrewAI CLI to add a content writer crew:
+
+```
+crewai flow add-crew content-crew
+
+```
+
+This command automatically creates the necessary directories and template files for your crew. The content writer crew will be responsible for writing and reviewing sections of our guide, working within the overall flow orchestrated by our main application.
+
+## Step 4: Configure the Content Writer Crew
+
+Now, let’s modify the generated files for the content writer crew. We’ll set up two specialized agents - a writer and a reviewer - that will collaborate to create high-quality content for our guide.
+
+1. First, update the agents configuration file to define our content creation team:Remember to set `llm` to the provider you are using.
+
+```
+# src/guide_creator_flow/crews/content_crew/config/agents.yaml
+content_writer:
+  role: >
+    Educational Content Writer
+  goal: >
+    Create engaging, informative content that thoroughly explains the assigned topic
+    and provides valuable insights to the reader
+  backstory: >
+    You are a talented educational writer with expertise in creating clear, engaging
+    content. You have a gift for explaining complex concepts in accessible language
+    and organizing information in a way that helps readers build their understanding.
+  llm: provider/model-id  # e.g. openai/gpt-4o, google/gemini-2.0-flash, anthropic/claude...
+
+content_reviewer:
+  role: >
+    Educational Content Reviewer and Editor
+  goal: >
+    Ensure content is accurate, comprehensive, well-structured, and maintains
+    consistency with previously written sections
+  backstory: >
+    You are a meticulous editor with years of experience reviewing educational
+    content. You have an eye for detail, clarity, and coherence. You excel at
+    improving content while maintaining the original author's voice and ensuring
+    consistent quality across multiple sections.
+  llm: provider/model-id  # e.g. openai/gpt-4o, google/gemini-2.0-flash, anthropic/claude...
+
+```
+
+These agent definitions establish the specialized roles and perspectives that will shape how our AI agents approach content creation. Notice how each agent has a distinct purpose and expertise.
+
+2. Next, update the tasks configuration file to define the specific writing and reviewing tasks:
+
+```
+# src/guide_creator_flow/crews/content_crew/config/tasks.yaml
+write_section_task:
+  description: >
+    Write a comprehensive section on the topic: "{section_title}"
+
+    Section description: {section_description}
+    Target audience: {audience_level} level learners
+
+    Your content should:
+    1. Begin with a brief introduction to the section topic
+    2. Explain all key concepts clearly with examples
+    3. Include practical applications or exercises where appropriate
+    4. End with a summary of key points
+    5. Be approximately 500-800 words in length
+
+    Format your content in Markdown with appropriate headings, lists, and emphasis.
+
+    Previously written sections:
+    {previous_sections}
+
+    Make sure your content maintains consistency with previously written sections
+    and builds upon concepts that have already been explained.
+  expected_output: >
+    A well-structured, comprehensive section in Markdown format that thoroughly
+    explains the topic and is appropriate for the target audience.
+  agent: content_writer
+
+review_section_task:
+  description: >
+    Review and improve the following section on "{section_title}":
+
+    {draft_content}
+
+    Target audience: {audience_level} level learners
+
+    Previously written sections:
+    {previous_sections}
+
+    Your review should:
+    1. Fix any grammatical or spelling errors
+    2. Improve clarity and readability
+    3. Ensure content is comprehensive and accurate
+    4. Verify consistency with previously written sections
+    5. Enhance the structure and flow
+    6. Add any missing key information
+
+    Provide the improved version of the section in Markdown format.
+  expected_output: >
+    An improved, polished version of the section that maintains the original
+    structure but enhances clarity, accuracy, and consistency.
+  agent: content_reviewer
+  context:
+    - write_section_task
+
+```
+
+These task definitions provide detailed instructions to our agents, ensuring they produce content that meets our quality standards. Note how the `context` parameter in the review task creates a workflow where the reviewer has access to the writer’s output.
+
+3. Now, update the crew implementation file to define how our agents and tasks work together:
+
+```
+# src/guide_creator_flow/crews/content_crew/content_crew.py
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from typing import List
+
+@CrewBase
+class ContentCrew():
+    """Content writing crew"""
+
+    agents: List[BaseAgent]
+    tasks: List[Task]
+
+    @agent
+    def content_writer(self) -> Agent:
+        return Agent(
+            config=self.agents_config['content_writer'], # type: ignore[index]
+            verbose=True
+        )
+
+    @agent
+    def content_reviewer(self) -> Agent:
+        return Agent(
+            config=self.agents_config['content_reviewer'], # type: ignore[index]
+            verbose=True
+        )
+
+    @task
+    def write_section_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['write_section_task'] # type: ignore[index]
+        )
+
+    @task
+    def review_section_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['review_section_task'], # type: ignore[index]
+            context=[self.write_section_task()]
+        )
+
+    @crew
+    def crew(self) -> Crew:
+        """Creates the content writing crew"""
+        return Crew(
+            agents=self.agents,
+            tasks=self.tasks,
+            process=Process.sequential,
+            verbose=True,
+        )
+
+```
+
+This crew definition establishes the relationship between our agents and tasks, setting up a sequential process where the content writer creates a draft and then the reviewer improves it. While this crew can function independently, in our flow it will be orchestrated as part of a larger system.
+
+## Step 5: Create the Flow
+
+Now comes the exciting part - creating the flow that will orchestrate the entire guide creation process. This is where we’ll combine regular Python code, direct LLM calls, and our content creation crew into a cohesive system.Our flow will:
+
+1. Get user input for a topic and audience level
+2. Make a direct LLM call to create a structured guide outline
+3. Process each section sequentially using the content writer crew
+4. Combine everything into a final comprehensive document
+
+Let’s create our flow in the `main.py` file:
+
+```
+#!/usr/bin/env python
+import json
+import os
+from typing import List, Dict
+from pydantic import BaseModel, Field
+from crewai import LLM
+from crewai.flow.flow import Flow, listen, start
+from guide_creator_flow.crews.content_crew.content_crew import ContentCrew
+
+# Define our models for structured data
+class Section(BaseModel):
+    title: str = Field(description="Title of the section")
+    description: str = Field(description="Brief description of what the section should cover")
+
+class GuideOutline(BaseModel):
+    title: str = Field(description="Title of the guide")
+    introduction: str = Field(description="Introduction to the topic")
+    target_audience: str = Field(description="Description of the target audience")
+    sections: List[Section] = Field(description="List of sections in the guide")
+    conclusion: str = Field(description="Conclusion or summary of the guide")
+
+# Define our flow state
+class GuideCreatorState(BaseModel):
+    topic: str = ""
+    audience_level: str = ""
+    guide_outline: GuideOutline = None
+    sections_content: Dict[str, str] = {}
+
+class GuideCreatorFlow(Flow[GuideCreatorState]):
+    """Flow for creating a comprehensive guide on any topic"""
+
+    @start()
+    def get_user_input(self):
+        """Get input from the user about the guide topic and audience"""
+        print("\n=== Create Your Comprehensive Guide ===\n")
+
+        # Get user input
+        self.state.topic = input("What topic would you like to create a guide for? ")
+
+        # Get audience level with validation
+        while True:
+            audience = input("Who is your target audience? (beginner/intermediate/advanced) ").lower()
+            if audience in ["beginner", "intermediate", "advanced"]:
+                self.state.audience_level = audience
+                break
+            print("Please enter 'beginner', 'intermediate', or 'advanced'")
+
+        print(f"\nCreating a guide on {self.state.topic} for {self.state.audience_level} audience...\n")
+        return self.state
+
+    @listen(get_user_input)
+    def create_guide_outline(self, state):
+        """Create a structured outline for the guide using a direct LLM call"""
+        print("Creating guide outline...")
+
+        # Initialize the LLM
+        llm = LLM(model="openai/gpt-4o-mini", response_format=GuideOutline)
+
+        # Create the messages for the outline
+        messages = [\
+            {"role": "system", "content": "You are a helpful assistant designed to output JSON."},\
+            {"role": "user", "content": f"""\
+            Create a detailed outline for a comprehensive guide on "{state.topic}" for {state.audience_level} level learners.\
+\
+            The outline should include:\
+            1. A compelling title for the guide\
+            2. An introduction to the topic\
+            3. 4-6 main sections that cover the most important aspects of the topic\
+            4. A conclusion or summary\
+\
+            For each section, provide a clear title and a brief description of what it should cover.\
+            """}\
+        ]
+
+        # Make the LLM call with JSON response format
+        response = llm.call(messages=messages)
+
+        # Parse the JSON response
+        outline_dict = json.loads(response)
+        self.state.guide_outline = GuideOutline(**outline_dict)
+
+        # Ensure output directory exists before saving
+        os.makedirs("output", exist_ok=True)
+
+        # Save the outline to a file
+        with open("output/guide_outline.json", "w") as f:
+            json.dump(outline_dict, f, indent=2)
+
+        print(f"Guide outline created with {len(self.state.guide_outline.sections)} sections")
+        return self.state.guide_outline
+
+    @listen(create_guide_outline)
+    def write_and_compile_guide(self, outline):
+        """Write all sections and compile the guide"""
+        print("Writing guide sections and compiling...")
+        completed_sections = []
+
+        # Process sections one by one to maintain context flow
+        for section in outline.sections:
+            print(f"Processing section: {section.title}")
+
+            # Build context from previous sections
+            previous_sections_text = ""
+            if completed_sections:
+                previous_sections_text = "# Previously Written Sections\n\n"
+                for title in completed_sections:
+                    previous_sections_text += f"## {title}\n\n"
+                    previous_sections_text += self.state.sections_content.get(title, "") + "\n\n"
+            else:
+                previous_sections_text = "No previous sections written yet."
+
+            # Run the content crew for this section
+            result = ContentCrew().crew().kickoff(inputs={
+                "section_title": section.title,
+                "section_description": section.description,
+                "audience_level": self.state.audience_level,
+                "previous_sections": previous_sections_text,
+                "draft_content": ""
+            })
+
+            # Store the content
+            self.state.sections_content[section.title] = result.raw
+            completed_sections.append(section.title)
+            print(f"Section completed: {section.title}")
+
+        # Compile the final guide
+        guide_content = f"# {outline.title}\n\n"
+        guide_content += f"## Introduction\n\n{outline.introduction}\n\n"
+
+        # Add each section in order
+        for section in outline.sections:
+            section_content = self.state.sections_content.get(section.title, "")
+            guide_content += f"\n\n{section_content}\n\n"
+
+        # Add conclusion
+        guide_content += f"## Conclusion\n\n{outline.conclusion}\n\n"
+
+        # Save the guide
+        with open("output/complete_guide.md", "w") as f:
+            f.write(guide_content)
+
+        print("\nComplete guide compiled and saved to output/complete_guide.md")
+        return "Guide creation completed successfully"
+
+def kickoff():
+    """Run the guide creator flow"""
+    GuideCreatorFlow().kickoff()
+    print("\n=== Flow Complete ===")
+    print("Your comprehensive guide is ready in the output directory.")
+    print("Open output/complete_guide.md to view it.")
+
+def plot():
+    """Generate a visualization of the flow"""
+    flow = GuideCreatorFlow()
+    flow.plot("guide_creator_flow")
+    print("Flow visualization saved to guide_creator_flow.html")
+
+if __name__ == "__main__":
+    kickoff()
+
+```
+
+Let’s analyze what’s happening in this flow:
+
+1. We define Pydantic models for structured data, ensuring type safety and clear data representation
+2. We create a state class to maintain data across different steps of the flow
+3. We implement three main flow steps:
+   - Getting user input with the `@start()` decorator
+   - Creating a guide outline with a direct LLM call
+   - Processing sections with our content crew
+4. We use the `@listen()` decorator to establish event-driven relationships between steps
+
+This is the power of flows - combining different types of processing (user interaction, direct LLM calls, crew-based tasks) into a coherent, event-driven system.
+
+## Step 6: Set Up Your Environment Variables
+
+Create a `.env` file in your project root with your API keys. See the [LLM setup\\
+guide](https://docs.crewai.com/en/concepts/llms#setting-up-your-llm) for details on configuring a provider.
+
+.env
+
+```
+OPENAI_API_KEY=your_openai_api_key
+# or
+GEMINI_API_KEY=your_gemini_api_key
+# or
+ANTHROPIC_API_KEY=your_anthropic_api_key
+
+```
+
+## Step 7: Install Dependencies
+
+Install the required dependencies:
+
+```
+crewai install
+
+```
+
+## Step 8: Run Your Flow
+
+Now it’s time to see your flow in action! Run it using the CrewAI CLI:
+
+```
+crewai flow kickoff
+
+```
+
+When you run this command, you’ll see your flow spring to life:
+
+1. It will prompt you for a topic and audience level
+2. It will create a structured outline for your guide
+3. It will process each section, with the content writer and reviewer collaborating on each
+4. Finally, it will compile everything into a comprehensive guide
+
+This demonstrates the power of flows to orchestrate complex processes involving multiple components, both AI and non-AI.
+
+## Step 9: Visualize Your Flow
+
+One of the powerful features of flows is the ability to visualize their structure:
+
+```
+crewai flow plot
+
+```
+
+This will create an HTML file that shows the structure of your flow, including the relationships between different steps and the data that flows between them. This visualization can be invaluable for understanding and debugging complex flows.
+
+## Step 10: Review the Output
+
+Once the flow completes, you’ll find two files in the `output` directory:
+
+1. `guide_outline.json`: Contains the structured outline of the guide
+2. `complete_guide.md`: The comprehensive guide with all sections
+
+Take a moment to review these files and appreciate what you’ve built - a system that combines user input, direct AI interactions, and collaborative agent work to produce a complex, high-quality output.
+
+## The Art of the Possible: Beyond Your First Flow
+
+What you’ve learned in this guide provides a foundation for creating much more sophisticated AI systems. Here are some ways you could extend this basic flow:
+
+### Enhancing User Interaction
+
+You could create more interactive flows with:
+
+- Web interfaces for input and output
+- Real-time progress updates
+- Interactive feedback and refinement loops
+- Multi-stage user interactions
+
+### Adding More Processing Steps
+
+You could expand your flow with additional steps for:
+
+- Research before outline creation
+- Image generation for illustrations
+- Code snippet generation for technical guides
+- Final quality assurance and fact-checking
+
+### Creating More Complex Flows
+
+You could implement more sophisticated flow patterns:
+
+- Conditional branching based on user preferences or content type
+- Parallel processing of independent sections
+- Iterative refinement loops with feedback
+- Integration with external APIs and services
+
+### Applying to Different Domains
+
+The same patterns can be applied to create flows for:
+
+- **Interactive storytelling**: Create personalized stories based on user input
+- **Business intelligence**: Process data, generate insights, and create reports
+- **Product development**: Facilitate ideation, design, and planning
+- **Educational systems**: Create personalized learning experiences
+
+## Key Features Demonstrated
+
+This guide creator flow demonstrates several powerful features of CrewAI:
+
+1. **User interaction**: The flow collects input directly from the user
+2. **Direct LLM calls**: Uses the LLM class for efficient, single-purpose AI interactions
+3. **Structured data with Pydantic**: Uses Pydantic models to ensure type safety
+4. **Sequential processing with context**: Writes sections in order, providing previous sections for context
+5. **Multi-agent crews**: Leverages specialized agents (writer and reviewer) for content creation
+6. **State management**: Maintains state across different steps of the process
+7. **Event-driven architecture**: Uses the `@listen` decorator to respond to events
+
+## Understanding the Flow Structure
+
+Let’s break down the key components of flows to help you understand how to build your own:
+
+### 1. Direct LLM Calls
+
+Flows allow you to make direct calls to language models when you need simple, structured responses:
+
+```
+llm = LLM(
+    model="model-id-here",  # gpt-4o, gemini-2.0-flash, anthropic/claude...
+    response_format=GuideOutline
+)
+response = llm.call(messages=messages)
+
+```
+
+This is more efficient than using a crew when you need a specific, structured output.
+
+### 2. Event-Driven Architecture
+
+Flows use decorators to establish relationships between components:
+
+```
+@start()
+def get_user_input(self):
+    # First step in the flow
+    # ...
+
+@listen(get_user_input)
+def create_guide_outline(self, state):
+    # This runs when get_user_input completes
+    # ...
+
+```
+
+This creates a clear, declarative structure for your application.
+
+### 3. State Management
+
+Flows maintain state across steps, making it easy to share data:
+
+```
+class GuideCreatorState(BaseModel):
+    topic: str = ""
+    audience_level: str = ""
+    guide_outline: GuideOutline = None
+    sections_content: Dict[str, str] = {}
+
+```
+
+This provides a type-safe way to track and transform data throughout your flow.
+
+### 4. Crew Integration
+
+Flows can seamlessly integrate with crews for complex collaborative tasks:
+
+```
+result = ContentCrew().crew().kickoff(inputs={
+    "section_title": section.title,
+    # ...
+})
+
+```
+
+This allows you to use the right tool for each part of your application - direct LLM calls for simple tasks and crews for complex collaboration.
+
+## Next Steps
+
+Now that you’ve built your first flow, you can:
+
+1. Experiment with more complex flow structures and patterns
+2. Try using `@router()` to create conditional branches in your flows
+3. Explore the `and_` and `or_` functions for more complex parallel execution
+4. Connect your flow to external APIs, databases, or user interfaces
+5. Combine multiple specialized crews in a single flow
+
+Congratulations! You’ve successfully built your first CrewAI Flow that combines regular code, direct LLM calls, and crew-based processing to create a comprehensive guide. These foundational skills enable you to create increasingly sophisticated AI applications that can tackle complex, multi-stage problems through a combination of procedural control and collaborative intelligence.
+</details>
+
+
+<details>
+<summary>introduction-crewai</summary>
+
+# What is CrewAI?
+
+**CrewAI is a lean, lightning-fast Python framework built entirely from scratch—completely independent of LangChain or other agent frameworks.**CrewAI empowers developers with both high-level simplicity and precise low-level control, ideal for creating autonomous AI agents tailored to any scenario:
+
+- **[CrewAI Crews](https://docs.crewai.com/en/guides/crews/first-crew)**: Optimize for autonomy and collaborative intelligence, enabling you to create AI teams where each agent has specific roles, tools, and goals.
+- **[CrewAI Flows](https://docs.crewai.com/en/guides/flows/first-flow)**: Enable granular, event-driven control, single LLM calls for precise task orchestration and supports Crews natively.
+
+With over 100,000 developers certified through our community courses, CrewAI is rapidly becoming the standard for enterprise-ready AI automation.
+
+## How Crews Work
+
+Just like a company has departments (Sales, Engineering, Marketing) working together under leadership to achieve business goals, CrewAI helps you create an organization of AI agents with specialized roles collaborating to accomplish complex tasks.https://mintcdn.com/crewai/5SZbe87tsCWZY09V/images/crews.png?fit=max&auto=format&n=5SZbe87tsCWZY09V&q=85&s=514fd0b06e4128e62f10728d44601975
+
+| Component | Description | Key Features |
+| --- | --- | --- |
+| **Crew** | The top-level organization | • Manages AI agent teams<br>• Oversees workflows<br>• Ensures collaboration<br>• Delivers outcomes |
+| **AI Agents** | Specialized team members | • Have specific roles (researcher, writer)<br>• Use designated tools<br>• Can delegate tasks<br>• Make autonomous decisions |
+| **Process** | Workflow management system | • Defines collaboration patterns<br>• Controls task assignments<br>• Manages interactions<br>• Ensures efficient execution |
+| **Tasks** | Individual assignments | • Have clear objectives<br>• Use specific tools<br>• Feed into larger process<br>• Produce actionable results |
+
+### How It All Works Together
+
+1. The **Crew** organizes the overall operation
+2. **AI Agents** work on their specialized tasks
+3. The **Process** ensures smooth collaboration
+4. **Tasks** get completed to achieve the goal
+
+## Key Features
+
+## Role-Based Agents
+
+Create specialized agents with defined roles, expertise, and goals - from researchers to analysts to writers
+
+## Flexible Tools
+
+Equip agents with custom tools and APIs to interact with external services and data sources
+
+## Intelligent Collaboration
+
+Agents work together, sharing insights and coordinating tasks to achieve complex objectives
+
+## Task Management
+
+Define sequential or parallel workflows, with agents automatically handling task dependencies
+
+## How Flows Work
+
+While Crews excel at autonomous collaboration, Flows provide structured automations, offering granular control over workflow execution. Flows ensure tasks are executed reliably, securely, and efficiently, handling conditional logic, loops, and dynamic state management with precision. Flows integrate seamlessly with Crews, enabling you to balance high autonomy with exacting control.https://mintcdn.com/crewai/qVjgZHKAyEOgSSUS/images/flows.png?fit=max&auto=format&n=qVjgZHKAyEOgSSUS&q=85&s=82ea168de2f004553dcea21410cd7d8a
+
+| Component | Description | Key Features |
+| --- | --- | --- |
+| **Flow** | Structured workflow orchestration | • Manages execution paths<br>• Handles state transitions<br>• Controls task sequencing<br>• Ensures reliable execution |
+| **Events** | Triggers for workflow actions | • Initiate specific processes<br>• Enable dynamic responses<br>• Support conditional branching<br>• Allow for real-time adaptation |
+| **States** | Workflow execution contexts | • Maintain execution data<br>• Enable persistence<br>• Support resumability<br>• Ensure execution integrity |
+| **Crew Support** | Enhances workflow automation | • Injects pockets of agency when needed<br>• Complements structured workflows<br>• Balances automation with intelligence<br>• Enables adaptive decision-making |
+
+### Key Capabilities
+
+## Event-Driven Orchestration
+
+Define precise execution paths responding dynamically to events
+
+## Fine-Grained Control
+
+Manage workflow states and conditional execution securely and efficiently
+
+## Native Crew Integration
+
+Effortlessly combine with Crews for enhanced autonomy and intelligence
+
+## Deterministic Execution
+
+Ensure predictable outcomes with explicit control flow and error handling
+
+## When to Use Crews vs. Flows
+
+Understanding when to use [Crews](https://docs.crewai.com/en/guides/crews/first-crew) versus [Flows](https://docs.crewai.com/en/guides/flows/first-flow) is key to maximizing the potential of CrewAI in your applications.
+
+| Use Case | Recommended Approach | Why? |
+| --- | --- | --- |
+| **Open-ended research** | [Crews](https://docs.crewai.com/en/guides/crews/first-crew) | When tasks require creative thinking, exploration, and adaptation |
+| **Content generation** | [Crews](https://docs.crewai.com/en/guides/crews/first-crew) | For collaborative creation of articles, reports, or marketing materials |
+| **Decision workflows** | [Flows](https://docs.crewai.com/en/guides/flows/first-flow) | When you need predictable, auditable decision paths with precise control |
+| **API orchestration** | [Flows](https://docs.crewai.com/en/guides/flows/first-flow) | For reliable integration with multiple external services in a specific sequence |
+| **Hybrid applications** | Combined approach | Use [Flows](https://docs.crewai.com/en/guides/flows/first-flow) to orchestrate overall process with [Crews](https://docs.crewai.com/en/guides/crews/first-crew) handling complex subtasks |
+
+### Decision Framework
+
+- **Choose [Crews](https://docs.crewai.com/en/guides/crews/first-crew) when:** You need autonomous problem-solving, creative collaboration, or exploratory tasks
+- **Choose [Flows](https://docs.crewai.com/en/guides/flows/first-flow) when:** You require deterministic outcomes, auditability, or precise control over execution
+- **Combine both when:** Your application needs both structured processes and pockets of autonomous intelligence
+
+## Why Choose CrewAI?
+
+- 🧠 **Autonomous Operation**: Agents make intelligent decisions based on their roles and available tools
+- 📝 **Natural Interaction**: Agents communicate and collaborate like human team members
+- 🛠️ **Extensible Design**: Easy to add new tools, roles, and capabilities
+- 🚀 **Production Ready**: Built for reliability and scalability in real-world applications
+- 🔒 **Security-Focused**: Designed with enterprise security requirements in mind
+- 💰 **Cost-Efficient**: Optimized to minimize token usage and API calls
+</details>
+
+
+<details>
+<summary>openai-agents-sdk</summary>
+
+# OpenAI Agents SDK
+
+The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) enables you to build agentic AI apps in a lightweight, easy-to-use package with very few abstractions. It's a production-ready upgrade of our previous experimentation for agents, [Swarm](https://github.com/openai/swarm/tree/main). The Agents SDK has a very small set of primitives:
+
+- **Agents**, which are LLMs equipped with instructions and tools
+- **Handoffs**, which allow agents to delegate to other agents for specific tasks
+- **Guardrails**, which enable validation of agent inputs and outputs
+- **Sessions**, which automatically maintains conversation history across agent runs
+
+In combination with Python, these primitives are powerful enough to express complex relationships between tools and agents, and allow you to build real-world applications without a steep learning curve. In addition, the SDK comes with built-in **tracing** that lets you visualize and debug your agentic flows, as well as evaluate them and even fine-tune models for your application.
+
+## Why use the Agents SDK
+
+The SDK has two driving design principles:
+
+1. Enough features to be worth using, but few enough primitives to make it quick to learn.
+2. Works great out of the box, but you can customize exactly what happens.
+
+Here are the main features of the SDK:
+
+- Agent loop: Built-in agent loop that handles calling tools, sending results to the LLM, and looping until the LLM is done.
+- Python-first: Use built-in language features to orchestrate and chain agents, rather than needing to learn new abstractions.
+- Handoffs: A powerful feature to coordinate and delegate between multiple agents.
+- Guardrails: Run input validations and checks in parallel to your agents, breaking early if the checks fail.
+- Sessions: Automatic conversation history management across agent runs, eliminating manual state handling.
+- Function tools: Turn any Python function into a tool, with automatic schema generation and Pydantic-powered validation.
+- Tracing: Built-in tracing that lets you visualize, debug and monitor your workflows, as well as use the OpenAI suite of evaluation, fine-tuning and distillation tools.
+
+## Installation
+
+```md-code__content
+pip install openai-agents
+
+```
+
+## Hello world example
+
+```md-code__content
+from agents import Agent, Runner
+
+agent = Agent(name="Assistant", instructions="You are a helpful assistant")
+
+result = Runner.run_sync(agent, "Write a haiku about recursion in programming.")
+print(result.final_output)
+
+# Code within the code,
+# Functions calling themselves,
+# Infinite loop's dance.
+
+```
+
+( _If running this, ensure you set the `OPENAI_API_KEY` environment variable_)
+
+```md-code__content
+export OPENAI_API_KEY=sk-...
+
+```
+</details>
+
+
+<details>
+<summary>overview-pydantic-ai</summary>
+
+# Durable Execution
+
+Pydantic AI allows you to build durable agents that can preserve their progress across transient API failures and application errors or restarts, and handle long-running, asynchronous, and human-in-the-loop workflows with production-grade reliability. Durable agents have full support for [streaming](https://ai.pydantic.dev/agents/#streaming-all-events) and [MCP](https://ai.pydantic.dev/mcp/client/), with the added benefit of fault tolerance.
+
+Pydantic AI natively supports two durable execution solutions:
+
+- [Temporal](https://ai.pydantic.dev/durable_execution/temporal/)
+- [DBOS](https://ai.pydantic.dev/durable_execution/dbos/)
+
+These integrations only uses Pydantic AI's public interface, so they also serve as a reference for integrating with other durable systems.
+</details>
+
+
+<details>
+<summary>persistence-docs-by-langchain</summary>
+
+LangGraph has a built-in persistence layer, implemented through checkpointers. When you compile a graph with a checkpointer, the checkpointer saves a `checkpoint` of the graph state at every super-step. Those checkpoints are saved to a `thread`, which can be accessed after graph execution. Because `threads` allow access to graph’s state after execution, several powerful capabilities including human-in-the-loop, memory, time travel, and fault-tolerance are all possible. Below, we’ll discuss each of these concepts in more detail.https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/checkpoints.jpg?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=966566aaae853ed4d240c2d0d067467c
+
+**LangGraph API handles checkpointing automatically**
+When using the LangGraph API, you don’t need to implement or configure checkpointers manually. The API handles all persistence infrastructure for you behind the scenes.
+
+## Threads
+
+A thread is a unique ID or thread identifier assigned to each checkpoint saved by a checkpointer. It contains the accumulated state of a sequence of [runs](https://docs.langchain.com/langsmith/assistants#execution). When a run is executed, the [state](https://docs.langchain.com/oss/python/langgraph/graph-api#state) of the underlying graph of the assistant will be persisted to the thread.When invoking a graph with a checkpointer, you **must** specify a `thread_id` as part of the `configurable` portion of the config.
+
+```
+{"configurable": {"thread_id": "1"}}
+
+```
+
+A thread’s current and historical state can be retrieved. To persist state, a thread must be created prior to executing a run. The LangSmith API provides several endpoints for creating and managing threads and thread state. See the [API reference](https://langchain-ai.github.io/langgraph/cloud/reference/api/) for more details.
+
+## Checkpoints
+
+The state of a thread at a particular point in time is called a checkpoint. Checkpoint is a snapshot of the graph state saved at each super-step and is represented by `StateSnapshot` object with the following key properties:
+
+- `config`: Config associated with this checkpoint.
+- `metadata`: Metadata associated with this checkpoint.
+- `values`: Values of the state channels at this point in time.
+- `next` A tuple of the node names to execute next in the graph.
+- `tasks`: A tuple of `PregelTask` objects that contain information about next tasks to be executed. If the step was previously attempted, it will include error information. If a graph was interrupted [dynamically](https://docs.langchain.com/oss/python/langgraph/interrupts#pause-using-interrupt) from within a node, tasks will contain additional data associated with interrupts.
+
+Checkpoints are persisted and can be used to restore the state of a thread at a later time.Let’s see what checkpoints are saved when a simple graph is invoked as follows:
+
+```
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain_core.runnables import RunnableConfig
+from typing import Annotated
+from typing_extensions import TypedDict
+from operator import add
+
+class State(TypedDict):
+    foo: str
+    bar: Annotated[list[str], add]
+
+def node_a(state: State):
+    return {"foo": "a", "bar": ["a"]}
+
+def node_b(state: State):
+    return {"foo": "b", "bar": ["b"]}
+
+workflow = StateGraph(State)
+workflow.add_node(node_a)
+workflow.add_node(node_b)
+workflow.add_edge(START, "node_a")
+workflow.add_edge("node_a", "node_b")
+workflow.add_edge("node_b", END)
+
+checkpointer = InMemorySaver()
+graph = workflow.compile(checkpointer=checkpointer)
+
+config: RunnableConfig = {"configurable": {"thread_id": "1"}}
+graph.invoke({"foo": ""}, config)
+
+```
+
+After we run the graph, we expect to see exactly 4 checkpoints:
+
+- empty checkpoint with `START` as the next node to be executed
+- checkpoint with the user input `{'foo': '', 'bar': []}` and `node_a` as the next node to be executed
+- checkpoint with the outputs of `node_a` `{'foo': 'a', 'bar': ['a']}` and `node_b` as the next node to be executed
+- checkpoint with the outputs of `node_b` `{'foo': 'b', 'bar': ['a', 'b']}` and no next nodes to be executed
+
+Note that we `bar` channel values contain outputs from both nodes as we have a reducer for `bar` channel.
+
+### Get state
+
+When interacting with the saved graph state, you **must** specify a [thread identifier](https://docs.langchain.com/oss/python/langgraph/persistence#threads). You can view the _latest_ state of the graph by calling `graph.get_state(config)`. This will return a `StateSnapshot` object that corresponds to the latest checkpoint associated with the thread ID provided in the config or a checkpoint associated with a checkpoint ID for the thread, if provided.
+
+```
+# get the latest state snapshot
+config = {"configurable": {"thread_id": "1"}}
+graph.get_state(config)
+
+# get a state snapshot for a specific checkpoint_id
+config = {"configurable": {"thread_id": "1", "checkpoint_id": "1ef663ba-28fe-6528-8002-5a559208592c"}}
+graph.get_state(config)
+
+```
+
+In our example, the output of `get_state` will look like this:
+
+```
+StateSnapshot(
+    values={'foo': 'b', 'bar': ['a', 'b']},
+    next=(),
+    config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28fe-6528-8002-5a559208592c'}},
+    metadata={'source': 'loop', 'writes': {'node_b': {'foo': 'b', 'bar': ['b']}}, 'step': 2},
+    created_at='2024-08-29T19:19:38.821749+00:00',
+    parent_config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f9-6ec4-8001-31981c2c39f8'}}, tasks=()
+)
+
+```
+
+### Get state history
+
+You can get the full history of the graph execution for a given thread by calling `graph.get_state_history(config)`. This will return a list of `StateSnapshot` objects associated with the thread ID provided in the config. Importantly, the checkpoints will be ordered chronologically with the most recent checkpoint / `StateSnapshot` being the first in the list.
+
+```
+config = {"configurable": {"thread_id": "1"}}
+list(graph.get_state_history(config))
+
+```
+
+In our example, the output of `get_state_history` will look like this:
+
+```
+[\
+    StateSnapshot(\
+        values={'foo': 'b', 'bar': ['a', 'b']},\
+        next=(),\
+        config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28fe-6528-8002-5a559208592c'}},\
+        metadata={'source': 'loop', 'writes': {'node_b': {'foo': 'b', 'bar': ['b']}}, 'step': 2},\
+        created_at='2024-08-29T19:19:38.821749+00:00',\
+        parent_config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f9-6ec4-8001-31981c2c39f8'}},\
+        tasks=(),\
+    ),\
+    StateSnapshot(\
+        values={'foo': 'a', 'bar': ['a']},\
+        next=('node_b',),\
+        config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f9-6ec4-8001-31981c2c39f8'}},\
+        metadata={'source': 'loop', 'writes': {'node_a': {'foo': 'a', 'bar': ['a']}}, 'step': 1},\
+        created_at='2024-08-29T19:19:38.819946+00:00',\
+        parent_config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f4-6b4a-8000-ca575a13d36a'}},\
+        tasks=(PregelTask(id='6fb7314f-f114-5413-a1f3-d37dfe98ff44', name='node_b', error=None, interrupts=()),),\
+    ),\
+    StateSnapshot(\
+        values={'foo': '', 'bar': []},\
+        next=('node_a',),\
+        config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f4-6b4a-8000-ca575a13d36a'}},\
+        metadata={'source': 'loop', 'writes': None, 'step': 0},\
+        created_at='2024-08-29T19:19:38.817813+00:00',\
+        parent_config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f0-6c66-bfff-6723431e8481'}},\
+        tasks=(PregelTask(id='f1b14528-5ee5-579c-949b-23ef9bfbed58', name='node_a', error=None, interrupts=()),),\
+    ),\
+    StateSnapshot(\
+        values={'bar': []},\
+        next=('__start__',),\
+        config={'configurable': {'thread_id': '1', 'checkpoint_ns': '', 'checkpoint_id': '1ef663ba-28f0-6c66-bfff-6723431e8481'}},\
+        metadata={'source': 'input', 'writes': {'foo': ''}, 'step': -1},\
+        created_at='2024-08-29T19:19:38.816205+00:00',\
+        parent_config=None,\
+        tasks=(PregelTask(id='6d27aa2e-d72b-5504-a36f-8620e54a76dd', name='__start__', error=None, interrupts=()),),\
+    )\
+]
+
+```https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/get_state.jpg?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=38ffff52be4d8806b287836295a3c058
+
+### Replay
+
+It’s also possible to play-back a prior graph execution. If we `invoke` a graph with a `thread_id` and a `checkpoint_id`, then we will _re-play_ the previously executed steps _before_ a checkpoint that corresponds to the `checkpoint_id`, and only execute the steps _after_ the checkpoint.
+
+- `thread_id` is the ID of a thread.
+- `checkpoint_id` is an identifier that refers to a specific checkpoint within a thread.
+
+You must pass these when invoking the graph as part of the `configurable` portion of the config:
+
+```
+config = {"configurable": {"thread_id": "1", "checkpoint_id": "0c62ca34-ac19-445d-bbb0-5b4984975b2a"}}
+graph.invoke(None, config=config)
+
+```
+
+Importantly, LangGraph knows whether a particular step has been executed previously. If it has, LangGraph simply _re-plays_ that particular step in the graph and does not re-execute the step, but only for the steps _before_ the provided `checkpoint_id`. All of the steps _after_ `checkpoint_id` will be executed (i.e., a new fork), even if they have been executed previously. See this [how to guide on time-travel to learn more about replaying](https://docs.langchain.com/oss/python/langgraph/use-time-travel).https://mintcdn.com/langchain-5e9cc07a/dL5Sn6Cmy9pwtY0V/oss/images/re_play.png?fit=max&auto=format&n=dL5Sn6Cmy9pwtY0V&q=85&s=d7b34b85c106e55d181ae1f4afb50251
+
+### Update state
+
+In addition to re-playing the graph from specific `checkpoints`, we can also _edit_ the graph state. We do this using `graph.update_state()`. This method accepts three different arguments:
+
+#### `config`
+
+The config should contain `thread_id` specifying which thread to update. When only the `thread_id` is passed, we update (or fork) the current state. Optionally, if we include `checkpoint_id` field, then we fork that selected checkpoint.
+
+#### `values`
+
+These are the values that will be used to update the state. Note that this update is treated exactly as any update from a node is treated. This means that these values will be passed to the [reducer](https://docs.langchain.com/oss/python/langgraph/graph-api#reducers) functions, if they are defined for some of the channels in the graph state. This means that `update_state` does NOT automatically overwrite the channel values for every channel, but only for the channels without reducers. Let’s walk through an example.Let’s assume you have defined the state of your graph with the following schema (see full example above):
+
+```
+from typing import Annotated
+from typing_extensions import TypedDict
+from operator import add
+
+class State(TypedDict):
+    foo: int
+    bar: Annotated[list[str], add]
+
+```
+
+Let’s now assume the current state of the graph is
+
+```
+{"foo": 1, "bar": ["a"]}
+
+```
+
+If you update the state as below:
+
+```
+graph.update_state(config, {"foo": 2, "bar": ["b"]})
+
+```
+
+Then the new state of the graph will be:
+
+```
+{"foo": 2, "bar": ["a", "b"]}
+
+```
+
+The `foo` key (channel) is completely changed (because there is no reducer specified for that channel, so `update_state` overwrites it). However, there is a reducer specified for the `bar` key, and so it appends `"b"` to the state of `bar`.
+
+#### `as_node`
+
+The final thing you can optionally specify when calling `update_state` is `as_node`. If you provided it, the update will be applied as if it came from node `as_node`. If `as_node` is not provided, it will be set to the last node that updated the state, if not ambiguous. The reason this matters is that the next steps to execute depend on the last node to have given an update, so this can be used to control which node executes next. See this [how to guide on time-travel to learn more about forking state](https://docs.langchain.com/oss/python/langgraph/use-time-travel).https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/checkpoints_full_story.jpg?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=a52016b2c44b57bd395d6e1eac47aa36
+
+## Memory Storehttps://mintcdn.com/langchain-5e9cc07a/dL5Sn6Cmy9pwtY0V/oss/images/shared_state.png?fit=max&auto=format&n=dL5Sn6Cmy9pwtY0V&q=85&s=354526fb48c5eb11b4b2684a2df40d6cA [state schema](https://docs.langchain.com/oss/python/langgraph/graph-api#schema) specifies a set of keys that are populated as a graph is executed. As discussed above, state can be written by a checkpointer to a thread at each graph step, enabling state persistence.But, what if we want to retain some information _across threads_? Consider the case of a chatbot where we want to retain specific information about the user across _all_ chat conversations (e.g., threads) with that user!With checkpointers alone, we cannot share information across threads. This motivates the need for the [`Store`](https://python.langchain.com/api_reference/langgraph/index.html#module-langgraph.store) interface. As an illustration, we can define an `InMemoryStore` to store information about a user across threads. We simply compile our graph with a checkpointer, as before, and with our new `in_memory_store` variable.
+
+**LangGraph API handles stores automatically**
+When using the LangGraph API, you don’t need to implement or configure stores manually. The API handles all storage infrastructure for you behind the scenes.
+
+### Basic Usage
+
+First, let’s showcase this in isolation without using LangGraph.
+
+```
+from langgraph.store.memory import InMemoryStore
+in_memory_store = InMemoryStore()
+
+```
+
+Memories are namespaced by a `tuple`, which in this specific example will be `(<user_id>, "memories")`. The namespace can be any length and represent anything, does not have to be user specific.
+
+```
+user_id = "1"
+namespace_for_memory = (user_id, "memories")
+
+```
+
+We use the `store.put` method to save memories to our namespace in the store. When we do this, we specify the namespace, as defined above, and a key-value pair for the memory: the key is simply a unique identifier for the memory ( `memory_id`) and the value (a dictionary) is the memory itself.
+
+```
+memory_id = str(uuid.uuid4())
+memory = {"food_preference" : "I like pizza"}
+in_memory_store.put(namespace_for_memory, memory_id, memory)
+
+```
+
+We can read out memories in our namespace using the `store.search` method, which will return all memories for a given user as a list. The most recent memory is the last in the list.
+
+```
+memories = in_memory_store.search(namespace_for_memory)
+memories[-1].dict()
+{'value': {'food_preference': 'I like pizza'},
+ 'key': '07e0caf4-1631-47b7-b15f-65515d4c1843',
+ 'namespace': ['1', 'memories'],
+ 'created_at': '2024-10-02T17:22:31.590602+00:00',
+ 'updated_at': '2024-10-02T17:22:31.590605+00:00'}
+
+```
+
+Each memory type is a Python class ( [`Item`](https://langchain-ai.github.io/langgraph/reference/store/#langgraph.store.base.Item)) with certain attributes. We can access it as a dictionary by converting via `.dict` as above.The attributes it has are:
+
+- `value`: The value (itself a dictionary) of this memory
+- `key`: A unique key for this memory in this namespace
+- `namespace`: A list of strings, the namespace of this memory type
+- `created_at`: Timestamp for when this memory was created
+- `updated_at`: Timestamp for when this memory was updated
+
+### Semantic Search
+
+Beyond simple retrieval, the store also supports semantic search, allowing you to find memories based on meaning rather than exact matches. To enable this, configure the store with an embedding model:
+
+```
+from langchain.embeddings import init_embeddings
+
+store = InMemoryStore(
+    index={
+        "embed": init_embeddings("openai:text-embedding-3-small"),  # Embedding provider
+        "dims": 1536,                              # Embedding dimensions
+        "fields": ["food_preference", "$"]              # Fields to embed
+    }
+)
+
+```
+
+Now when searching, you can use natural language queries to find relevant memories:
+
+```
+# Find memories about food preferences
+# (This can be done after putting memories into the store)
+memories = store.search(
+    namespace_for_memory,
+    query="What does the user like to eat?",
+    limit=3  # Return top 3 matches
+)
+
+```
+
+You can control which parts of your memories get embedded by configuring the `fields` parameter or by specifying the `index` parameter when storing memories:
+
+```
+# Store with specific fields to embed
+store.put(
+    namespace_for_memory,
+    str(uuid.uuid4()),
+    {
+        "food_preference": "I love Italian cuisine",
+        "context": "Discussing dinner plans"
+    },
+    index=["food_preference"]  # Only embed "food_preferences" field
+)
+
+# Store without embedding (still retrievable, but not searchable)
+store.put(
+    namespace_for_memory,
+    str(uuid.uuid4()),
+    {"system_info": "Last updated: 2024-01-01"},
+    index=False
+)
+
+```
+
+### Using in LangGraph
+
+With this all in place, we use the `in_memory_store` in LangGraph. The `in_memory_store` works hand-in-hand with the checkpointer: the checkpointer saves state to threads, as discussed above, and the `in_memory_store` allows us to store arbitrary information for access _across_ threads. We compile the graph with both the checkpointer and the `in_memory_store` as follows.
+
+```
+from langgraph.checkpoint.memory import InMemorySaver
+
+# We need this because we want to enable threads (conversations)
+checkpointer = InMemorySaver()
+
+# ... Define the graph ...
+
+# Compile the graph with the checkpointer and store
+graph = graph.compile(checkpointer=checkpointer, store=in_memory_store)
+
+```
+
+We invoke the graph with a `thread_id`, as before, and also with a `user_id`, which we’ll use to namespace our memories to this particular user as we showed above.
+
+```
+# Invoke the graph
+user_id = "1"
+config = {"configurable": {"thread_id": "1", "user_id": user_id}}
+
+# First let's just say hi to the AI
+for update in graph.stream(
+    {"messages": [{"role": "user", "content": "hi"}]}, config, stream_mode="updates"
+):
+    print(update)
+
+```
+
+We can access the `in_memory_store` and the `user_id` in _any node_ by passing `store: BaseStore` and `config: RunnableConfig` as node arguments. Here’s how we might use semantic search in a node to find relevant memories:
+
+```
+def update_memory(state: MessagesState, config: RunnableConfig, *, store: BaseStore):
+
+    # Get the user id from the config
+    user_id = config["configurable"]["user_id"]
+
+    # Namespace the memory
+    namespace = (user_id, "memories")
+
+    # ... Analyze conversation and create a new memory
+
+    # Create a new memory ID
+    memory_id = str(uuid.uuid4())
+
+    # We create a new memory
+    store.put(namespace, memory_id, {"memory": memory})
+
+```
+
+As we showed above, we can also access the store in any node and use the `store.search` method to get memories. Recall the memories are returned as a list of objects that can be converted to a dictionary.
+
+```
+memories[-1].dict()
+{'value': {'food_preference': 'I like pizza'},
+ 'key': '07e0caf4-1631-47b7-b15f-65515d4c1843',
+ 'namespace': ['1', 'memories'],
+ 'created_at': '2024-10-02T17:22:31.590602+00:00',
+ 'updated_at': '2024-10-02T17:22:31.590605+00:00'}
+
+```
+
+We can access the memories and use them in our model call.
+
+```
+def call_model(state: MessagesState, config: RunnableConfig, *, store: BaseStore):
+    # Get the user id from the config
+    user_id = config["configurable"]["user_id"]
+
+    # Namespace the memory
+    namespace = (user_id, "memories")
+
+    # Search based on the most recent message
+    memories = store.search(
+        namespace,
+        query=state["messages"][-1].content,
+        limit=3
+    )
+    info = "\n".join([d.value["memory"] for d in memories])
+
+    # ... Use memories in the model call
+
+```
+
+If we create a new thread, we can still access the same memories so long as the `user_id` is the same.
+
+```
+# Invoke the graph
+config = {"configurable": {"thread_id": "2", "user_id": "1"}}
+
+# Let's say hi again
+for update in graph.stream(
+    {"messages": [{"role": "user", "content": "hi, tell me about my memories"}]}, config, stream_mode="updates"
+):
+    print(update)
+
+```
+
+When we use the LangSmith, either locally (e.g., in [Studio](https://docs.langchain.com/langsmith/studio)) or [hosted with LangSmith](https://docs.langchain.com/langsmith/hosting), the base store is available to use by default and does not need to be specified during graph compilation. To enable semantic search, however, you **do** need to configure the indexing settings in your `langgraph.json` file. For example:
+
+```
+{
+    ...
+    "store": {
+        "index": {
+            "embed": "openai:text-embeddings-3-small",
+            "dims": 1536,
+            "fields": ["$"]
+        }
+    }
+}
+
+```
+
+See the [deployment guide](https://docs.langchain.com/langsmith/semantic-search) for more details and configuration options.
+
+## Checkpointer libraries
+
+Under the hood, checkpointing is powered by checkpointer objects that conform to [BaseCheckpointSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.base.BaseCheckpointSaver) interface. LangGraph provides several checkpointer implementations, all implemented via standalone, installable libraries:
+
+- `langgraph-checkpoint`: The base interface for checkpointer savers ( [BaseCheckpointSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.base.BaseCheckpointSaver)) and serialization/deserialization interface ( [SerializerProtocol](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.base.SerializerProtocol)). Includes in-memory checkpointer implementation ( [InMemorySaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.memory.InMemorySaver)) for experimentation. LangGraph comes with `langgraph-checkpoint` included.
+- `langgraph-checkpoint-sqlite`: An implementation of LangGraph checkpointer that uses SQLite database ( [SqliteSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.sqlite.SqliteSaver) / [AsyncSqliteSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.sqlite.aio.AsyncSqliteSaver)). Ideal for experimentation and local workflows. Needs to be installed separately.
+- `langgraph-checkpoint-postgres`: An advanced checkpointer that uses Postgres database ( [PostgresSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.postgres.PostgresSaver) / [AsyncPostgresSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.postgres.aio.AsyncPostgresSaver)), used in LangSmith. Ideal for using in production. Needs to be installed separately.
+
+### Checkpointer interface
+
+Each checkpointer conforms to [BaseCheckpointSaver](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.base.BaseCheckpointSaver) interface and implements the following methods:
+
+- `.put` \- Store a checkpoint with its configuration and metadata.
+- `.put_writes` \- Store intermediate writes linked to a checkpoint (i.e. [pending writes](https://docs.langchain.com/oss/python/langgraph/persistence#pending-writes)).
+- `.get_tuple` \- Fetch a checkpoint tuple using for a given configuration ( `thread_id` and `checkpoint_id`). This is used to populate `StateSnapshot` in `graph.get_state()`.
+- `.list` \- List checkpoints that match a given configuration and filter criteria. This is used to populate state history in `graph.get_state_history()`
+
+If the checkpointer is used with asynchronous graph execution (i.e. executing the graph via `.ainvoke`, `.astream`, `.abatch`), asynchronous versions of the above methods will be used ( `.aput`, `.aput_writes`, `.aget_tuple`, `.alist`).
+
+For running your graph asynchronously, you can use `InMemorySaver`, or async versions of Sqlite/Postgres checkpointers — `AsyncSqliteSaver` / `AsyncPostgresSaver` checkpointers.
+
+### Serializer
+
+When checkpointers save the graph state, they need to serialize the channel values in the state. This is done using serializer objects.`langgraph_checkpoint` defines [protocol](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.base.SerializerProtocol) for implementing serializers provides a default implementation ( [JsonPlusSerializer](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.jsonplus.JsonPlusSerializer)) that handles a wide variety of types, including LangChain and LangGraph primitives, datetimes, enums and more.
+
+#### Serialization with `pickle`
+
+The default serializer, [`JsonPlusSerializer`](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.jsonplus.JsonPlusSerializer), uses ormsgpack and JSON under the hood, which is not suitable for all types of objects.If you want to fallback to pickle for objects not currently supported by our msgpack encoder (such as Pandas dataframes),
+you can use the `pickle_fallback` argument of the `JsonPlusSerializer`:
+
+```
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+
+# ... Define the graph ...
+graph.compile(
+    checkpointer=InMemorySaver(serde=JsonPlusSerializer(pickle_fallback=True))
+)
+
+```
+
+#### Encryption
+
+Checkpointers can optionally encrypt all persisted state. To enable this, pass an instance of [`EncryptedSerializer`](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.encrypted.EncryptedSerializer) to the `serde` argument of any `BaseCheckpointSaver` implementation. The easiest way to create an encrypted serializer is via [`from_pycryptodome_aes`](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.encrypted.EncryptedSerializer.from_pycryptodome_aes), which reads the AES key from the `LANGGRAPH_AES_KEY` environment variable (or accepts a `key` argument):
+
+```
+import sqlite3
+
+from langgraph.checkpoint.serde.encrypted import EncryptedSerializer
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+serde = EncryptedSerializer.from_pycryptodome_aes()  # reads LANGGRAPH_AES_KEY
+checkpointer = SqliteSaver(sqlite3.connect("checkpoint.db"), serde=serde)
+
+```
+
+```
+from langgraph.checkpoint.serde.encrypted import EncryptedSerializer
+from langgraph.checkpoint.postgres import PostgresSaver
+
+serde = EncryptedSerializer.from_pycryptodome_aes()
+checkpointer = PostgresSaver.from_conn_string("postgresql://...", serde=serde)
+checkpointer.setup()
+
+```
+
+When running on LangSmith, encryption is automatically enabled whenever `LANGGRAPH_AES_KEY` is present, so you only need to provide the environment variable. Other encryption schemes can be used by implementing [`CipherProtocol`](https://langchain-ai.github.io/langgraph/reference/checkpoints/#langgraph.checkpoint.serde.base.CipherProtocol) and supplying it to `EncryptedSerializer`.
+
+## Capabilities
+
+### Human-in-the-loop
+
+First, checkpointers facilitate [human-in-the-loop workflows](https://docs.langchain.com/oss/python/langgraph/interrupts) workflows by allowing humans to inspect, interrupt, and approve graph steps. Checkpointers are needed for these workflows as the human has to be able to view the state of a graph at any point in time, and the graph has to be to resume execution after the human has made any updates to the state. See [the how-to guides](https://docs.langchain.com/oss/python/langgraph/interrupts) for examples.
+
+### Memory
+
+Second, checkpointers allow for [“memory”](https://docs.langchain.com/oss/python/concepts/memory) between interactions. In the case of repeated human interactions (like conversations) any follow up messages can be sent to that thread, which will retain its memory of previous ones. See [Add memory](https://docs.langchain.com/oss/python/langgraph/add-memory) for information on how to add and manage conversation memory using checkpointers.
+
+### Time Travel
+
+Third, checkpointers allow for [“time travel”](https://docs.langchain.com/oss/python/langgraph/use-time-travel), allowing users to replay prior graph executions to review and / or debug specific graph steps. In addition, checkpointers make it possible to fork the graph state at arbitrary checkpoints to explore alternative trajectories.
+
+### Fault-tolerance
+
+Lastly, checkpointing also provides fault-tolerance and error recovery: if one or more nodes fail at a given superstep, you can restart your graph from the last successful step. Additionally, when a graph node fails mid-execution at a given superstep, LangGraph stores pending checkpoint writes from any other nodes that completed successfully at that superstep, so that whenever we resume graph execution from that superstep we don’t re-run the successful nodes.
+
+#### Pending writes
+
+Additionally, when a graph node fails mid-execution at a given superstep, LangGraph stores pending checkpoint writes from any other nodes that completed successfully at that superstep, so that whenever we resume graph execution from that superstep we don’t re-run the successful nodes.
+</details>
+
+
+<details>
+<summary>pydantic-ai</summary>
+
+Pydantic AI is a Python agent framework designed to help you
+quickly, confidently, and painlessly build production grade applications and workflows with Generative AI.
+
+FastAPI revolutionized web development by offering an innovative and ergonomic design, built on the foundation of [Pydantic Validation](https://docs.pydantic.dev/) and modern Python features like type hints.
+
+Yet despite virtually every Python agent framework and LLM library using Pydantic Validation, when we began to use LLMs in [Pydantic Logfire](https://pydantic.dev/logfire), we couldn't find anything that gave us the same feeling.
+
+We built Pydantic AI with one simple aim: to bring that FastAPI feeling to GenAI app and agent development.
+
+## Why use Pydantic AI
+
+01. **Built by the Pydantic Team**:
+    [Pydantic Validation](https://docs.pydantic.dev/latest/) is the validation layer of the OpenAI SDK, the Google ADK, the Anthropic SDK, LangChain, LlamaIndex, AutoGPT, Transformers, CrewAI, Instructor and many more.
+
+02. **Model-agnostic**:
+    Supports virtually every [model](https://ai.pydantic.dev/models/overview/) and provider: OpenAI, Anthropic, Gemini, DeepSeek, Grok, Cohere, Mistral, and Perplexity; Azure AI Foundry, Amazon Bedrock, Google Vertex AI, Ollama, LiteLLM, Groq, OpenRouter, Together AI, Fireworks AI, Cerebras, Hugging Face, GitHub, Heroku, Vercel, Nebius. If your favorite model or provider is not listed, you can easily implement a [custom model](https://ai.pydantic.dev/models/overview/#custom-models).
+
+03. **Seamless Observability**:
+    Tightly [integrates](https://ai.pydantic.dev/logfire/) with [Pydantic Logfire](https://pydantic.dev/logfire), our general-purpose OpenTelemetry observability platform, for real-time debugging, evals-based performance monitoring, and behavior, tracing, and cost tracking. If you already have an observability platform that supports OTel, you can [use that too](https://ai.pydantic.dev/logfire/#alternative-observability-backends).
+
+04. **Fully Type-safe**:
+    Designed to give your IDE or AI coding agent as much context as possible for auto-completion and [type checking](https://ai.pydantic.dev/agents/#static-type-checking), moving entire classes of errors from runtime to write-time for a bit of that Rust "if it compiles, it works" feel.
+
+05. **Powerful Evals**:
+    Enables you to systematically test and [evaluate](https://ai.pydantic.dev/evals/) the performance and accuracy of the agentic systems you build, and monitor the performance over time in Pydantic Logfire.
+
+06. **MCP, A2A, and AG-UI**:
+    Integrates the [Model Context Protocol](https://ai.pydantic.dev/mcp/client/), [Agent2Agent](https://ai.pydantic.dev/a2a/), and [AG-UI](https://ai.pydantic.dev/ag-ui/) standards to give your agent access to external tools and data, let it interoperate with other agents, and build interactive applications with streaming event-based communication.
+
+07. **Human-in-the-Loop Tool Approval**:
+    Easily lets you flag that certain tool calls [require approval](https://ai.pydantic.dev/deferred-tools/#human-in-the-loop-tool-approval) before they can proceed, possibly depending on tool call arguments, conversation history, or user preferences.
+
+08. **Durable Execution**:
+    Enables you to build [durable agents](https://ai.pydantic.dev/durable_execution/overview/) that can preserve their progress across transient API failures and application errors or restarts, and handle long-running, asynchronous, and human-in-the-loop workflows with production-grade reliability.
+
+09. **Streamed Outputs**:
+    Provides the ability to [stream](https://ai.pydantic.dev/output/#streamed-results) structured output continuously, with immediate validation, ensuring real time access to generated data.
+
+10. **Graph Support**:
+    Provides a powerful way to define [graphs](https://ai.pydantic.dev/graph/) using type hints, for use in complex applications where standard control flow can degrade to spaghetti code.
+
+## Hello World Example
+
+Here's a minimal example of Pydantic AI:
+
+hello\_world.py
+```
+from pydantic_ai import Agent
+
+agent = Agent(
+    'anthropic:claude-sonnet-4-0',
+    instructions='Be concise, reply with one sentence.',
+)
+
+result = agent.run_sync('Where does "hello world" come from?')
+print(result.output)
+"""
+The first known use of "hello, world" was in a 1974 textbook about the C programming language.
+"""
+
+```
+
+The exchange will be very short: Pydantic AI will send the instructions and the user prompt to the LLM, and the model will return a text response.
+
+Not very interesting yet, but we can easily add [tools](https://ai.pydantic.dev/tools/), [dynamic instructions](https://ai.pydantic.dev/agents/#instructions), and [structured outputs](https://ai.pydantic.dev/output/) to build more powerful agents.
+
+## Tools & Dependency Injection Example
+
+Here is a concise example using Pydantic AI to build a support agent for a bank:
+
+bank\_support.py
+```
+from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
+from pydantic_ai import Agent, RunContext
+
+from bank_database import DatabaseConn
+
+@dataclass
+class SupportDependencies:
+    customer_id: int
+    db: DatabaseConn
+
+class SupportOutput(BaseModel):
+    support_advice: str = Field(description='Advice returned to the customer')
+    block_card: bool = Field(description="Whether to block the customer's card")
+    risk: int = Field(description='Risk level of query', ge=0, le=10)
+
+support_agent = Agent(
+    'openai:gpt-5',
+    deps_type=SupportDependencies,
+    output_type=SupportOutput,
+    instructions=(
+        'You are a support agent in our bank, give the '
+        'customer support and judge the risk level of their query.'
+    ),
+)
+
+@support_agent.instructions
+async def add_customer_name(ctx: RunContext[SupportDependencies]) -> str:
+    customer_name = await ctx.deps.db.customer_name(id=ctx.deps.customer_id)
+    return f"The customer's name is {customer_name!r}"
+
+@support_agent.tool
+async def customer_balance(
+    ctx: RunContext[SupportDependencies], include_pending: bool
+) -> float:
+    """Returns the customer's current account balance."""
+    return await ctx.deps.db.customer_balance(
+        id=ctx.deps.customer_id,
+        include_pending=include_pending,
+    )
+
+...
+
+async def main():
+    deps = SupportDependencies(customer_id=123, db=DatabaseConn())
+    result = await support_agent.run('What is my balance?', deps=deps)
+    print(result.output)
+    """
+    support_advice='Hello John, your current account balance, including pending transactions, is $123.45.' block_card=False risk=1
+    """
+
+    result = await support_agent.run('I just lost my card!', deps=deps)
+    print(result.output)
+    """
+    support_advice="I'm sorry to hear that, John. We are temporarily blocking your card to prevent unauthorized transactions." block_card=True risk=8
+    """
+
+```
+
+The code included here is incomplete for the sake of brevity (the definition of `DatabaseConn` is missing); you can find the complete `bank_support.py` example [here](https://ai.pydantic.dev/examples/bank-support/).
+
+## Instrumentation with Pydantic Logfire
+
+Even a simple agent with just a handful of tools can result in a lot of back-and-forth with the LLM, making it nearly impossible to be confident of what's going on just from reading the code.
+To understand the flow of the above runs, we can watch the agent in action using Pydantic Logfire.
+
+To do this, we need to [set up Logfire](https://ai.pydantic.dev/logfire/#using-logfire), and add the following to our code:
+
+bank\_support\_with\_logfire.py
+```
+...
+from pydantic_ai import Agent, RunContext
+
+from bank_database import DatabaseConn
+
+import logfire
+
+logfire.configure()
+logfire.instrument_pydantic_ai()
+logfire.instrument_asyncpg()
+
+...
+
+support_agent = Agent(
+    'openai:gpt-4o',
+    deps_type=SupportDependencies,
+    output_type=SupportOutput,
+    system_prompt=(
+        'You are a support agent in our bank, give the '
+        'customer support and judge the risk level of their query.'
+    ),
+)
+
+```
+
+That's enough to get the following view of your agent in action:
+
+See [Monitoring and Performance](https://ai.pydantic.dev/logfire/) to learn more.
+</details>
+
+
+<details>
+<summary>quickstart-crewai</summary>
+
+## Build your first CrewAI Agent
+
+Let’s create a simple crew that will help us `research` and `report` on the `latest AI developments` for a given topic or subject.Before we proceed, make sure you have finished installing CrewAI.
+If you haven’t installed them yet, you can do so by following the [installation guide](https://docs.crewai.com/en/installation).Follow the steps below to get Crewing! 🚣‍♂️
+
+1
+
+Create your crew
+
+Create a new crew project by running the following command in your terminal.
+This will create a new directory called `latest-ai-development` with the basic structure for your crew.
+
+Terminal
+
+```
+crewai create crew latest-ai-development
+
+```
+
+2
+
+Navigate to your new crew project
+
+Terminal
+
+```
+cd latest_ai_development
+
+```
+
+3
+
+Modify your \`agents.yaml\` file
+
+You can also modify the agents as needed to fit your use case or copy and paste as is to your project.
+Any variable interpolated in your `agents.yaml` and `tasks.yaml` files like `{topic}` will be replaced by the value of the variable in the `main.py` file.
+
+agents.yaml
+
+```
+# src/latest_ai_development/config/agents.yaml
+researcher:
+  role: >
+    {topic} Senior Data Researcher
+  goal: >
+    Uncover cutting-edge developments in {topic}
+  backstory: >
+    You're a seasoned researcher with a knack for uncovering the latest
+    developments in {topic}. Known for your ability to find the most relevant
+    information and present it in a clear and concise manner.
+
+reporting_analyst:
+  role: >
+    {topic} Reporting Analyst
+  goal: >
+    Create detailed reports based on {topic} data analysis and research findings
+  backstory: >
+    You're a meticulous analyst with a keen eye for detail. You're known for
+    your ability to turn complex data into clear and concise reports, making
+    it easy for others to understand and act on the information you provide.
+
+```
+
+4
+
+Modify your \`tasks.yaml\` file
+
+tasks.yaml
+
+````
+# src/latest_ai_development/config/tasks.yaml
+research_task:
+  description: >
+    Conduct a thorough research about {topic}
+    Make sure you find any interesting and relevant information given
+    the current year is 2025.
+  expected_output: >
+    A list with 10 bullet points of the most relevant information about {topic}
+  agent: researcher
+
+reporting_task:
+  description: >
+    Review the context you got and expand each topic into a full section for a report.
+    Make sure the report is detailed and contains any and all relevant information.
+  expected_output: >
+    A fully fledge reports with the mains topics, each with a full section of information.
+    Formatted as markdown without '```'
+  agent: reporting_analyst
+  output_file: report.md
+
+````
+
+5
+
+Modify your \`crew.py\` file
+
+crew.py
+
+```
+# src/latest_ai_development/crew.py
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task
+from crewai_tools import SerperDevTool
+from crewai.agents.agent_builder.base_agent import BaseAgent
+from typing import List
+
+@CrewBase
+class LatestAiDevelopmentCrew():
+  """LatestAiDevelopment crew"""
+
+  agents: List[BaseAgent]
+  tasks: List[Task]
+
+  @agent
+  def researcher(self) -> Agent:
+    return Agent(
+      config=self.agents_config['researcher'], # type: ignore[index]
+      verbose=True,
+      tools=[SerperDevTool()]
+    )
+
+  @agent
+  def reporting_analyst(self) -> Agent:
+    return Agent(
+      config=self.agents_config['reporting_analyst'], # type: ignore[index]
+      verbose=True
+    )
+
+  @task
+  def research_task(self) -> Task:
+    return Task(
+      config=self.tasks_config['research_task'], # type: ignore[index]
+    )
+
+  @task
+  def reporting_task(self) -> Task:
+    return Task(
+      config=self.tasks_config['reporting_task'], # type: ignore[index]
+      output_file='output/report.md' # This is the file that will be contain the final report.
+    )
+
+  @crew
+  def crew(self) -> Crew:
+    """Creates the LatestAiDevelopment crew"""
+    return Crew(
+      agents=self.agents, # Automatically created by the @agent decorator
+      tasks=self.tasks, # Automatically created by the @task decorator
+      process=Process.sequential,
+      verbose=True,
+    )
+
+```
+
+6
+
+\[Optional\] Add before and after crew functions
+
+crew.py
+
+```
+# src/latest_ai_development/crew.py
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task, before_kickoff, after_kickoff
+from crewai_tools import SerperDevTool
+
+@CrewBase
+class LatestAiDevelopmentCrew():
+  """LatestAiDevelopment crew"""
+
+  @before_kickoff
+  def before_kickoff_function(self, inputs):
+    print(f"Before kickoff function with inputs: {inputs}")
+    return inputs # You can return the inputs or modify them as needed
+
+  @after_kickoff
+  def after_kickoff_function(self, result):
+    print(f"After kickoff function with result: {result}")
+    return result # You can return the result or modify it as needed
+
+  # ... remaining code
+
+```
+
+7
+
+Feel free to pass custom inputs to your crew
+
+For example, you can pass the `topic` input to your crew to customize the research and reporting.
+
+main.py
+
+```
+#!/usr/bin/env python
+# src/latest_ai_development/main.py
+import sys
+from latest_ai_development.crew import LatestAiDevelopmentCrew
+
+def run():
+  """
+  Run the crew.
+  """
+  inputs = {
+    'topic': 'AI Agents'
+  }
+  LatestAiDevelopmentCrew().crew().kickoff(inputs=inputs)
+
+```
+
+8
+
+Set your environment variables
+
+Before running your crew, make sure you have the following keys set as environment variables in your `.env` file:
+
+- A [Serper.dev](https://serper.dev/) API key: `SERPER_API_KEY=YOUR_KEY_HERE`
+- The configuration for your choice of model, such as an API key. See the
+[LLM setup guide](https://docs.crewai.com/en/concepts/llms#setting-up-your-llm) to learn how to configure models from any provider.
+
+9
+
+Lock and install the dependencies
+
+- Lock the dependencies and install them by using the CLI command:
+
+Terminal
+
+```
+crewai install
+
+```
+
+- If you have additional packages that you want to install, you can do so by running:
+
+Terminal
+
+```
+uv add <package-name>
+
+```
+
+10
+
+Run your crew
+
+- To run your crew, execute the following command in the root of your project:
+
+Terminal
+
+```
+crewai run
+
+```
+
+11
+
+View your final report
+
+You should see the output in the console and the `report.md` file should be created in the root of your project with the final report.Here’s an example of what the report should look like:
+
+output/report.md
+
+```
+# Comprehensive Report on the Rise and Impact of AI Agents in 2025
+
+## 1. Introduction to AI Agents
+In 2025, Artificial Intelligence (AI) agents are at the forefront of innovation across various industries. As intelligent systems that can perform tasks typically requiring human cognition, AI agents are paving the way for significant advancements in operational efficiency, decision-making, and overall productivity within sectors like Human Resources (HR) and Finance. This report aims to detail the rise of AI agents, their frameworks, applications, and potential implications on the workforce.
+
+## 2. Benefits of AI Agents
+AI agents bring numerous advantages that are transforming traditional work environments. Key benefits include:
+
+- **Task Automation**: AI agents can carry out repetitive tasks such as data entry, scheduling, and payroll processing without human intervention, greatly reducing the time and resources spent on these activities.
+- **Improved Efficiency**: By quickly processing large datasets and performing analyses that would take humans significantly longer, AI agents enhance operational efficiency. This allows teams to focus on strategic tasks that require higher-level thinking.
+- **Enhanced Decision-Making**: AI agents can analyze trends and patterns in data, provide insights, and even suggest actions, helping stakeholders make informed decisions based on factual data rather than intuition alone.
+
+## 3. Popular AI Agent Frameworks
+Several frameworks have emerged to facilitate the development of AI agents, each with its own unique features and capabilities. Some of the most popular frameworks include:
+
+- **Autogen**: A framework designed to streamline the development of AI agents through automation of code generation.
+- **Semantic Kernel**: Focuses on natural language processing and understanding, enabling agents to comprehend user intentions better.
+- **Promptflow**: Provides tools for developers to create conversational agents that can navigate complex interactions seamlessly.
+- **Langchain**: Specializes in leveraging various APIs to ensure agents can access and utilize external data effectively.
+- **CrewAI**: Aimed at collaborative environments, CrewAI strengthens teamwork by facilitating communication through AI-driven insights.
+- **MemGPT**: Combines memory-optimized architectures with generative capabilities, allowing for more personalized interactions with users.
+
+These frameworks empower developers to build versatile and intelligent agents that can engage users, perform advanced analytics, and execute various tasks aligned with organizational goals.
+
+## 4. AI Agents in Human Resources
+AI agents are revolutionizing HR practices by automating and optimizing key functions:
+
+- **Recruiting**: AI agents can screen resumes, schedule interviews, and even conduct initial assessments, thus accelerating the hiring process while minimizing biases.
+- **Succession Planning**: AI systems analyze employee performance data and potential, helping organizations identify future leaders and plan appropriate training.
+- **Employee Engagement**: Chatbots powered by AI can facilitate feedback loops between employees and management, promoting an open culture and addressing concerns promptly.
+
+As AI continues to evolve, HR departments leveraging these agents can realize substantial improvements in both efficiency and employee satisfaction.
+
+## 5. AI Agents in Finance
+The finance sector is seeing extensive integration of AI agents that enhance financial practices:
+
+- **Expense Tracking**: Automated systems manage and monitor expenses, flagging anomalies and offering recommendations based on spending patterns.
+- **Risk Assessment**: AI models assess credit risk and uncover potential fraud by analyzing transaction data and behavioral patterns.
+- **Investment Decisions**: AI agents provide stock predictions and analytics based on historical data and current market conditions, empowering investors with informative insights.
+
+The incorporation of AI agents into finance is fostering a more responsive and risk-aware financial landscape.
+
+## 6. Market Trends and Investments
+The growth of AI agents has attracted significant investment, especially amidst the rising popularity of chatbots and generative AI technologies. Companies and entrepreneurs are eager to explore the potential of these systems, recognizing their ability to streamline operations and improve customer engagement.
+
+Conversely, corporations like Microsoft are taking strides to integrate AI agents into their product offerings, with enhancements to their Copilot 365 applications. This strategic move emphasizes the importance of AI literacy in the modern workplace and indicates the stabilizing of AI agents as essential business tools.
+
+## 7. Future Predictions and Implications
+Experts predict that AI agents will transform essential aspects of work life. As we look toward the future, several anticipated changes include:
+
+- Enhanced integration of AI agents across all business functions, creating interconnected systems that leverage data from various departmental silos for comprehensive decision-making.
+- Continued advancement of AI technologies, resulting in smarter, more adaptable agents capable of learning and evolving from user interactions.
+- Increased regulatory scrutiny to ensure ethical use, especially concerning data privacy and employee surveillance as AI agents become more prevalent.
+
+To stay competitive and harness the full potential of AI agents, organizations must remain vigilant about latest developments in AI technology and consider continuous learning and adaptation in their strategic planning.
+
+## 8. Conclusion
+The emergence of AI agents is undeniably reshaping the workplace landscape in 5. With their ability to automate tasks, enhance efficiency, and improve decision-making, AI agents are critical in driving operational success. Organizations must embrace and adapt to AI developments to thrive in an increasingly digital business environment.
+
+```
+
+Congratulations!You have successfully set up your crew project and are ready to start building your own agentic workflows!
+
+### Note on Consistency in Naming
+
+The names you use in your YAML files ( `agents.yaml` and `tasks.yaml`) should match the method names in your Python code.
+For example, you can reference the agent for specific tasks from `tasks.yaml` file.
+This naming consistency allows CrewAI to automatically link your configurations with your code; otherwise, your task won’t recognize the reference properly.
+
+#### Example References
+
+Note how we use the same name for the agent in the `agents.yaml` ( `email_summarizer`) file as the method name in the `crew.py` ( `email_summarizer`) file.
+
+agents.yaml
+
+```
+email_summarizer:
+    role: >
+      Email Summarizer
+    goal: >
+      Summarize emails into a concise and clear summary
+    backstory: >
+      You will create a 5 bullet point summary of the report
+    llm: provider/model-id  # Add your choice of model here
+
+```
+
+Note how we use the same name for the task in the `tasks.yaml` ( `email_summarizer_task`) file as the method name in the `crew.py` ( `email_summarizer_task`) file.
+
+tasks.yaml
+
+```
+email_summarizer_task:
+    description: >
+      Summarize the email into a 5 bullet point summary
+    expected_output: >
+      A 5 bullet point summary of the email
+    agent: email_summarizer
+    context:
+      - reporting_task
+      - research_task
+
+```
+</details>
+
+
+<details>
+<summary>quickstart-fastmcp</summary>
+
+Welcome! This guide will help you quickly set up FastMCP, run your first MCP server, and deploy a server to FastMCP Cloud.If you haven’t already installed FastMCP, follow the [installation instructions](https://gofastmcp.com/getting-started/installation).
+
+## Create a FastMCP Server
+
+A FastMCP server is a collection of tools, resources, and other MCP components. To create a server, start by instantiating the `FastMCP` class.Create a new file called `my_server.py` and add the following code:
+
+my\_server.py
+
+```
+from fastmcp import FastMCP
+
+mcp = FastMCP("My MCP Server")
+
+```
+
+That’s it! You’ve created a FastMCP server, albeit a very boring one. Let’s add a tool to make it more interesting.
+
+## Add a Tool
+
+To add a tool that returns a simple greeting, write a function and decorate it with `@mcp.tool` to register it with the server:
+
+my\_server.py
+
+```
+from fastmcp import FastMCP
+
+mcp = FastMCP("My MCP Server")
+
+@mcp.tool
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+```
+
+## Run the Server
+
+The simplest way to run your FastMCP server is to call its `run()` method. You can choose between different transports, like `stdio` for local servers, or `http` for remote access:
+
+my\_server.py (stdio)
+
+my\_server.py (HTTP)
+
+```
+from fastmcp import FastMCP
+
+mcp = FastMCP("My MCP Server")
+
+@mcp.tool
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    mcp.run()
+
+```
+
+This lets us run the server with `python my_server.py`. The stdio transport is the traditional way to connect MCP servers to clients, while the HTTP transport enables remote connections.
+
+Why do we need the `if __name__ == "__main__":` block?The `__main__` block is recommended for consistency and compatibility, ensuring your server works with all MCP clients that execute your server file as a script. Users who will exclusively run their server with the FastMCP CLI can omit it, as the CLI imports the server object directly.
+
+### Using the FastMCP CLI
+
+You can also use the `fastmcp run` command to start your server. Note that the FastMCP CLI **does not** execute the `__main__` block of your server file. Instead, it imports your server object and runs it with whatever transport and options you provide.For example, to run this server with the default stdio transport (no matter how you called `mcp.run()`), you can use the following command:
+
+```
+fastmcp run my_server.py:mcp
+
+```
+
+To run this server with the HTTP transport, you can use the following command:
+
+```
+fastmcp run my_server.py:mcp --transport http --port 8000
+
+```
+
+## Call Your Server
+
+Once your server is running with HTTP transport, you can connect to it with a FastMCP client or any LLM client that supports the MCP protocol:
+
+my\_client.py
+
+```
+import asyncio
+from fastmcp import Client
+
+client = Client("http://localhost:8000/mcp")
+
+async def call_tool(name: str):
+    async with client:
+        result = await client.call_tool("greet", {"name": name})
+        print(result)
+
+asyncio.run(call_tool("Ford"))
+
+```
+
+Note that:
+
+- FastMCP clients are asynchronous, so we need to use `asyncio.run` to run the client
+- We must enter a client context ( `async with client:`) before using the client
+- You can make multiple client calls within the same context
+
+## Deploy to FastMCP Cloud
+
+[FastMCP Cloud](https://fastmcp.cloud/) is a hosting service run by the FastMCP team at [Prefect](https://www.prefect.io/fastmcp). It is optimized to deploy authenticated FastMCP servers as quickly as possible, giving you a secure URL that you can plug into any LLM client.
+
+FastMCP Cloud is **free for personal servers** and offers simple pay-as-you-go pricing for teams.
+
+To deploy your server, you’ll need a [GitHub account](https://github.com/). Once you have one, you can deploy your server in three steps:
+
+1. Push your `my_server.py` file to a GitHub repository
+2. Sign in to [FastMCP Cloud](https://fastmcp.cloud/) with your GitHub account
+3. Create a new project from your repository and enter `my_server.py:mcp` as the server entrypoint
+
+That’s it! FastMCP Cloud will build and deploy your server, making it available at a URL like `https://your-project.fastmcp.app/mcp`. You can chat with it to test its functionality, or connect to it from any LLM client that supports the MCP protocol.For more details, see the [FastMCP Cloud guide](https://gofastmcp.com/deployment/fastmcp-cloud).
+</details>
+
+
+<details>
+<summary>welcome-to-fastmcp-2-0-fastmcp</summary>
+
+**FastMCP is the standard framework for building MCP applications.** The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) provides a standardized way to connect LLMs to tools and data, and FastMCP makes it production-ready with clean, Pythonic code:
+
+```
+from fastmcp import FastMCP
+
+mcp = FastMCP("Demo 🚀")
+
+@mcp.tool
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()
+
+```
+
+## Beyond Basic MCP
+
+FastMCP pioneered Python MCP development, with FastMCP 1.0 being incorporated into the [official MCP SDK](https://github.com/modelcontextprotocol/python-sdk) in 2024.**This is FastMCP 2.0** — the actively maintained version that extends far beyond basic protocol implementation. While the SDK provides core functionality, FastMCP 2.0 delivers everything needed for production: advanced MCP patterns (server composition, proxying, OpenAPI/FastAPI generation, tool transformation), enterprise auth (Google, GitHub, Azure, Auth0, WorkOS, and more), deployment tools, testing frameworks, and comprehensive client libraries.Ready to build? Start with our [installation guide](https://gofastmcp.com/getting-started/installation) or jump straight to the [quickstart](https://gofastmcp.com/getting-started/quickstart).
+
+## What is MCP?
+
+The Model Context Protocol lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. It is often described as “the USB-C port for AI”, providing a uniform way to connect LLMs to resources they can use. It may be easier to think of it as an API, but specifically designed for LLM interactions. MCP servers can:
+
+- Expose data through `Resources` (think of these sort of like GET endpoints; they are used to load information into the LLM’s context)
+- Provide functionality through `Tools` (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
+- Define interaction patterns through `Prompts` (reusable templates for LLM interactions)
+- And more!
+
+FastMCP provides a high-level, Pythonic interface for building, managing, and interacting with these servers.
+
+## Why FastMCP?
+
+FastMCP handles all the complex protocol details so you can focus on building. In most cases, decorating a Python function is all you need — FastMCP handles the rest.🚀 **Fast**: High-level interface means less code and faster development🍀 **Simple**: Build MCP servers with minimal boilerplate🐍 **Pythonic**: Feels natural to Python developers🔍 **Complete**: Everything for production — enterprise auth (Google, GitHub, Azure, Auth0, WorkOS), deployment tools, testing frameworks, client libraries, and moreFastMCP provides the shortest path from idea to production. Deploy locally, to the cloud with [FastMCP Cloud](https://fastmcp.cloud/) (free for personal servers), or to your own infrastructure.FastMCP is made with 💙 by [Prefect](https://www.prefect.io/).
+</details>
+
+
+<details>
+<summary>workflows-and-agents-docs-by-langchain</summary>
+
+This guide reviews common workflow and agent patterns.
+
+- Workflows have predetermined code paths and are designed to operate in a certain order.
+- Agents are dynamic and define their own processes and tool usage.https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/agent_workflow.png?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=c217c9ef517ee556cae3fc928a21dc55LangGraph offers several benefits when building agents and workflows, including [persistence](https://docs.langchain.com/oss/python/langgraph/persistence), [streaming](https://docs.langchain.com/oss/python/langgraph/streaming), and support for debugging as well as [deployment](https://docs.langchain.com/oss/python/langgraph/deploy).
+
+## Setup
+
+To build a workflow or agent, you can use [any chat model](https://docs.langchain.com/oss/python/integrations/chat) that supports structured outputs and tool calling. The following example uses Anthropic:
+
+1. Install dependencies:
+
+```
+pip install langchain_core langchain-anthropic langgraph
+
+```
+
+2. Initialize the LLM:
+
+```
+import os
+import getpass
+
+from langchain_anthropic import ChatAnthropic
+
+def _set_env(var: str):
+    if not os.environ.get(var):
+        os.environ[var] = getpass.getpass(f"{var}: ")
+
+_set_env("ANTHROPIC_API_KEY")
+
+llm = ChatAnthropic(model="claude-3-5-sonnet-latest")
+
+```
+
+## LLMs and augmentations
+
+Workflows and agentic systems are based on LLMs and the various augmentations you add to them. [Tool calling](https://docs.langchain.com/oss/python/langchain/tools), [structured outputs](https://docs.langchain.com/oss/python/langchain/structured-output), and [short term memory](https://docs.langchain.com/oss/python/langchain/short-term-memory) are a few options for tailoring LLMs to your needs.https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/augmented_llm.png?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=7ea9656f46649b3ebac19e8309ae9006
+
+```
+
+# Schema for structured output
+from pydantic import BaseModel, Field
+
+class SearchQuery(BaseModel):
+    search_query: str = Field(None, description="Query that is optimized web search.")
+    justification: str = Field(
+        None, description="Why this query is relevant to the user's request."
+    )
+
+# Augment the LLM with schema for structured output
+structured_llm = llm.with_structured_output(SearchQuery)
+
+# Invoke the augmented LLM
+output = structured_llm.invoke("How does Calcium CT score relate to high cholesterol?")
+
+# Define a tool
+def multiply(a: int, b: int) -> int:
+    return a * b
+
+# Augment the LLM with tools
+llm_with_tools = llm.bind_tools([multiply])
+
+# Invoke the LLM with input that triggers the tool call
+msg = llm_with_tools.invoke("What is 2 times 3?")
+
+# Get the tool call
+msg.tool_calls
+
+```
+
+## Prompt chaining
+
+Prompt chaining is when each LLM call processes the output of the previous call. It’s often used for performing well-defined tasks that can be broken down into smaller, verifiable steps. Some examples include:
+
+- Translating documents into different languages
+- Verifying generated content for consistencyhttps://mintcdn.com/langchain-5e9cc07a/dL5Sn6Cmy9pwtY0V/oss/images/prompt_chain.png?fit=max&auto=format&n=dL5Sn6Cmy9pwtY0V&q=85&s=762dec147c31b8dc6ebb0857e236fc1f
+
+Graph API
+
+Functional API
+
+```
+from typing_extensions import TypedDict
+from langgraph.graph import StateGraph, START, END
+from IPython.display import Image, display
+
+# Graph state
+class State(TypedDict):
+    topic: str
+    joke: str
+    improved_joke: str
+    final_joke: str
+
+# Nodes
+def generate_joke(state: State):
+    """First LLM call to generate initial joke"""
+
+    msg = llm.invoke(f"Write a short joke about {state['topic']}")
+    return {"joke": msg.content}
+
+def check_punchline(state: State):
+    """Gate function to check if the joke has a punchline"""
+
+    # Simple check - does the joke contain "?" or "!"
+    if "?" in state["joke"] or "!" in state["joke"]:
+        return "Pass"
+    return "Fail"
+
+def improve_joke(state: State):
+    """Second LLM call to improve the joke"""
+
+    msg = llm.invoke(f"Make this joke funnier by adding wordplay: {state['joke']}")
+    return {"improved_joke": msg.content}
+
+def polish_joke(state: State):
+    """Third LLM call for final polish"""
+    msg = llm.invoke(f"Add a surprising twist to this joke: {state['improved_joke']}")
+    return {"final_joke": msg.content}
+
+# Build workflow
+workflow = StateGraph(State)
+
+# Add nodes
+workflow.add_node("generate_joke", generate_joke)
+workflow.add_node("improve_joke", improve_joke)
+workflow.add_node("polish_joke", polish_joke)
+
+# Add edges to connect nodes
+workflow.add_edge(START, "generate_joke")
+workflow.add_conditional_edges(
+    "generate_joke", check_punchline, {"Fail": "improve_joke", "Pass": END}
+)
+workflow.add_edge("improve_joke", "polish_joke")
+workflow.add_edge("polish_joke", END)
+
+# Compile
+chain = workflow.compile()
+
+# Show workflow
+display(Image(chain.get_graph().draw_mermaid_png()))
+
+# Invoke
+state = chain.invoke({"topic": "cats"})
+print("Initial joke:")
+print(state["joke"])
+print("\n--- --- ---\n")
+if "improved_joke" in state:
+    print("Improved joke:")
+    print(state["improved_joke"])
+    print("\n--- --- ---\n")
+
+    print("Final joke:")
+    print(state["final_joke"])
+else:
+    print("Joke failed quality gate - no punchline detected!")
+
+```
+
+## Parallelization
+
+With parallelization, LLMs work simultaneously on a task. This is either done by running multiple independent subtasks at the same time, or running the same task multiple times to check for different outputs. Parallelization is commonly used to:
+
+- Split up subtasks and run them in parallel, which increases speed
+- Run tasks multiple times to check for different outputs, which increases confidence
+
+Some examples include:
+
+- Running one subtask that processes a document for keywords, and a second subtask to check for formatting errors
+- Running a task multiple times that scores a document for accuracy based on different criteria, like the number of citations, the number of sources used, and the quality of the sourceshttps://mintcdn.com/langchain-5e9cc07a/dL5Sn6Cmy9pwtY0V/oss/images/parallelization.png?fit=max&auto=format&n=dL5Sn6Cmy9pwtY0V&q=85&s=8afe3c427d8cede6fed1e4b2a5107b71
+
+Graph API
+
+Functional API
+
+```
+# Graph state
+class State(TypedDict):
+    topic: str
+    joke: str
+    story: str
+    poem: str
+    combined_output: str
+
+# Nodes
+def call_llm_1(state: State):
+    """First LLM call to generate initial joke"""
+
+    msg = llm.invoke(f"Write a joke about {state['topic']}")
+    return {"joke": msg.content}
+
+def call_llm_2(state: State):
+    """Second LLM call to generate story"""
+
+    msg = llm.invoke(f"Write a story about {state['topic']}")
+    return {"story": msg.content}
+
+def call_llm_3(state: State):
+    """Third LLM call to generate poem"""
+
+    msg = llm.invoke(f"Write a poem about {state['topic']}")
+    return {"poem": msg.content}
+
+def aggregator(state: State):
+    """Combine the joke and story into a single output"""
+
+    combined = f"Here's a story, joke, and poem about {state['topic']}!\n\n"
+    combined += f"STORY:\n{state['story']}\n\n"
+    combined += f"JOKE:\n{state['joke']}\n\n"
+    combined += f"POEM:\n{state['poem']}"
+    return {"combined_output": combined}
+
+# Build workflow
+parallel_builder = StateGraph(State)
+
+# Add nodes
+parallel_builder.add_node("call_llm_1", call_llm_1)
+parallel_builder.add_node("call_llm_2", call_llm_2)
+parallel_builder.add_node("call_llm_3", call_llm_3)
+parallel_builder.add_node("aggregator", aggregator)
+
+# Add edges to connect nodes
+parallel_builder.add_edge(START, "call_llm_1")
+parallel_builder.add_edge(START, "call_llm_2")
+parallel_builder.add_edge(START, "call_llm_3")
+parallel_builder.add_edge("call_llm_1", "aggregator")
+parallel_builder.add_edge("call_llm_2", "aggregator")
+parallel_builder.add_edge("call_llm_3", "aggregator")
+parallel_builder.add_edge("aggregator", END)
+parallel_workflow = parallel_builder.compile()
+
+# Show workflow
+display(Image(parallel_workflow.get_graph().draw_mermaid_png()))
+
+# Invoke
+state = parallel_workflow.invoke({"topic": "cats"})
+print(state["combined_output"])
+
+```
+
+## Routing
+
+Routing workflows process inputs and then directs them to context-specific tasks. This allows you to define specialized flows for complex tasks. For example, a workflow built to answer product related questions might process the type of question first, and then route the request to specific processes for pricing, refunds, returns, etc.https://mintcdn.com/langchain-5e9cc07a/dL5Sn6Cmy9pwtY0V/oss/images/routing.png?fit=max&auto=format&n=dL5Sn6Cmy9pwtY0V&q=85&s=272e0e9b681b89cd7d35d5c812c50ee6
+
+Graph API
+
+Functional API
+
+```
+from typing_extensions import Literal
+from langchain.messages import HumanMessage, SystemMessage
+
+# Schema for structured output to use as routing logic
+class Route(BaseModel):
+    step: Literal["poem", "story", "joke"] = Field(
+        None, description="The next step in the routing process"
+    )
+
+# Augment the LLM with schema for structured output
+router = llm.with_structured_output(Route)
+
+# State
+class State(TypedDict):
+    input: str
+    decision: str
+    output: str
+
+# Nodes
+def llm_call_1(state: State):
+    """Write a story"""
+
+    result = llm.invoke(state["input"])
+    return {"output": result.content}
+
+def llm_call_2(state: State):
+    """Write a joke"""
+
+    result = llm.invoke(state["input"])
+    return {"output": result.content}
+
+def llm_call_3(state: State):
+    """Write a poem"""
+
+    result = llm.invoke(state["input"])
+    return {"output": result.content}
+
+def llm_call_router(state: State):
+    """Route the input to the appropriate node"""
+
+    # Run the augmented LLM with structured output to serve as routing logic
+    decision = router.invoke(
+        [\
+            SystemMessage(\
+                content="Route the input to story, joke, or poem based on the user's request."\
+            ),\
+            HumanMessage(content=state["input"]),\
+        ]
+    )
+
+    return {"decision": decision.step}
+
+# Conditional edge function to route to the appropriate node
+def route_decision(state: State):
+    # Return the node name you want to visit next
+    if state["decision"] == "story":
+        return "llm_call_1"
+    elif state["decision"] == "joke":
+        return "llm_call_2"
+    elif state["decision"] == "poem":
+        return "llm_call_3"
+
+# Build workflow
+router_builder = StateGraph(State)
+
+# Add nodes
+router_builder.add_node("llm_call_1", llm_call_1)
+router_builder.add_node("llm_call_2", llm_call_2)
+router_builder.add_node("llm_call_3", llm_call_3)
+router_builder.add_node("llm_call_router", llm_call_router)
+
+# Add edges to connect nodes
+router_builder.add_edge(START, "llm_call_router")
+router_builder.add_conditional_edges(
+    "llm_call_router",
+    route_decision,
+    {  # Name returned by route_decision : Name of next node to visit
+        "llm_call_1": "llm_call_1",
+        "llm_call_2": "llm_call_2",
+        "llm_call_3": "llm_call_3",
+    },
+)
+router_builder.add_edge("llm_call_1", END)
+router_builder.add_edge("llm_call_2", END)
+router_builder.add_edge("llm_call_3", END)
+
+# Compile workflow
+router_workflow = router_builder.compile()
+
+# Show the workflow
+display(Image(router_workflow.get_graph().draw_mermaid_png()))
+
+# Invoke
+state = router_workflow.invoke({"input": "Write me a joke about cats"})
+print(state["output"])
+
+```
+
+## Orchestrator-worker
+
+In an orchestrator-worker configuration, the orchestrator:
+
+- Breaks down tasks into subtasks
+- Delegates subtasks to workers
+- Synthesizes worker outputs into a final resulthttps://mintcdn.com/langchain-5e9cc07a/ybiAaBfoBvFquMDz/oss/images/worker.png?fit=max&auto=format&n=ybiAaBfoBvFquMDz&q=85&s=2e423c67cd4f12e049cea9c169ff0676Orchestrator-worker workflows provide more flexibility and are often used when subtasks cannot be predefined the way they can with [parallelization](https://docs.langchain.com/oss/python/langgraph/workflows-agents#parallelization). This is common with workflows that write code or need to update content across multiple files. For example, a workflow that needs to update installation instructions for multiple Python libraries across an unknown number of documents might use this pattern.
+
+Graph API
+
+Functional API
+
+```
+from typing import Annotated, List
+import operator
+
+# Schema for structured output to use in planning
+class Section(BaseModel):
+    name: str = Field(
+        description="Name for this section of the report.",
+    )
+    description: str = Field(
+        description="Brief overview of the main topics and concepts to be covered in this section.",
+    )
+
+class Sections(BaseModel):
+    sections: List[Section] = Field(
+        description="Sections of the report.",
+    )
+
+# Augment the LLM with schema for structured output
+planner = llm.with_structured_output(Sections)
+
+```
+
+### Creating workers in LangGraph
+
+Orchestrator-worker workflows are common and LangGraph has built-in support for them. The `Send` API lets you dynamically create worker nodes and send them specific inputs. Each worker has its own state, and all worker outputs are written to a shared state key that is accessible to the orchestrator graph. This gives the orchestrator access to all worker output and allows it to synthesize them into a final output. The example below iterates over a list of sections and uses the `Send` API to send a section to each worker.
+
+```
+from langgraph.types import Send
+
+# Graph state
+class State(TypedDict):
+    topic: str  # Report topic
+    sections: list[Section]  # List of report sections
+    completed_sections: Annotated[\
+        list, operator.add\
+    ]  # All workers write to this key in parallel
+    final_report: str  # Final report
+
+# Worker state
+class WorkerState(TypedDict):
+    section: Section
+    completed_sections: Annotated[list, operator.add]
+
+# Nodes
+def orchestrator(state: State):
+    """Orchestrator that generates a plan for the report"""
+
+    # Generate queries
+    report_sections = planner.invoke(
+        [\
+            SystemMessage(content="Generate a plan for the report."),\
+            HumanMessage(content=f"Here is the report topic: {state['topic']}"),\
+        ]
+    )
+
+    return {"sections": report_sections.sections}
+
+def llm_call(state: WorkerState):
+    """Worker writes a section of the report"""
+
+    # Generate section
+    section = llm.invoke(
+        [\
+            SystemMessage(\
+                content="Write a report section following the provided name and description. Include no preamble for each section. Use markdown formatting."\
+            ),\
+            HumanMessage(\
+                content=f"Here is the section name: {state['section'].name} and description: {state['section'].description}"\
+            ),\
+        ]
+    )
+
+    # Write the updated section to completed sections
+    return {"completed_sections": [section.content]}
+
+def synthesizer(state: State):
+    """Synthesize full report from sections"""
+
+    # List of completed sections
+    completed_sections = state["completed_sections"]
+
+    # Format completed section to str to use as context for final sections
+    completed_report_sections = "\n\n---\n\n".join(completed_sections)
+
+    return {"final_report": completed_report_sections}
+
+# Conditional edge function to create llm_call workers that each write a section of the report
+def assign_workers(state: State):
+    """Assign a worker to each section in the plan"""
+
+    # Kick off section writing in parallel via Send() API
+    return [Send("llm_call", {"section": s}) for s in state["sections"]]
+
+# Build workflow
+orchestrator_worker_builder = StateGraph(State)
+
+# Add the nodes
+orchestrator_worker_builder.add_node("orchestrator", orchestrator)
+orchestrator_worker_builder.add_node("llm_call", llm_call)
+orchestrator_worker_builder.add_node("synthesizer", synthesizer)
+
+# Add edges to connect nodes
+orchestrator_worker_builder.add_edge(START, "orchestrator")
+orchestrator_worker_builder.add_conditional_edges(
+    "orchestrator", assign_workers, ["llm_call"]
+)
+orchestrator_worker_builder.add_edge("llm_call", "synthesizer")
+orchestrator_worker_builder.add_edge("synthesizer", END)
+
+# Compile the workflow
+orchestrator_worker = orchestrator_worker_builder.compile()
+
+# Show the workflow
+display(Image(orchestrator_worker.get_graph().draw_mermaid_png()))
+
+# Invoke
+state = orchestrator_worker.invoke({"topic": "Create a report on LLM scaling laws"})
+
+from IPython.display import Markdown
+Markdown(state["final_report"])
+
+```
+
+## Evaluator-optimizer
+
+In evaluator-optimizer workflows, one LLM call creates a response and the other evaluates that response. If the evaluator or a [human-in-the-loop](https://docs.langchain.com/oss/python/langgraph/interrupts) determines the response needs refinement, feedback is provided and the response is recreated. This loop continues until an acceptable response is generated.Evaluator-optimizer workflows are commonly used when there’s particular success criteria for a task, but iteration is required to meet that criteria. For example, there’s not always a perfect match when translating text between two languages. It might take a few iterations to generate a translation with the same meaning across the two languages.https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/evaluator_optimizer.png?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=9bd0474f42b6040b14ed6968a9ab4e3c
+
+Graph API
+
+Functional API
+
+```
+# Graph state
+class State(TypedDict):
+    joke: str
+    topic: str
+    feedback: str
+    funny_or_not: str
+
+# Schema for structured output to use in evaluation
+class Feedback(BaseModel):
+    grade: Literal["funny", "not funny"] = Field(
+        description="Decide if the joke is funny or not.",
+    )
+    feedback: str = Field(
+        description="If the joke is not funny, provide feedback on how to improve it.",
+    )
+
+# Augment the LLM with schema for structured output
+evaluator = llm.with_structured_output(Feedback)
+
+# Nodes
+def llm_call_generator(state: State):
+    """LLM generates a joke"""
+
+    if state.get("feedback"):
+        msg = llm.invoke(
+            f"Write a joke about {state['topic']} but take into account the feedback: {state['feedback']}"
+        )
+    else:
+        msg = llm.invoke(f"Write a joke about {state['topic']}")
+    return {"joke": msg.content}
+
+def llm_call_evaluator(state: State):
+    """LLM evaluates the joke"""
+
+    grade = evaluator.invoke(f"Grade the joke {state['joke']}")
+    return {"funny_or_not": grade.grade, "feedback": grade.feedback}
+
+# Conditional edge function to route back to joke generator or end based upon feedback from the evaluator
+def route_joke(state: State):
+    """Route back to joke generator or end based upon feedback from the evaluator"""
+
+    if state["funny_or_not"] == "funny":
+        return "Accepted"
+    elif state["funny_or_not"] == "not funny":
+        return "Rejected + Feedback"
+
+# Build workflow
+optimizer_builder = StateGraph(State)
+
+# Add the nodes
+optimizer_builder.add_node("llm_call_generator", llm_call_generator)
+optimizer_builder.add_node("llm_call_evaluator", llm_call_evaluator)
+
+# Add edges to connect nodes
+optimizer_builder.add_edge(START, "llm_call_generator")
+optimizer_builder.add_edge("llm_call_generator", "llm_call_evaluator")
+optimizer_builder.add_conditional_edges(
+    "llm_call_evaluator",
+    route_joke,
+    {  # Name returned by route_joke : Name of next node to visit
+        "Accepted": END,
+        "Rejected + Feedback": "llm_call_generator",
+    },
+)
+
+# Compile the workflow
+optimizer_workflow = optimizer_builder.compile()
+
+# Show the workflow
+display(Image(optimizer_workflow.get_graph().draw_mermaid_png()))
+
+# Invoke
+state = optimizer_workflow.invoke({"topic": "Cats"})
+print(state["joke"])
+
+```
+
+## Agents
+
+Agents are typically implemented as an LLM performing actions using [tools](https://docs.langchain.com/oss/python/langchain/tools). They operate in continuous feedback loops, and are used in situations where problems and solutions are unpredictable. Agents have more autonomy than workflows, and can make decisions about the tools they use and how to solve problems. You can still define the available toolset and guidelines for how agents behave.https://mintcdn.com/langchain-5e9cc07a/-_xGPoyjhyiDWTPJ/oss/images/agent.png?fit=max&auto=format&n=-_xGPoyjhyiDWTPJ&q=85&s=bd8da41dbf8b5e6fc9ea6bb10cb63e38
+
+To get started with agents, see the [quickstart](https://docs.langchain.com/oss/python/langchain/quickstart) or read more about [how they work](https://docs.langchain.com/oss/python/langchain/agents) in LangChain.
+
+Using tools
+
+```
+from langchain.tools import tool
+
+# Define tools
+@tool
+def multiply(a: int, b: int) -> int:
+    """Multiply a and b.
+
+    Args:
+        a: first int
+        b: second int
+    """
+    return a * b
+
+@tool
+def add(a: int, b: int) -> int:
+    """Adds a and b.
+
+    Args:
+        a: first int
+        b: second int
+    """
+    return a + b
+
+@tool
+def divide(a: int, b: int) -> float:
+    """Divide a and b.
+
+    Args:
+        a: first int
+        b: second int
+    """
+    return a / b
+
+# Augment the LLM with tools
+tools = [add, multiply, divide]
+tools_by_name = {tool.name: tool for tool in tools}
+llm_with_tools = llm.bind_tools(tools)
+
+```
+
+Graph API
+
+Functional API
+
+```
+from langgraph.graph import MessagesState
+from langchain.messages import SystemMessage, HumanMessage, ToolMessage
+
+# Nodes
+def llm_call(state: MessagesState):
+    """LLM decides whether to call a tool or not"""
+
+    return {
+        "messages": [\
+            llm_with_tools.invoke(\
+                [\
+                    SystemMessage(\
+                        content="You are a helpful assistant tasked with performing arithmetic on a set of inputs."\
+                    )\
+                ]\
+                + state["messages"]\
+            )\
+        ]
+    }
+
+def tool_node(state: dict):
+    """Performs the tool call"""
+
+    result = []
+    for tool_call in state["messages"][-1].tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        observation = tool.invoke(tool_call["args"])
+        result.append(ToolMessage(content=observation, tool_call_id=tool_call["id"]))
+    return {"messages": result}
+
+# Conditional edge function to route to the tool node or end based upon whether the LLM made a tool call
+def should_continue(state: MessagesState) -> Literal["tool_node", END]:
+    """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
+
+    messages = state["messages"]
+    last_message = messages[-1]
+    # If the LLM makes a tool call, then perform an action
+    if last_message.tool_calls:
+        return "tool_node"
+    # Otherwise, we stop (reply to the user)
+    return END
+
+# Build workflow
+agent_builder = StateGraph(MessagesState)
+
+# Add nodes
+agent_builder.add_node("llm_call", llm_call)
+agent_builder.add_node("tool_node", tool_node)
+
+# Add edges to connect nodes
+agent_builder.add_edge(START, "llm_call")
+agent_builder.add_conditional_edges(
+    "llm_call",
+    should_continue,
+    ["tool_node", END]
+)
+agent_builder.add_edge("tool_node", "llm_call")
+
+# Compile the agent
+agent = agent_builder.compile()
+
+# Show the agent
+display(Image(agent.get_graph(xray=True).draw_mermaid_png()))
+
+# Invoke
+messages = [HumanMessage(content="Add 3 and 4.")]
+messages = agent.invoke({"messages": messages})
+for m in messages["messages"]:
+    m.pretty_print()
+
+```
+</details>
+
+
+
+## Local Files
+
+_No local files found._
