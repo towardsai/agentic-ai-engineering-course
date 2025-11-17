@@ -1,13 +1,14 @@
 [project]
 name = "mcp-client"
 version = "0.1.0"
-description = "Add your description here"
+description = "The Nova MCP client"
 readme = "README.md"
 requires-python = "==3.12.11"
 dependencies = [
     "rich>=14.0.0",
     "opik>=1.8.42",
     "langgraph>=0.5.3",
+    "langchain>=0.3.0",
     "langchain-google-genai>=2.1.8",
     "langchain-openai>=0.3.28",
     "langchain-perplexity>=0.1.1",
