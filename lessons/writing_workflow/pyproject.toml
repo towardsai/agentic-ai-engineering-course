@@ -1,0 +1,66 @@
+[project]
+name = "brown"
+version = "0.1.0"
+description = "Brown: The writing agent."
+readme = "README.md"
+authors = [
+    {name = "Paul Iusztin", email = "p.b.iusztin@gmail.com"},
+]
+license = { text = "MIT" }
+requires-python = "==3.12.11"
+dependencies = [
+    "click>=8.1.8",
+    "loguru>=0.7.3",
+    "pydantic>=2.11.4",
+    "pydantic-settings>=2.9.1",
+    "langgraph>=1.0.2",
+    "langchain>=1.0.3",
+    "langgraph-checkpoint-sqlite>=2.0.11",
+    "langchain-perplexity>=1.0.0",
+    "langchain-google-genai>=3.0.0",
+    "langchain-community>=0.4.1",
+    "langchain-openai>=1.0.1",
+    "polars>=1.29.0",
+    "opik>=1.7.42",
+    "firecrawl-py>=2.7.1",
+    "httpx>=0.28.1",
+    "gitingest>=0.1.5",
+    "google-genai>=1.24.0",
+    "fastmcp==2.12.0",
+    "pyyaml>=6.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.3.0",
+    "pytest-asyncio>=1.2.0",
+    "pytest>=8.3.5",
+    "ruff>=0.11.8",
+]
+
+[tool.pip]
+extra-index-url = "https://download.pytorch.org/whl/cpu/torch_stable.html"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/brown"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 140
+
+[tool.ruff.lint]
+select = [
+    "F",    # Pyflakes
+    "E",    # pycodestyle errors
+    "I",    # isort
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "tests"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

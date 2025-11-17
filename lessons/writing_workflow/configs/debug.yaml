@@ -1,0 +1,60 @@
+context:
+  article_guideline_loader: "markdown"
+  article_guideline_uri: "article_guideline.md"
+  research_loader: "markdown"
+  research_uri: "research.md"
+  article_loader: "markdown"
+  article_renderer: "markdown"
+  article_uri: "article.md"
+  profiles_loader: "markdown"
+  profiles_uri: "inputs/profiles"
+  character_profile: "paul_iusztin.md"
+  examples_loader: "markdown"
+  examples_uri: "inputs/examples/debug"
+memory:
+  checkpointer: "in_memory"
+num_reviews: 1
+nodes:
+  generate_media_items:
+    model_id: "fake"
+    model_config:
+      temperature: 0.0
+      include_thoughts: false
+      thinking_budget: null
+    tools:
+      mermaid_diagram_generator:
+        model_id: "fake"
+        config:
+          temperature: 0.0
+          include_thoughts: false
+          thinking_budget: null
+  write_article:
+    model_id: "fake"
+    model_config:
+      temperature: 0.7
+      include_thoughts: false
+      thinking_budget: 6144
+  review_article:
+    model_id: "fake"
+    model_config:
+      temperature: 0.0
+      include_thoughts: false
+      thinking_budget: null
+  edit_article:
+    model_id: "fake"
+    model_config:
+      temperature: 0.1
+      include_thoughts: false
+      thinking_budget: 8192
+  review_selected_text:
+    model_id: "fake"
+    model_config:
+      temperature: 0.0
+      include_thoughts: false
+      thinking_budget: null
+  edit_selected_text:
+    model_id: "fake"
+    model_config:
+      temperature: 0.1
+      include_thoughts: false
+      thinking_budget: 8192

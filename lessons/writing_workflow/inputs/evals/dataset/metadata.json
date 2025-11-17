@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Lesson 2: Workflows vs. Agents",
+        "directory": "data/02_workflows_vs_agents",
+        "article_guideline_path": "article_guideline.md",
+        "research_path": "research.md",
+        "ground_truth_article_path": "article_ground_truth.md"
+    },
+    {
+        "name": "Lesson 3: Context Engineering",
+        "directory": "data/03_context_engineering"
+    },
+    {
+        "name": "Lesson 4: Structured Outputs",
+        "directory": "data/04_structured_outputs",
+        "is_few_shot_example": true
+    },
+    {
+        "name": "Lesson 5: Workflow Patterns",
+        "directory": "data/05_workflow_patterns"
+    },
+    {
+        "name": "Lesson 6: Tools",
+        "directory": "data/06_tools"
+    },
+    {
+        "name": "Lesson 7: Planning and Reasoning",
+        "directory": "data/07_reasoning_planning",
+        "is_few_shot_example": true
+    },
+    {
+        "name": "Lesson 8: ReAct Practice",
+        "directory": "data/08_react_practice"
+    },
+    {
+        "name": "Lesson 9: Retrieval-Augmented Generation (RAG)",
+        "directory": "data/09_RAG"
+    },
+    {
+        "name": "Lesson 10: Memory",
+        "directory": "data/10_memory_knowledge_access"
+    },
+    {
+        "name": "Lesson 11: Multimodal Data",
+        "directory": "data/11_multimodal"
+    }
+]
