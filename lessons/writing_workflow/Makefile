@@ -39,9 +39,6 @@ brown-edit-article: # Run the Brown MCP client to edit an article.
 brown-edit-selected-text: # Run the Brown MCP client to a selected text section of an article.
 	uv run python scripts/brown_mcp_cli.py edit-text --dir-path $(DIR_PATH) --human-feedback $(HUMAN_FEEDBACK) --first-line $(FIRST_LINE) --last-line $(LAST_LINE)
 
-run-research-agent: # Run the MCP research agent to gather information for generating the article.
-	uv --directory src/nova/mcp_client run -m src.client
-
 
 # --- Evals ---
 
