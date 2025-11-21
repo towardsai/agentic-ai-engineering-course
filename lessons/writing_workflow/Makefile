@@ -27,9 +27,6 @@ build: # Build the project.
 
 # --- Agents ---
 
-brown-run-http-server: # Run the Brown MCP server
-	uv run fastmcp run src/brown/interfaces/mcp/server.py:mcp --transport http --port 8000
-
 brown-generate-article: # Run the Brown MCP client to generate an article.
 	uv run python scripts/brown_mcp_cli.py generate-article --dir-path $(DIR_PATH)
 

@@ -12,6 +12,9 @@ This README shows how to:
 - Launch the research agent from the terminal
 - Run a **full research workflow**
 
+> [!NOTE]
+> This will be run as an independent project from the rest of this repository.
+
 ---
 
 ## 1. Directory Layout
@@ -36,7 +39,7 @@ You will install and run `mcp_server` and `mcp_client` as **separate `uv` projec
 - **Python**: The projects are pinned to Python `3.12.11` in their `pyproject.toml`.  
   If you followed the main course `README.md`, you already have a compatible Python installed.
 - **`uv`** package manager: see the root `README.md` for installation instructions.
-- A shell on macOS / Linux (commands below assume Bash/zsh).
+- All the commands below assume you are using a MacOS / Linux shell with commands based on Bash/zsh. In case you are using Windows, we assume to use a shell compatible with Linux such as WSL.
 
 You do **not** need to manually create or activate virtual environments; `uv` will manage them per-project.
 
@@ -75,22 +78,21 @@ This will create a `.venv` inside `mcp_client` and install all client dependenci
 Both the **server** and **client** read configuration from:
 
 - Real environment variables (`export VAR=...`), **and/or**
-- A local `.env` file in their project directory
+- A local `.env` file in their project directory using the `.env.example` as an example.
 
 For a smooth setup, create **two `.env` files** (you can copy the same content to both):
 
 1. `lessons/research_agent_part_2/mcp_server/.env`
 2. `lessons/research_agent_part_2/mcp_client/.env`
 
+You can use `.env.example` as a template: `cp .env.example .env`
+
 ### 4.1. Minimum required variables
 
 At minimum, you should set:
 
 ```bash
-# LLM provider (choose at least one)
 GOOGLE_API_KEY=your-google-api-key-here     # used by Gemini models
-# or
-OPENAI_API_KEY=your-openai-api-key-here     # used by OpenAI models (optional alternative)
 
 # Web research & scraping
 PPLX_API_KEY=your-perplexity-api-key-here   # required for Perplexity research
@@ -99,27 +101,20 @@ FIRECRAWL_API_KEY=your-firecrawl-api-key-here  # required for web scraping
 # Optional: GitHub analysis
 GITHUB_TOKEN=your-github-token-here
 
-# Optional: logging
-LOG_LEVEL=INFO
-LOG_LEVEL_DEPENDENCIES=WARNING
-
 # Optional: Opik monitoring
 OPIK_API_KEY=your-opik-api-key-here
-OPIK_WORKSPACE=your-opik-workspace
-OPIK_PROJECT_NAME=nova
 ```
 
 **Where to get these keys (all have free tiers):**
 
 - **`GOOGLE_API_KEY` (Gemini)**: Create a key in Google AI Studio (`https://aistudio.google.com/app/apikey`).  
   Google offers a free tier suitable for experimentation and this course.
-- **`OPENAI_API_KEY` (optional)**: Create a key in your OpenAI account dashboard.  
-  Check OpenAI’s pricing page for current free credits / trial limits.
 - **`PPLX_API_KEY` (Perplexity)**: Create a key from the Perplexity settings page (`https://www.perplexity.ai/settings/api`).  
   Perplexity currently offers a paid plan with generous usage; see their docs for any trial limits.
 - **`FIRECRAWL_API_KEY`**: Create a key at `https://firecrawl.dev/`.  
   Firecrawl has a free tier that allows you to scrape **around 500 pages**.
 - **`GITHUB_TOKEN`**: Create a fine‑grained personal access token from your GitHub settings, with read‑only access to the repositories you want to analyze.
+- **`OPIK_API_KEY`**: Create a free account at `https://www.comet.com/site/products/opik/` and find the API KEY based on this [doc](https://www.comet.com/docs/opik/faq#where-can-i-find-my-opik-api-key-)
 
 You can either:
 
@@ -285,7 +280,7 @@ You can point other MCP‑aware tools at this server. Examples below assume the 
 
 #### Cursor & Claude Desktop (stdio)
 
-Add something like this to your `.cursor/mcp.json` or `claude_desktop_config.json`:
+Add the following configuration to your `.cursor/mcp.json` or `claude_desktop_config.json`:
 
 ```json
 {
@@ -307,6 +302,30 @@ Add something like this to your `.cursor/mcp.json` or `claude_desktop_config.jso
       }
     }
   }
+}
+```
+
+You can also leverage the `.env` file directly:
+```json
+{
+    "mcpServers": {
+        "nova": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "/absolute/path/to/course-ai-agents/lessons/research_agent_part_2/mcp_server",
+                "run",
+                "-m",
+                "src.server",
+                "--transport",
+                "stdio"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENV_FILE_PATH": "${workspaceFolder}/lessons/research_agent_part_2/mcp_server/.env"
+            }
+        }
+    }
 }
 ```
 

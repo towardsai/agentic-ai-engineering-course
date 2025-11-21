@@ -72,3 +72,14 @@ The code exercises are in the form of Jupyter Notebooks (`.ipynb` files). You ca
 6.  Select the virtual environment from the cloned repository, which will be located at `.venv/bin/python`.
 
 You are now ready to run the code cells in the notebook
+
+### Running the Research Agent and Writing Workflow as Independent Projects
+
+Along with the Jupyter Notebook lessons you can also run the research agent and writing workflow as independent projects.
+
+You can find specialized documentation on how to install and run each project at:
+
+| Project | Description | Location |
+|---------|-------------|----------|
+| **Nova Research Agent** | Research agent used in part 2. | [`lessons/research_agent_part_2/README.md`](lessons/research_agent_part_2/README.md) |
+| **Brown Writing Workflow** | All the code for the writing workflow. | [`lessons/writing_workflow/README.md`](lessons/writing_workflow/README.md) |
