@@ -4,7 +4,7 @@ from loguru import logger
 from opik import evaluation
 from opik.evaluation.metrics import base_metric
 
-from brown.config import settings
+from brown.config import get_settings
 from brown.config_app import get_app_config as load_app_config
 
 from .opik_utils import get_dataset
@@ -43,7 +43,7 @@ def evaluate(
         None
     """
 
-    assert settings.OPIK_API_KEY, "OPIK_API_KEY is not set. We need it to track the experiment with Opik."
+    assert get_settings().OPIK_API_KEY, "OPIK_API_KEY is not set. We need it to track the experiment with Opik."
 
     dataset = get_dataset(dataset_name)
     if not dataset:

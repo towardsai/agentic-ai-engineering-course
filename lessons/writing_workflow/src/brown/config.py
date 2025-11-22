@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 from typing import Annotated
 
 from loguru import logger
@@ -27,4 +28,6 @@ class Settings(BaseSettings):
     CONFIG_FILE: Annotated[FilePath, Field(default="configs/course.yaml", description="Path to the application configuration YAML file.")]
 
 
-settings = Settings()
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return Settings()

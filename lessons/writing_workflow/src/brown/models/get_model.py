@@ -3,7 +3,7 @@ import json
 from langchain.chat_models import init_chat_model
 from langchain_core.language_models import BaseChatModel
 
-from brown.config import settings
+from brown.config import get_settings
 
 from .config import (
     DEFAULT_MODEL_CONFIGS,
@@ -39,6 +39,7 @@ def get_model(model: SupportedModels, config: ModelConfig | None = None) -> Base
 
     required_api_key = MODEL_TO_REQUIRED_API_KEY.get(model)
     if required_api_key:
+        settings = get_settings()
         if not getattr(settings, required_api_key):
             raise ValueError(f"Required environment variable `{required_api_key}` is not set")
         else:
