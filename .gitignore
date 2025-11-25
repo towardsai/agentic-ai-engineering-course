@@ -203,3 +203,10 @@ checkpoints/
 # Nova Agent
 .nova
 .research
+
+# Lessons
+# Ignore all configs and inputs folders except those from lessons/writing_workflow
+configs/
+inputs/
+!lessons/writing_workflow/configs/
+!lessons/writing_workflow/inputs/
