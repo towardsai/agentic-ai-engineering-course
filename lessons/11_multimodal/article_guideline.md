@@ -27,7 +27,7 @@ Often, we have to manipulate various types of multimodal data such as text, imag
 This piece is part of a broader course on AI agents and LLM workflows. The course consists of 4 parts, each with multiple lessons. 
 
 Thus, it's essential to always anchor this piece into the broader course, understanding where the reader is in its journey. You will be careful to consider the following:
-- The points of view
+- The point of view
 - To not reintroduce concepts already taught in the previous lesson.
 - To be careful when talking about concepts introduced only in future lessons
 - To always reference previous and future lessons when discussing topics outside the piece's scope.
