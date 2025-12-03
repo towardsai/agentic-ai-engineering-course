@@ -1,6 +1,6 @@
 [project]
 name = "agentic-ai-engineering-course"
-version = "0.2.0"
+version = "0.3.1"
 description = "Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML."
 readme = "README_PACKAGE.md"
 requires-python = ">=3.12.11"
