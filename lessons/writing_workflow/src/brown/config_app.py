@@ -6,7 +6,7 @@ import yaml
 from annotated_types import Ge
 from pydantic import BaseModel, DirectoryPath, Field, field_validator
 
-from brown.config import settings
+from brown.config import get_settings
 from brown.models.config import ModelConfig, SupportedModels
 
 
@@ -33,7 +33,7 @@ class Context(BaseModel):
 
 
 class Memory(BaseModel):
-    checkpointer: Literal["in_memory"]
+    checkpointer: Literal["in_memory", "sqlite"]
 
 
 class ToolConfig(BaseModel):
@@ -109,4 +109,4 @@ class AppConfig(BaseModel):
 
 @lru_cache(maxsize=1)
 def get_app_config() -> AppConfig:
-    return AppConfig.from_yaml(settings.CONFIG_FILE)
+    return AppConfig.from_yaml(get_settings().CONFIG_FILE)

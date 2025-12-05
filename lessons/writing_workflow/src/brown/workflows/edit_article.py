@@ -2,12 +2,13 @@ from pathlib import Path
 from typing import TypedDict, cast
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.config import get_stream_writer
 from langgraph.func import entrypoint, task
 from langgraph.types import RetryPolicy
 
 from brown.base import Loader
-from brown.builders import build_loaders, build_memory, build_model
+from brown.builders import build_loaders, build_model
 from brown.config_app import get_app_config
 from brown.entities.articles import Article, ArticleExamples
 from brown.entities.guidelines import ArticleGuideline
@@ -20,9 +21,21 @@ from brown.nodes.article_writer import ArticleWriter
 from brown.workflows.types import WorkflowProgress
 
 app_config = get_app_config()
-checkpointer = build_memory(app_config)
 
 retry_policy = RetryPolicy(max_attempts=3, retry_on=Exception)
+
+
+def build_edit_article_workflow(checkpointer: BaseCheckpointSaver):
+    """Create an edit article workflow with checkpointer.
+
+    Args:
+        checkpointer: Checkpointer to use for workflow persistence.
+
+    Returns:
+        Configured workflow entrypoint
+    """
+
+    return entrypoint(checkpointer=checkpointer)(_edit_article_workflow)
 
 
 class EditArticleInput(TypedDict):
@@ -30,8 +43,7 @@ class EditArticleInput(TypedDict):
     human_feedback: str
 
 
-@entrypoint(checkpointer=checkpointer)
-async def edit_article_workflow(inputs: EditArticleInput, config: RunnableConfig) -> str:
+async def _edit_article_workflow(inputs: EditArticleInput, config: RunnableConfig) -> str:
     writer = get_stream_writer()
 
     # Progress: Loading context

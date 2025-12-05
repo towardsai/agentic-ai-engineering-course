@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class SupportedModels(StrEnum):
+    GOOGLE_GEMINI_30_PRO = "google_genai:gemini-3-pro-preview"
     GOOGLE_GEMINI_25_PRO = "google_genai:gemini-2.5-pro"
     GOOGLE_GEMINI_25_FLASH = "google_genai:gemini-2.5-flash"
     GOOGLE_GEMINI_25_FLASH_LITE = "google_genai:gemini-2.5-flash-lite"
@@ -45,6 +46,12 @@ class ModelConfig(BaseModel):
 
 
 DEFAULT_MODEL_CONFIGS = {
+    "google_genai:gemini-3-pro-preview": ModelConfig(
+        temperature=0.7,
+        include_thoughts=False,
+        thinking_budget=1000,
+        max_retries=3,
+    ),
     "google_genai:gemini-2.5-pro": ModelConfig(
         temperature=0.7,
         include_thoughts=False,
@@ -53,12 +60,6 @@ DEFAULT_MODEL_CONFIGS = {
     ),
     "google_genai:gemini-2.5-flash": ModelConfig(
         temperature=1,
-        thinking_budget=1000,
-        include_thoughts=False,
-        max_retries=3,
-    ),
-    "google_genai:gemini-2.0-flash-exp": ModelConfig(
-        temperature=0.7,
         thinking_budget=1000,
         include_thoughts=False,
         max_retries=3,

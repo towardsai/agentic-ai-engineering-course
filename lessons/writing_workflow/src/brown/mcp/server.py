@@ -19,10 +19,14 @@ from fastmcp import Context, FastMCP
 from langgraph.pregel.main import RunnableConfig
 from loguru import logger
 
-from brown.builders import build_loaders
+from brown.builders import build_loaders, build_short_term_memory
 from brown.config_app import get_app_config as load_app_config
 from brown.observability import tracing
-from brown.workflows import edit_article_workflow, edit_selected_text_workflow, generate_article_workflow
+from brown.workflows import (
+    build_edit_article_workflow,
+    build_edit_selected_text_workflow,
+    build_generate_article_workflow,
+)
 from brown.workflows.types import WorkflowProgress
 
 app_config = load_app_config()
@@ -107,18 +111,21 @@ async def generate_article(dir_path: Path, ctx: Context) -> str:
         # with multiple review iterations applied as article_000.md, article_001.md, etc.
     """
 
-    thread_id = str(uuid.uuid4())
-    tracer = tracing.build_handler(thread_id, tags=["generate"])
-    config: RunnableConfig = {
-        "configurable": {
-            "thread_id": thread_id,
-        },
-        "callbacks": [tracer],
-    }
+    async with build_short_term_memory(app_config) as checkpointer:
+        generate_article_workflow = build_generate_article_workflow(checkpointer=checkpointer)
 
-    async for chunk in generate_article_workflow.astream({"dir_path": dir_path}, config=config, stream_mode=["custom", "values"]):
-        _, chunk_data = chunk
-        await parse_message(chunk_data, ctx)
+        thread_id = str(uuid.uuid4())
+        tracer = tracing.build_handler(thread_id, tags=["generate"])
+        config: RunnableConfig = {
+            "configurable": {
+                "thread_id": thread_id,
+            },
+            "callbacks": [tracer],
+        }
+
+        async for chunk in generate_article_workflow.astream({"dir_path": dir_path}, config=config, stream_mode=["custom", "values"]):
+            _, chunk_data = chunk
+            await parse_message(chunk_data, ctx)
 
     return "Article generation completed successfully!"
 
@@ -188,28 +195,31 @@ async def edit_article(
         <instructions>
     """
 
-    thread_id = str(uuid.uuid4())
-    tracer = tracing.build_handler(thread_id, tags=["edit"])
-    config: RunnableConfig = {"configurable": {"thread_id": thread_id}, "callbacks": [tracer]}
+    async with build_short_term_memory(app_config) as checkpointer:
+        edit_article_workflow = build_edit_article_workflow(checkpointer=checkpointer)
 
-    dir_path = Path(article_path).parent
-    await ctx.info(f"Editing article from file {article_path}")
-    await ctx.info(f"Using directory `{dir_path}` as context")
+        thread_id = str(uuid.uuid4())
+        tracer = tracing.build_handler(thread_id, tags=["edit"])
+        config: RunnableConfig = {"configurable": {"thread_id": thread_id}, "callbacks": [tracer]}
 
-    final_result = None
-    async for chunk in edit_article_workflow.astream(
-        {
-            "dir_path": Path(dir_path),
-            "human_feedback": human_feedback,
-        },
-        config=config,
-        stream_mode=["custom", "values"],
-    ):
-        chunk_type, chunk_data = chunk
-        await parse_message(chunk_data, ctx)
+        dir_path = Path(article_path).parent
+        await ctx.info(f"Editing article from file {article_path}")
+        await ctx.info(f"Using directory `{dir_path}` as context")
 
-        if chunk_type == "values":
-            final_result = chunk_data
+        final_result = None
+        async for chunk in edit_article_workflow.astream(
+            {
+                "dir_path": Path(dir_path),
+                "human_feedback": human_feedback,
+            },
+            config=config,
+            stream_mode=["custom", "values"],
+        ):
+            chunk_type, chunk_data = chunk
+            await parse_message(chunk_data, ctx)
+
+            if chunk_type == "values":
+                final_result = chunk_data
 
     return final_result or "Article editing completed successfully!"
 
@@ -292,31 +302,34 @@ async def edit_selected_text(
         <instructions>
     """
 
-    thread_id = str(uuid.uuid4())
-    tracer = tracing.build_handler(thread_id, tags=["edit_selected_text"])
-    config: RunnableConfig = {"configurable": {"thread_id": thread_id}, "callbacks": [tracer]}
+    async with build_short_term_memory(app_config) as checkpointer:
+        edit_selected_text_workflow = build_edit_selected_text_workflow(checkpointer=checkpointer)
 
-    dir_path = Path(article_path).parent
-    await ctx.info(f"Editing selected text from file {article_path}")
-    await ctx.info(f"Using directory `{dir_path}` as context")
+        thread_id = str(uuid.uuid4())
+        tracer = tracing.build_handler(thread_id, tags=["edit_selected_text"])
+        config: RunnableConfig = {"configurable": {"thread_id": thread_id}, "callbacks": [tracer]}
 
-    final_result = None
-    async for chunk in edit_selected_text_workflow.astream(
-        {
-            "dir_path": Path(dir_path),
-            "human_feedback": human_feedback,
-            "selected_text": selected_text,
-            "number_line_before_selected_text": first_line_number,
-            "number_line_after_selected_text": last_line_number,
-        },
-        config=config,
-        stream_mode=["custom", "values"],
-    ):
-        chunk_type, chunk_data = chunk
-        await parse_message(chunk_data, ctx)
+        dir_path = Path(article_path).parent
+        await ctx.info(f"Editing selected text from file {article_path}")
+        await ctx.info(f"Using directory `{dir_path}` as context")
 
-        if chunk_type == "values":
-            final_result = chunk_data
+        final_result = None
+        async for chunk in edit_selected_text_workflow.astream(
+            {
+                "dir_path": Path(dir_path),
+                "human_feedback": human_feedback,
+                "selected_text": selected_text,
+                "number_line_before_selected_text": first_line_number,
+                "number_line_after_selected_text": last_line_number,
+            },
+            config=config,
+            stream_mode=["custom", "values"],
+        ):
+            chunk_type, chunk_data = chunk
+            await parse_message(chunk_data, ctx)
+
+            if chunk_type == "values":
+                final_result = chunk_data
 
     return final_result or "Selected text editing completed successfully!"
 

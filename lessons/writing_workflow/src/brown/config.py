@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 from typing import Annotated
 
 from loguru import logger
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
 
     # --- Opik ---
 
+    OPIK_ENABLED: bool = Field(default=False, description="Whether to use Opik for monitoring and logging.")
     OPIK_WORKSPACE: str | None = Field(default=None, description="Name of the Opik workspace containing the project.")
     OPIK_PROJECT_NAME: str = Field(default="brown", description="Name of the Opik project.")
     OPIK_API_KEY: SecretStr | None = Field(default=None, description="The API key for the Opik API.")
@@ -27,4 +29,6 @@ class Settings(BaseSettings):
     CONFIG_FILE: Annotated[FilePath, Field(default="configs/course.yaml", description="Path to the application configuration YAML file.")]
 
 
-settings = Settings()
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return Settings()

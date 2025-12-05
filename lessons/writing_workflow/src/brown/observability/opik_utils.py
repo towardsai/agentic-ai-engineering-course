@@ -3,10 +3,11 @@ import os
 import opik
 from loguru import logger
 
-from brown.config import settings
+from brown.config import get_settings
 
 
 def configure() -> None:
+    settings = get_settings()
     if settings.OPIK_API_KEY and settings.OPIK_PROJECT_NAME:
         os.environ["OPIK_PROJECT_NAME"] = settings.OPIK_PROJECT_NAME
 

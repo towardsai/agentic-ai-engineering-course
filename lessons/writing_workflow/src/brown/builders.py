@@ -1,8 +1,6 @@
 from typing import Literal, TypedDict
 
 from langchain_core.runnables import Runnable
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.func import BaseCheckpointSaver
 
 from brown.base import Loader, Renderer
 from brown.config_app import AppConfig
@@ -14,6 +12,7 @@ from brown.loaders import (
     MarkdownArticleProfilesLoader,
     MarkdownResearchLoader,
 )
+from brown.memory import build_in_memory_checkpointer, build_sqlite_checkpointer
 from brown.models import get_model
 from brown.nodes import TOOL_NODES, Toolkit
 from brown.renderers import MarkdownArticleRenderer
@@ -102,9 +101,24 @@ def build_article_renderer(app_config: AppConfig) -> Renderer:
 ##################
 
 
-def build_memory(app_config: AppConfig) -> BaseCheckpointSaver:
+def build_short_term_memory(app_config: AppConfig):
+    """Build a checkpointer based on app config.
+
+    Returns:
+        For in_memory: Returns an async context manager that yields InMemorySaver
+        For sqlite: Returns an async context manager that yields AsyncSqliteSaver
+
+    Usage:
+        # For both in_memory and sqlite (use async with)
+        async with build_short_term_memory(app_config) as checkpointer:
+            workflow = build_generate_article_workflow(checkpointer=checkpointer)
+            await workflow.ainvoke(...)
+    """
+
     if app_config.memory.checkpointer == "in_memory":
-        return InMemorySaver()
+        return build_in_memory_checkpointer()
+    elif app_config.memory.checkpointer == "sqlite":
+        return build_sqlite_checkpointer()
     else:
         raise InvalidConfigurationException(f"Invalid memory checkpointer: {app_config.memory.checkpointer}")
 
