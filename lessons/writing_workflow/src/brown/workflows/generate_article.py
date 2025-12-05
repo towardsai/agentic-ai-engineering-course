@@ -3,12 +3,13 @@ from pathlib import Path
 from typing import TypedDict, cast
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.config import get_stream_writer
 from langgraph.func import entrypoint, task
 from langgraph.types import RetryPolicy
 
 from brown.base import Loader
-from brown.builders import build_article_renderer, build_loaders, build_memory, build_model
+from brown.builders import build_article_renderer, build_loaders, build_model
 from brown.config_app import get_app_config
 from brown.entities.articles import Article, ArticleExamples
 from brown.entities.guidelines import ArticleGuideline
@@ -22,17 +23,28 @@ from brown.nodes.media_generator import MediaGeneratorOrchestrator
 from brown.workflows.types import WorkflowProgress
 
 app_config = get_app_config()
-checkpointer = build_memory(app_config)
 
 retry_policy = RetryPolicy(max_attempts=3, retry_on=Exception)
+
+
+def build_generate_article_workflow(checkpointer: BaseCheckpointSaver):
+    """Create a generate article workflow with optional checkpointer.
+
+    Args:
+        checkpointer: Optional checkpointer to use. If None, workflow runs without persistence.
+
+    Returns:
+        Configured workflow entrypoint
+    """
+
+    return entrypoint(checkpointer=checkpointer)(_generate_article_workflow)
 
 
 class GenerateArticleInput(TypedDict):
     dir_path: Path
 
 
-@entrypoint(checkpointer=checkpointer)
-async def generate_article_workflow(inputs: GenerateArticleInput, config: RunnableConfig) -> str:
+async def _generate_article_workflow(inputs: GenerateArticleInput, config: RunnableConfig) -> str:
     dir_path = inputs["dir_path"]
     dir_path.mkdir(parents=True, exist_ok=True)
 

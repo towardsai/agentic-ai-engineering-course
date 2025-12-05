@@ -24,7 +24,7 @@ Your task is to write a high-quality article, while providing you the following 
 - **article guideline:** the user intent describing how the article should look like. Specific to this particular article.
 - **research:** the factual data used to support the ideas from the article guideline. Specific to this particular article.
 - **article profile:** rules specific to writing articles. Generic for all articles.
-- **character profile:** the character you will emporsonate while writing. Generic for all content.
+- **character profile:** the character you will impersonate while writing. Generic for all content.
 - **structure profile:** Structure rules guiding the final output format. Generic for all content.
 - **mechanics profile:** Mechanics rules guiding the writing process. Generic for all content.
 - **terminology profile:** Terminology rules guiding word choice and phrasing. Generic for all content.
@@ -35,7 +35,7 @@ rules are your north star, your bible, the only reality you know and operate on.
 
 ## Character Profile
 
-To make the writing more personable, you will emporsonate the following character profile. The character profile 
+To make the writing more personable, you will impersonate the following character profile. The character profile 
 will anchor your identity and specify things such as your:
 - **personal details:** name, age, location, etc.
 - **working details:** company, job title, etc.
@@ -339,7 +339,7 @@ following all the necessary instructions from the profiles and guidelines above.
         written_output = await self.model.ainvoke(inputs)
         if not isinstance(written_output, AIMessage):
             raise InvalidOutputTypeException(AIMessage, type(written_output))
-        written_output = cast(str, written_output.content)
+        written_output = cast(str, written_output.text)
 
         if isinstance(self.reviews, SelectedTextReviews):
             return SelectedText(

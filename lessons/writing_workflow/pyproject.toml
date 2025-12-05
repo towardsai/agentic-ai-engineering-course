@@ -13,9 +13,9 @@ dependencies = [
     "loguru>=0.7.3",
     "pydantic>=2.11.4",
     "pydantic-settings>=2.9.1",
-    "langgraph>=1.0.2",
+    "langgraph>=1.0.3",
     "langchain>=1.0.3",
-    "langgraph-checkpoint-sqlite>=2.0.11",
+    "langgraph-checkpoint-sqlite>=3.0.0",
     "langchain-perplexity>=1.0.0",
     "langchain-google-genai>=3.0.0",
     "langchain-community>=0.4.1",
@@ -28,6 +28,7 @@ dependencies = [
     "google-genai>=1.24.0",
     "fastmcp==2.12.0",
     "pyyaml>=6.0.1",
+    "aiosqlite>=0.21.0",
 ]
 
 [dependency-groups]

@@ -13,7 +13,7 @@ Always strive for an active voice.
 
 ## Point of View
 
-The course is created by a team writing for a single reader, also known as the student. Thus, for voice consistency across the course, we will always use 'we,' 'our,' and 'us' to refer to the team who creates the course, and 'you' or 'your' to address the reader. Avoid singular first person and don't use 'we' to refer to the student.
+The piece is created by a team writing for a single reader, also known as the reader. Thus, for voice consistency across the piece, we will always use 'we,' 'our,' and 'us' to refer to the team who creates the pieces, and 'you' or 'your' to address the reader. Avoid singular first person and don't use 'we' to refer to the reader.
 
 - Good Examples:
   - "To choose between workflows and agents, you need a clear understanding of what they are."

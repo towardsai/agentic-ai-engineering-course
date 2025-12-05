@@ -2,4 +2,5 @@ from brown import config, observability
 
 __all__ = ["config"]
 
-observability.configure()
+if config.get_settings().OPIK_ENABLED:
+    observability.configure()

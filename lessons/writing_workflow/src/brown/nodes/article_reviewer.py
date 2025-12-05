@@ -94,34 +94,34 @@ Here is the article guideline:
 ## Character Profile
 
 To make the writing more personable, we emporsonated the following character profile when writing the article:
-{character_template}
+{character_profile}
 
 ## Terminology Profile
 
 Here is the terminology profile, describing how to choose the right words and phrases:§
 to the target audience:
-{terminology_template}
+{terminology_profile}
 
 ## Tonality Profile
 
 Here is the tonality profile, describing the tone, voice and style of the writing:
-{tonality_template}
+{tonality_profile}
 
 ## Mechanics Profile
 
 Here is the mechanics profile, describing how the sentences and words should be written:
-{mechanics_template}
+{mechanics_profile}
 
 ## Structure Profile
 
 Here is the structure profile, describing general rules on how to structure text, such as the sections, paragraphs, lists,
 code blocks, or media items:
-{structure_template}
+{structure_profile}
 
 ## Article Profile
 
 Here is the article profile, describing particularities on how the end-to-end article should look like:
-{article_template}
+{article_profile}
 
 ## Reviewing Process
 
@@ -241,12 +241,12 @@ previous chain of thoughts:
             human_feedback=self.human_feedback.to_context() if self.human_feedback else "",
             article=self.article.to_context(),
             article_guideline=self.article_guideline.to_context(),
-            character_template=self.article_profiles.character.to_context(),
-            article_template=self.article_profiles.article.to_context(),
-            structure_template=self.article_profiles.structure.to_context(),
-            mechanics_template=self.article_profiles.mechanics.to_context(),
-            terminology_template=self.article_profiles.terminology.to_context(),
-            tonality_template=self.article_profiles.tonality.to_context(),
+            character_profile=self.article_profiles.character.to_context(),
+            article_profile=self.article_profiles.article.to_context(),
+            structure_profile=self.article_profiles.structure.to_context(),
+            mechanics_profile=self.article_profiles.mechanics.to_context(),
+            terminology_profile=self.article_profiles.terminology.to_context(),
+            tonality_profile=self.article_profiles.tonality.to_context(),
         )
         user_input_content = self.build_user_input_content(inputs=[system_prompt])
         inputs = [
