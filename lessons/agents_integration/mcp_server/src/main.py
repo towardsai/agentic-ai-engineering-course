@@ -20,9 +20,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def load_server_config() -> dict:
-    """Load the MCP servers configuration from JSON file."""
-    config_path = Path(__file__).parent.parent / "mcp_servers_to_compose.json"
+def load_server_config(config_path: Path | None = None) -> dict:
+    """Load the MCP servers configuration from JSON file.
+    
+    Args:
+        config_path: Optional path to config file. If None, uses default mcp_servers_to_compose.json
+    """
+    if config_path is None:
+        config_path = Path(__file__).parent.parent / "mcp_servers_to_compose.json"
+    else:
+        config_path = Path(config_path)
     
     if not config_path.exists():
         raise FileNotFoundError(f"Configuration file not found: {config_path}")
@@ -31,9 +38,12 @@ def load_server_config() -> dict:
         return json.load(f)
 
 
-def create_composed_server() -> FastMCP:
+def create_composed_server(config_path: Path | None = None) -> FastMCP:
     """
     Create a composed MCP server by mounting Nova and Brown servers.
+    
+    Args:
+        config_path: Optional path to config file. If None, uses default mcp_servers_to_compose.json
     
     Returns:
         FastMCP: The composed server instance with both servers mounted
@@ -45,7 +55,7 @@ def create_composed_server() -> FastMCP:
     )
     
     logger.info("Loading server configuration...")
-    config = load_server_config()
+    config = load_server_config(config_path)
     
     servers_config = config.get("mcpServers", {})
     
@@ -249,12 +259,44 @@ the "generate_article" tool of the Brown MCP Server, which will take care of eve
 
 
 if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Composed MCP Server (Nova + Brown)")
+    parser.add_argument(
+        "--transport",
+        "-t",
+        type=str,
+        choices=["stdio", "streamable-http"],
+        default="stdio",
+        help="Transport protocol to use (stdio or streamable-http)",
+    )
+    parser.add_argument(
+        "--port",
+        "-p",
+        type=int,
+        default=8003,
+        help="Port number for HTTP transport (default: 8003)",
+    )
+    parser.add_argument(
+        "--config",
+        "-c",
+        type=str,
+        default=None,
+        help="Path to MCP servers configuration file (overrides default mcp_servers_to_compose.json)",
+    )
+    args = parser.parse_args()
+    
     logger.info("Starting composed MCP server...")
     
     try:
-        composed_server = create_composed_server()
+        composed_server = create_composed_server(config_path=args.config)
         logger.info("Running composed server...")
-        composed_server.run()
+        
+        # Run the server with the specified transport
+        if args.transport == "streamable-http":
+            composed_server.run(transport=args.transport, port=args.port)
+        else:
+            composed_server.run(transport=args.transport)
     except Exception as e:
         logger.error(f"Failed to start composed server: {e}")
         raise

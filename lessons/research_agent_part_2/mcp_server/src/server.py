@@ -51,7 +51,14 @@ if __name__ == "__main__":
         type=str,
         choices=["stdio", "streamable-http"],
         default="streamable-http",
-        help="The transport protocol to use for the MCP server.",
+        help="The transport protocol to use for the MCP server (stdio or streamable-http).",
+    )
+    parser.add_argument(
+        "--port",
+        "-p",
+        type=int,
+        default=8001,
+        help="Port number for HTTP transport (default: 8001)",
     )
     args = parser.parse_args()
 
@@ -62,4 +69,9 @@ if __name__ == "__main__":
         print("📊 Opik monitoring disabled (missing configuration)")
 
     mcp = create_mcp_server()
-    mcp.run(transport=args.transport)
+    
+    # Run the server with the specified transport
+    if args.transport == "streamable-http":
+        mcp.run(transport=args.transport, port=args.port)
+    else:
+        mcp.run(transport=args.transport)
