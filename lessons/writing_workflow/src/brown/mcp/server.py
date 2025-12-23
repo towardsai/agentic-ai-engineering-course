@@ -12,6 +12,7 @@ Example:
     Or used as an MCP server in other applications that support MCP protocol.
 """
 
+import argparse
 import uuid
 from pathlib import Path
 
@@ -433,4 +434,26 @@ def __get_profile(profile_name: str) -> str:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    parser = argparse.ArgumentParser(description="Brown MCP Server")
+    parser.add_argument(
+        "--transport",
+        "-t",
+        type=str,
+        choices=["stdio", "streamable-http"],
+        default="stdio",
+        help="Transport protocol to use (stdio or streamable-http)",
+    )
+    parser.add_argument(
+        "--port",
+        "-p",
+        type=int,
+        default=8002,
+        help="Port number for HTTP transport (default: 8002)",
+    )
+    args = parser.parse_args()
+    
+    # Run the server with the specified transport
+    if args.transport == "streamable-http":
+        mcp.run(transport=args.transport, port=args.port)
+    else:
+        mcp.run(transport=args.transport)

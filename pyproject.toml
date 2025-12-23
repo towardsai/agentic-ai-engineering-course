@@ -1,6 +1,6 @@
 [project]
 name = "agentic-ai-engineering-course"
-version = "0.4.1"
+version = "0.4.5"
 description = "Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML."
 readme = "README_PACKAGE.md"
 requires-python = ">=3.12.11"
@@ -56,7 +56,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["lessons/utils", "lessons/research_agent_part_2"]
+packages = ["lessons/utils", "lessons/research_agent_part_2", "lessons/agents_integration", "lessons/writing_workflow"]
 force-include = { "lessons/writing_workflow/src/brown" = "brown" }
 
 [tool.ruff]
