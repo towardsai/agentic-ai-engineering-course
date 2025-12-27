@@ -3,7 +3,7 @@
 """Script to run evaluations on the Brown agent using evaluation datasets."""
 
 from pathlib import Path
-from typing import List
+from typing import List, Literal
 
 import click
 from loguru import logger
@@ -29,6 +29,12 @@ from brown.observability.evaluation import evaluate
     default=["follows_gt"],
     help="Metrics to use for evaluation. Available metrics: 'follows_gt' (evaluates agains ground truth),"
     "'user_intent' (evaluates guideline adherence and research anchoring).",
+)
+@click.option(
+    "--split",
+    type=click.Choice(["val", "test"], case_sensitive=False),
+    default="test",
+    help="Dataset split to use. 'val' includes only 'Lesson 10: Memory', 'test' includes all other lessons.",
 )
 @click.option(
     "--cache-dir",
@@ -59,12 +65,13 @@ from brown.observability.evaluation import evaluate
 )
 def main(
     dataset_name: str,
+    metrics: List[str],
+    split: Literal["val", "test"],
     cache_dir: Path,
     workers: int,
     nb_samples: int | None,
     read_from_cache: bool,
     debug: bool,
-    metrics: List[str],
 ) -> None:
     """Run evaluation over an Opik dataset with the Brown agent.
 
@@ -73,6 +80,8 @@ def main(
 
     Args:
         dataset_name: Name of the Opik dataset to evaluate.
+        metrics: Names of scoring metrics to use. Supported: "follows_gt", "user_intent".
+        split: Dataset split to use. "val" includes only "Lesson 10: Memory", "test" includes all other lessons.
         cache_dir: Directory used to cache generated artifacts and results.
         workers: Number of parallel workers to use during evaluation.
         nb_samples: Number of samples to evaluate. If None, evaluates the full dataset.
@@ -87,7 +96,8 @@ def main(
         None
     """
 
-    logger.info(f"Starting evaluation with dataset: {dataset_name}")
+    split = split.lower()
+    logger.info(f"Starting evaluation with dataset `{dataset_name}` on split `{split}`")
 
     cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -102,6 +112,21 @@ def main(
     model_config = ModelConfig(temperature=0.0, thinking_budget=int(1024 * 0.5), include_thoughts=False, max_retries=3)
     evaluation_metrics = build_evaluation_metrics(metrics, model, model_config)
 
+    if split == "val":
+        dataset_item_names = ["Lesson 10: Memory"]
+    elif split == "test":
+        dataset_item_names = [
+            "Lesson 2: Workflows vs. Agents",
+            "Lesson 3: Context Engineering",
+            "Lesson 5: Workflow Patterns",
+            "Lesson 6: Tools",
+            "Lesson 8: ReAct Practice",
+            "Lesson 9: Retrieval-Augmented Generation (RAG)",
+            "Lesson 11: Multimodal Data",
+        ]
+    else:
+        raise ValueError(f"Invalid split: {split}")
+
     try:
         evaluate(
             dataset_name=dataset_name,
@@ -110,16 +135,8 @@ def main(
             llm_judge_config={"model": model, **model_config.model_dump()},
             workers=workers,
             nb_samples=nb_samples,
-            dataset_item_names=[
-                "Lesson 2: Workflows vs. Agents",
-                "Lesson 3: Context Engineering",
-                "Lesson 5: Workflow Patterns",
-                "Lesson 6: Tools",
-                "Lesson 8: ReAct Practice",
-                "Lesson 9: Retrieval-Augmented Generation (RAG)",
-                "Lesson 10: Memory",
-                "Lesson 11: Multimodal Data",
-            ],
+            dataset_item_names=dataset_item_names,
+            split=split,
         )
 
         logger.success("Evaluation completed successfully!")

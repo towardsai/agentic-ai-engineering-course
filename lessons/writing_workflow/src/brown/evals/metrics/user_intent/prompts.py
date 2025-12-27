@@ -550,7 +550,7 @@ def get_eval_prompt(
         The complete formatted prompt string ready for LLM invocation.
 
     """
-    # Path("user_intent_context.md").write_text(few_shot_examples.to_context())
+
     return SYSTEM_PROMPT.format(
         examples=few_shot_examples.to_context(),
         input=input,

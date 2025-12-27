@@ -18,7 +18,7 @@ from brown.models import ModelConfig, SupportedModels, get_model
 from brown.utils import a
 
 FewShotExamplesT = TypeVar("FewShotExamplesT", bound=BaseModel)
-MockedResponseT = TypeVar("MockedResponseT", bound=BaseModel)
+StructuredOutputTypeT = TypeVar("StructuredOutputTypeT", bound=BaseModel)
 
 CriteriaScoresT = TypeVar("CriteriaScoresT", bound="CriteriaScores")
 ExampleT = TypeVar("ExampleT", bound="BaseExample")
@@ -227,7 +227,7 @@ class BaseFewShotExamples(pydantic.BaseModel, Generic[ExampleT]):
         return examples
 
 
-class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedResponseT], abc.ABC):
+class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, StructuredOutputTypeT], abc.ABC):
     """Abstract base class for Brown evaluation metrics that use LLMs for structured scoring.
 
     This abstract base class provides a foundation for implementing evaluation metrics that
@@ -241,7 +241,7 @@ class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedRe
 
     Type Parameters:
         FewShotExamplesT: Type of the few-shot examples model, must inherit from BaseModel.
-        MockedResponseT: Type of the structured output model, must inherit from BaseModel.
+        StructuredOutputTypeT: Type of the structured output model, must inherit from BaseModel.
 
     Args:
         model: The language model to use for evaluation from SupportedModels enum.
@@ -289,7 +289,7 @@ class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedRe
         self,
         model: SupportedModels,
         name: str,
-        structured_output_type: type[MockedResponseT],
+        structured_output_type: type[StructuredOutputTypeT],
         few_shot_examples: FewShotExamplesT,
         model_config: ModelConfig,
         track: bool = True,

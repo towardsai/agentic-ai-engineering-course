@@ -182,13 +182,13 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# Brown Agent
+# Brown
 .brown
 .debug/
 checkpoints/
 outputs/
 
-# Nova Agent
+# Nova
 .nova
 .research
 
