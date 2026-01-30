@@ -1,0 +1,77 @@
+# Nova MCP Server Dockerfile
+# Multi-stage build for smaller final image
+# For local development with Docker Compose
+
+# ============================================
+# Stage 1: Build stage with uv
+# ============================================
+FROM python:3.12.11-slim AS builder
+
+# Install uv for fast dependency management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files first (for layer caching)
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies into a virtual environment
+RUN uv sync --frozen --no-dev
+
+# ============================================
+# Stage 2: Runtime stage
+# ============================================
+FROM python:3.12.11-slim AS runtime
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash nova
+
+# Configure git to not prompt for credentials (must be done as nova user)
+USER nova
+RUN git config --global credential.helper store && \
+    git config --global core.askPass "" && \
+    git config --global http.postBuffer 524288000
+
+# Set working directory
+WORKDIR /app
+
+# Copy virtual environment from builder
+COPY --from=builder --chown=nova:nova /app/.venv /app/.venv
+
+# Copy application source code
+COPY --chown=nova:nova src/ /app/src/
+COPY --chown=nova:nova alembic.ini /app/alembic.ini
+COPY --chown=nova:nova alembic/ /app/alembic/
+COPY --chown=nova:nova docker-entrypoint.sh /app/docker-entrypoint.sh
+
+# Make entrypoint executable
+USER root
+RUN chmod +x /app/docker-entrypoint.sh
+USER nova
+
+# Set environment variables
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app"
+ENV PYTHONUNBUFFERED=1
+# Suppress Python deprecation warnings for cleaner logs
+ENV PYTHONWARNINGS="ignore::DeprecationWarning,ignore::PydanticDeprecatedSince20"
+# Disable git credential prompts (critical for non-interactive environments)
+ENV GIT_TERMINAL_PROMPT=0
+ENV GIT_ASKPASS=echo
+
+# Expose the server port
+EXPOSE 8000
+
+# Health check - check if uvicorn process is running
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD pgrep -f "python -m src.server" || exit 1
+
+# Default command: run migrations then start server
+CMD ["/app/docker-entrypoint.sh"]

@@ -1,0 +1,82 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: nova-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nova}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nova_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-nova_research}
+      # Reduce PostgreSQL logging verbosity
+      POSTGRES_INITDB_ARGS: "-E UTF8 --lc-collate=C --lc-ctype=C"
+    command:
+      - "postgres"
+      - "-c"
+      - "log_min_messages=WARNING"
+      - "-c"
+      - "log_min_error_statement=ERROR"
+      - "-c"
+      - "log_error_verbosity=terse"
+      - "-c"
+      - "client_min_messages=WARNING"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-nova} -d ${POSTGRES_DB:-nova_research}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Nova MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nova-mcp-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database configuration - uses Docker network hostname
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nova}:${POSTGRES_PASSWORD:-nova_dev_password}@postgres:5432/${POSTGRES_DB:-nova_research}
+
+      # Server configuration
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8000
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+      # API Keys (pass through from host .env)
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PPLX_API_KEY: ${PPLX_API_KEY}
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+
+      # Opik monitoring (optional)
+      OPIK_API_KEY: ${OPIK_API_KEY}
+      OPIK_WORKSPACE: ${OPIK_WORKSPACE}
+      OPIK_PROJECT_NAME: ${OPIK_PROJECT_NAME:-nova}
+
+      # Descope authentication (optional)
+      DESCOPE_PROJECT_ID: ${DESCOPE_PROJECT_ID}
+      DESCOPE_BASE_URL: ${DESCOPE_BASE_URL:-https://api.descope.com}
+      SERVER_URL: ${SERVER_URL}
+    ports:
+      - "${SERVER_PORT:-8000}:8000"
+    volumes:
+      # Mount source code for development (hot reload)
+      - ./src:/app/src:ro
+      # Mount data folder for research files (from parent directory)
+      - ../data:/app/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local

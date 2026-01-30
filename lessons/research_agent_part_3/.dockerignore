@@ -1,0 +1,60 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv
+env
+ENV
+.eggs
+*.egg-info
+*.egg
+dist
+build
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Testing
+tests
+test_*
+*_test.py
+
+# Documentation
+*.md
+!README.md
+docs
+
+# Development files
+Makefile
+docker-compose*.yml
+*.sh
+!docker-entrypoint.sh
+!docker-entrypoint-cloudrun.sh
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
