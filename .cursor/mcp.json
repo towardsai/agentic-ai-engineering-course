@@ -1,0 +1,35 @@
+{
+    "mcpServers": {
+        "nova": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "lessons/research_agent_part_2/mcp_server",
+                "run",
+                "-m",
+                "src.server",
+                "--transport",
+                "stdio"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENV_FILE_PATH": "${workspaceFolder}/lessons/research_agent_part_2/mcp_server/.env"
+            }
+        },
+        "brown": {
+            "command": "uv",
+            "args": [
+                "--directory",
+                "lessons/writing_workflow/",
+                "run",
+                "python",
+                "-m",
+                "brown.mcp.server"
+            ],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ENV_FILE_PATH": "${workspaceFolder}/lessons/writing_workflow/.env"
+            }
+        }
+    }
+}
