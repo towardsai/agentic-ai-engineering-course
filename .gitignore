@@ -182,24 +182,19 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# Brown Agent
+# Brown
 .brown
 .debug/
-agent_graph.png
-article_outline.md
-article_stage_1.md
-article_stage_1.metadata.json
-article_stage_2.md
-article_stage_2.metadata.json
-article_stage_3.md
-article_stage_3.metadata.json
-reflection_scores.md
-sources.md
-style_guideline.md
-article_error*
-offline_ranked_human_review.md
 checkpoints/
+outputs/
 
-# Nova Agent
+# Nova
 .nova
 .research
+
+# Lessons
+# Ignore all configs and inputs folders except those from lessons/writing_workflow
+configs/
+inputs/
+!lessons/writing_workflow/configs/
+!lessons/writing_workflow/inputs/
