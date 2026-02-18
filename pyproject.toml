@@ -1,7 +1,12 @@
 [project]
 name = "agentic-ai-engineering-course"
+<<<<<<< HEAD
 version = "0.4.6"
 description = "Python modules for the Agentic AI Engineering course by Towards AI and Paul Iusztin."
+=======
+version = "0.2.0"
+description = "Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML."
+>>>>>>> 4f280f7779464e9ba2fad96eea93ca6dcdc823ea
 readme = "README_PACKAGE.md"
 requires-python = ">=3.12.11"
 authors = [
