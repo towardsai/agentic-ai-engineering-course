@@ -1,6 +1,6 @@
 # AI Agents Course from Towards AI and Decoding AI
 
-This repository contains all the code exercises and project materials for the **AI Agents** course, created by **Towards AI** and **Decoding ML**. This course is designed for developers who want to move beyond basic LLM tutorials and build production-grade AI agents and workflows. It provides a hands-on, project-based approach to learning agentic architecture patterns, modern frameworks like LangGraph, and essential production skills like LLMOps, evaluation, and deployment.
+This repository contains all the code exercises and project materials for the **AI Agents** course, created by **Towards AI** and **Decoding AI**. This course is designed for developers who want to move beyond basic LLM tutorials and build production-grade AI agents and workflows. It provides a hands-on, project-based approach to learning agentic architecture patterns, modern frameworks like LangGraph, and essential production skills like LLMOps, evaluation, and deployment.
 
 ### Repository Structure
 
@@ -72,3 +72,14 @@ The code exercises are in the form of Jupyter Notebooks (`.ipynb` files). You ca
 6.  Select the virtual environment from the cloned repository, which will be located at `.venv/bin/python`.
 
 You are now ready to run the code cells in the notebook
+
+### Running the Research Agent and Writing Workflow as Independent Projects
+
+Along with the Jupyter Notebook lessons you can also run the research agent and writing workflow as independent projects.
+
+You can find specialized documentation on how to install and run each project at:
+
+| Project | Description | Location |
+|---------|-------------|----------|
+| **Nova Research Agent** | Research agent used in part 2. | [`lessons/research_agent_part_2/README.md`](lessons/research_agent_part_2/README.md) |
+| **Brown Writing Workflow** | All the code for the writing workflow. | [`lessons/writing_workflow/README.md`](lessons/writing_workflow/README.md) |

@@ -1,6 +1,6 @@
 # Agentic AI Engineering Course
 
-Python modules for the Agentic AI Engineering course by Towards AI and Decoding ML.
+Python modules for the Agentic AI Engineering course by Towards AI and Decoding AI. [Find more about the course](https://academy.towardsai.net/courses/agent-engineering).
 
 ## Installation
 
