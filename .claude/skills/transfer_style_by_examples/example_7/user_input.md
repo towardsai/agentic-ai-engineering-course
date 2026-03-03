@@ -1,0 +1,1 @@
+Make the 'LLM' blocks intense black + bolded orange rectangles. Make the 'Unstructured Text' and 'Structured Output' blocks bolded black + white. Also, make the diagram square of a resolution of 1200x1200px.

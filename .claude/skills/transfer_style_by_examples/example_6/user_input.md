@@ -1,0 +1,1 @@
+Make the 'Images & PDF Pages' and 'User Text Query'' blocks bolded black + white.  Make the 'Similarity Search' block bolded orange + black as a rectangle. Make the 'Retrieve Top Images' block bolded red + white. Don't miss any text. Make curvy arrows.
