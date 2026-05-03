@@ -181,7 +181,7 @@ async def generate_reviews(article: Article, article_guideline: ArticleGuideline
         article_guideline=article_guideline,
         article_profiles=article_profiles,
         model=model,
-        max_reviews=app_config.max_reviews,
+        max_reviews=app_config.max_reviews_per_iteration,
     )
     reviews = await article_reviewer.ainvoke()
 

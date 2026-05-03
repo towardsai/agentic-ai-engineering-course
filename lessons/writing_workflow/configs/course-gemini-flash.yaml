@@ -14,7 +14,7 @@ context:
 memory:
   checkpointer: "in_memory"
 num_reviews: 2
-max_reviews: 5
+max_reviews_per_iteration: 5
 nodes:
   generate_media_items:
     model_id: "google_genai:gemini-2.5-flash"
