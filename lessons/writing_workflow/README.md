@@ -324,6 +324,7 @@ You can customize the workflow by modifying `configs/course.yaml`:
 
 ```yaml
 num_reviews: 2  # Number of review iterations
+max_reviews: 5  # Max reviews the reviewer node may emit per call (caps editor context)
 
 nodes:
   write_article:
@@ -456,7 +457,7 @@ make brown-edit-selected-text \
 - **Articles are too short or missing content**
   - Ensure your `research.md` file contains sufficient context and data
   - Check that `article_guideline.md` has a clear outline and requirements
-  - Consider increasing `num_reviews` in the config for more refinement
+  - Consider increasing `num_reviews` in the config for more refinement, or raising `max_reviews` to let each pass surface more issues
 
 - **Model rate limits or timeouts**
   - Google's free tier has rate limits; wait a few minutes and retry

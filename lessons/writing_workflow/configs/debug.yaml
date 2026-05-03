@@ -14,6 +14,7 @@ context:
 memory:
   checkpointer: "in_memory"
 num_reviews: 1
+max_reviews: 2
 nodes:
   generate_media_items:
     model_id: "fake"

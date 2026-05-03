@@ -53,6 +53,11 @@ class AppConfig(BaseModel):
     memory: Memory
 
     num_reviews: Annotated[int, Ge(1), Field(description="The number of reviews to perform while generating the article the first time.")]
+    max_reviews: Annotated[
+        int,
+        Ge(1),
+        Field(description="Maximum number of reviews the article reviewer may emit per call. Caps reviewer output to keep the editor's context window manageable."),
+    ]
     nodes: dict[str, NodeConfig]
 
     @field_validator("nodes", mode="before")

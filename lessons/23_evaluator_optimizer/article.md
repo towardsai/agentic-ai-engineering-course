@@ -364,7 +364,7 @@ The system prompt is the brain of our evaluator. Let's analyze its anatomy, foll
    2. Read and analyze the <human_feedback>.
    3. Read and analyze all the requirements...
    4. Carefully compare the article against the requirements...
-   5. For each requirement, create 0 to N reviews
+   5. For each requirement, create 0 to N reviews (up to `{max_reviews}` total)
    6. Return the reviews of the article.
    ```
    This explicit reasoning path forces the model to synthesize all inputs before generating the output.
