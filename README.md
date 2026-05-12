@@ -29,6 +29,8 @@ First, make sure you have **Git** and the **`uv`** package manager installed.
 
 Clone the course repository as described in the admin lesson of the course. It uses a fine-grained GitHub token to provide read-only access to its contents.
 
+**For Windows users**: We recommend using [WSL (Windows Subsystem for Linux)](https://learn.microsoft.com/en-us/windows/wsl/install) for local development. Some components (particularly MCP server connections via stdio transport) may not work correctly in native Windows. WSL resolves these compatibility issues.
+
 #### 3\. Set Up the Virtual Environment
 
 Navigate into the cloned repository's root directory and run `uv sync --group dev`. This will create a virtual environment (`.venv` folder) and install all the necessary packages defined in the `pyproject.toml` file.
