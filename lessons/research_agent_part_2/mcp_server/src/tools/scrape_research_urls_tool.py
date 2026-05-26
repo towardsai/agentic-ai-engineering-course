@@ -21,9 +21,7 @@ from ..utils.file_utils import read_file_safe, validate_research_folder
 logger = logging.getLogger(__name__)
 
 
-def validate_and_read_urls_file(
-    urls_file_path: Path, research_directory: str
-) -> tuple[list[str], Dict[str, Any] | None]:
+def validate_and_read_urls_file(urls_file_path: Path, research_directory: str) -> tuple[list[str], Dict[str, Any] | None]:
     """
     Validate and read URLs from the research URLs file.
 
@@ -193,9 +191,7 @@ async def process_and_save_urls(
 
     # Process OTHER URLs
     if other_urls:
-        logger.debug(
-            f"Starting scraping of {len(other_urls)} web pages with a concurrency limit of {concurrency_limit}..."
-        )
+        logger.debug(f"Starting scraping of {len(other_urls)} web pages with a concurrency limit of {concurrency_limit}...")
 
         # Scrape URLs concurrently
         completed_results = await scrape_urls_concurrently(other_urls, article_guidelines, concurrency_limit)
@@ -296,8 +292,7 @@ async def scrape_research_urls_tool(research_directory: str, concurrency_limit: 
 
     # Final Report
     base_message = (
-        f"Processed {len(youtube_urls) + len(other_urls)} new URLs "
-        f"from {URLS_TO_SCRAPE_FROM_RESEARCH_FILE} in '{research_directory}'."
+        f"Processed {len(youtube_urls) + len(other_urls)} new URLs from {URLS_TO_SCRAPE_FROM_RESEARCH_FILE} in '{research_directory}'."
     )
 
     total_urls_processed = len(youtube_urls) + len(other_urls)

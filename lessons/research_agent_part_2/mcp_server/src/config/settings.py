@@ -29,24 +29,14 @@ class Settings(BaseSettings):
     source_selection_model: str = Field(default="gemini-2.5-flash", description="Model for source selection")
 
     # API Keys
-    google_api_key: SecretStr | None = Field(
-        default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API"
-    )
-    openai_api_key: SecretStr | None = Field(
-        default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API"
-    )
-    perplexity_api_key: SecretStr | None = Field(
-        default=None, alias="PPLX_API_KEY", description="The API key for the Perplexity API"
-    )
-    firecrawl_api_key: SecretStr | None = Field(
-        default=None, alias="FIRECRAWL_API_KEY", description="The API key for the Firecrawl API"
-    )
+    google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API")
+    openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API")
+    perplexity_api_key: SecretStr | None = Field(default=None, alias="PPLX_API_KEY", description="The API key for the Perplexity API")
+    firecrawl_api_key: SecretStr | None = Field(default=None, alias="FIRECRAWL_API_KEY", description="The API key for the Firecrawl API")
     github_token: SecretStr | None = Field(default=None, alias="GITHUB_TOKEN", description="The GitHub token")
 
     # Opik Monitoring Configuration
-    opik_api_key: SecretStr | None = Field(
-        default=None, alias="OPIK_API_KEY", description="The API key to authenticate with Opik"
-    )
+    opik_api_key: SecretStr | None = Field(default=None, alias="OPIK_API_KEY", description="The API key to authenticate with Opik")
     opik_workspace: str | None = Field(
         default=None,
         alias="OPIK_WORKSPACE",

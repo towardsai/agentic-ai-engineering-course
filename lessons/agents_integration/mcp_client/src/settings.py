@@ -37,12 +37,8 @@ class Settings(BaseSettings):
     recursion_limit: int = Field(default=100, description="The recursion limit for the agent")
 
     # API Keys
-    google_api_key: SecretStr | None = Field(
-        default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API"
-    )
-    openai_api_key: SecretStr | None = Field(
-        default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API"
-    )
+    google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API")
+    openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API")
 
     # Opik Configuration
     opik_api_key: SecretStr | None = Field(default=None, alias="OPIK_API_KEY", description="The API key for Opik")

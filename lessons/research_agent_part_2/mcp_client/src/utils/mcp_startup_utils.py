@@ -21,8 +21,5 @@ def print_startup_info(tools: List, resources: List, prompts: List):
     print(f"📚 Available resources: {len(resources)}")
     print(f"💬 Available prompts: {len(prompts)}")
     print()
-    print(
-        "Available Commands: /tools, /resources, /prompts, /prompt/<name>, "
-        "/resource/<uri>, /model-thinking-switch, /quit"
-    )
+    print("Available Commands: /tools, /resources, /prompts, /prompt/<name>, /resource/<uri>, /model-thinking-switch, /quit")
     print()

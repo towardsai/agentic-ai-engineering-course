@@ -16,12 +16,7 @@ async def process_github_url(url: str, dest_folder: Path, token: str | None) -> 
     try:
         summary, tree, content = await ingest_async(url, exclude_patterns="*.lock", token=token)
         ingestion_succeeded = True
-        md = (
-            f"# Repository analysis for {url}\n\n"
-            f"## Summary\n{summary}\n\n"
-            f"## File tree\n```{tree}\n```\n\n"
-            f"## Extracted content\n{content}"
-        )
+        md = f"# Repository analysis for {url}\n\n## Summary\n{summary}\n\n## File tree\n```{tree}\n```\n\n## Extracted content\n{content}"
     except Exception as e:
         md = f"# Error processing {url}\n\n{e}"
         logger.error(f"Error processing repository {url}: {e}", exc_info=True)
@@ -31,9 +26,7 @@ async def process_github_url(url: str, dest_folder: Path, token: str | None) -> 
     # Regex for HTML-style base64 images: <img src="data:image/...">
     md = re.sub(r'<img[^>]+src="data:image/[^;]+;base64,[^"]+"[^>]*>', "[... base64 image removed ...]", md)
     # Regex for naked base64 image data starting with common magic numbers.
-    md = re.sub(
-        r"(?:iVBOR|/9j/|R0lGOD|UklGR)[A-Za-z0-9+/=\s]{100,}", "[... base64 image removed ...]", md, flags=re.IGNORECASE
-    )
+    md = re.sub(r"(?:iVBOR|/9j/|R0lGOD|UklGR)[A-Za-z0-9+/=\s]{100,}", "[... base64 image removed ...]", md, flags=re.IGNORECASE)
 
     # Check if content is too long and truncate if necessary
     MAX_CHARS = 65_000

@@ -1,2 +1,1 @@
 """Composed MCP Server package."""
-
