@@ -3,7 +3,7 @@
 ## Important IMAGE URLS
 
 [Prompt Anatomy](https://substackcdn.com/image/fetch/$s_!PWPl!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F82059d64-50f7-4788-ba38-d2a340e9f9f3_3840x1948.png)
-[Lesson 22 Writing Workflow Architecture](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/images/l22_writing_workflow.png)
+[Lesson 22 Writing Workflow Architecture](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/assets/images/l22_writing_workflow.png)
 
 ## Research Results
 
@@ -2040,7 +2040,7 @@ First, let's download the configs folder:
 %%capture
 
 !rm -rf configs
-!curl -L -o configs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/configs.zip
+!curl -L -o configs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/configs.zip
 !unzip configs.zip
 !rm -rf configs.zip
 
@@ -2051,7 +2051,7 @@ Now, let's download the inputs folder containing profiles, examples, and test da
 %%capture
 
 !rm -rf inputs
-!curl -L -o inputs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/inputs.zip
+!curl -L -o inputs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/inputs.zip
 !unzip inputs.zip
 !rm -rf inputs.zip
 
@@ -2227,7 +2227,7 @@ With all context and media items ready, the **ArticleWriter** node generates the
 
 Let's visualize this workflow with a diagram:
 
-<img src="https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l22_writing_workflow.png" alt="Workflow" height="800"/>
+<img src="https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l22_writing_workflow.png" alt="Workflow" height="800"/>
 """
 
 """

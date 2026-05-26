@@ -146,7 +146,7 @@ your_article_directory/
 You can find a complete example at:
 
 ```bash
-lessons/writing_workflow/inputs/tests/00_debug/
+lessons/writing_workflow/inputs/tests/00_sample_tiny/
   ├── article_guideline.md
   └── research.md
 ```
@@ -165,7 +165,7 @@ To generate a new article from scratch:
 
 ```bash
 cd lessons/writing_workflow
-make brown-generate-article DIR_PATH=inputs/tests/00_debug
+make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
 ```
 
 **Parameters:**
@@ -185,7 +185,7 @@ To edit an existing article based on an optional human feedback:
 
 ```bash
 cd lessons/writing_workflow
-make brown-edit-article DIR_PATH=inputs/tests/00_debug HUMAN_FEEDBACK="Make the introduction more engaging and add more technical depth to section 2"
+make brown-edit-article DIR_PATH=inputs/tests/00_sample_tiny HUMAN_FEEDBACK="Make the introduction more engaging and add more technical depth to section 2"
 ```
 
 **Parameters:**
@@ -205,7 +205,7 @@ To make targeted edits to a specific section of an article:
 
 ```bash
 cd lessons/writing_workflow
-make brown-edit-selected-text DIR_PATH=inputs/tests/00_debug HUMAN_FEEDBACK="Simplify this explanation and add a concrete example" FIRST_LINE=10 LAST_LINE=20
+make brown-edit-selected-text DIR_PATH=inputs/tests/00_sample_tiny HUMAN_FEEDBACK="Simplify this explanation and add a concrete example" FIRST_LINE=10 LAST_LINE=20
 ```
 
 **Parameters:**
@@ -446,7 +446,7 @@ make brown-edit-selected-text \
   - By default, Brown uses `configs/course.yaml`
   - To use a different config, set the `CONFIG_FILE` environment variable:
     ```bash
-    CONFIG_FILE=configs/debug.yaml make brown-generate-article DIR_PATH=inputs/tests/00_debug
+    CONFIG_FILE=configs/debug.yaml make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
     ```
 
 - **"File not found" errors for article_guideline.md or research.md**

@@ -2143,7 +2143,7 @@ First, let's download the configs folder:
 %%capture
 
 !rm -rf configs
-!curl -L -o configs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/configs.zip
+!curl -L -o configs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/configs.zip
 !unzip configs.zip
 !rm -rf configs.zip
 
@@ -2154,7 +2154,7 @@ Now, let's download the inputs folder containing profiles, examples, and test da
 %%capture
 
 !rm -rf inputs
-!curl -L -o inputs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/inputs.zip
+!curl -L -o inputs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/inputs.zip
 !unzip inputs.zip
 !rm -rf inputs.zip
 
@@ -2239,7 +2239,7 @@ Here's how the workflow looks:
 """
 
 """
-<img src="https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l24_writing_workflow.png" alt="Workflow" height="700"/>
+<img src="https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l24_writing_workflow.png" alt="Workflow" height="700"/>
 """
 
 """

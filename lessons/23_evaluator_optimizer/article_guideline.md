@@ -204,7 +204,7 @@ In all use cases, avoid using acronyms that aren't explicitly stated in the guid
     - **Article Reviewer Node** = Evaluator (checks if article follows all the standards)
     - **Article Writer Node** = Optimizer (edits the article based on reviews)
 
-- Include the workflow image from the notebook showing the complete 5-step workflow with the review-edit loop: `https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l23_writing_workflow.png`
+- Include the workflow image from the notebook showing the complete 5-step workflow with the review-edit loop: `https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l23_writing_workflow.png`
 
 - Explain how this mimics the reviewing-editing process from the real-world of writing professional content.
     1. The writer writes the article (initial draft)

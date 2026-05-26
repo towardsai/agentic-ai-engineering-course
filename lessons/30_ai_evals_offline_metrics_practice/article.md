@@ -1036,17 +1036,17 @@ def get_eval_prompt(
 
 ### Running the Judge
 
-Let's see the `FollowsGTMetricLLMJudge` in action. We will use the [01_sample_sample](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/tree/main/data/inputs/tests/01_sample_small), where we have the [article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article.md) as the expected article and [a noisy version of it - article_noisy.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md) as the generated article where we intentionally introduced all kind of mistakes such as changed the paragraph order or deleted some sections to see if the judge catches them.
+Let's see the `FollowsGTMetricLLMJudge` in action. We will use the [01_sample_sample](https://github.com/towardsai/agentic-ai-engineering-course/tree/main/lessons/writing_workflow/inputs/tests/01_sample_small), where we have the [article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article.md) as the expected article and [a noisy version of it - article_noisy.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md) as the generated article where we intentionally introduced all kind of mistakes such as changed the paragraph order or deleted some sections to see if the judge catches them.
 
-To actually look at the article, either open the links above or run the associated Notebook. Meanwhile, to avoid copying an article within an article, we will assume you looked at the [expected_article.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article.md) and [generated_article.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md).
+To actually look at the article, either open the links above or run the associated Notebook. Meanwhile, to avoid copying an article within an article, we will assume you looked at the [expected_article.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article.md) and [generated_article.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md).
 
 ```python
 from brown.evals.metrics import FollowsGTMetricLLMJudge
 from brown.models import SupportedModels
 
-EXPECTED_ARTICLE = read_url("https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article.md")
+EXPECTED_ARTICLE = read_url("https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article.md")
 
-OUTPUT_ARTICLE = read_url("https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md")
+OUTPUT_ARTICLE = read_url("https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md")
 
 follows_gt_metric = FollowsGTMetricLLMJudge(
     model=SupportedModels.GOOGLE_GEMINI_25_FLASH,
@@ -1684,19 +1684,19 @@ def get_eval_prompt(
 
 ### Running the Judge
 
-Let's see the `UserIntentMetricLLMJudge` in action. We will use the same [01_sample_small](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/tree/main/data/inputs/tests/01_sample_small) as in the previous example. For this sample we available the [article_guideline.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_guideline.md) and [research.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/research.md) as input context, and [a noisy version of the article - article_noisy.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md) as the generated article where we intentionally introduced the specified violations such as hallucinated claims and guideline deviations to see if the judge catches them.
+Let's see the `UserIntentMetricLLMJudge` in action. We will use the same [01_sample_small](https://github.com/towardsai/agentic-ai-engineering-course/tree/main/lessons/writing_workflow/inputs/tests/01_sample_small) as in the previous example. For this sample we available the [article_guideline.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_guideline.md) and [research.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/research.md) as input context, and [a noisy version of the article - article_noisy.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md) as the generated article where we intentionally introduced the specified violations such as hallucinated claims and guideline deviations to see if the judge catches them.
 
-To view the files, either open the links above or run the associated Notebook. Meanwhile, to avoid copying an article within an article, we will assume you looked at the [article_guideline.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_guideline.md), [research.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/research.md), and [article_noisy.md](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md).
+To view the files, either open the links above or run the associated Notebook. Meanwhile, to avoid copying an article within an article, we will assume you looked at the [article_guideline.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_guideline.md), [research.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/research.md), and [article_noisy.md](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md).
 
 ```python
 from brown.evals.metrics import UserIntentMetricLLMJudge
 from brown.models import SupportedModels
 
-ARTICLE_GUIDELINE = read_url("https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_guideline.md")
+ARTICLE_GUIDELINE = read_url("https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_guideline.md")
 
-RESEARCH = read_url("https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/research.md")
+RESEARCH = read_url("https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/research.md")
 
-OUTPUT_ARTICLE = read_url("https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/tests/01_sample_small/article_noisy.md")
+OUTPUT_ARTICLE = read_url("https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/tests/01_sample_small/article_noisy.md")
 
 user_intent_metric = UserIntentMetricLLMJudge(
     model=SupportedModels.GOOGLE_GEMINI_25_FLASH,
@@ -2060,9 +2060,9 @@ The formula ranges from `[0, 1]`. Hence, we can consider it as an alignment perc
 Only when the alignment percentage approaches 100% can you start relying on your LLM Judge.
 
 To keep it simple we will walk you throug the process of how we computed the alignment score for the follows GT LLM judge. Here are the steps we went through:
-1. We fixed the generated articles through by using the [outputs/evals-flash](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/tree/main/data/outputs/evals-flash/data) directory as a cache. This is important because we want to fix all input components to the LLM Judge (expected and generated articles) to have the only moving variable the output of the judge.
-2. Next, we opened the [cached generated `L10: Memory` article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/outputs/evals-pro/data/10_memory_knowledge_access/article.md).
-3. Also, opened the [ground truth `L10: Memory` article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) from the AI evals dataset
+1. We fixed the generated articles through by using the [outputs/evals-flash](https://github.com/towardsai/agentic-ai-engineering-course/tree/main/lessons/writing_workflow/outputs-cached/evals-flash/data) directory as a cache. This is important because we want to fix all input components to the LLM Judge (expected and generated articles) to have the only moving variable the output of the judge.
+2. Next, we opened the [cached generated `L10: Memory` article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/outputs-cached/evals-pro/data/10_memory_knowledge_access/article.md).
+3. Also, opened the [ground truth `L10: Memory` article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) from the AI evals dataset
 4. Now we manually labeled the difference between the two (both scores and reason messages). It's extremely important to do the labeling before looking at the results from the judge to avoid being biased. 
 5. Ran an experiment on the validation split that contains the `L10: Memory` article.
 6. Added the LLM judge results along with the manual ones. We did this in a Google Sheet.
@@ -2215,11 +2215,11 @@ Even if we did our best to stabilize these scores, for example, by using binary 
 
 So, how can we compute the stability of the LLM judge?
 
-As before, we fix all components using our cached articles from [outputs/evals-flash](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/tree/main/data/outputs/evals-flash/data), and run the experiment multiple times on the same inputs to see how much the scores vary. The idea is that, by keeping everything the same within the AI evals pipeline, the results differ purely due to the stochastic nature of the LLMs.
+As before, we fix all components using our cached articles from [outputs/evals-flash](https://github.com/towardsai/agentic-ai-engineering-course/tree/main/lessons/writing_workflow/outputs-cached/evals-flash/data), and run the experiment multiple times on the same inputs to see how much the scores vary. The idea is that, by keeping everything the same within the AI evals pipeline, the results differ purely due to the stochastic nature of the LLMs.
 
 In our use case, we run the AI evals on the test split 5 times and got the following results:
 
-<img src="https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/30_ai_evals_offline_metrics_practice_llm_judge_variation.png" alt="LLM Judge Variation" height=600/>
+<img src="https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/30_ai_evals_offline_metrics_practice_llm_judge_variation.png" alt="LLM Judge Variation" height=600/>
 
 As you can see in the image above, the lines for each metric are pretty flat. It's not 100% flat, but it doesn't vary much, which means our LLM judges are stable, though not 100% stable.
 

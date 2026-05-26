@@ -58,7 +58,7 @@ Now, we are extending this into a five-step workflow by adding a review-edit loo
 4.  **Review Article (Evaluator)**: The `ArticleReviewer` node checks the draft against the article guideline and all writing profiles (tone, style, structure).
 5.  **Edit Article (Optimizer)**: The `ArticleWriter` node ingests the reviews and rewrites the article to fix the identified issues.
 
- https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l23_writing_workflow.png 
+ https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l23_writing_workflow.png 
 <image_caption>
 Image 2: The complete writing workflow, adding the review and edit steps to the previous pipeline. (Source [The Agentic AI Engineering Course](https://github.com/towardsai/agentic-ai-engineering-course/tree/dev/lessons/23_evaluator_optimizer))
 </image_caption>
