@@ -680,7 +680,7 @@ We use Pydantic to define a type-safe schema for our config and YAML for the act
 
 ### Example YAML
 
-In `configs/course.yaml`, we can fine-tune the behavior of each step.
+In `configs/course-gemini-flash.yaml`, we can fine-tune the behavior of each step.
 
 ```yaml
 num_reviews: 2
@@ -708,7 +708,7 @@ We load the configuration once at the start of our application.
 from brown.config import AppConfig
 
 # Load config from YAML
-config = AppConfig.from_yaml(Path("configs/course.yaml"))
+config = AppConfig.from_yaml(Path("configs/course-gemini-flash.yaml"))
 
 print(f"Loaded config with {config.num_reviews} review iterations")
 print(f"Writer model: {config.nodes['article_writer'].model}")

@@ -430,7 +430,7 @@ In all use cases, avoid using acronyms that aren't explicitly stated in the guid
             - `from_yaml()`: Load configuration from YAML file
             - Full Pydantic validation ensures type safety
     5. **Example YAML Configuration:**
-        - Show the example `configs/course.yaml` file content
+        - Show the example `configs/course-gemini-flash.yaml` file content
         - Highlight configuration decisions:
             - **Media generation**: Uses fast Flash model with 0 temperature (deterministic)
             - **Article writing**: Uses Pro model with higher temperature (0.7) for creativity

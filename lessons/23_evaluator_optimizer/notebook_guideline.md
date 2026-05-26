@@ -193,9 +193,9 @@ def wrapped(
     - run the example with `SupportedModels.GOOGLE_GEMINI_25_FLASH` 
 7. Markdown and code section on explaining the app config class. Before glueing all this code into a LangGraph workflow, we want to have a way to configure everything from a single YAML file, thus go over:
     - (markdown) the AppConfig class from @config_app.py with everything around it
-    - (markdown) show an example of a config from @configs.course.yaml
+    - (markdown) show an example of a config from @configs.course-gemini-flash.yaml
     - (markdown) explain that like this we can change everything we want stgarting from the models down to a glanuratity of a node, to the number of iterations, few-shot-examples, etc. just from a single file that repreents the source of truth 
-    - (code) load a config from `configs/course.yaml` and show how it looks like
+    - (code) load a config from `configs/course-gemini-flash.yaml` and show how it looks like
 8. Markdown section on gluging everyting together within a LangGraph workflow with inmemory checkpointer. Now we finally want to wrap everything into the app layer, by glueing everythging together into a robust workflow with LangGraph. The whole workflow can be found at @workflows.generate_article.py, while we call it at @mcp.server.py:
     1. (Markdown): Show the build_generate_article_workflow, _generate_article_workflow and GenerateArticleInput components (without the whole implementation of the _generate_article_workflow)
     2. (Markdown): Explain that we could also just do @entrypoint to decorate the _generate_article_workflow, but why we did this will make sense when we run the workflow in the next section. So bear with us

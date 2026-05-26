@@ -2162,7 +2162,7 @@ class Settings(BaseSettings):
     OPIK_API_KEY: SecretStr | None = Field(default=None, description="The API key for the Opik API.")
 
     # --- App Config ---
-    CONFIG_FILE: Annotated[FilePath, Field(default="configs/course.yaml", description="Path to the application configuration YAML file.")]
+    CONFIG_FILE: Annotated[FilePath, Field(default="configs/course-gemini-flash.yaml", description="Path to the application configuration YAML file.")]
 
 
 @lru_cache(maxsize=1)
