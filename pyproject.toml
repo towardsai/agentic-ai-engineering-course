@@ -75,8 +75,9 @@ select = [
 known-first-party = ["lessons"]
 
 [tool.ruff.lint.per-file-ignores]
-# Teaching notebooks legitimately use long lines and intentional re-imports/re-defs.
-"*.ipynb" = ["E501", "F811", "F401"]
+# Teaching notebooks legitimately use long lines, intentional re-imports/re-defs,
+# and imports introduced mid-cell where they are first used.
+"*.ipynb" = ["E501", "F811", "F401", "E402"]
 
 [dependency-groups]
 dev = [
