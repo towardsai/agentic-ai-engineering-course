@@ -15,19 +15,35 @@ clean:
 
 # --- Tests & QA ---
 
-QA_FOLDERS := lessons/research_agent_part_2/ lessons/writing_workflow/ lessons/utils/
+# Pinned to match the CI workflows (.github/workflows/*.yml) so local == CI.
+RUFF := uvx ruff@0.14.6
 
-format-fix: # Auto-format Python code using ruff formatter.
-	uv run ruff format $(QA_FOLDERS)
+# QA groups mirror the CI jobs in .github/workflows/ci.yml.
+QA_WRITING  := lessons/writing_workflow/src lessons/writing_workflow/scripts lessons/writing_workflow/tests
+QA_RESEARCH := lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src
+QA_CORE     := lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils
+QA_FOLDERS  := $(QA_WRITING) $(QA_RESEARCH) $(QA_CORE)
+NOTEBOOKS   := $(shell git ls-files '*.ipynb' | grep -v '/inputs/')
 
-lint-fix: # Auto-fix linting issues using ruff linter.
-	uv run ruff check --fix $(QA_FOLDERS)
+format-fix: # Auto-format code and notebooks using ruff formatter.
+	$(RUFF) format $(QA_FOLDERS) $(NOTEBOOKS)
 
-format-check: # Check code formatting without making changes using ruff formatter.
-	uv run ruff format --check $(QA_FOLDERS) 
+lint-fix: # Auto-fix linting issues in code and notebooks using ruff linter.
+	$(RUFF) check --fix $(QA_FOLDERS) $(NOTEBOOKS)
 
-lint-check: # Check code for linting issues without fixing them using ruff linter.
-	uv run ruff check $(QA_FOLDERS)
+format-check: # Check formatting of code and notebooks without making changes.
+	$(RUFF) format --check $(QA_FOLDERS) $(NOTEBOOKS)
+
+lint-check: # Check code and notebooks for linting issues without fixing them.
+	$(RUFF) check $(QA_FOLDERS) $(NOTEBOOKS)
+
+notebooks-validate: # Verify every lesson notebook is valid nbformat JSON.
+	python3 -c "import json, glob; [json.load(open(f)) for f in glob.glob('lessons/**/*.ipynb', recursive=True) if '/.venv/' not in f and '/inputs/' not in f]"
+
+test: # Run the writing_workflow unit tests (offline, mocked config).
+	cd lessons/writing_workflow && CONFIG_FILE=configs/debug.yaml uv run pytest
+
+ci-local: format-check lint-check notebooks-validate test # Run the full CI suite locally.
 
 
 # --- Course data archives (served raw from GitHub) ---

@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Lint + format check, one independent (parallel) job per code area.
+  qa:
+    name: QA (${{ matrix.group }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: writing_workflow
+            folders: lessons/writing_workflow/src lessons/writing_workflow/scripts lessons/writing_workflow/tests
+          - group: research_agents
+            folders: lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src
+          - group: core
+            folders: lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: 💅 Format check
+        run: uvx ruff@0.14.6 format --check ${{ matrix.folders }}
+
+      - name: 🔎 Lint check
+        run: uvx ruff@0.14.6 check ${{ matrix.folders }}
+
+  # Unit tests. Only writing_workflow has a suite today; runs offline (mocked config).
+  tests:
+    name: Tests (writing_workflow)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lessons/writing_workflow
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: lessons/writing_workflow/.python-version
+
+      - name: 🦾 Install writing_workflow
+        run: uv sync
+
+      - name: 🧪 Run tests
+        run: CONFIG_FILE=configs/debug.yaml uv run pytest

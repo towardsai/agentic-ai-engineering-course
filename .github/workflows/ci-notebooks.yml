@@ -1,0 +1,51 @@
+name: CI (notebooks)
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-notebooks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notebooks:
+    name: Notebook checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+
+      # 1. Validity — every lesson notebook parses as valid nbformat JSON.
+      - name: ✅ Validate notebooks
+        run: |
+          python3 - <<'PY'
+          import glob, json, sys
+          bad = []
+          for f in glob.glob("lessons/**/*.ipynb", recursive=True):
+              if "/.venv/" in f or "/inputs/" in f:
+                  continue
+              try:
+                  json.load(open(f))
+              except Exception as e:
+                  bad.append((f, e))
+          for f, e in bad:
+              print("INVALID", f, e)
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: 📓 Collect lesson notebooks
+        id: nb
+        run: echo "files=$(git ls-files '*.ipynb' | grep -v '/inputs/' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+
+      # 2. Lint + format (ruff handles ! shell + magics; teaching-notebook ignores in pyproject.toml).
+      - name: 💅 Format check
+        run: uvx ruff@0.14.6 format --check ${{ steps.nb.outputs.files }}
+
+      - name: 🔎 Lint check
+        run: uvx ruff@0.14.6 check ${{ steps.nb.outputs.files }}
