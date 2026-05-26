@@ -20,6 +20,16 @@ jobs:
 
       - name: 📦 Install uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: 🦾 Install dev tooling (ruff + nbformat)
+        run: uv sync --only-dev --frozen
 
       # Collect only the plain, tracked lesson notebooks: git ls-files omits the
       # gitignored .venv, and grep drops the inputs/ test fixtures.
@@ -27,15 +37,16 @@ jobs:
         id: nb
         run: echo "files=$(git ls-files '*.ipynb' | grep -v '/inputs/' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
 
-      # 1. Validity — every collected notebook parses as valid nbformat JSON.
+      # 1. Validity — every collected notebook conforms to the nbformat schema.
       - name: ✅ Validate notebooks
         run: |
-          python3 - ${{ steps.nb.outputs.files }} <<'PY'
-          import json, sys
+          uv run --no-sync python - ${{ steps.nb.outputs.files }} <<'PY'
+          import sys
+          import nbformat
           bad = []
           for f in sys.argv[1:]:
               try:
-                  json.load(open(f))
+                  nbformat.validate(nbformat.read(f, as_version=4))
               except Exception as e:
                   bad.append((f, e))
           for f, e in bad:
@@ -45,7 +56,7 @@ jobs:
 
       # 2. Lint + format (ruff handles ! shell + magics; teaching-notebook ignores in pyproject.toml).
       - name: 💅 Format check
-        run: uvx ruff@0.14.6 format --check ${{ steps.nb.outputs.files }}
+        run: uv run --no-sync ruff format --check ${{ steps.nb.outputs.files }}
 
       - name: 🔎 Lint check
-        run: uvx ruff@0.14.6 check ${{ steps.nb.outputs.files }}
+        run: uv run --no-sync ruff check ${{ steps.nb.outputs.files }}

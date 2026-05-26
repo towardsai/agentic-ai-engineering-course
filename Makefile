@@ -15,8 +15,9 @@ clean:
 
 # --- Tests & QA ---
 
-# Pinned to match the CI workflows (.github/workflows/*.yml) so local == CI.
-RUFF := uvx ruff@0.14.6
+# Tooling comes from the project's dev dependency group (pinned via uv.lock),
+# matching the CI workflows (.github/workflows/*.yml).
+RUFF := uv run ruff
 
 # QA groups mirror the CI jobs in .github/workflows/ci.yml.
 QA_WRITING  := lessons/writing_workflow/src lessons/writing_workflow/scripts lessons/writing_workflow/tests
@@ -37,8 +38,8 @@ format-check: # Check formatting of code and notebooks without making changes.
 lint-check: # Check code and notebooks for linting issues without fixing them.
 	$(RUFF) check $(QA_FOLDERS) $(NOTEBOOKS)
 
-notebooks-validate: # Verify every plain (tracked) lesson notebook is valid nbformat JSON.
-	python3 -c "import json, sys; [json.load(open(f)) for f in sys.argv[1:]]" $(NOTEBOOKS)
+notebooks-validate: # Verify every plain (tracked) lesson notebook conforms to the nbformat schema.
+	uv run python -c "import sys, nbformat; [nbformat.validate(nbformat.read(f, as_version=4)) for f in sys.argv[1:]]" $(NOTEBOOKS)
 
 test: # Run the writing_workflow unit tests (offline, mocked config).
 	cd lessons/writing_workflow && CONFIG_FILE=configs/debug.yaml uv run pytest

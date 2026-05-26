@@ -83,4 +83,5 @@ dev = [
     "ipykernel>=6.29.5",
     "notebook>=7.4.5",
     "ruff>=0.14.6",
+    "nbformat>=5.10",
 ]

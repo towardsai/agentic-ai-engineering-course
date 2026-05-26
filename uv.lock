@@ -42,6 +42,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "ipykernel" },
+    { name = "nbformat" },
     { name = "notebook" },
     { name = "ruff" },
 ]
@@ -78,6 +79,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "ipykernel", specifier = ">=6.29.5" },
+    { name = "nbformat", specifier = ">=5.10" },
     { name = "notebook", specifier = ">=7.4.5" },
     { name = "ruff", specifier = ">=0.14.6" },
 ]
