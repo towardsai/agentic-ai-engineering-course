@@ -56,7 +56,7 @@ class AppConfig(BaseModel):
     max_reviews_per_iteration: Annotated[
         int,
         Ge(1),
-        Field(description="Maximum reviews the article reviewer may emit per call (caps the editor's context window)."),
+        Field(default=5, description="Maximum reviews the article reviewer may emit per call (caps the editor's context window)."),
     ]
     nodes: dict[str, NodeConfig]
 
