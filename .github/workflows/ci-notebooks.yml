@@ -2,9 +2,9 @@ name: CI (notebooks)
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, test]
   push:
-    branches: [main]
+    branches: [main, test]
 
 concurrency:
   group: ci-notebooks-${{ github.ref }}
