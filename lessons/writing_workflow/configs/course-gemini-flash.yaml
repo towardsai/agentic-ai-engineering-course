@@ -30,31 +30,31 @@ nodes:
           include_thoughts: false
           thinking_budget: null
   write_article:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-2.5-pro"
     model_config:
       temperature: 0.7
       include_thoughts: false
       thinking_budget: null
   review_article:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-2.5-pro"
     model_config:
       temperature: 0.0
       include_thoughts: false
       thinking_budget: null
   edit_article:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-2.5-pro"
     model_config:
       temperature: 0.1
       include_thoughts: false
       thinking_budget: null
   review_selected_text:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-2.5-pro"
     model_config:
       temperature: 0.0
       include_thoughts: false
       thinking_budget: null
   edit_selected_text:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-2.5-pro"
     model_config:
       temperature: 0.1
       include_thoughts: false
