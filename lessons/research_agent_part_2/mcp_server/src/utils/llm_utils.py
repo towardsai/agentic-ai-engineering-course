@@ -30,6 +30,10 @@ def get_chat_model(model_id: str, schema: Optional[Type[BaseModel]] = None) -> B
 
     init_kwargs = model_params.copy()
 
+    # Gemini 3.x uses thinking_level; Gemini 2.5 uses thinking_budget. They are mutually exclusive.
+    if init_kwargs.get("thinking_budget") is not None and init_kwargs.get("thinking_level") is not None:
+        raise ValueError(f"Model '{model_id}' sets both `thinking_budget` and `thinking_level`; they are mutually exclusive.")
+
     if api_key_env_var:
         # Get the appropriate API key based on the environment variable name
         api_key = None
