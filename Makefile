@@ -37,8 +37,8 @@ format-check: # Check formatting of code and notebooks without making changes.
 lint-check: # Check code and notebooks for linting issues without fixing them.
 	$(RUFF) check $(QA_FOLDERS) $(NOTEBOOKS)
 
-notebooks-validate: # Verify every lesson notebook is valid nbformat JSON.
-	python3 -c "import json, glob; [json.load(open(f)) for f in glob.glob('lessons/**/*.ipynb', recursive=True) if '/.venv/' not in f and '/inputs/' not in f]"
+notebooks-validate: # Verify every plain (tracked) lesson notebook is valid nbformat JSON.
+	python3 -c "import json, sys; [json.load(open(f)) for f in sys.argv[1:]]" $(NOTEBOOKS)
 
 test: # Run the writing_workflow unit tests (offline, mocked config).
 	cd lessons/writing_workflow && CONFIG_FILE=configs/debug.yaml uv run pytest

@@ -21,15 +21,19 @@ jobs:
       - name: 📦 Install uv
         uses: astral-sh/setup-uv@v4
 
-      # 1. Validity — every lesson notebook parses as valid nbformat JSON.
+      # Collect only the plain, tracked lesson notebooks: git ls-files omits the
+      # gitignored .venv, and grep drops the inputs/ test fixtures.
+      - name: 📓 Collect lesson notebooks
+        id: nb
+        run: echo "files=$(git ls-files '*.ipynb' | grep -v '/inputs/' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+
+      # 1. Validity — every collected notebook parses as valid nbformat JSON.
       - name: ✅ Validate notebooks
         run: |
-          python3 - <<'PY'
-          import glob, json, sys
+          python3 - ${{ steps.nb.outputs.files }} <<'PY'
+          import json, sys
           bad = []
-          for f in glob.glob("lessons/**/*.ipynb", recursive=True):
-              if "/.venv/" in f or "/inputs/" in f:
-                  continue
+          for f in sys.argv[1:]:
               try:
                   json.load(open(f))
               except Exception as e:
@@ -38,10 +42,6 @@ jobs:
               print("INVALID", f, e)
           sys.exit(1 if bad else 0)
           PY
-
-      - name: 📓 Collect lesson notebooks
-        id: nb
-        run: echo "files=$(git ls-files '*.ipynb' | grep -v '/inputs/' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
 
       # 2. Lint + format (ruff handles ! shell + magics; teaching-notebook ignores in pyproject.toml).
       - name: 💅 Format check
