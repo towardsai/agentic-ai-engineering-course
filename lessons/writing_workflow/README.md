@@ -27,7 +27,7 @@ From the repository root (`course-ai-agents`):
 ```bash
 lessons/writing_workflow/
   ├── configs/              # YAML configuration files
-  │   ├── course.yaml       # Production config
+  │   ├── course-gemini-flash.yaml       # Production config
   │   └── debug.yaml        # Testing config (fake models)
   ├── inputs/               # Input data and resources
   │   ├── profiles/         # Writing style and character profiles
@@ -175,7 +175,7 @@ make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
 1. Brown reads the article guidelines and research data
 2. Loads character profiles and writing style guidelines from `inputs/profiles/`
 3. Generates an initial article draft
-4. Runs multiple review and revision iterations (default: 2, configured in `configs/course.yaml`)
+4. Runs multiple review and revision iterations (default: 2, configured in `configs/course-gemini-flash.yaml`)
 5. Saves the final article as `article.md` in the input directory
 6. Creates checkpoints for each iteration (e.g., `article_000.md`, `article_001.md`)
 
@@ -254,7 +254,7 @@ make brown-run-eval-flash
 ```
 
 This runs the evaluation using Gemini Flash model configuration:
-- **Config**: `configs/course-gemini-flash.yaml`
+- **Config**: `configs/course-gemini-flash.yaml` (the default, all-Flash configuration)
 - **Dataset**: `brown-course-lessons`
 - **Metrics**: `follows_gt` (evaluates adherence to ground truth articles) and `user_intent`
 - **Cache directory**: `outputs/evals-flash`
@@ -311,7 +311,7 @@ The article generation workflow is Brown's most comprehensive process, designed 
    - **Review**: Analyzes the draft against guidelines, research, and style profiles
    - **Identify Issues**: Finds areas for improvement (clarity, depth, structure, style)
    - **Edit**: Generates a revised version addressing the identified issues
-   - Repeats for N iterations (default: 2, configurable in `configs/course.yaml`)
+   - Repeats for N iterations (default: 2, configurable in `configs/course-gemini-flash.yaml`)
 
 5. **Save Final Article**
    - Saves the final article as `article.md`
@@ -320,7 +320,7 @@ The article generation workflow is Brown's most comprehensive process, designed 
 
 **Configuration:**
 
-You can customize the workflow by modifying `configs/course.yaml`:
+You can customize the workflow by modifying `configs/course-gemini-flash.yaml`:
 
 ```yaml
 num_reviews: 2  # Number of review iterations
@@ -443,7 +443,7 @@ make brown-edit-selected-text \
   - Verify the key is valid and has not expired
 
 - **"Config file not found" errors**
-  - By default, Brown uses `configs/course.yaml`
+  - By default, Brown uses `configs/course-gemini-flash.yaml`
   - To use a different config, set the `CONFIG_FILE` environment variable:
     ```bash
     CONFIG_FILE=configs/debug.yaml make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
@@ -640,7 +640,7 @@ Now that you have Brown set up, you can:
 
 1. **Try the example workflows**: Run article generation on the test inputs in `inputs/tests/`
 2. **Create your own articles**: Set up a new directory with your own `article_guideline.md` and `research.md`
-3. **Customize the configuration**: Adjust models, review iterations, and other settings in `configs/course.yaml`
+3. **Customize the configuration**: Adjust models, review iterations, and other settings in `configs/course-gemini-flash.yaml`
 4. **Integrate with your IDE**: Set up Brown as an MCP server in Cursor or Claude Desktop
 5. **Explore the evaluation framework**: Check out the `evals/` directory for quality assessment tools
 

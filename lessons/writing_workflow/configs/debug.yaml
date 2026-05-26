@@ -21,7 +21,7 @@ nodes:
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: low
     tools:
       mermaid_diagram_generator:
         model_id: "fake"
@@ -40,7 +40,7 @@ nodes:
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high
   edit_article:
     model_id: "fake"
     model_config:
@@ -52,7 +52,7 @@ nodes:
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: medium
   edit_selected_text:
     model_id: "fake"
     model_config:

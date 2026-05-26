@@ -21,7 +21,9 @@ class Settings(BaseSettings):
 
     # --- App Config ---
 
-    CONFIG_FILE: Annotated[FilePath, Field(default="configs/course.yaml", description="Path to the application configuration YAML file.")]
+    CONFIG_FILE: Annotated[
+        FilePath, Field(default="configs/course-gemini-flash.yaml", description="Path to the application configuration YAML file.")
+    ]
 
 
 @lru_cache(maxsize=1)
