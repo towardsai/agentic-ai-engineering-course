@@ -15,9 +15,7 @@ def parse_user_input(user_input: str) -> ProcessedInput:
     if user_input_lower.startswith("/prompt/"):
         # This is a prompt loading command
         prompt_name = user_input_lower[8:]  # Remove "/prompt/" prefix
-        return ProcessedInput(
-            input_type=InputType.COMMAND_PROMPT, should_continue=True, prompt_name=prompt_name, user_message=user_input
-        )
+        return ProcessedInput(input_type=InputType.COMMAND_PROMPT, should_continue=True, prompt_name=prompt_name, user_message=user_input)
 
     if user_input_lower.startswith("/resource/"):
         # This is a resource reading command

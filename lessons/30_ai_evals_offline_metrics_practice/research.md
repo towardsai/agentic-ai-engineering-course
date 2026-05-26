@@ -799,7 +799,7 @@ First, let's download Brown's configs folder:
 %%capture
 
 !rm -rf configs
-!curl -L -o configs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/configs.zip
+!curl -L -o configs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/configs.zip
 !unzip configs.zip
 !rm -rf configs.zip
 ```
@@ -811,7 +811,7 @@ Now, let's download Brown's inputs folder containing profiles, examples, and tes
 %%capture
 
 !rm -rf inputs
-!curl -L -o inputs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/inputs.zip
+!curl -L -o inputs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/inputs.zip
 !unzip inputs.zip
 !rm -rf inputs.zip
 ```
@@ -823,7 +823,7 @@ Ultimately, we will download Brown's outputs folder that contains pre-generated 
 %%capture
 
 !rm -rf outputs
-!curl -L -o outputs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/outputs.zip
+!curl -L -o outputs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/outputs.zip
 !unzip outputs.zip
 !rm -rf outputs.zip
 ```
@@ -4462,7 +4462,7 @@ logger.success("Evaluation completed successfully!")
 
 At this step, using the validation split, we want to align the LLM Judges with our human judgment. For simplicity, let's assume that we want to do that only for the following GT metric.
 
-To do that, as the validation split contains only `Lesson 10`, you will open the [cached generated article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/outputs/evals-pro/data/10_memory_knowledge_access/article.md) and the [ground article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) side by side.
+To do that, as the validation split contains only `Lesson 10`, you will open the [cached generated article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/outputs-cached/evals-pro/data/10_memory_knowledge_access/article.md) and the [ground article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) side by side.
 
 Then you will label this sample, writing down the scores and the reasons behind the scores for the content, flow, and structure metrics scoped under the GT metric.
 
@@ -4481,8 +4481,8 @@ Only when the alignment percentage approaches 100% can you start relying on your
 To show you how aligning works in pratice, let's compute the alignment scores on `Lesson 10 - Memory` on the follows ground truth metric.
 
 To do that, we:
-- opened the [cached generated memory article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/outputs/evals-pro/data/10_memory_knowledge_access/article.md) (we have to fix the generated article as well to have all the components fixed except the LLM Judge itself)
-- opened the [ground memory article](https://github.com/iusztinpaul/agentic-ai-engineering-course-data/blob/main/data/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) from the AI evals dataset
+- opened the [cached generated memory article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/outputs-cached/evals-pro/data/10_memory_knowledge_access/article.md) (we have to fix the generated article as well to have all the components fixed except the LLM Judge itself)
+- opened the [ground memory article](https://github.com/towardsai/agentic-ai-engineering-course/blob/main/lessons/writing_workflow/inputs/evals/dataset/data/10_memory_knowledge_access/article_ground_truth.md) from the AI evals dataset
 - labeled the difference between the two (both scores and reason messages)
 - ran an experiment using the validation split
 - added the LLM judge results along with the manual ones
@@ -4661,7 +4661,7 @@ As before, we fix all components, including the generated article and evaluation
 
 In our use case, we did that 5 times and got the following results:
 
-<img src="https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/30_ai_evals_offline_metrics_practice_llm_judge_variation.png" alt="LLM Judge Variation" height=600/>
+<img src="https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/30_ai_evals_offline_metrics_practice_llm_judge_variation.png" alt="LLM Judge Variation" height=600/>
 
 As you can see in the image above, the lines for each metric are pretty flat. It's not 100% flat, but it doesn't vary much, which means our LLM judges are stable, though not 100% stable.
 

@@ -51,9 +51,7 @@ def print_colored(text: str, color: Color, style: Optional[Style] = None, end: s
         print(f"{color.value}{text}{Color.RESET.value}", end=end)
 
 
-def print_header(
-    text: str, delimiter_char: str = "=", color: Color = Color.BRIGHT_CYAN, style: Optional[Style] = Style.BOLD
-) -> None:
+def print_header(text: str, delimiter_char: str = "=", color: Color = Color.BRIGHT_CYAN, style: Optional[Style] = Style.BOLD) -> None:
     """Print a header with delimiters.
 
     Args:

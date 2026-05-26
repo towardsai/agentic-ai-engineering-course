@@ -451,7 +451,7 @@ if __name__ == "__main__":
         help="Port number for HTTP transport (default: 8002)",
     )
     args = parser.parse_args()
-    
+
     # Run the server with the specified transport
     if args.transport == "streamable-http":
         mcp.run(transport=args.transport, port=args.port)

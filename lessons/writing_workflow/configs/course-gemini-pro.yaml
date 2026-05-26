@@ -14,20 +14,21 @@ context:
 memory:
   checkpointer: "in_memory"
 num_reviews: 2
+max_reviews_per_iteration: 5
 nodes:
   generate_media_items:
-    model_id: "google_genai:gemini-2.5-flash"
+    model_id: "google_genai:gemini-3.5-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: low
     tools:
       mermaid_diagram_generator:
-        model_id: "google_genai:gemini-2.5-flash"
+        model_id: "google_genai:gemini-3.5-flash"
         config:
           temperature: 0.0
           include_thoughts: false
-          thinking_budget: null
+          thinking_level: low
   write_article:
     model_id: "google_genai:gemini-2.5-pro"
     model_config:

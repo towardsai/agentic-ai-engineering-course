@@ -89,6 +89,17 @@ async def _generate_article_workflow(inputs: GenerateArticleInput, config: Runna
         reviews = await generate_reviews(article, context["article_guideline"], context["profiles"])
         writer(WorkflowProgress(progress=p_review, message="Generated reviews").model_dump(mode="json"))
 
+        # Early stop: no reviews means the article already satisfies all requirements, so there is
+        # nothing to edit and further review/edit iterations are unnecessary.
+        if not reviews.reviews:
+            writer(
+                WorkflowProgress(
+                    progress=p_review,
+                    message=f"No reviews on iteration {i} / {app_config.num_reviews}. Article meets requirements, stopping early.",
+                ).model_dump(mode="json")
+            )
+            break
+
         # Edit step
         p_edit = int(25 + step_size * (base_step_index + 2))
         p_edit = min(p_edit, 99)
@@ -181,6 +192,7 @@ async def generate_reviews(article: Article, article_guideline: ArticleGuideline
         article_guideline=article_guideline,
         article_profiles=article_profiles,
         model=model,
+        max_reviews=app_config.max_reviews_per_iteration,
     )
     reviews = await article_reviewer.ainvoke()
 

@@ -107,14 +107,14 @@ Here is what the Notebook will contain starting from the introduction up to the 
         1. configs using this exact command:
         ```bash
             !rm -rf configs
-            !curl -L -o configs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/configs.zip
+            !curl -L -o configs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/configs.zip
             !unzip configs.zip
             !rm -rf configs.zip
         ```
         1. inputs using this exact command:
         ```bash
             !rm -rf inputs
-            !curl -L -o inputs.zip https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/data/inputs.zip
+            !curl -L -o inputs.zip https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/data/inputs.zip
             !unzip inputs.zip
             !rm -rf inputs.zip
         ```

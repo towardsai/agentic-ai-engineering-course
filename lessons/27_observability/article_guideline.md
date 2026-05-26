@@ -224,7 +224,7 @@ This idea of managing autonomy is built into LLM apps via the "autonomy slider,"
     - The `edit_selected_text` workflow is a third independent MCP tool
     - This allows you to generate an article, review it, and then selectively apply additional editing workflows with your human feedback until satisfied
 
-- **Include the workflow diagram** from the notebook showing the three MCP tools and the human feedback loop: `https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l24_writing_workflow.png`
+- **Include the workflow diagram** from the notebook showing the three MCP tools and the human feedback loop: `https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l24_writing_workflow.png`
 
 - **Avoiding overreaction:** Editing the whole article can be an overreaction as it can make changes where you don't want any. That's why we implemented the `edit_selected_text` workflow that allows you to edit only a selected piece of text. We apply the same logic as before, but only to the selected portion.
 

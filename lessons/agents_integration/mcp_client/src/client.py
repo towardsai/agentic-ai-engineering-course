@@ -1,7 +1,7 @@
 """
 Multi-Server MCP Client - Interactive MCP client connecting to multiple servers.
 
-This client connects to both Nova (research agent) and Brown (writing workflow) 
+This client connects to both Nova (research agent) and Brown (writing workflow)
 MCP servers using a single FastMCP Client instance with multi-server configuration.
 All tools, resources, and prompts are accessible without prefixes.
 
@@ -23,8 +23,7 @@ from .utils.handle_message_utils import handle_user_message
 from .utils.logging_utils import configure_logging
 from .utils.opik_handler import configure_opik
 from .utils.parse_message_utils import parse_user_input
-from .utils.print_utils import Color, print_colored, print_header
-from .utils.types import InputType
+from .utils.print_utils import print_header
 
 # Configure logging
 configure_logging()
@@ -51,7 +50,7 @@ async def main():
         help="Path to MCP servers config file (default: mcp_servers_config.json)",
     )
     args = parser.parse_args()
-    
+
     # Determine which config file to use
     if args.config:
         config_path = Path(args.config)
@@ -60,7 +59,7 @@ async def main():
             config_path = Path.cwd() / config_path
     else:
         config_path = settings.mcp_config_path
-    
+
     try:
         # Initialize Opik if configured
         if configure_opik():
@@ -87,9 +86,7 @@ async def main():
             resources = await client.list_resources()
             prompts = await client.list_prompts()
 
-            logging.info(
-                f"Total capabilities: {len(tools)} tools, {len(resources)} resources, {len(prompts)} prompts"
-            )
+            logging.info(f"Total capabilities: {len(tools)} tools, {len(resources)} resources, {len(prompts)} prompts")
 
             # Print welcome message showing all capabilities
             print()
@@ -97,8 +94,7 @@ async def main():
 
             # Print available commands
             print(
-                "Available Commands: /tools, /resources, /prompts, /prompt/<name>?arg=value, "
-                "/resource/<uri>, /model-thinking-switch, /quit"
+                "Available Commands: /tools, /resources, /prompts, /prompt/<name>?arg=value, /resource/<uri>, /model-thinking-switch, /quit"
             )
             print()
 

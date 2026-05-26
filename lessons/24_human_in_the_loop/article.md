@@ -51,7 +51,7 @@ We will apply this same logic to Brown. We have implemented two new editing work
 
 To make this flexible, we decouple these workflows using the Model Context Protocol (MCP). Instead of one monolithic script, we expose three independent tools: `generate_article`, `edit_article`, and `edit_selected_text`.
 
-Image 1: The Brown writing workflow with human-in-the-loop, showing the iterative process of human input, AI tool usage, and human review for content generation and refinement. (Source https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l24_writing_workflow.png)
+Image 1: The Brown writing workflow with human-in-the-loop, showing the iterative process of human input, AI tool usage, and human review for content generation and refinement. (Source https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l24_writing_workflow.png)
 
 This architecture allows you to generate a draft, review it, and then choose your next move. If the whole tone is off, you use `edit_article`. If just the introduction is weak, you highlight it and use `edit_selected_text`. This keeps the AI on a leash and avoids the risk of it rewriting sections you already like.
 

@@ -95,9 +95,7 @@ async def generate_next_queries_tool(research_directory: str, n_queries: int = 5
     if not article_guidelines:
         logger.warning(f"⚠️  Article guidelines not found at {guidelines_path}. Proceeding anyway.")
 
-    queries_and_reasons = await generate_queries_with_reasons(
-        article_guidelines, past_research, scraped_ctx_str, n_queries=n_queries
-    )
+    queries_and_reasons = await generate_queries_with_reasons(article_guidelines, past_research, scraped_ctx_str, n_queries=n_queries)
 
     # Write to next_queries.md (overwrite)
     next_q_path = nova_path / NEXT_QUERIES_FILE

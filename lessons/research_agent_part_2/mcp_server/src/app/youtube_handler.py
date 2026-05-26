@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 
 @retry(
     retry=retry_if_exception_type(errors.ServerError),
-    wait=wait_exponential(
-        multiplier=1, min=YOUTUBE_TRANSCRIPTION_RETRY_WAIT_MIN_SECONDS, max=YOUTUBE_TRANSCRIPTION_RETRY_WAIT_MAX_SECONDS
-    ),
+    wait=wait_exponential(multiplier=1, min=YOUTUBE_TRANSCRIPTION_RETRY_WAIT_MIN_SECONDS, max=YOUTUBE_TRANSCRIPTION_RETRY_WAIT_MAX_SECONDS),
     stop=stop_after_attempt(YOUTUBE_TRANSCRIPTION_MAX_RETRIES),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )

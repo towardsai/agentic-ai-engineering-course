@@ -17,9 +17,7 @@ def _parse_github_folder_url(url: str):
     parts = [p for p in parsed.path.split("/") if p]
     # Expecting: owner / repo / tree / branch / path...
     if len(parts) < 4 or parts[2] != "tree":
-        raise ValueError(
-            "URL must be a GitHub 'tree' URL to a folder, e.g. https://github.com/owner/repo/tree/branch/path"
-        )
+        raise ValueError("URL must be a GitHub 'tree' URL to a folder, e.g. https://github.com/owner/repo/tree/branch/path")
     owner = parts[0]
     repo = parts[1]
     branch = parts[3]
@@ -108,9 +106,7 @@ def download_github_folder(relative_path: str, local_folder: str, recursive: boo
         name = item.get("name")
         item_path = item.get("path")
         if t == "file":
-            download_url = (
-                item.get("download_url") or f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{item_path}"
-            )
+            download_url = item.get("download_url") or f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{item_path}"
             # Preserve structure inside local_folder, relative to starting folder
             dest_rel = os.path.relpath(item_path, start=path_in_repo) if path_in_repo else name
             dest_path = os.path.join(local_folder, dest_rel)

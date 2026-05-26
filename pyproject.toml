@@ -62,7 +62,7 @@ force-include = { "lessons/writing_workflow/src/brown" = "brown" }
 
 [tool.ruff]
 target-version = "py312"
-line-length = 120
+line-length = 140
 
 [tool.ruff.lint]
 select = [
@@ -74,9 +74,15 @@ select = [
 [tool.ruff.lint.isort]
 known-first-party = ["lessons"]
 
+[tool.ruff.lint.per-file-ignores]
+# Teaching notebooks legitimately use long lines, intentional re-imports/re-defs,
+# and imports introduced mid-cell where they are first used.
+"*.ipynb" = ["E501", "F811", "F401", "E402"]
+
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
     "notebook>=7.4.5",
     "ruff>=0.14.6",
+    "nbformat>=5.10",
 ]

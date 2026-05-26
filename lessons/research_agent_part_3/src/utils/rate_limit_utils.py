@@ -60,18 +60,20 @@ async def check_and_record_tool_call(user_id: str, tool_name: str) -> int:
     session_factory = await get_async_session_factory()
     async with session_factory() as session:
         # Count existing calls this month
-        stmt = select(func.count()).select_from(ToolCallUsage).where(
-            ToolCallUsage.user_id == user_id,
-            ToolCallUsage.year_month == year_month,
+        stmt = (
+            select(func.count())
+            .select_from(ToolCallUsage)
+            .where(
+                ToolCallUsage.user_id == user_id,
+                ToolCallUsage.year_month == year_month,
+            )
         )
         result = await session.execute(stmt)
         current_count = result.scalar() or 0
 
         # Check if limit exceeded
         if current_count >= settings.monthly_tool_call_limit:
-            logger.warning(
-                f"Rate limit exceeded for user {user_id}: {current_count}/{settings.monthly_tool_call_limit}"
-            )
+            logger.warning(f"Rate limit exceeded for user {user_id}: {current_count}/{settings.monthly_tool_call_limit}")
             raise RateLimitExceededError(user_id, current_count, settings.monthly_tool_call_limit)
 
         # Record this tool call
@@ -84,9 +86,7 @@ async def check_and_record_tool_call(user_id: str, tool_name: str) -> int:
         await session.commit()
 
         new_count = current_count + 1
-        logger.debug(
-            f"Recorded tool call for user {user_id}: {tool_name} ({new_count}/{settings.monthly_tool_call_limit})"
-        )
+        logger.debug(f"Recorded tool call for user {user_id}: {tool_name} ({new_count}/{settings.monthly_tool_call_limit})")
         return new_count
 
 
