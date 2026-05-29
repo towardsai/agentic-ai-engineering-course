@@ -82,4 +82,5 @@ You can find specialized documentation on how to install and run each project at
 | Project | Description | Location |
 |---------|-------------|----------|
 | **Nova Research Agent** | Research agent used in part 2. | [`lessons/research_agent_part_2/README.md`](lessons/research_agent_part_2/README.md) |
+| **Nova MCP Server** | Dockerized Nova MCP server used in part 3. | [`lessons/research_agent_part_3/README.md`](lessons/research_agent_part_3/README.md) |
 | **Brown Writing Workflow** | All the code for the writing workflow. | [`lessons/writing_workflow/README.md`](lessons/writing_workflow/README.md) |
