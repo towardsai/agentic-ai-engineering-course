@@ -14,6 +14,34 @@ You stage content for release by copying a **user-selected subset of files** fro
 
 > There are no branch protections on this repo (free plan, private repo). That means nothing mechanically stops a bad push — **you** are the safeguard. Be deliberate, confirm before committing/pushing, and never force-push.
 
+## Release content policy for `lessons/NN_*` (ALWAYS enforce)
+
+Students clone `main`. From the **numbered course lessons** (`lessons/NN_<name>/`, e.g. `lessons/06_tools/`) we ship a runnable lesson, **not** the authoring artifacts. So whenever the release set touches any `lessons/NN_*` path, apply this filter automatically — it is not optional and does not depend on the user listing individual files:
+
+**Default for every numbered lesson — include ONLY:**
+1. `notebook.ipynb`, and
+2. the **supporting media the notebook actually references** — images, PDFs, audio, etc. Infer this set by scanning the notebook for local media paths (do **not** ship the whole directory blindly):
+
+   ```bash
+   # List media paths referenced inside a lesson's notebook:
+   grep -oE '[A-Za-z0-9_./-]+\.(png|jpe?g|gif|svg|webp|bmp|pdf|mp3|wav|m4a|mp4|mov)' \
+     lessons/NN_<name>/notebook.ipynb | sort -u
+   ```
+   The grep is a **heuristic** — it also emits noise (bare filenames, URL fragments, paths from markdown output cells). Treat a hit as real media only when it resolves to a tracked file in the lesson directory; cross-check against the actual tree:
+   ```bash
+   git ls-tree -r --name-only dev -- lessons/NN_<name>
+   ```
+   Keep the relative paths that exist as files under the lesson (e.g. `images/attention_is_all_you_need_1.jpeg`, `pdfs/attention_is_all_you_need_paper.pdf`); drop hits that don't resolve. Lesson **11** (`11_multimodal`) is the canonical example: it pulls in `lessons/11_multimodal/images/*` and `lessons/11_multimodal/pdfs/*`. Present the final inferred media list to the user before staging.
+
+**ALWAYS exclude** from numbered lessons (never release): `article.md`, `article_*.md`, `article_guideline.md`, `article_outline.md`, `*.metadata.json`, `research.md`, `research.xml`, `*_review*.md`, `reflection_scores.md`, `style_guideline.md`, `checkpoints/`, and any other article/research/eval authoring artifacts.
+
+### Stored edge cases (override the default above)
+
+- **`lessons/25_integrate_agents/`** — in addition to `notebook.ipynb`, also release the **MCP server setup** config files the lesson requires: `mcp_servers_config_http.json` and `mcp_composed_server_config_http.json`. (Still exclude `article*.md`, `research.md`, `article_guideline.md`.)
+- **`lessons/26_end_to_end_demo/`** — release **ALL** files in the lesson directory. We deliberately keep every output artifact produced during the end-to-end demo (`article.md`, `article_000.md`, `article_001.md`, `article_002.md`, `research.md`, `article_guideline.md`, `notebook.ipynb`, plus anything else present). Do **not** apply the notebook-only filter here.
+
+This policy applies **only** to `lessons/NN_*`. Source-code projects under `lessons/` (`writing_workflow`, `research_agent_part_*`, `agents_integration`, `utils`), root/infra files, and `assets/` are released as-is per the user's selection. `.claude/` is never released.
+
 ## Step 0 — Hard precondition: must be on `dev` (ASSERTION)
 
 This is a blocking gate. Run it **first**, before any other git command:
@@ -54,6 +82,8 @@ The user controls the file list. Resolve it in this order:
    ```
 
    If any path is missing on `dev`, surface it and ask the user to correct the list rather than guessing.
+
+4. **Apply the `lessons/NN_*` release content policy** (see the section above) to the resolved set. For any numbered lesson in the selection, narrow it to `notebook.ipynb` + inferred supporting media, honoring the stored edge cases for lessons **25** and **26**. Show the user the before/after for those lessons (what you dropped and why) so the filtering is transparent, then continue with the filtered set. This filter is mandatory even when the user said "all the notebooks" or named a whole lesson directory.
 
 Keep the confirmed list as `<files>` for the steps below (space-separated, each path quoted if it contains spaces).
 
@@ -106,7 +136,19 @@ git checkout dev
 
 Confirm with `git rev-parse --abbrev-ref HEAD` that you're back on `dev`.
 
-## Step 6 — Open the `test → main` pull request
+## Step 6 — Optional: audit `dev` ↔ `test` synchronization
+
+After the release is pushed and you're back on `dev`, **ask the user** whether they want a synchronization check between the two branches — e.g. *"Want me to run the `dev-test-sync-checker` to see how `dev` and `test` still differ (both directions)?"*
+
+- If **no**, skip to Step 7.
+- If **yes**, launch the **`dev-test-sync-checker`** subagent (via the Agent tool, `subagent_type: dev-test-sync-checker`). It is **read-only**: it compares the two branch tips both ways and returns a categorized report —
+  - what `dev` has that `test` doesn't (unreleased / intentionally-excluded artifacts),
+  - what `test` has that `dev` doesn't (likely stale leftovers), and
+  - files present on both but differing.
+
+  Relay its report to the user. It never commits, pushes, or deletes — if its report suggests cleanup (e.g. stale files on `test`, or source files that drifted), surface those as **follow-up suggestions** and let the user decide. Acting on them (deletions on `test`, re-releasing drifted files) is a separate, explicitly-confirmed operation, not part of this skill's automatic flow.
+
+## Step 7 — Open the `test → main` pull request
 
 The PR is reviewed (diffs + reviewers) and merged on GitHub. Offer the user two options:
 
@@ -126,7 +168,7 @@ The PR is reviewed (diffs + reviewers) and merged on GitHub. Offer the user two 
 
   Don't auto-merge — leave the review/merge decision to the user.
 
-## Step 7 — Report
+## Step 8 — Report
 
 Summarize concisely:
 
@@ -134,6 +176,7 @@ Summarize concisely:
 - the exact files released,
 - the commit message and that the push succeeded,
 - confirmation you're back on `dev`,
+- whether the sync check (Step 6) was run, and a one-line takeaway if it was,
 - the PR link (or the PR that `gh` created), and
 - any step you skipped or stopped on, and why.
 
@@ -141,6 +184,8 @@ Summarize concisely:
 
 - **Never run anything if Step 0's branch assertion fails.** `dev`-only, no exceptions.
 - Only release the files the user explicitly selected — never a blanket "everything that differs."
+- **Always enforce the `lessons/NN_*` release content policy** (notebooks + inferred supporting media only; lesson 25 also ships its MCP configs; lesson 26 ships everything). Never release lesson article/research/metadata authoring artifacts.
 - Confirm with the user before `git commit` and `git push`.
 - Never force-push; never touch `main` directly.
+- The `dev-test-sync-checker` subagent is read-only — it reports divergence but never commits, pushes, or deletes. Any cleanup it suggests needs explicit user confirmation as a separate step.
 - If any step errors, stop, report, and make sure the repo is left back on `dev`.
