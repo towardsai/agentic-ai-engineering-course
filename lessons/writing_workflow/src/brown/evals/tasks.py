@@ -13,10 +13,12 @@ from typing import Any, Callable, Dict
 from langchain_core.runnables.config import RunnableConfig
 from loguru import logger
 
+from brown.builders import build_short_term_memory
+from brown.config_app import get_app_config
 from brown.evals.dataset import EvalSampleDict
 from brown.observability import tracing
 from brown.utils import a
-from brown.workflows import generate_article_workflow
+from brown.workflows import build_generate_article_workflow
 
 
 @a.as_sync
@@ -40,21 +42,15 @@ async def evaluation_task(
             - research: Research content
             - ground_truth_article: Ground truth article content
             - is_few_shot_example: Whether this is a few-shot example
-        style_guideline_dir: Directory containing style guidelines.
-        examples_dir: Directory containing example articles.
-        evaluation_rules_path: Path to evaluation rules file.
-        writer_profile_path: Path to writer profile file.
         cache_dir: Cache directory for generated articles.
         read_from_cache: Whether to read from cache instead of generating.
         clean_cache: Whether to clean up cache after processing.
         debug: Whether to enable debug mode.
-        online_human_review: Whether to enable online human review.
-        skip_to_stage_3: Whether to skip to stage 3 of the workflow.
 
     Returns:
         Dictionary containing evaluation results with keys:
-            - input: Original input data (article_guideline, research)
-            - context: Context used for generation (style guidelines, examples, etc.)
+            - input: Original input data (article_guideline)
+            - context: Context used for generation (research, debug flag)
             - output: Generated article content
             - expected_output: Ground truth article content
             - reference: Ground truth article content (alias for expected_output)
@@ -87,8 +83,6 @@ async def evaluation_task(
 
         try:
             generated_article = await __run(config, inputs, read_from_cache)
-
-            logger.success(f"Successfully generated article for sample: `{sample['name']}`")
         except Exception:
             generated_article = "ERROR: Failed to generate article"
 
@@ -121,9 +115,8 @@ async def __run(config: RunnableConfig, inputs: Dict[str, Any], read_from_cache:
     generated article content from the output directory.
 
     Args:
-        graph: The compiled state graph for article generation.
         config: Runnable configuration containing thread_id, debug settings, etc.
-        inputs: Input parameters for the workflow including file paths and settings.
+        inputs: Input parameters for the workflow including dir_path.
         read_from_cache: Whether to read from cache instead of running the workflow.
 
     Returns:
@@ -134,12 +127,19 @@ async def __run(config: RunnableConfig, inputs: Dict[str, Any], read_from_cache:
         FileNotFoundError: If the generated article file is not found.
 
     """
+
+    app_config = get_app_config()
+
     article_path = inputs["dir_path"] / "article.md"
     if read_from_cache:
         assert article_path.exists(), f"Article file not found in cache at `{article_path}`"
         logger.success(f"Successfully read article from cache at `{article_path}`")
     else:
-        await generate_article_workflow.ainvoke(inputs, config)
+        async with build_short_term_memory(app_config) as checkpointer:
+            generate_article_workflow = build_generate_article_workflow(checkpointer=checkpointer)
+            await generate_article_workflow.ainvoke(inputs, config)
+
+        logger.success(f"Successfully generated article at `{article_path}`")
 
     article = article_path.read_text(encoding="utf-8")
 

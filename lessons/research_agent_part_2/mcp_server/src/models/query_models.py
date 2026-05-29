@@ -23,10 +23,7 @@ class SourceSelection(BaseModel):
     """Structured response expected from the LLM."""
 
     selection_type: Literal["none", "all", "specific"] = Field(
-        description=(
-            "Type of selection made: 'none' for no sources, 'all' for all sources, "
-            "or 'specific' for specific source IDs"
-        )
+        description=("Type of selection made: 'none' for no sources, 'all' for all sources, or 'specific' for specific source IDs")
     )
     source_ids: List[int] = Field(
         description="List of selected source IDs. Empty for 'none', all IDs for 'all', or specific IDs for 'specific'"

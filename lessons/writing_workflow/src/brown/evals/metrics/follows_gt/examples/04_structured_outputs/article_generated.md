@@ -4,7 +4,7 @@ We will start with a critical component for building production-grade AI systems
 
 LLMs generate text, but our applications need data—objects, lists, and validated fields. Structured outputs provide a reliable contract that forces the model’s free-form text into a predictable format. Mastering this is not just a nice-to-have, it is essential for any AI Engineer who wants to build systems that are reliable, testable, and maintainable. Without it, you are just building fragile applications on a foundation of hope.
 
-## Understanding why structured outputs are critical
+## Why Structured Outputs Are Critical
 
 Before we write any code, it is important to understand why forcing an LLM to return structured data is a non-negotiable best practice. At its core, it is about control and reliability. When a model returns a clean JSON object or a validated Pydantic model, the output becomes easy to parse, manipulate, and debug. You can directly access attributes like `response.summary` instead of wrestling with fragile regular expressions to find a summary somewhere in a long string of text [[1]](https://arxiv.org/html/2506.21585v1).
 
@@ -348,7 +348,7 @@ Let us see how the same result can be achieved using the Gemini SDK's native cap
 
 This native approach is the recommended way to work with structured data. It is cleaner, less error-prone, and lets you focus on your application's logic instead of fighting with prompt formatting and response parsing.
 
-## Conclusion: Structured Outputs Are Everywhere
+## Structured Outputs Are Everywhere
 
 Structured outputs are a fundamental pattern in AI engineering that serves as the essential bridge allowing the fluid, text-based world of LLMs to communicate with the rigid, data-driven logic of our applications, appearing universally in nearly every LLM-powered system whether building simple workflows or complex, autonomous agents across any domain from finance to healthcare [7](https://developers.redhat.com/articles/2025/06/03/structured-outputs-vllm-guiding-ai-responses).
 

@@ -1,11 +1,12 @@
 import pytest
 
-from brown.evals.metrics.base import CriterionScore, SectionCriteriaScores
-from brown.evals.metrics.user_intent.metric import UserIntentMetric
+from brown.evals.metrics.base import CriterionScore
+from brown.evals.metrics.user_intent.metric import UserIntentMetricLLMJudge
 from brown.evals.metrics.user_intent.types import (
     UserIntentArticleScores,
     UserIntentCriteriaScores,
     UserIntentMetricFewShotExamples,
+    UserIntentSectionScores,
 )
 from brown.models import ModelConfig, SupportedModels
 
@@ -17,14 +18,14 @@ def mock_user_intent_scores_perfect() -> UserIntentArticleScores:
     """
     return UserIntentArticleScores(
         sections=[
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Introduction",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=1, reason="Perfect adherence to guidelines."),
                     research_anchoring=CriterionScore(score=1, reason="Perfect research anchoring."),
                 ),
             ),
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Body",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=1, reason="Perfect adherence to guidelines."),
@@ -42,14 +43,14 @@ def mock_user_intent_scores_mixed() -> UserIntentArticleScores:
     """
     return UserIntentArticleScores(
         sections=[
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Introduction",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=0, reason="Poor adherence to guidelines."),
                     research_anchoring=CriterionScore(score=1, reason="Good research anchoring."),
                 ),
             ),
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Body",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=1, reason="Good adherence to guidelines."),
@@ -67,7 +68,7 @@ def mock_user_intent_scores_poor() -> UserIntentArticleScores:
     """
     return UserIntentArticleScores(
         sections=[
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Introduction",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=0, reason="Poor adherence to guidelines."),
@@ -87,44 +88,44 @@ def mock_user_intent_scores_empty_sections() -> UserIntentArticleScores:
 
 
 @pytest.fixture
-def mock_user_intent_metric(mock_user_intent_scores_perfect: UserIntentArticleScores) -> UserIntentMetric:
+def mock_user_intent_metric(mock_user_intent_scores_perfect: UserIntentArticleScores) -> UserIntentMetricLLMJudge:
     """
     Fixture for a UserIntentMetric instance with a mocked perfect response.
     """
     model_config = ModelConfig(mocked_response=mock_user_intent_scores_perfect)
-    return UserIntentMetric(model=SupportedModels.FAKE_MODEL, model_config=model_config)
+    return UserIntentMetricLLMJudge(model=SupportedModels.FAKE_MODEL, model_config=model_config)
 
 
 @pytest.fixture
-def mock_user_intent_metric_mixed(mock_user_intent_scores_mixed: UserIntentArticleScores) -> UserIntentMetric:
+def mock_user_intent_metric_mixed(mock_user_intent_scores_mixed: UserIntentArticleScores) -> UserIntentMetricLLMJudge:
     """
     Fixture for a UserIntentMetric instance with a mocked mixed response.
     """
     model_config = ModelConfig(mocked_response=mock_user_intent_scores_mixed)
-    return UserIntentMetric(model=SupportedModels.FAKE_MODEL, model_config=model_config)
+    return UserIntentMetricLLMJudge(model=SupportedModels.FAKE_MODEL, model_config=model_config)
 
 
 @pytest.fixture
-def mock_user_intent_metric_poor(mock_user_intent_scores_poor: UserIntentArticleScores) -> UserIntentMetric:
+def mock_user_intent_metric_poor(mock_user_intent_scores_poor: UserIntentArticleScores) -> UserIntentMetricLLMJudge:
     """
     Fixture for a UserIntentMetric instance with a mocked poor response.
     """
     model_config = ModelConfig(mocked_response=mock_user_intent_scores_poor)
-    return UserIntentMetric(model=SupportedModels.FAKE_MODEL, model_config=model_config)
+    return UserIntentMetricLLMJudge(model=SupportedModels.FAKE_MODEL, model_config=model_config)
 
 
 @pytest.fixture
 def mock_user_intent_metric_empty_sections(
     mock_user_intent_scores_empty_sections: UserIntentArticleScores,
-) -> UserIntentMetric:
+) -> UserIntentMetricLLMJudge:
     """
     Fixture for a UserIntentMetric instance with a mocked empty sections response.
     """
     model_config = ModelConfig(mocked_response=mock_user_intent_scores_empty_sections)
-    return UserIntentMetric(model=SupportedModels.FAKE_MODEL, model_config=model_config)
+    return UserIntentMetricLLMJudge(model=SupportedModels.FAKE_MODEL, model_config=model_config)
 
 
-def test_user_intent_metric_perfect_score(mock_user_intent_metric: UserIntentMetric) -> None:
+def test_user_intent_metric_perfect_score(mock_user_intent_metric: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric returns perfect scores when mocked with a perfect response.
     """
@@ -145,7 +146,7 @@ def test_user_intent_metric_perfect_score(mock_user_intent_metric: UserIntentMet
     assert "user_intent_research_anchoring" in result_names
 
 
-def test_user_intent_metric_mixed_scores(mock_user_intent_metric_mixed: UserIntentMetric) -> None:
+def test_user_intent_metric_mixed_scores(mock_user_intent_metric_mixed: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric returns mixed scores when mocked with a mixed response.
     """
@@ -164,7 +165,7 @@ def test_user_intent_metric_mixed_scores(mock_user_intent_metric_mixed: UserInte
         assert result.name.startswith("user_intent_")
 
 
-def test_user_intent_metric_poor_scores(mock_user_intent_metric_poor: UserIntentMetric) -> None:
+def test_user_intent_metric_poor_scores(mock_user_intent_metric_poor: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric returns poor scores when mocked with a poor response.
     """
@@ -182,7 +183,7 @@ def test_user_intent_metric_poor_scores(mock_user_intent_metric_poor: UserIntent
         assert result.name.startswith("user_intent_")
 
 
-def test_user_intent_metric_empty_sections(mock_user_intent_metric_empty_sections: UserIntentMetric) -> None:
+def test_user_intent_metric_empty_sections(mock_user_intent_metric_empty_sections: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric handles empty sections gracefully by returning an empty list.
     """
@@ -202,7 +203,7 @@ def test_user_intent_metric_missing_research_in_context() -> None:
     Test that UserIntentMetric raises ValueError when context doesn't contain 'research' key.
     """
     model_config = ModelConfig(mocked_response=UserIntentArticleScores(sections=[]))
-    metric = UserIntentMetric(
+    metric = UserIntentMetricLLMJudge(
         model=SupportedModels.FAKE_MODEL,
         model_config=model_config,
     )
@@ -221,14 +222,14 @@ def test_user_intent_metric_init_requires_mocked_response_for_fake_model() -> No
     """
     with pytest.raises(AssertionError, match="Mocked response is required for fake model"):
         model_config = ModelConfig(mocked_response=None)
-        UserIntentMetric(model=SupportedModels.FAKE_MODEL, model_config=model_config)
+        UserIntentMetricLLMJudge(model=SupportedModels.FAKE_MODEL, model_config=model_config)
 
 
 def test_user_intent_metric_init_default_model() -> None:
     """
     Test that UserIntentMetric initializes with the default model if not specified.
     """
-    metric = UserIntentMetric()
+    metric = UserIntentMetricLLMJudge()
     assert metric.model == SupportedModels.GOOGLE_GEMINI_25_FLASH
 
 
@@ -237,7 +238,7 @@ def test_user_intent_metric_init_custom_name() -> None:
     Test that UserIntentMetric initializes with a custom name.
     """
     custom_name = "my_custom_user_intent_metric"
-    metric = UserIntentMetric(name=custom_name)
+    metric = UserIntentMetricLLMJudge(name=custom_name)
     assert metric.name == custom_name
 
 
@@ -245,13 +246,13 @@ def test_user_intent_metric_init_custom_few_shot_examples() -> None:
     """
     Test that UserIntentMetric initializes with default few-shot examples.
     """
-    metric = UserIntentMetric()
+    metric = UserIntentMetricLLMJudge()
     # Verify that the metric has few_shot_examples attribute and it's of the correct type
     assert hasattr(metric, "few_shot_examples")
     assert isinstance(metric.few_shot_examples, UserIntentMetricFewShotExamples)
 
 
-def test_user_intent_metric_score_result_structure(mock_user_intent_metric: UserIntentMetric) -> None:
+def test_user_intent_metric_score_result_structure(mock_user_intent_metric: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric returns results with the correct structure and naming.
     """
@@ -278,7 +279,7 @@ def test_user_intent_metric_score_result_structure(mock_user_intent_metric: User
 
 
 @pytest.mark.asyncio
-async def test_user_intent_metric_async_score(mock_user_intent_metric: UserIntentMetric) -> None:
+async def test_user_intent_metric_async_score(mock_user_intent_metric: UserIntentMetricLLMJudge) -> None:
     """
     Test that UserIntentMetric async score method works correctly.
     """
@@ -296,9 +297,9 @@ async def test_user_intent_metric_async_score(mock_user_intent_metric: UserInten
 
 def test_user_intent_scores_to_context() -> None:
     """
-    Test that SectionCriteriaScores.to_context() generates the expected XML format.
+    Test that UserIntentSectionScores.to_context() generates the expected XML format.
     """
-    section_scores = SectionCriteriaScores(
+    section_scores = UserIntentSectionScores(
         title="Test Section",
         scores=UserIntentCriteriaScores(
             guideline_adherence=CriterionScore(score=1, reason="Good adherence"),
@@ -324,7 +325,7 @@ def test_user_intent_article_scores_to_context() -> None:
     """
     article_scores = UserIntentArticleScores(
         sections=[
-            SectionCriteriaScores(
+            UserIntentSectionScores(
                 title="Section 1",
                 scores=UserIntentCriteriaScores(
                     guideline_adherence=CriterionScore(score=1, reason="Good"),

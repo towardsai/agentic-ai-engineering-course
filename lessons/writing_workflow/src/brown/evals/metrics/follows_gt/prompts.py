@@ -7,13 +7,14 @@ multiple dimensions (content, flow, structure, mechanics).
 
 from pathlib import Path
 
-from brown.evals.metrics.base import CriterionScore, SectionCriteriaScores
+from brown.evals.metrics.base import CriterionScore
 
 from .types import (
     FollowsGTArticleScores,
     FollowsGTCriterionScores,
-    FollowsGTMetricExample,
+    FollowsGTMetricFewShotExample,
     FollowsGTMetricFewShotExamples,
+    FollowsGTSectionScores,
 )
 
 SYSTEM_PROMPT = """ You are an expert in Natural Language Processing (NLP) evaluation metrics, specifically trained to 
@@ -92,24 +93,16 @@ another criterion.
     - Mismatches in headers formatting and presence. For example, if the expected section doesn't has a header,
     while the generated section has one, it's invalid. It's valid only if there is a one on one match between the headers
     formatting and presence.
-    - Paragraph length patterns
     - Use of bulleted lists, numbered lists, callouts, notes, or other layout elements
     - Division of the section when guiding readers through code blocks or diagrams
+    - Formatting of notes and code blocks
     - Use of bolding, italicizing, quotes, backticks, or other formatting elements
     - Formatting of citation references across sentences
     - Formatting of images, tables, and Mermaid diagrams and their corresponding citations. If they are missing from
     the generated section, we consider it valid for this criterion, as we are interested ONLY in formatting, which we
     cannot verify when elements are absent. For this criterion, missing elements from the generated sections are 
     considered valid. They are invalid only if present in both sections but formatted differently.
-    - Formatting of notes and code blocks
     - Number formatting conventions
-  4. **Mechanics:** Evaluate whether the generated section follows the same mechanics as the expected section. By 
-  mechanics, we mean:
-    - Sentence length patterns
-    - Active vs. passive voice usage
-    - Punctuation preferences (colons ":", commas ",", semicolons ";", em-dashes "—", periods ".", etc.)
-    - Capitalization patterns
-    - Abbreviation or acronym usage
 9. Along with the binary scores, you will provide a brief and concise explanation containing the reasoning behind 
 the score for each criterion. The score will be used to debug and monitor the evaluation process. Therefore, it is
 important to provide thorough reasoning for the score. Since we provide binary scores, the reasoning should always 
@@ -180,12 +173,12 @@ Think through your answer step by step, and provide the requested evaluation.
 EXAMPLES_DIR = Path(__file__).parent / "examples"
 DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
     examples=[
-        FollowsGTMetricExample.from_markdown(
+        FollowsGTMetricFewShotExample.from_markdown(
             output_file=EXAMPLES_DIR / "04_structured_outputs" / "article_generated.md",
             expected_output_file=EXAMPLES_DIR / "04_structured_outputs" / "article_ground_truth.md",
             scores=FollowsGTArticleScores(
                 sections=[
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Introduction",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -207,17 +200,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                 score=1,
                                 reason="Both sections use the same paragraph length patterns.",
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Both sections contain similar sentence length, voice, punctuation and "
-                                    "capitalization usage. Still, the generated section didn't abbreviate the "
-                                    "word Large Language Models as in the expected section."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Why Structured Outputs Are Critical",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -247,16 +232,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "and their corresponding citations use the same formatting rules."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Both sections maintain consistent sentence length, voice, punctuation, capitalization, and "
-                                    "abbreviation usage."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Implementing Structured Outputs From Scratch Using JSON",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -274,24 +252,15 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                             structure=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "Both sections use the same paragraph length, number formatting , numbered lists and division of code "
-                                    "blocks patterns. However, the generated section incorrectly formats the JSON code block under point 4)"
-                                    " ,where it misses the closing ```. Also, in the last section, where it outputs "
+                                    "The generated section incorrectly formats the JSON code block under point 4), "
+                                    "where it misses the closing ```. Also, in the last section, where it outputs "
                                     "the final JSON structure, it doesn't enclose the JSON into Python backticks "
                                     "as expected: ```python <content> ```"
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Both sections maintain consistent sentence length, voice, capitalization, and "
-                                    "abbreviation usage. However, the generated sections, in most of the code blocks, "
-                                    "missed the colon punctuation at the end of the paragraphs that go through the code."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Implementing Structured Outputs From Scratch Using Pydantic",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -316,35 +285,23 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                             structure=CriterionScore(
                                 score=1,
                                 reason=(
-                                    "Both sections maintain a similar structure to format the code: introductory paragraphs, "
-                                    "numbered steps with code blocks, and a concluding comparison. The formatting of the Python code and "
-                                    "JSON blocks is the same. Also, the use of backticks and formatting of citation "
-                                    "references is the same."
-                                ),
-                            ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Both sections maintain consistent sentence length, punctuation, capitalization, "
-                                    "and abbreviation usage. Still, on the punctuation side of things, it "
-                                    "correctly uses colons at the end of each paragraph that walks people through "
-                                    "the code, but in the second paragraph of the generated section, there is a "
-                                    "semicolon, while in the expected section, there are no semicolons. Also, there "
-                                    "are a few sentences where the generated section contains passive voice, instead "
-                                    "of active, as expected, such as 'When an LLM's output is parsed into a Pydantic "
-                                    "model' (line 185)."
+                                    "Both sections maintain similar introductory paragraphs, numbered steps with code blocks, "
+                                    "and a concluding comparison. The formatting of the Python code and JSON blocks is the same. "
+                                    "Also, the use of backticks and formatting of citation references is the same."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Implementing Structured Outputs Using Gemini and Pydantic",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
                                     "Both sections accurately describe the native implementation of structured "
-                                    "outputs using the Gemini API and Pydantic."
+                                    "outputs using the Gemini API and Pydantic. Still, the generated section lacks "
+                                    "some key code block examples (points 3 and 4 on calling the Gemini API), "
+                                    "which are necessary to fully illustrate the concept."
                                 ),
                             ),
                             flow=CriterionScore(
@@ -366,31 +323,25 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "bulleted list to divide the code blocks instead of a numbered list as expected."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Both sections maintain consistent mechanics regarding sentence length, "
-                                    "punctuation, capitalization, and abbreviation usage. However, the generated "
-                                    "section uses passive voice instead of active voice, as expected."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Structured Outputs Are Everywhere",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
                                     "Both sections serve as a conclusion, summarizing the importance of structured "
-                                    "outputs as a fundamental pattern."
+                                    "outputs as a fundamental pattern. Still, the generated section misses the last "
+                                    "paragraph that presents how structured outputs fit in the course and the AI "
+                                    "Engineering field, which is critical for the conclusion."
                                 ),
                             ),
                             flow=CriterionScore(
                                 score=0,
                                 reason=(
                                     "Both sections follow a similar flow, summarizing the key takeaway. Still, the "
-                                    "generated section omits the final sentences that set the scene for future lessons "
+                                    "generated section misses the last paragraph on looking ahead to future lessons "
                                     "in the course."
                                 ),
                             ),
@@ -402,17 +353,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "square brackets."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Both sections maintain consistent voice, punctuation, capitalization, and "
-                                    "abbreviation usage. Still, the generated section has considerably longer "
-                                    "sentences than the expected section."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="References",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -431,24 +374,17 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "[<reference_name>](<reference_url>)"
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains the same sentence length, voice, punctuation preferences, "
-                                    "capitalization and abbreviation patterns."
-                                ),
-                            ),
                         ),
                     ),
                 ]
             ),
         ),
-        FollowsGTMetricExample.from_markdown(
+        FollowsGTMetricFewShotExample.from_markdown(
             output_file=EXAMPLES_DIR / "07_reasoning_planning" / "article_generated.md",
             expected_output_file=EXAMPLES_DIR / "07_reasoning_planning" / "article_ground_truth.md",
             scores=FollowsGTArticleScores(
                 sections=[
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Introduction",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -470,20 +406,12 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                 score=0,
                                 reason=(
                                     "The generated output uses an H2 header 'Why Your Agent Needs to Think Before It Acts' "
-                                    "as a title for the introduction, while the expected section doesn't has any headers."
-                                ),
-                            ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, capitalization, and "
-                                    "abbreviation usage as the expected output. Still, the generated section uses the semicolon "
-                                    "punctuation, while the expected section doesn't. "
+                                    "as a title for the introduction, while the expected section doesn't."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="What a Non-Reasoning Model Does And Why It Fails on Complex Tasks",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -508,17 +436,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "corresponding citations."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, "
-                                    "capitalization, and abbreviation usage as the expected output. Still, the generated sections "
-                                    "uses the semicolon punctuation, while the expected section doesn't."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title='Teaching Models to "Think": Chain-of-Thought and Its Limits',
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -544,16 +464,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "'Note' callout box."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, punctuation, "
-                                    "capitalization, and abbreviation usage."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -579,18 +492,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "of a bullet list with the names of the algorithms being bolded."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, "
-                                    "and capitalization. Still, on the abbreviation usage, we expected "
-                                    'to have the full name of " ReAct (Reason + Act)", instead, we have only "ReAct". '
-                                    "Also, the second paragraph is written in passive voice instead of active voice, as expected."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="ReAct in Depth: The Loop of Thought, Action, and Observation",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -619,16 +523,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "expected section does not."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, punctuation, "
-                                    "capitalization, and abbreviation usage."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Plan-and-Execute in Depth: Structure and Predictability",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -656,16 +553,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "and execution phases as bolded text instead of as H3 headers."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, punctuation, "
-                                    "capitalization, and abbreviation."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Pros and Cons: ReAct vs. Plan-and-Execute",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -680,13 +570,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                 score=0,
                                 reason="The generated output completely omits this section.",
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason="The generated output completely misses this section.",
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Deep Research AI Assistant Systems",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -712,20 +598,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "is missing from the generation section, we consider the citation valid."
                                 ),
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage,  "
-                                    "capitalization, and abbreviation usage as the expected output. "
-                                    "Still, the generated section uses the semicolon punctuation, while the expected section doesn't. "
-                                    "Also, the sentences from the last two paragraphs are too long (the whole "
-                                    "paragraph is one big sentence), relative to the smaller sentence length of the "
-                                    "expected paragraphs."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title='Reasoning Models: How LLMs\' "Reasoning and Planning" are Being Internalized in LLMs',
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -740,13 +615,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                 score=0,
                                 reason="The generated section is completely empty.",
                             ),
-                            mechanics=CriterionScore(
-                                score=0,
-                                reason="The generated section is completely empty.",
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="Conclusion",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -768,16 +639,9 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                 score=1,
                                 reason="Both sections have similar paragraph length, number formatting, and citation patterns.",
                             ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains consistent sentence length patterns, active voice usage, punctuation, "
-                                    "capitalization, and abbreviation usage."
-                                ),
-                            ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    FollowsGTSectionScores(
                         title="References",
                         scores=FollowsGTCriterionScores(
                             content=CriterionScore(
@@ -794,13 +658,6 @@ DEFAULT_FEW_SHOT_EXAMPLES = FollowsGTMetricFewShotExamples(
                                     "Both sections use a bulleted list to enumerate the citations, "
                                     "but the use of parentheses is not the same. The generated article outputs the references as "
                                     "`- [<number>] <reference_name>(<url>), ` instead of `- [[<number>]](<url>) <article_name>`."
-                                ),
-                            ),
-                            mechanics=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "Maintains the same sentence length, voice, punctuation preferences, "
-                                    "capitalization and abbreviation patterns."
                                 ),
                             ),
                         ),
@@ -832,7 +689,7 @@ def get_eval_prompt(
         The complete formatted prompt string ready for LLM invocation.
 
     """
-    # Path("context.md").write_text(few_shot_examples.to_context())
+
     return SYSTEM_PROMPT.format(
         examples=few_shot_examples.to_context(),
         output=output,

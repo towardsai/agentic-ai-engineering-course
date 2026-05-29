@@ -13,8 +13,8 @@ repos:
         types_or: [yaml, json5]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Ruff version.
-    rev: v0.12.1
+    # Ruff version. Keep in sync with the CI workflows (.github/workflows/*.yml).
+    rev: v0.14.6
     hooks:
       # Run the linter.
       - id: ruff-check

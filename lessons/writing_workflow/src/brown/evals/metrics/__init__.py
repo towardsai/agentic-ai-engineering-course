@@ -8,10 +8,10 @@ from opik.evaluation.metrics import base_metric
 
 from brown.models import ModelConfig, SupportedModels
 
-from .follows_gt import FollowsGTMetric
-from .user_intent import UserIntentMetric
+from .follows_gt import FollowsGTMetricLLMJudge
+from .user_intent import UserIntentMetricLLMJudge
 
-__all__ = ["UserIntentMetric", "FollowsGTMetric", "build_evaluation_metrics"]
+__all__ = ["UserIntentMetricLLMJudge", "FollowsGTMetricLLMJudge", "build_evaluation_metrics"]
 
 
 def build_evaluation_metrics(
@@ -23,6 +23,9 @@ def build_evaluation_metrics(
         metrics: List of metric names to use. Valid values are:
             - "user_intent": Evaluates if article follows guidelines and is anchored in research
             - "follows_gt": Evaluates article structure and content
+        model: The language model to use for evaluation.
+        model_config: Configuration for the model including temperature, thinking budget,
+            and retry settings. If None, each metric uses its default configuration.
 
     Returns:
         List of metric instances
@@ -32,8 +35,8 @@ def build_evaluation_metrics(
 
     """
     metrics_mapping = {
-        "user_intent": UserIntentMetric(model=model, model_config=model_config),
-        "follows_gt": FollowsGTMetric(model=model, model_config=model_config),
+        "user_intent": UserIntentMetricLLMJudge(model=model, model_config=model_config),
+        "follows_gt": FollowsGTMetricLLMJudge(model=model, model_config=model_config),
     }
 
     try:

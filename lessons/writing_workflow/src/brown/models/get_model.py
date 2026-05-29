@@ -13,8 +13,9 @@ from .config import (
 from .fake_model import FakeModel
 
 MODEL_TO_REQUIRED_API_KEY = {
-    SupportedModels.GOOGLE_GEMINI_30_PRO: "GOOGLE_API_KEY",
     SupportedModels.GOOGLE_GEMINI_25_PRO: "GOOGLE_API_KEY",
+    SupportedModels.GOOGLE_GEMINI_35_FLASH: "GOOGLE_API_KEY",
+    SupportedModels.GOOGLE_GEMINI_31_FLASH_LITE: "GOOGLE_API_KEY",
     SupportedModels.GOOGLE_GEMINI_25_FLASH: "GOOGLE_API_KEY",
     SupportedModels.GOOGLE_GEMINI_25_FLASH_LITE: "GOOGLE_API_KEY",
 }

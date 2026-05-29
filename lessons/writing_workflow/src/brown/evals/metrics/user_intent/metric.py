@@ -16,7 +16,7 @@ from . import prompts
 from .types import UserIntentArticleScores
 
 
-class UserIntentMetric(BrownBaseMetric):
+class UserIntentMetricLLMJudge(BrownBaseMetric):
     """A metric that evaluates how well generated articles follow article guidelines and are anchored in research.
 
     This metric uses a language model to assess how well the generated article content
@@ -44,8 +44,8 @@ class UserIntentMetric(BrownBaseMetric):
         structured_output_type: The UserIntentArticleScores type used for structured output parsing.
 
     Example:
-        >>> from brown.evals.metrics.user_intent.metric import UserIntentMetric
-        >>> user_intent_metric = UserIntentMetric()
+        >>> from brown.evals.metrics.user_intent.metric import UserIntentMetricLLMJudge
+        >>> user_intent_metric = UserIntentMetricLLMJudge()
         >>> results = await user_intent_metric.ascore(
         ...     input="Article guideline content...",
         ...     context={"research": "Research content..."},

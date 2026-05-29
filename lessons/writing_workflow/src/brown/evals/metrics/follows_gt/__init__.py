@@ -4,6 +4,6 @@ This metric evaluates how well generated articles follow the structure and conte
 of expected ground truth articles across multiple dimensions.
 """
 
-from .metric import FollowsGTMetric
+from .metric import FollowsGTMetricLLMJudge
 
-__all__ = ["FollowsGTMetric"]
+__all__ = ["FollowsGTMetricLLMJudge"]

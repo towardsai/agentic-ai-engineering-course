@@ -1,17 +1,12 @@
-import os
 from functools import lru_cache
 from typing import Annotated
 
-from loguru import logger
 from pydantic import Field, FilePath, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ENV_FILE_PATH = os.getenv("ENV_FILE_PATH", ".env")
-logger.info(f"Loading environment file from `{ENV_FILE_PATH}`")
-
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, extra="ignore", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_file_encoding="utf-8")
 
     # --- Gemini ---
 
@@ -26,7 +21,9 @@ class Settings(BaseSettings):
 
     # --- App Config ---
 
-    CONFIG_FILE: Annotated[FilePath, Field(default="configs/course.yaml", description="Path to the application configuration YAML file.")]
+    CONFIG_FILE: Annotated[
+        FilePath, Field(default="configs/course-gemini-flash.yaml", description="Path to the application configuration YAML file.")
+    ]
 
 
 @lru_cache(maxsize=1)

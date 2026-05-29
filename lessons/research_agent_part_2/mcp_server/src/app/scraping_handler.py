@@ -58,9 +58,7 @@ async def scrape_url(url: str, firecrawl_app: AsyncFirecrawl) -> dict:
         try:
             # Add timeout to individual Firecrawl request
             # Use maxAge=1 week for 500% faster scraping with cached data
-            res = await firecrawl_app.scrape(
-                url, formats=["markdown"], maxAge=MAX_AGE_ONE_WEEK, timeout=timeout_seconds
-            )
+            res = await firecrawl_app.scrape(url, formats=["markdown"], maxAge=MAX_AGE_ONE_WEEK, timeout=timeout_seconds)
             title = res.metadata.title if res and res.metadata and res.metadata.title else "N/A"
             markdown_content = res.markdown if res and res.markdown else ""
             return {"url": url, "title": title, "markdown": markdown_content, "success": True}
@@ -117,9 +115,7 @@ def convert_markdown_images_to_urls(text: str) -> str:
     return text
 
 
-async def clean_markdown(
-    markdown_content: str, article_guidelines: str, url_for_log: str, chat_model: BaseChatModel
-) -> str:
+async def clean_markdown(markdown_content: str, article_guidelines: str, url_for_log: str, chat_model: BaseChatModel) -> str:
     """Clean markdown content via LLM and convert image syntax to URLs."""
     if not markdown_content.strip():
         return markdown_content
@@ -163,9 +159,7 @@ async def scrape_and_clean(url: str, article_guidelines: str, firecrawl_app: Asy
     return scraped
 
 
-async def scrape_urls_concurrently(
-    other_urls: List[str], article_guidelines: str, concurrency_limit: int = 4
-) -> List[dict]:
+async def scrape_urls_concurrently(other_urls: List[str], article_guidelines: str, concurrency_limit: int = 4) -> List[dict]:
     """
     Scrape and clean multiple URLs concurrently.
 

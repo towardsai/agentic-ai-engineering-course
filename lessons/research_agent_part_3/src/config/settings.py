@@ -21,10 +21,10 @@ class Settings(BaseSettings):
     log_level_dependencies: str = Field(default="WARNING", alias="LOG_LEVEL_DEPENDENCIES", description="The log level for dependencies")
 
     # LLM Configuration
-    youtube_transcription_model: str = Field(default="gemini-2.5-flash", description="Model for YouTube transcription")
-    scraping_model: str = Field(default="gemini-2.5-flash", description="Model for web scraping")
+    youtube_transcription_model: str = Field(default="gemini-3.5-flash", description="Model for YouTube transcription")
+    scraping_model: str = Field(default="gemini-3.5-flash", description="Model for web scraping")
     query_generation_model: str = Field(default="gemini-2.5-pro", description="Model for query generation")
-    source_selection_model: str = Field(default="gemini-2.5-flash", description="Model for source selection")
+    source_selection_model: str = Field(default="gemini-3.5-flash", description="Model for source selection")
 
     # API Keys
     google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API")
@@ -93,12 +93,12 @@ class Settings(BaseSettings):
                     "max_retries": 3,
                 },
             },
-            "gemini-2.5-flash": {
-                "identifier": "google_genai:gemini-2.5-flash",
+            "gemini-3.5-flash": {
+                "identifier": "google_genai:gemini-3.5-flash",
                 "api_key_env_var": "GOOGLE_API_KEY",
                 "params": {
                     "temperature": 1,
-                    "thinking_budget": 1000,
+                    "thinking_level": "low",
                     "include_thoughts": False,
                     "max_retries": 3,
                 },

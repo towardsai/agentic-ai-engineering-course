@@ -27,7 +27,7 @@ From the repository root (`course-ai-agents`):
 ```bash
 lessons/writing_workflow/
   ├── configs/              # YAML configuration files
-  │   ├── course.yaml       # Production config
+  │   ├── course-gemini-flash.yaml       # Production config
   │   └── debug.yaml        # Testing config (fake models)
   ├── inputs/               # Input data and resources
   │   ├── profiles/         # Writing style and character profiles
@@ -146,7 +146,7 @@ your_article_directory/
 You can find a complete example at:
 
 ```bash
-lessons/writing_workflow/inputs/tests/00_debug/
+lessons/writing_workflow/inputs/tests/00_sample_tiny/
   ├── article_guideline.md
   └── research.md
 ```
@@ -165,7 +165,7 @@ To generate a new article from scratch:
 
 ```bash
 cd lessons/writing_workflow
-make brown-generate-article DIR_PATH=inputs/tests/00_debug
+make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
 ```
 
 **Parameters:**
@@ -175,7 +175,7 @@ make brown-generate-article DIR_PATH=inputs/tests/00_debug
 1. Brown reads the article guidelines and research data
 2. Loads character profiles and writing style guidelines from `inputs/profiles/`
 3. Generates an initial article draft
-4. Runs multiple review and revision iterations (default: 2, configured in `configs/course.yaml`)
+4. Runs multiple review and revision iterations (default: 2, configured in `configs/course-gemini-flash.yaml`)
 5. Saves the final article as `article.md` in the input directory
 6. Creates checkpoints for each iteration (e.g., `article_000.md`, `article_001.md`)
 
@@ -185,7 +185,7 @@ To edit an existing article based on an optional human feedback:
 
 ```bash
 cd lessons/writing_workflow
-make brown-edit-article DIR_PATH=inputs/tests/00_debug HUMAN_FEEDBACK="Make the introduction more engaging and add more technical depth to section 2"
+make brown-edit-article DIR_PATH=inputs/tests/00_sample_tiny HUMAN_FEEDBACK="Make the introduction more engaging and add more technical depth to section 2"
 ```
 
 **Parameters:**
@@ -205,7 +205,7 @@ To make targeted edits to a specific section of an article:
 
 ```bash
 cd lessons/writing_workflow
-make brown-edit-selected-text DIR_PATH=inputs/tests/00_debug HUMAN_FEEDBACK="Simplify this explanation and add a concrete example" FIRST_LINE=10 LAST_LINE=20
+make brown-edit-selected-text DIR_PATH=inputs/tests/00_sample_tiny HUMAN_FEEDBACK="Simplify this explanation and add a concrete example" FIRST_LINE=10 LAST_LINE=20
 ```
 
 **Parameters:**
@@ -244,18 +244,35 @@ This creates an evaluation dataset from the articles in `inputs/evals/dataset/` 
 
 **Run evaluations:**
 
+Brown provides two evaluation commands for different model configurations:
+
+**1. Run evaluation with Gemini Flash:**
+
 ```bash
 cd lessons/writing_workflow
-make brown-run-eval
+make brown-run-eval-flash
 ```
 
-This runs the evaluation using the `follows_gt` metric (checks if generated articles follow ground truth patterns) and caches results in `outputs/evals/`.
+This runs the evaluation using Gemini Flash model configuration:
+- **Config**: `configs/course-gemini-flash.yaml` (the default, all-Flash configuration)
+- **Dataset**: `brown-course-lessons`
+- **Metrics**: `follows_gt` (evaluates adherence to ground truth articles) and `user_intent`
+- **Cache directory**: `outputs/evals-flash`
+- **Reads from cache**: Enabled for faster re-runs
 
-**Parameters:**
-- The dataset name is `brown-course-lessons` (created by the previous command)
-- Metrics: `follows_gt` (evaluates adherence to ground truth articles)
-- Results are cached in `outputs/evals/` for faster re-runs
-- Uses 1 worker for sequential processing
+**2. Run evaluation with Gemini Pro:**
+
+```bash
+cd lessons/writing_workflow
+make brown-run-eval-pro
+```
+
+This runs the evaluation using Gemini Pro model configuration:
+- **Config**: `configs/course-gemini-pro.yaml`
+- **Dataset**: `brown-course-lessons`
+- **Metrics**: `follows_gt` (evaluates adherence to ground truth articles) and `user_intent`
+- **Cache directory**: `outputs/evals-pro`
+- **Reads from cache**: Enabled for faster re-runs
 
 ---
 
@@ -294,7 +311,7 @@ The article generation workflow is Brown's most comprehensive process, designed 
    - **Review**: Analyzes the draft against guidelines, research, and style profiles
    - **Identify Issues**: Finds areas for improvement (clarity, depth, structure, style)
    - **Edit**: Generates a revised version addressing the identified issues
-   - Repeats for N iterations (default: 2, configurable in `configs/course.yaml`)
+   - Repeats for N iterations (default: 2, configurable in `configs/course-gemini-flash.yaml`)
 
 5. **Save Final Article**
    - Saves the final article as `article.md`
@@ -303,10 +320,11 @@ The article generation workflow is Brown's most comprehensive process, designed 
 
 **Configuration:**
 
-You can customize the workflow by modifying `configs/course.yaml`:
+You can customize the workflow by modifying `configs/course-gemini-flash.yaml`:
 
 ```yaml
 num_reviews: 2  # Number of review iterations
+max_reviews_per_iteration: 5  # Max reviews the reviewer node may emit per call (caps editor context)
 
 nodes:
   write_article:
@@ -425,10 +443,10 @@ make brown-edit-selected-text \
   - Verify the key is valid and has not expired
 
 - **"Config file not found" errors**
-  - By default, Brown uses `configs/course.yaml`
+  - By default, Brown uses `configs/course-gemini-flash.yaml`
   - To use a different config, set the `CONFIG_FILE` environment variable:
     ```bash
-    CONFIG_FILE=configs/debug.yaml make brown-generate-article DIR_PATH=inputs/tests/00_debug
+    CONFIG_FILE=configs/debug.yaml make brown-generate-article DIR_PATH=inputs/tests/00_sample_tiny
     ```
 
 - **"File not found" errors for article_guideline.md or research.md**
@@ -439,7 +457,7 @@ make brown-edit-selected-text \
 - **Articles are too short or missing content**
   - Ensure your `research.md` file contains sufficient context and data
   - Check that `article_guideline.md` has a clear outline and requirements
-  - Consider increasing `num_reviews` in the config for more refinement
+  - Consider increasing `num_reviews` in the config for more refinement, or raising `max_reviews_per_iteration` to let each pass surface more issues
 
 - **Model rate limits or timeouts**
   - Google's free tier has rate limits; wait a few minutes and retry
@@ -622,7 +640,7 @@ Now that you have Brown set up, you can:
 
 1. **Try the example workflows**: Run article generation on the test inputs in `inputs/tests/`
 2. **Create your own articles**: Set up a new directory with your own `article_guideline.md` and `research.md`
-3. **Customize the configuration**: Adjust models, review iterations, and other settings in `configs/course.yaml`
+3. **Customize the configuration**: Adjust models, review iterations, and other settings in `configs/course-gemini-flash.yaml`
 4. **Integrate with your IDE**: Set up Brown as an MCP server in Cursor or Claude Desktop
 5. **Explore the evaluation framework**: Check out the `evals/` directory for quality assessment tools
 

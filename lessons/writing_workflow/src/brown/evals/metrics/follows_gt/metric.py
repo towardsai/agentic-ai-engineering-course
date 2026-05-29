@@ -16,16 +16,16 @@ from . import prompts
 from .types import FollowsGTArticleScores
 
 
-class FollowsGTMetric(BrownBaseMetric):
+class FollowsGTMetricLLMJudge(BrownBaseMetric):
     """A metric that evaluates the quality of article content across multiple sections and dimensions.
 
     This metric uses a language model to assess how well the generated article content
-    matches the expected output across four key dimensions: flow, content, writing_style,
-    and mechanics. It evaluates multiple sections and computes average scores per dimension,
+    matches the expected output across three key dimensions: content, flow, and structure.
+    It evaluates multiple sections and computes average scores per dimension,
     providing detailed breakdowns for comprehensive analysis.
 
-    The scoring system evaluates each section across four dimensions (flow, content,
-    writing_style, mechanics), computes average scores per dimension across all sections,
+    The scoring system evaluates each section across three dimensions (content, flow,
+    structure), computes average scores per dimension across all sections,
     returns separate ScoreResult objects for each dimension, and provides detailed
     reasoning for each dimension and section.
 
@@ -44,15 +44,15 @@ class FollowsGTMetric(BrownBaseMetric):
         structured_output_type: The ArticleScores type used for structured output parsing.
 
     Example:
-        >>> from brown.evals.metrics.article.metric import ArticleMetric
-        >>> article_metric = ArticleMetric()
-        >>> results = await article_metric.ascore(
-        ...     output="Generated article content...",
-        ...     expected_output="Expected article content..."
-        ... )
+        >>> from brown.evals.metrics.follows_gt.metric import FollowsGTMetricLLMJudge
+        >>> follows_gt_metric = FollowsGTMetricLLMJudge()
+        >>> results = await follows_gt_metric.ascore(
+            ...     output="Generated article content...",
+            ...     expected_output="Expected article content..."
+            ... )
         >>> # results is a list of ScoreResult objects, one per dimension
         >>> for result in results:
-        ...     print(f"{result.name}: {result.value}")  # e.g., "article_flow: 0.85"
+        ...     print(f"{result.name}: {result.value}")  # e.g., "follows_gt_flow: 0.85"
         ...     print(f"Reason: {result.reason}")
 
     """
@@ -97,7 +97,7 @@ class FollowsGTMetric(BrownBaseMetric):
         """Asynchronously calculate the article evaluation score with dimension-wise analysis.
 
         This method uses an LLM to evaluate the article content across multiple sections
-        and four dimensions (flow, content, writing_style, mechanics). It computes
+        and three dimensions (content, flow, structure). It computes
         average scores per dimension and returns separate ScoreResult objects for each
         dimension with detailed reasoning.
 
@@ -115,7 +115,7 @@ class FollowsGTMetric(BrownBaseMetric):
 
         Returns:
             list[score_result.ScoreResult]: A list of ScoreResult objects, one for each
-                dimension (flow, content, writing_style, mechanics), containing the
+                dimension (content, flow, structure), containing the
                 aggregated score (between 0.0 and 1.0) and detailed reasons broken
                 down by sections.
 

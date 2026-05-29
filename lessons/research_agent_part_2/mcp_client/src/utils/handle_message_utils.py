@@ -66,10 +66,7 @@ async def handle_user_message(
     elif parsed_input.input_type == InputType.COMMAND_UNKNOWN:
         # Handle unknown commands starting with "/"
         print_colored(f"❌ Unknown command: '{parsed_input.user_message}'", Color.BRIGHT_RED, Style.BOLD)
-        print(
-            "Available commands: /tools, /resources, /prompts, /prompt/<name>, "
-            "/resource/<uri>, /model-thinking-switch, /quit"
-        )
+        print("Available commands: /tools, /resources, /prompts, /prompt/<name>, /resource/<uri>, /model-thinking-switch, /quit")
         return True, thinking_enabled
 
     elif parsed_input.input_type == InputType.NORMAL_MESSAGE:

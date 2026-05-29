@@ -7,12 +7,15 @@ across two dimensions (guideline_adherence and research_anchoring).
 
 from pathlib import Path
 
+import pydantic
+from opik.evaluation.metrics import score_result
+
 from brown.evals.metrics.base import (
-    ArticleScores,
     BaseExample,
     BaseFewShotExamples,
     CriteriaScores,
     CriterionScore,
+    aggregate_section_scores_to_results,
 )
 
 
@@ -32,17 +35,80 @@ class UserIntentCriteriaScores(CriteriaScores):
     research_anchoring: CriterionScore
 
 
-class UserIntentArticleScores(ArticleScores[UserIntentCriteriaScores]):
+class UserIntentSectionScores(pydantic.BaseModel):
+    """Section evaluation with scores across all UserIntent dimensions.
+
+    This class holds the evaluation results for one section of an article,
+    containing scores for guideline_adherence and research_anchoring.
+
+    Attributes:
+        title: The title of the section being evaluated.
+        scores: The scores for this section across all UserIntent dimensions.
+
+    """
+
+    title: str = pydantic.Field(description="The title of the section being evaluated.")
+    scores: UserIntentCriteriaScores = pydantic.Field(description="The scores of the section being evaluated.")
+
+    def to_context(self) -> str:
+        """Convert the section scores to a formatted XML string for use as context in prompts.
+
+        Returns:
+            An XML string representation of the section scores.
+
+        """
+        scores_xml = self.scores.to_context()
+
+        return f"""
+<section_scores>
+    <section_title>{self.title}</section_title>
+{scores_xml}</section_scores>
+"""
+
+
+class UserIntentArticleScores(pydantic.BaseModel):
     """Article-level scores for the UserIntent evaluation metric.
 
     This class represents the complete evaluation results for an article,
-    containing scores for all sections across the two UserIntent dimensions.
+    containing scores for all sections across the two UserIntent dimensions
+    (guideline_adherence, research_anchoring).
+
+    Attributes:
+        sections: List of evaluated sections, each containing scores for all dimensions.
+
     """
 
-    pass
+    sections: list[UserIntentSectionScores]
+
+    def to_context(self) -> str:
+        """Convert all section scores to a formatted string for use as context in prompts.
+
+        Returns:
+            A string containing all section scores formatted for prompt context.
+
+        """
+        context_body = "".join([f"\t{section.to_context()}\n" for section in self.sections])
+
+        return f"<article_scores>\n{context_body}\n</article_scores>"
+
+    def to_score_result(self, prefix: str) -> list[score_result.ScoreResult]:
+        """Convert the evaluation results to ScoreResult objects with dimension-wise scoring.
+
+        This method aggregates scores across all sections for each dimension and creates
+        separate ScoreResult objects for each dimension.
+
+        Args:
+            prefix: The prefix to use for the metric names.
+
+        Returns:
+            A list of ScoreResult objects, one for each dimension, containing the
+            aggregated score and detailed reasons.
+
+        """
+        return aggregate_section_scores_to_results(self.sections, prefix)
 
 
-class UserIntentExample(BaseExample):
+class UserIntentMetricFewShotExample(BaseExample):
     """Represents a single example for the user intent evaluation.
 
     Attributes:
@@ -65,7 +131,7 @@ class UserIntentExample(BaseExample):
         context_file: Path,
         output_file: Path,
         scores: UserIntentArticleScores,
-    ) -> "UserIntentExample":
+    ) -> "UserIntentMetricFewShotExample":
         """Create a UserIntentExample instance from markdown files.
 
         Args:
@@ -110,7 +176,7 @@ class UserIntentExample(BaseExample):
 """
 
 
-class UserIntentMetricFewShotExamples(BaseFewShotExamples[UserIntentExample]):
+class UserIntentMetricFewShotExamples(BaseFewShotExamples[UserIntentMetricFewShotExample]):
     """Collection of few-shot examples for the UserIntent evaluation metric.
 
     This class contains examples used for prompt engineering to guide the

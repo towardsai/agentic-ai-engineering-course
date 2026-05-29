@@ -69,7 +69,7 @@ if __name__ == "__main__":
         print("📊 Opik monitoring disabled (missing configuration)")
 
     mcp = create_mcp_server()
-    
+
     # Run the server with the specified transport
     if args.transport == "streamable-http":
         mcp.run(transport=args.transport, port=args.port)

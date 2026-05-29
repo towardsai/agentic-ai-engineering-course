@@ -18,7 +18,7 @@ from brown.models import ModelConfig, SupportedModels, get_model
 from brown.utils import a
 
 FewShotExamplesT = TypeVar("FewShotExamplesT", bound=BaseModel)
-MockedResponseT = TypeVar("MockedResponseT", bound=BaseModel)
+StructuredOutputTypeT = TypeVar("StructuredOutputTypeT", bound=BaseModel)
 
 CriteriaScoresT = TypeVar("CriteriaScoresT", bound="CriteriaScores")
 ExampleT = TypeVar("ExampleT", bound="BaseExample")
@@ -66,7 +66,7 @@ class CriterionScore(pydantic.BaseModel):
     reason: str = pydantic.Field(description="The reason for the given score.")
 
 
-class CriteriaScores(pydantic.BaseModel, Generic[CriteriaScoresT]):
+class CriteriaScores(pydantic.BaseModel):
     """Abstract base class for scores across multiple evaluation dimensions.
 
     This class provides the generic structure and `to_context()` functionality
@@ -78,7 +78,7 @@ class CriteriaScores(pydantic.BaseModel, Generic[CriteriaScoresT]):
 
     """
 
-    def to_context(self: CriteriaScoresT) -> str:
+    def to_context(self) -> str:
         """Convert the scores to a formatted XML string for use as context in prompts.
 
         This method automatically generates XML structure based on the model fields,
@@ -100,107 +100,65 @@ class CriteriaScores(pydantic.BaseModel, Generic[CriteriaScoresT]):
         return scores_xml
 
 
-class SectionCriteriaScores(pydantic.BaseModel, Generic[CriteriaScoresT]):
-    """Base class for section evaluation with scores across multiple dimensions.
+def aggregate_section_scores_to_results(
+    section_scores: list,
+    prefix: str,
+) -> list[score_result.ScoreResult]:
+    """Convert section-level evaluation results to aggregated ScoreResult objects.
 
-    This class holds the evaluation results for one section of an article,
-    containing scores for multiple evaluation dimensions.
+    This function aggregates scores across all sections for each dimension and creates
+    separate ScoreResult objects for each dimension. It works with any section type
+    that has 'title' and 'scores' attributes where scores is a CriteriaScores subclass.
 
-    Attributes:
-        title: The title of the section being evaluated.
-        scores: The scores for this section across all dimensions.
+    Args:
+        section_scores: List of section objects, each with 'title' (str) and 'scores' (CriteriaScores) attributes.
+        prefix: The prefix to use for the metric names (e.g., "follows_gt", "user_intent").
 
-    """
+    Returns:
+        A list of ScoreResult objects, one for each dimension, containing the
+        aggregated score and detailed reasons.
 
-    title: str = pydantic.Field(description="The title of the section being evaluated.")
-    scores: CriteriaScoresT = pydantic.Field(description="The scores of the section being evaluated.")
-
-    def to_context(self) -> str:
-        """Convert the section scores to a formatted XML string for use as context in prompts.
-
-        Returns:
-            An XML string representation of the section scores.
-
-        """
-        scores_xml = self.scores.to_context()
-
-        return f"""
-<section_scores>
-    <section_title>{self.title}</section_title>
-{scores_xml}</section_scores>
-"""
-
-
-class ArticleScores(pydantic.BaseModel, Generic[CriteriaScoresT]):
-    """Base class for article evaluation containing multiple sections with dimension-wise scoring.
-
-    This model represents the evaluation results for an article, where each section is evaluated
-    across multiple dimensions. The scoring system computes average scores per dimension across
-    all sections and provides detailed breakdowns.
-
-    Attributes:
-        sections: List of evaluated sections, each containing scores for multiple dimensions.
+    Example:
+        >>> sections = [
+        ...     FollowsGTSectionScores(title="Intro", scores=FollowsGTCriterionScores(...)),
+        ...     FollowsGTSectionScores(title="Body", scores=FollowsGTCriterionScores(...)),
+        ... ]
+        >>> results = aggregate_section_scores_to_results(sections, "follows_gt")
+        >>> # Returns [ScoreResult(name="follows_gt_content", ...), ScoreResult(name="follows_gt_flow", ...), ...]
 
     """
+    if not section_scores:
+        return []
 
-    sections: list[SectionCriteriaScores]
-
-    def to_context(self) -> str:
-        """Convert all section scores to a formatted string for use as context in prompts.
-
-        Returns:
-            A string containing all section scores formatted for prompt context.
-
-        """
-        context_body = "".join([f"\t{section.to_context()}\n" for section in self.sections])
-
-        return f"<article_scores>\n{context_body}\n</article_scores>"
-
-    def to_score_result(self, prefix: str) -> list[score_result.ScoreResult]:
-        """Convert the evaluation results to ScoreResult objects with dimension-wise scoring.
-
-        This method aggregates scores across all sections for each dimension and creates
-        separate ScoreResult objects for each dimension.
-
-        Args:
-            prefix: The prefix to use for the metric names.
-
-        Returns:
-            A list of ScoreResult objects, one for each dimension, containing the
-            aggregated score and detailed reasons.
-
-        """
-        if not self.sections:
-            return []
-
-        # Automatically infer dimensions from the first section's scores class
-        scores_class = type(self.sections[0].scores)
-        scores_fields = scores_class.model_fields
-        aggregated_scores = {
-            field_name: {
-                "scores": [],
-                "reason": "",
-            }
-            for field_name in scores_fields.keys()
+    # Automatically infer dimensions from the first section's scores class
+    scores_class = type(section_scores[0].scores)  # type: ignore[attr-defined]
+    scores_fields = scores_class.model_fields
+    aggregated_scores: dict[str, dict[str, list[int] | str]] = {
+        field_name: {
+            "scores": [],
+            "reason": "",
         }
+        for field_name in scores_fields.keys()
+    }
 
-        for section in self.sections:
-            for dimension in aggregated_scores.keys():
-                dimension_score = getattr(section.scores, dimension)
-                aggregated_scores[dimension]["scores"].append(dimension_score.score)
-                aggregated_scores[dimension]["reason"] += f"{section.title}:\n"
-                aggregated_scores[dimension]["reason"] += f"**{dimension_score.score}:** {dimension_score.reason}\n\n"
+    for section in section_scores:
+        for dimension in aggregated_scores.keys():
+            dimension_score = getattr(section.scores, dimension)  # type: ignore[attr-defined]
+            aggregated_scores[dimension]["scores"].append(dimension_score.score)  # type: ignore[union-attr]
+            aggregated_scores[dimension]["reason"] += f"{section.title}:\n"  # type: ignore[attr-defined]
+            aggregated_scores[dimension]["reason"] += f"**{dimension_score.score}:** {dimension_score.reason}\n\n"
 
-        score_results: list[score_result.ScoreResult] = []
-        for dimension, scores in aggregated_scores.items():
-            aggregated_score = CriterionAggregatedScore(
-                name=f"{prefix}_{dimension}",
-                score=sum(scores["scores"]) / len(scores["scores"]),
-                reason=scores["reason"],
-            )
-            score_results.append(aggregated_score.to_score_result())
+    results: list[score_result.ScoreResult] = []
+    for dimension, scores_data in aggregated_scores.items():
+        scores_list = scores_data["scores"]
+        aggregated_score = CriterionAggregatedScore(
+            name=f"{prefix}_{dimension}",
+            score=sum(scores_list) / len(scores_list),  # type: ignore[arg-type]
+            reason=str(scores_data["reason"]),
+        )
+        results.append(aggregated_score.to_score_result())
 
-        return score_results
+    return results
 
 
 class BaseExample(pydantic.BaseModel, Generic[ExampleT]):
@@ -269,7 +227,7 @@ class BaseFewShotExamples(pydantic.BaseModel, Generic[ExampleT]):
         return examples
 
 
-class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedResponseT], abc.ABC):
+class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, StructuredOutputTypeT], abc.ABC):
     """Abstract base class for Brown evaluation metrics that use LLMs for structured scoring.
 
     This abstract base class provides a foundation for implementing evaluation metrics that
@@ -283,7 +241,7 @@ class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedRe
 
     Type Parameters:
         FewShotExamplesT: Type of the few-shot examples model, must inherit from BaseModel.
-        MockedResponseT: Type of the structured output model, must inherit from BaseModel.
+        StructuredOutputTypeT: Type of the structured output model, must inherit from BaseModel.
 
     Args:
         model: The language model to use for evaluation from SupportedModels enum.
@@ -331,7 +289,7 @@ class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, MockedRe
         self,
         model: SupportedModels,
         name: str,
-        structured_output_type: type[MockedResponseT],
+        structured_output_type: type[StructuredOutputTypeT],
         few_shot_examples: FewShotExamplesT,
         model_config: ModelConfig,
         track: bool = True,
