@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "nova-research": {
+      "command": "/path/to/uv",
+      "args": [
+        "--directory",
+        "/path/to/mcp_server",
+        "run",
+        "-m",
+        "src.server",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "GOOGLE_API_KEY": "...",
+        "OPENAI_API_KEY": "...",
+        "PPLX_API_KEY": "...",
+        "FIRECRAWL_API_KEY": "...",
+        "OPIK_API_KEY": "...",
+        "OPIK_WORKSPACE": "...",
+        "OPIK_PROJECT_NAME": "...",
+        "GITHUB_TOKEN": "...",
+      }
+    }
+  }
+}
