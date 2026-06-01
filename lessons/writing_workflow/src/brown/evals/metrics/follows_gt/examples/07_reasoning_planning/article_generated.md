@@ -23,7 +23,7 @@ The consequences are predictable. The output is superficial, often just a shallo
 
 In previous lessons, we saw how workflows and structured outputs provide modularity, and tools give the model the ability to act. These are crucial ingredients. But for complex tasks where the path isn't perfectly predictable, they are not enough. Without a reasoning mechanism to guide the use of these tools and adapt to unforeseen results, the agent is simply executing a brittle script. To fix this, we first need to teach the model to think before it answers.
 
-## Teaching Models to "Think": Chain-of-Thought and Its Limits
+## Teaching Models to “Think": Chain-of-Thought and Its Limits
 
 The first major step toward making a model "think" was the development of Chain-of-Thought (CoT) prompting. The idea is simple but effective: before asking for the final answer, you instruct the LLM to "think step by step" and write out its reasoning process [[35]](https://arxiv.org/abs/2201.11903). Just like humans often talk themselves through a problem, this forces the model to articulate a plan and work through intermediate steps, which significantly improves its performance on complex reasoning tasks [[37]](https://orq.ai/blog/what-is-chain-of-thought-prompting).
 
@@ -39,7 +39,7 @@ Several immediate benefits are provided by this separation. First, much better c
 
 This fundamental concept of separation is the foundation for the two dominant strategies in agent design. The first is the ReAct (Reason and Act) pattern, which interleaves thought and action in a tight loop. The second is the Plan-and-Execute pattern, which creates a complete plan upfront and then executes it. We will now explore ReAct in detail.
 
-## ReAct in Depth: Loop, Evolving Example, Pros and Cons
+## ReAct in Depth: The Loop of Thought, Action, and Observation
 
 The ReAct framework was introduced to bridge the gap between pure reasoning (like Chain-of-Thought) and pure acting. It synergizes the two by having the agent generate reasoning traces to create, maintain, and adjust plans, while also using actions to interface with external tools and gather information that feeds back into the reasoning process [[35]](https://arxiv.org/abs/2201.11903). This is achieved through a simple but powerful loop: Thought, Action, Observation.
 
@@ -78,7 +78,7 @@ Let's walk through how our Technical Research Assistant Agent would tackle its t
 *   **Thought 5:** "I have resolved the conflict using the market report. I now have enough verified information to identify key trends, gaps, and write the final report."
 *   **Final Answer:** A structured report is generated, complete with citations and a note explaining the resolution of the conflicting adoption rates.
 
-## Plan-and-Execute in Depth: Plan, Execution, Pros and Cons
+## Plan-and-Execute in Depth: Structure and Predictability
 
 While ReAct excels at adaptability, some tasks have a more predictable structure. For these scenarios, the Plan-and-Execute pattern can be more efficient and reliable. The core concept is to separate the entire process into two distinct phases: first, the agent generates a complete, multi-step plan, and second, it executes that plan from start to finish [[4]](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9). The plan is typically only updated if a step fails or new information makes the original plan obsolete.
 
@@ -120,7 +120,7 @@ The agent, or a separate worker, now executes this plan step-by-step. It will pr
 
 The main advantage of Plan-and-Execute is its efficiency and predictability for structured tasks. By planning upfront, it can reduce the number of expensive LLM calls during execution, leading to faster execution and cost savings [[1]](https://blog.langchain.com/planning-agents/). This makes it easier to estimate costs and completion times. The primary disadvantage is its inflexibility. If the problem is highly exploratory or the environment is unpredictable, the initial plan may quickly become outdated, requiring frequent and costly re-planning [[5]](https://www.willowtreeapps.com/craft/building-ai-agents-with-plan-and-execute). Linear, upfront plans can lack flexibility, and handling failures may require explicit mechanisms to update the plan, otherwise progress stalls when unexpected issues occur [[5]](https://www.willowtreeapps.com/craft/building-ai-agents-with-plan-and-execute).
 
-## Financial AI Assistant Systems
+## Deep Research AI Assistant Systems
 
 The theoretical patterns of ReAct and Plan-and-Execute are not just academic exercises; they power real-world, large-scale systems designed for deep research, market analysis, and scientific review. These systems operationalize planning and reasoning to tackle long-horizon tasks that would be impossible for a single-shot LLM call.
 
@@ -138,7 +138,7 @@ Some models take this a step further with "interleaved thinking." This allows th
 
 What does this mean for system design? While these powerful models might reduce the need for you to implement an explicit, step-by-step loop in your own code, the underlying principles remain critical. The explicit separation of reasoning and action that patterns like ReAct and Plan-and-Execute enforce is still incredibly valuable for debugging, control, and reliability. Even with a model that thinks internally, you need robust prompts, state management, and guardrails to ensure it stays on track. These patterns provide the mental model to build and manage such systems effectively.
 
-## **Reasoning Models: How Reasoning and Planning are Being Internalized in LLMs**
+## Reasoning Models: How LLMs’ “Reasoning and Planning" are Being Internalized in LLMs
 
 ## Advanced Agent Capabilities Enabled by Planning: Goal Decomposition and Self-Correction
 

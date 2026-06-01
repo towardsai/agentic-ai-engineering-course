@@ -50,7 +50,9 @@ def main(
             └── article_generated.md
 
     Args:
-        input_dir: Directory containing the evaluation dataset metadata and data files
+        input_dir: Directory containing the evaluation dataset metadata and data files.
+        name: Dataset name to register.
+        description: Dataset description.
     """
 
     logger.info(f"Loading evaluation dataset from: {input_dir}")

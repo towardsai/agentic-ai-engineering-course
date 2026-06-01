@@ -28,9 +28,7 @@ def handle_thinking_toggle(thinking_enabled: bool) -> bool:
     return new_state
 
 
-def handle_command(
-    processed_input: ProcessedInput, tools: List, resources: List, prompts: List, server_names: List[str]
-):
+def handle_command(processed_input: ProcessedInput, tools: List, resources: List, prompts: List, server_names: List[str]):
     """Handle informational commands by listing all capabilities.
 
     Args:
@@ -85,9 +83,7 @@ def _format_prompt_arguments(prompt) -> str:
     return " | ".join(parts) if parts else ""
 
 
-async def handle_prompt_command(
-    prompt_name: str, prompt_arguments: dict[str, str], prompts: List, client: Client
-) -> str | None:
+async def handle_prompt_command(prompt_name: str, prompt_arguments: dict[str, str], prompts: List, client: Client) -> str | None:
     """Handle /prompt/<prompt-name>?arg=value command by retrieving prompt content.
 
     Args:

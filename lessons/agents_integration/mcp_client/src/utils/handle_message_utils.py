@@ -47,9 +47,7 @@ async def handle_user_message(
 
     elif parsed_input.input_type == InputType.COMMAND_PROMPT:
         # Handle prompt loading command with optional arguments
-        prompt_content = await handle_prompt_command(
-            parsed_input.prompt_name, parsed_input.prompt_arguments, prompts, mcp_client
-        )
+        prompt_content = await handle_prompt_command(parsed_input.prompt_name, parsed_input.prompt_arguments, prompts, mcp_client)
         if prompt_content is not None:
             prompt_message = types.Content(role="user", parts=[types.Part(text=prompt_content)])
             conversation_history.append(prompt_message)
@@ -69,10 +67,7 @@ async def handle_user_message(
     elif parsed_input.input_type == InputType.COMMAND_UNKNOWN:
         # Handle unknown commands starting with "/"
         print_colored(f"❌ Unknown command: '{parsed_input.user_message}'", Color.BRIGHT_RED, Style.BOLD)
-        print(
-            "Available commands: /tools, /resources, /prompts, /prompt/<name>?arg=value, "
-            "/resource/<uri>, /model-thinking-switch, /quit"
-        )
+        print("Available commands: /tools, /resources, /prompts, /prompt/<name>?arg=value, /resource/<uri>, /model-thinking-switch, /quit")
         return True, thinking_enabled
 
     elif parsed_input.input_type == InputType.NORMAL_MESSAGE:

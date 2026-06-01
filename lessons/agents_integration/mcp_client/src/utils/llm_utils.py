@@ -25,11 +25,18 @@ def build_llm_config_with_tools(mcp_tools: List, thinking_enabled: bool = True) 
         )
         gemini_tools.append(gemini_tool)
 
-    # Create thinking config dynamically based on current state
-    thinking_config = types.ThinkingConfig(
-        include_thoughts=thinking_enabled,
-        thinking_budget=settings.thinking_budget,
-    )
+    # Create thinking config dynamically based on current state.
+    # Gemini 3.x models use thinking_level; Gemini 2.5 models use thinking_budget (mutually exclusive).
+    if settings.thinking_level is not None:
+        thinking_config = types.ThinkingConfig(
+            include_thoughts=thinking_enabled,
+            thinking_level=settings.thinking_level,
+        )
+    else:
+        thinking_config = types.ThinkingConfig(
+            include_thoughts=thinking_enabled,
+            thinking_budget=settings.thinking_budget,
+        )
 
     return types.GenerateContentConfig(
         tools=gemini_tools,

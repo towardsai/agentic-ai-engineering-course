@@ -111,16 +111,27 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 ## Lesson Outline 
 
-1. What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
-2. Teaching Models to “Think” Chain-of-Thought and Its Limits
-3. Separating Planning from Answering Foundations of ReAct and Plan-and-Execute
-4. ReAct in Depth Loop, Evolving Example, Pros and Cons
-5. Plan-and-Execute in Depth Plan, Execution, Pros and Cons
-6. Where This Shows Up in Practice Deep Research–Style Systems
-7. Modern Reasoning Models Thinking vs Answer Streams and Interleaved Thinking
-8. Advanced Agent Capabilities Enabled by Planning Goal Decomposition and Self-Correction
+1. Introduction
+2. What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
+3. Teaching Models to “Think” Chain-of-Thought and Its Limits
+4. Separating Planning from Answering Foundations of ReAct and Plan-and-Execute
+5. ReAct in Depth: Loop, Evolving Example, Pros and Cons
+6. Plan-and-Execute in Depth: Structuring the Path from Goal to Action
+7. Where This Shows Up in Practice: Deep Research–Style Systems
+8. Modern Reasoning Models Thinking vs Answer Streams and Interleaved Thinking
+9. Advanced Agent Capabilities Enabled by Planning Goal Decomposition and Self-Correction
+10. Conclusion
 
-## Section 1 - What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
+## Section 1 - Introduction
+
+Set the stage for the lesson by introducing the foundational concepts of planning and reasoning for AI agents.
+Explain why standard LLMs fall short on complex, multi-step tasks.
+Preview the key strategies to be discussed, such as ReAct and Plan-and-Execute.
+Briefly mention the advanced capabilities these patterns unlock, like goal decomposition and self-correction, to establish the value for an AI engineer.
+
+- **Section length:** 100-150 words
+
+## Section 2 - What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
 
 - Use the recurring example of a "Technical Research Assistant Agent" to frame the problem. The agent must produce a comprehensive technical report on "Latest developments in edge AI deployment" (find recent papers, summarize findings, identify trends and gaps, write a structured report).
 - Show how a non-reasoning model behaves: it immediately “answers” without first drafting a plan. It treats the entire task as a single response generation. It may call the right tools in the correct order, without correcting on mistakes or unforeseen results.
@@ -133,7 +144,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 250-350 words
 
-## Section 2 - Teaching Models to “Think” Chain-of-Thought and Its Limits
+## Section 3 - Teaching Models to "Think": Chain-of-Thought and Its Limits
 
 - Explain the idea: like humans “talk to themselves,” we can ask an LLM to write a reasoning trace (thinking tokens) before the final answer. This adds planning power and enables iterations on partial solutions.
 - Provide a simple chain-of-thought example for the same research task:
@@ -146,7 +157,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 250-350 words
 
-## Section 3 - Separating Planning from Answering Foundations of ReAct and Plan-and-Execute
+## Section 4 - Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute
 
 - Present the core idea: ask the model to (1) plan/reason and (2) produce the answer or call a tool as two distinct phases or interleaved steps.
 - Why this helps:
@@ -160,7 +171,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 150-250 words
 
-## Section 4 - ReAct in Depth Loop, Evolving Example, Pros and Cons
+## Section 5 - ReAct in Depth: The Loop of Thought and Observation
 
 - Historical context and motivation: ReAct emerged to bridge free-form reasoning (chain-of-thought) and action-only paradigms by interleaving both with environment feedback.
 - Explain the loop clearly and provide a diagram deliverable:
@@ -190,7 +201,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 500-600 words
 
-## Section 5 - Plan-and-Execute in Depth Plan, Execution, Pros and Cons
+## Section 6 - Plan-and-Execute in Depth: Structuring the Path from Goal to Action
 
 - Core concept: produce a plan upfront; then execute sequentially or in controlled parallel, updating the plan only when needed.
 - Provide a diagram deliverable:
@@ -214,7 +225,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 450-550 words
 
-## Section 6 - Where This Shows Up in Practice Deep Research–Style Systems
+## Section 7 - Where This Shows Up in Practice: Deep Research–Style Systems
 
 - Describe how research-style systems (e.g., Deep Research) operationalize planning/reasoning:
     - Long-horizon tasks decomposed into sub-goals.
@@ -228,7 +239,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 200-300 words
 
-## Section 7 - Modern Reasoning Models Thinking vs Answer Streams and Interleaved Thinking
+## Section 8 - Modern Reasoning Models: Thinking vs. Answer Streams and Interleaved Thinking
 
 - Explain how modern reasoning models are trained to integrate planning directly:
     - Two streams: a private "thinking" stream and a public "answer" stream.
@@ -241,7 +252,7 @@ Follow the next narrative flow when writing the end-to-end lesson:
 
 - **Section length:** 250-350 words
 
-## Section 8 - Advanced Agent Capabilities Enabled by Planning Goal Decomposition and Self-Correction
+## Section 9 - Advanced Agent Capabilities Enabled by Planning: Goal Decomposition and Self-Correction
 
 - Goal decomposition:
     - Break tasks into sub-goals and sub-sub-goals; choose order and tactics.
@@ -257,6 +268,13 @@ Follow the next narrative flow when writing the end-to-end lesson:
     - Soon after: memory systems (Lesson 9), knowledge-augmented retrieval (Lesson 10), multimodal processing (Lesson 11).
 
 - **Section length:** 450-550 words
+
+## Section 10 - Conclusion
+
+Summarize the key learnings from the lesson, reinforcing the importance of planning and reasoning for building robust agents.
+Briefly recap the two core patterns discussed (ReAct and Plan-and-Execute) and the advanced capabilities they enable.
+Provide a clear connection to the next steps in the course, explicitly referencing Lesson 8 (implementing ReAct), Lesson 9 (memory), and Lesson 10 (RAG).
+- **Section length:** 100-150 words
 
 ## Article Code
 

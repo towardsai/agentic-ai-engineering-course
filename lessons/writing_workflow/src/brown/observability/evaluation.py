@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 
 from loguru import logger
 from opik import evaluation
@@ -20,6 +20,7 @@ def evaluate(
     workers: int = 2,
     nb_samples: int | None = None,
     dataset_item_names: list[str] | None = None,
+    split: Literal["val", "test"] = "test",
 ) -> None:
     """Run an Opik evaluation with the provided metrics and task.
 
@@ -34,6 +35,7 @@ def evaluate(
         workers: Number of parallel task threads. Defaults to 2.
         nb_samples: Optional cap on the number of samples; if None, evaluates all.
         dataset_item_names: Optional subset of dataset item names to evaluate.
+        split: Dataset split to use. "val" includes only "Lesson 10: Memory", "test" includes all other lessons.
 
     Raises:
         ValueError: If the dataset does not exist.
@@ -59,6 +61,7 @@ def evaluate(
     logger.info("Starting evaluation...")
 
     llm_judge_config = {
+        "split": split,
         "dataset_name": dataset.name,
         "llm_judge_config": llm_judge_config,
         "app_config": app_config.model_dump(mode="json"),

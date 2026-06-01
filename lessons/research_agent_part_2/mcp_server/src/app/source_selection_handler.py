@@ -117,9 +117,7 @@ def load_scraped_guideline_context(research_directory: str) -> str:
     return "\n\n".join(ctx_parts)
 
 
-async def select_top_sources(
-    article_guidelines: str, guideline_ctx: str, md_results_selected: str, max_sources: int = 5
-) -> Dict[str, Any]:
+async def select_top_sources(article_guidelines: str, guideline_ctx: str, md_results_selected: str, max_sources: int = 5) -> Dict[str, Any]:
     """Select up to max_sources top sources to scrape fully.
 
     Returns:

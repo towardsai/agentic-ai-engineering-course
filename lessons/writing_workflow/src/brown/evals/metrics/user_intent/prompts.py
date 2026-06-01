@@ -7,13 +7,14 @@ in research across two dimensions (guideline adherence, research anchoring).
 
 from pathlib import Path
 
-from brown.evals.metrics.base import CriterionScore, SectionCriteriaScores
+from brown.evals.metrics.base import CriterionScore
 
 from .types import (
     UserIntentArticleScores,
     UserIntentCriteriaScores,
-    UserIntentExample,
+    UserIntentMetricFewShotExample,
     UserIntentMetricFewShotExamples,
+    UserIntentSectionScores,
 )
 
 SYSTEM_PROMPT = """You are an expert in Natural Language Processing (NLP) evaluation metrics, specifically trained to 
@@ -156,159 +157,144 @@ Think through your answer step by step, and provide the requested evaluation.
 EXAMPLES_DIR = Path(__file__).parent / "examples"
 DEFAULT_FEW_SHOT_EXAMPLES = UserIntentMetricFewShotExamples(
     examples=[
-        UserIntentExample.from_markdown(
+        UserIntentMetricFewShotExample.from_markdown(
             input_file=EXAMPLES_DIR / "04_structured_outputs" / "article_guideline.md",
             context_file=EXAMPLES_DIR / "04_structured_outputs" / "research.md",
             output_file=EXAMPLES_DIR / "04_structured_outputs" / "article_generated.md",
             scores=UserIntentArticleScores(
                 sections=[
-                    SectionCriteriaScores(
+                    UserIntentSectionScores(
                         title="Introduction",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
-                                    "The introduction successfully follows the guideline requirements by referencing "
-                                    "previous lessons ('AI engineering fundamentals including agent landscapes and context engineering') "
-                                    "and transitioning to the current lesson topic as specified. It correctly positions "
-                                    "structured outputs as bridging 'two worlds' between LLMs and applications, matching "
-                                    "the guideline's bridge concept. The section meets the expected 150-word length constraint."
+                                    'The section correctly introduces the "bridge" concept but violates three guidelines: '
+                                    'it uses the first-person singular ("I remember...") against the point-of-view rule, '
+                                    "adds a new anecdote about sentiment analysis and at ~250 words, it exceeds the "
+                                    "150-word length constraint."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "While the section effectively establishes the conceptual framework for structured outputs, "
-                                    "it fails to anchor its claims in the provided research material. The section discusses "
-                                    "the bridge concept and benefits but doesn't reference any of the specific research "
-                                    "findings about native API features, Pydantic validation, or JSON parsing best practices "
-                                    "mentioned in the research sources."
+                                    'While the core "bridge" concept between the LLM (software 3.0) and Python '
+                                    "(software 1.0) worlds' is anchored in the guideline, the section introduces a "
+                                    'significant, un-anchored claim that mastering structured outputs is "the key to '
+                                    'unlocking true Artificial General Intelligence (AGI)," which is not supported by '
+                                    "the research."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
-                        title="Why Structured Outputs Are Critical",
-                        scores=UserIntentCriteriaScores(
-                            guideline_adherence=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section excellently covers all three theoretical benefits specified in the guideline: "
-                                    "easy parsing and programmatic manipulation ('easy to parse and manipulate programmatically'), "
-                                    "data quality checks with Pydantic ('using libraries like Pydantic adds data and type validation'), "
-                                    "and reducing fragile parsing ('eliminate the messy task of parsing it with fragile regular "
-                                    " expressions'). The section maintains the specified 300-word length and theoretical focus."
-                                ),
-                            ),
-                            research_anchoring=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section effectively incorporates key research findings, particularly about the benefits "
-                                    "of structured outputs over manual parsing. While it doesn't cite specific sources, "
-                                    "the content aligns well with the research findings about Pydantic's validation capabilities "
-                                    "and the formal contract concept between LLMs and applications mentioned in the research sources."
-                                ),
-                            ),
-                        ),
-                    ),
-                    SectionCriteriaScores(
-                        title="Implementing Structured Outputs From Scratch Using JSON",
+                    UserIntentSectionScores(
+                        title="Understanding why structured outputs are critical",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "While the section correctly addresses the JSON implementation topic and mentions "
-                                    "prompting models to return JSON structures, it significantly lacks the detailed "
-                                    "code examples and step-by-step implementation that the guideline specifically requires. "
-                                    "The guideline calls for 'code examples to explain how to force the LLM to output data structures "
-                                    "in JSON format,' but the generated section only provides high-level descriptions "
-                                    "without actual implementation details or code snippets."
+                                    "The section correctly covers the required benefits but violates the "
+                                    '"Different Order" rule by presenting them in a different sequence than the '
+                                    'guideline. It also adds an unrequested benefit ("Improved Token Efficiency"), '
+                                    'violating the "More" rule.'
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "The section is well-anchored. The benefits of parsing, Pydantic validation, "
+                                    "avoiding fragile parsing and the GraphRAG/knowledge-graph use-case are all "
+                                    "supported in the research and the added point on token efficiency are all "
+                                    "directly supported by claims in the provided research material"
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Implementing structured outputs from scratch using JSON",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "This section adheres to the guideline. It follows the step list exactly: "
+                                    "client/model setup, sample DOCUMENT, XML-tagged prompt, model call, raw output, "
+                                    "helper to extract JSON, parsed output, and display. It meets the length and "
+                                    "content expectations."
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "The section is correctly anchored. All code examples are taken directly from "
+                                    "the required lesson notebook, and the explanation of using XML tags for clarity "
+                                    "is supported by prompt engineering best practices found in the research"
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Implementing structured outputs from scratch using Pydantic",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "The section correctly explains Pydantic's general benefits. However, it "
+                                    "critically fails to follow the guideline by omitting the mandatory step of "
+                                    "generating the JSON schema from the Pydantic model and injecting it into the "
+                                    "prompt. It also adds an unrequested comment on YAML."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "The section appropriately mentions JSON formatting and parsing concepts, which aligns "
-                                    "with the general research theme. However, it fails to reference any specific research "
-                                    "findings about JSON parsing techniques, validation methods, or best practices detailed "
-                                    "in the research sources. The content remains at a conceptual level without grounding "
-                                    "in the provided research evidence."
+                                    "The section introduces a factual contradiction with the provided guideline. "
+                                    'It incorrectly states that type hints can be used directly "Starting with '
+                                    'Python 10," whereas the guideline explicitly specifies this feature is '
+                                    'available from "Python 11," failing the anchoring criterion.'
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
-                        title="Implementing Structured Outputs Using Pydantic",
+                    UserIntentSectionScores(
+                        title="Implementing structured outputs using Gemini and Pydantic",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "The section correctly covers Pydantic implementation and explains its validation benefits "
-                                    "and fail-fast behavior as required by the guideline. However, it falls significantly short "
-                                    "of the guideline's expectations in terms of depth and length. The guideline specifies "
-                                    "600 words for this section, making it the most substantial part of the article, but "
-                                    "the generated content provides only a brief overview without the detailed implementation "
-                                    "examples and comprehensive coverage expected for this critical section."
+                                    "The section provides the correct code for using Gemini's native features. "
+                                    "However, it fails the guideline by completely omitting the required explanation "
+                                    'of the pros of this approach (that it is "easier, more accurate and cheaper").'
                                 ),
                             ),
                             research_anchoring=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
-                                    "The section effectively incorporates research findings about Pydantic's validation "
-                                    "capabilities, particularly the 'field and type checking out-of-the-box' and immediate "
-                                    "error raising mentioned in Source [2]. The fail-fast behavior description aligns well "
-                                    "with the research findings about Pydantic's ability to catch data quality issues early "
-                                    "and provide clear validation errors."
+                                    "The section fails to incorporate key research findings. The provided sources "
+                                    "clearly state that native API features enhance reliability and reduce "
+                                    "development costs (Sources [37], [58]), but none of this required evidence "
+                                    "is mentioned."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
-                        title="Implementing Structured Outputs Using Gemini",
-                        scores=UserIntentCriteriaScores(
-                            guideline_adherence=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section successfully covers Gemini's native structured outputs functionality "
-                                    "as specified in the guideline and presents the key advantages of using native features "
-                                    "over custom implementation ('easier, more accurate and cheaper'). It appropriately "
-                                    "positions native API usage as the preferred approach and meets the expected 300-word "
-                                    "length constraint while maintaining focus on the Gemini-Pydantic integration theme."
-                                ),
-                            ),
-                            research_anchoring=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section effectively incorporates research findings from Source [1] about native "
-                                    "API advantages, specifically referencing that native structured outputs are 'easier, "
-                                    "more accurate, and cheaper' which directly matches the research findings. The content "
-                                    "about eliminating custom parsing logic aligns with the research about reliable data "
-                                    "extraction and standardized JSON responses mentioned in the research sources."
-                                ),
-                            ),
-                        ),
-                    ),
-                    SectionCriteriaScores(
+                    UserIntentSectionScores(
                         title="Conclusion: Structured Outputs Are Everywhere",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
-                                    "The conclusion perfectly fulfills the guideline requirements by emphasizing "
-                                    "the ubiquity of structured outputs ('used everywhere in AI engineering, regardless "
-                                    "of what you are building') and providing a clear transition to future lessons "
-                                    "('We will leverage structured outputs in almost all future lessons'). The section "
-                                    "maintains the appropriate 150-word length and conclusive tone as specified."
+                                    "The section correctly emphasizes the ubiquity of structured outputs and "
+                                    "name-checks later topics as the guideline asks for. However, it does not "
+                                    "provide a transition to the requested next Lesson 5."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
-                                score=0,
+                                score=1,
                                 reason=(
-                                    "While the conclusion effectively wraps up the lesson's main theme, it remains "
-                                    "entirely generic without referencing any specific research findings, best practices, "
-                                    "or evidence from the provided research sources. The conclusion does convey the "
-                                    "importance of structured outputs but lacks grounding in the research about validation "
-                                    "benefits, API advantages, or implementation best practices detailed in the research material."
+                                    "The section's claims are general and consistent with the course context. "
+                                    "It does not introduce new factual claims that require specific anchoring, "
+                                    "and therefore contains no information that contradicts the provided research "
+                                    "material."
                                 ),
                             ),
                         ),
@@ -316,164 +302,220 @@ DEFAULT_FEW_SHOT_EXAMPLES = UserIntentMetricFewShotExamples(
                 ]
             ),
         ),
-        UserIntentExample.from_markdown(
+        UserIntentMetricFewShotExample.from_markdown(
             input_file=EXAMPLES_DIR / "07_reasoning_planning" / "article_guideline.md",
             context_file=EXAMPLES_DIR / "07_reasoning_planning" / "research.md",
             output_file=EXAMPLES_DIR / "07_reasoning_planning" / "article_generated.md",
             scores=UserIntentArticleScores(
                 sections=[
-                    SectionCriteriaScores(
+                    UserIntentSectionScores(
                         title="Introduction",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
                                 score=1,
                                 reason=(
-                                    "The introduction successfully follows the guideline structure by building on "
-                                    "previous lessons ('you learned foundational components for building AI systems') "
-                                    "and introducing the core concepts of planning and reasoning as specified. It correctly "
-                                    "positions agentic reasoning as the major leap and mentions both ReAct and Plan-and-Execute "
-                                    "strategies as required. The introduction appropriately sets up the article's focus "
-                                    "without going into implementation details."
+                                    "The introduction aligns with the guideline. It sets the stage by introducing "
+                                    "planning and reasoning, explains the problem with standard LLMs, previews ReAct "
+                                    "and Plan-and-Execute, and mentions the advanced capabilities, all while staying "
+                                    "within the specified word count."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
-                                score=0,
+                                score=1,
                                 reason=(
-                                    "While the introduction effectively establishes the conceptual foundation for agentic "
-                                    "reasoning and mentions key strategies, it does not reference any specific research "
-                                    "findings from the provided sources. The section discusses planning and reasoning concepts "
-                                    "but fails to ground these claims in the research about agent architectures, planning "
-                                    "benefits, or the differences between ReAct and Plan-and-Execute detailed in the research material."
+                                    "The section is fully anchored in the research. All the high-level concepts it "
+                                    "introduces—planning, reasoning, ReAct, Plan-and-Execute, and self-correction—are "
+                                    "the central themes of the provided research material and are presented accurately."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    UserIntentSectionScores(
                         title="What a Non-Reasoning Model Does And Why It Fails on Complex Tasks",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
                                 score=1,
                                 reason=(
-                                    "The section excellently follows the guideline by using the required Technical "
-                                    "Research Assistant Agent example with a specific task ('comprehensive technical "
-                                    "report on edge AI deployment'). It clearly demonstrates non-reasoning model behavior "
-                                    "('treats the entire complex request as one big text generation problem') and explains "
-                                    "the consequences including superficial outputs and lack of sub-goal breakdown. "
-                                    "The section meets the 250-350 word length constraint."
+                                    "The section meets all requirements from the outline, including the correct agent "
+                                    "example, consequences, and transitions. The addition of context on the 'black box "
+                                    "problem' is brief and does not detract from or replace any of the mandated points."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
-                                    "The section effectively incorporates research findings from Source [5] about "
-                                    "non-reasoning model failures, specifically referencing 'lack of mechanism to evaluate "
-                                    "information quality' and 'don't break problems down into logical sub-goals,' which "
-                                    "directly matches the research findings. The content about treating complex requests "
-                                    "as text generation aligns well with the research about models lacking planning capabilities."
+                                    "While the core concepts are based on the guideline, the section's added discussion "
+                                    "on the 'black box problem' and its relation to 'enterprise adoption' is not "
+                                    "supported by any evidence within the provided research material."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
+                    UserIntentSectionScores(
                         title='Teaching Models to "Think": Chain-of-Thought and Its Limits',
-                        scores=UserIntentCriteriaScores(
-                            guideline_adherence=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section successfully explains Chain-of-Thought prompting as the solution "
-                                    "to non-reasoning model failures and provides a concrete example using the research "
-                                    "task as specified in the guideline. It correctly identifies the core limitation "
-                                    "that 'the thinking and the answer as one uninterrupted stream' with 'no pause point "
-                                    "to run tools or verify claims.' The section maintains the required 250-350 word length."
-                                ),
-                            ),
-                            research_anchoring=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section effectively draws from research findings in Source [3] about CoT "
-                                    "limitations, specifically incorporating that 'the plan and answer appear in the same "
-                                    "text stream' and there's 'no pause point to run tools, fetch fresh data, or verify "
-                                    "claims,' which directly matches the research findings about CoT's constraints in "
-                                    "agent contexts."
-                                ),
-                            ),
-                        ),
-                    ),
-                    SectionCriteriaScores(
-                        title="Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute",
-                        scores=UserIntentCriteriaScores(
-                            guideline_adherence=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section perfectly presents the core idea of separating planning from action "
-                                    "('explicitly separate the planning process from the action process') as required "
-                                    "by the guideline. It correctly positions ReAct and Plan-and-Execute as the two "
-                                    "fundamental patterns and provides clear, concise descriptions of their key differences. "
-                                    "The section maintains the specified 150-250 word length and serves as an effective "
-                                    "bridge between the problem identification and detailed implementation sections."
-                                ),
-                            ),
-                            research_anchoring=CriterionScore(
-                                score=1,
-                                reason=(
-                                    "The section accurately incorporates research findings from Source [1] about the "
-                                    "fundamental differences between these architectures, specifically that ReAct 'interleaves "
-                                    "reasoning and actions in a single loop' while Plan-and-Execute 'separates an LLM-powered "
-                                    "planner from the execution runtime.' The descriptions align well with the research "
-                                    "about ReAct's reasoning-action loop and Plan-and-Execute's separated phases."
-                                ),
-                            ),
-                        ),
-                    ),
-                    SectionCriteriaScores(
-                        title="ReAct in Depth: The Loop of Thought, Action, and Observation",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
                                 score=0,
                                 reason=(
-                                    "While the section correctly covers ReAct's core mechanism and provides a concrete "
-                                    "example using the research assistant, it significantly falls short of the guideline's "
-                                    "expectations. The guideline specifically requires a 'detailed evolving example,' "
-                                    "a 'diagram' showing the loop structure, and 500-600 words, making this the most "
-                                    "substantial section. The generated content provides only a brief overview with "
-                                    "a simple example, missing the comprehensive depth and visual elements required."
+                                    "The section uses the correct prompt example and most request topics but it fails "
+                                    "to address the specific limitation required by the guideline, which is that the "
+                                    "'plan and the answer appear in the same text'. Instead, it substitutes this with "
+                                    "an unrequested point about computational cost."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
                                 score=1,
                                 reason=(
-                                    "The section effectively incorporates research findings about ReAct's mechanism, "
-                                    "specifically the 'interleaving reasoning and actions with environment feedback' "
-                                    "from Source [2], and mentions key advantages like 'high interpretability and natural "
-                                    "error recovery' which align with the research about ReAct's benefits. The loop "
-                                    "description matches the research findings about ReAct's iterative decision-making process."
+                                    "The section's description of Chain-of-Thought is correctly aligned with the "
+                                    "foundational concepts presented in the research materials, such as the canonical "
+                                    "paper Sourced."
                                 ),
                             ),
                         ),
                     ),
-                    SectionCriteriaScores(
-                        title="Plan-and-Execute in Depth: Structure and Predictability",
+                    UserIntentSectionScores(
+                        title="Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute",
                         scores=UserIntentCriteriaScores(
                             guideline_adherence=CriterionScore(
-                                score=1,
+                                score=0,
                                 reason=(
-                                    "The section successfully covers the core Plan-and-Execute concept with upfront "
-                                    "planning followed by systematic execution. It provides a comprehensive structured "
-                                    "example with clear numbered steps (1-6) using the same research agent as required. "
-                                    "The section includes the required diagram concept ('Planning phase output') and "
-                                    "covers both pros ('upfront structure and improved efficiency for well-defined tasks') "
-                                    "and cons ('less flexible for exploratory problems'). The length appears appropriate "
-                                    "for the 450-550 word target."
+                                    "The presents the core idea, details the benefits, correctly positions the two "
+                                    "patterns against each other, and provides a clear transition to the next section. "
+                                    "It misses an explanation for how it allows different handling for reasoning traces "
+                                    "vs. final outputs."
                                 ),
                             ),
                             research_anchoring=CriterionScore(
                                 score=1,
                                 reason=(
-                                    "The section effectively incorporates research findings from Source [1] about "
-                                    "Plan-and-Execute advantages, specifically that it 'can be faster because sub-tasks "
-                                    "execute without consulting the larger model' and 'can be cheaper by delegating "
-                                    "sub-tasks to smaller, domain-specific models.' The structured approach and efficiency "
-                                    "benefits mentioned align well with the research about separated planning and execution phases."
+                                    "The content is well-anchored in the provided research. The distinction between "
+                                    "ReAct's interleaved loop and Plan-and-Execute's separated phases is directly "
+                                    "supported by sources"
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="ReAct in Depth: The Loop of Thought and Observation",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "The section fails on multiple guidelines: it is missing the required Mermaid "
+                                    "diagram, and the steps in the evolving example depart from what the guidelines "
+                                    "map out and are presented in a logically incorrect order, violating the "
+                                    "deliverable requirements."
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "Most key claims are sourced but the section introduces a significant claim that "
+                                    "ReAct has 'Python implementation difficulty,' which is an assertion not supported "
+                                    "by any of the provided research sources."
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Plan-and-Execute in Depth: Structuring the Path from Goal to Action",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "Includes mermaid diagram and maps out the plan and execute example as requested. "
+                                    "The section fails to adhere to the content guideline for its 'Pros'. It incorrectly "
+                                    "emphasizes 'fostering model creativity' instead of the specified advantages of "
+                                    "efficiency and reliability for structured tasks."
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "A source for inflexibility is found correctly but the primary advantage "
+                                    "presented—creativity—is not supported by the research set. The provided sources "
+                                    "frame the benefits of this pattern in terms of cost, reliability, and efficiency."
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Where This Shows Up in Practice: Deep Research-Style Systems",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "This section, which is explicitly required in the lesson outline, is completely "
+                                    "missing from the generated article."
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=0,
+                                reason=("As the section is not present in the article, it cannot be anchored in research."),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Modern Reasoning Models: Thinking vs. Answer Streams and Interleaved Thinking",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "The section is incomplete. It introduces the core concepts but omits the mandatory "
+                                    "discussion on 'Implications for system design' and fails to provide the required "
+                                    "transition to the next section. As a result the section is also well under the "
+                                    "word count asked."
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "The concepts that are discussed, such as 'thinking' streams and 'interleaved "
+                                    "thinking', are correctly anchored in the research, with support from sources."
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Advanced Agent Capabilities Enabled by Planning: Goal Decomposition and Self-Correction",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=0,
+                                reason=(
+                                    "The section includes key discussion on Goal decomposition and self-correction as "
+                                    "asked but it violates the guideline by substituting the recurring 'conflicting "
+                                    "adoption rates' example with an unrequested flight-booking scenario. It also omits "
+                                    "the required discussion on 'Why patterns still matter"
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "Although the specific flight example/analogy was not requested, the key facts and "
+                                    "high-level concepts of goal decomposition and self-correction are well-supported "
+                                    "by the provided research material and include sources."
+                                ),
+                            ),
+                        ),
+                    ),
+                    UserIntentSectionScores(
+                        title="Conclusion",
+                        scores=UserIntentCriteriaScores(
+                            guideline_adherence=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "The conclusion adheres to the guideline. It effectively summarizes the lesson's "
+                                    "key takeaways, recaps the ReAct and Plan-and-Execute patterns, and provides a "
+                                    "clear, accurate preview of the next lessons (8, 9, and 10), all within the "
+                                    "specified length"
+                                ),
+                            ),
+                            research_anchoring=CriterionScore(
+                                score=1,
+                                reason=(
+                                    "The section is fully anchored. The summary accurately recaps the core concepts "
+                                    "supported by the research, and the preview of future lessons (8, 9, and 10) is "
+                                    "taken directly from the article guideline."
                                 ),
                             ),
                         ),
@@ -508,7 +550,7 @@ def get_eval_prompt(
         The complete formatted prompt string ready for LLM invocation.
 
     """
-    # Path("user_intent_context.md").write_text(few_shot_examples.to_context())
+
     return SYSTEM_PROMPT.format(
         examples=few_shot_examples.to_context(),
         input=input,

@@ -6,7 +6,7 @@ In the previous lessons, you learned the foundational components for building AI
 
 This lesson introduces the core concepts of planning and reasoning. You will learn about the core strategies that give agents their 'thinking' ability, such as ReAct and Plan-and-Execute. We will also explore why standard LLMs often fall short on complex, multi-step tasks that demand adaptation and foresight.
 
-## **What a Non-Reasoning Model Does And Why It Fails on Complex Tasks**
+## What a Non-Reasoning Model Does And Why It Fails on Complex Tasks
 
 Let's consider a practical example using a technical research assistant agent. Your goal is to give it a high-level task, such as *producing a comprehensive technical report on the latest developments in edge AI deployment*. This involves finding recent papers, summarizing their findings, identifying trends, and writing a structured report.
 
@@ -20,7 +20,7 @@ While components like tools and structured outputs are essential building blocks
 
 Without this reasoning capability, the agent produces superficial outputs and cannot iterate on partial results or correct its course, leading to unreliable and less useful outcomes for any non-trivial challenge [[1]](https://arxiv.org/pdf/2503.13657), [[2]](https://huyenchip.com/2025/01/07/agents.html). To address this, we first "teach" the model to produce a reasoning trace, which means thinking before answering.
 
-## **Teaching Models to "Think": Chain-of-Thought and Its Limits**
+## Teaching Models to “Think": Chain-of-Thought and Its Limits
 
 To fix the failures of non-reasoning models, the first and simplest step is to teach the model to "think" before it acts. The most basic way to do this is with a technique called Chain-of-Thought (CoT) prompting. The idea is simple: you instruct the LLM to think step by step, writing out its reasoning process before giving the final answer. It is like asking someone to show their work in a math problem.
 
@@ -43,7 +43,7 @@ In a single-pass setup, Chain-of-Thought adds a step-by-step reasoning trace bef
 
 Because there is no separation or interrupt boundary, you **cannot** build an iterative loop where the agent executes a step, observes the result, and uses that observation to guide the next step. Tool calls can't be executed, results can't be inspected, and claims can't be verified *before* the answer is produced. To enable verification, tool use, and adaptation, we must explicitly separate the planning/reasoning from the action/answering phases.
 
-## **Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute**
+## Separating Planning from Answering: Foundations of ReAct and Plan-and-Execute
 
 The key to building more advanced agents is to explicitly separate the planning and reasoning process from the action and answering process. Instead of asking the model to think and then answer in one go, we create a system where these are distinct steps [[4](https://blog.langchain.com/planning-agents/)], [[5](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9)].
 
@@ -54,7 +54,7 @@ Two fundamental patterns implement this separation: ReAct[[26](https://www.ibm.c
 
 Both patterns are built on the same principle of separating thought from action, but they offer different trade-offs in terms of flexibility and predictability[[24](https://www.ibm.com/think/topics/agentic-reasoning)]. 
 
-## **ReAct in Depth: The Loop of Thought, Action, and Observation**
+## ReAct in Depth: The Loop of Thought, Action, and Observation
 
 The ReAct (Reason + Act) framework emerged to bridge the gap between pure reasoning, like in Chain-of-Thought, and pure action-taking. We realize that human intelligence seamlessly combines task-oriented actions with verbal reasoning or "inner speech." You can think of it as how we decide what to do next, while our actions give us new information that influences our subsequent thoughts [[7]](https://arxiv.org/pdf/2210.03629). Researchers designed ReAct to mimic this synergistic process in AI agents.
 
@@ -83,7 +83,7 @@ Let's walk through how our assistant agent could use the ReAct pattern to tackle
 
 As illustrated in the example, the primary advantage of ReAct is its high interpretability; you can follow the agent's "mind" at each step. This makes debugging easier and allows for natural error recovery, as seen when the agent detected the conflict and adjusted its plan. It is particularly well-suited for exploratory tasks where the path to the solution is not known in advance, such as customer service dialogues or instant queries. However, this iterative process can be slower and more costly due to the multiple LLM calls, as the main agent is consulted at every step. It also requires careful prompt engineering and guardrails to prevent the agent from getting stuck in loops.
 
-## **Plan-and-Execute in Depth: Structure and Predictability**
+## Plan-and-Execute in Depth: Structure and Predictability
 
 While ReAct excels at exploratory tasks, its iterative nature can be inefficient for problems with a more predictable structure, meaning tasks where the sequence of steps from input to output is known in advance and does not depend much on intermediate tool results. For example, a writing agent can follow a fixed pipeline consisting of: outline, draft sections, render Mermaid diagrams, extract images, and then compile the final article. An alternative pattern, Plan-and-Execute, fits this setting better. As its name suggests, it separates the process into two distinct phases: first, creating a comprehensive plan, and second, executing that plan.
 
@@ -98,7 +98,7 @@ Note that Orchestrator–Worker and Plan-and-Execute may sound similar but diffe
 
 Let's revisit our assistant agent and see how it would operate using this pattern.
 
-### **Planning Phase**
+### Planning Phase
 
 You first prompt the agent to create a complete plan to fulfill the request. It outputs a structured list of tasks, like this:
 
@@ -110,11 +110,11 @@ You first prompt the agent to create a complete plan to fulfill the request. It 
 6. Draft a detailed outline for the final report, including sections for Introduction, Key Trends, Technical Challenges, Industry Adoption, and Conclusion. Ensure a logical flow and comprehensive coverage.
 7. Write the full report based on the outline, ensuring all claims are supported by citations and including a methodology section explaining the research process. This ensures transparency and verifiability.
 
-### **Execution Phase**
+### Execution Phase
 
 The agent now systematically works through the plan, executing step 1, then step 2, and so on. It stores the results of each step and uses them as input for subsequent steps. For example, the URLs found in step 2 are used in step 3. The system returns to the planning phase only if a step fails completely (e.g., no relevant sources are found), if the output of one step is incompatible with the expected input of the next (an interface mismatch), or if a predefined trigger for re-planning is met. These potential failure points highlight the inherent risk of committing to a full plan upfront: while efficient, it can break down if reality diverges from assumptions made during the planning phase. This creates a more controlled and predictable workflow overall, but one that must be designed with safeguards for error handling and re-planning.
 
-## **Pros and Cons: ReAct vs. Plan-and-Execute**
+## Pros and Cons: ReAct vs. Plan-and-Execute
 
 Choosing between the two depends on your task's uncertainty, structure, and latency/cost constraints. Use the comparison below to quickly decide which pattern (or hybrid) best fits your scenario.
 
@@ -146,7 +146,7 @@ In practice, many production systems blend these strengths along a **continuum**
 
 Let's look at how this hybridization shows up in real "Deep Research" workflows.
 
-## **Deep Research AI Assistant Systems**
+## Deep Research AI Assistant Systems
 
 The theoretical patterns of ReAct and Plan-and-Execute are the foundation for sophisticated, real-world AI systems designed for complex analysis and reporting. A prime example is what we call "Deep Research" systems. We use these for tasks like market analysis, scientific literature reviews, or complex financial diligence.
 
@@ -192,7 +192,7 @@ flowchart TD
     class Start,End startEnd
 ```
 
-## **Reasoning Models: How LLMs' "Reasoning and Planning" are Being Internalized in LLMs**
+## Reasoning Models: How LLMs’ “Reasoning and Planning" are Being Internalized in LLMs
 
 As LLMs continue to evolve, they are beginning to internalize some of the reasoning structures we have discussed. Instead of relying solely on external frameworks to orchestrate thinking, developers now design modern models with built-in reasoning capabilities. Broadly, two model-side patterns mirror the system patterns we covered: a think-then-answer mode that parallels Plan-and-Execute, and an interleaved reasoning mode that parallels ReAct.
 
@@ -214,7 +214,7 @@ Previously, you had to write different, complex prompts *and* manage a multi-s
 
 Consider a simple agent that needs to check the weather and then book a flight.
 
-### **The "Old Way" (Developer-Led Orchestration)**
+### The "Old Way" (Developer-Led Orchestration)
 
 The developer must manually chain LLM calls, using distinct prompts first to generate a thought and then to generate an action based on that thought.
 
@@ -261,7 +261,7 @@ observation = search_weather(location=action["args"]["location"]) # Returns "The
 # The developer must repeat this entire 2-call sequence for the next step (booking the flight).
 ```
 
-### **The "New Way" (Model-Native Reasoning)**
+### The "New Way" (Model-Native Reasoning)
 
 You define the tools and provide them directly to the model's API. The model handles the reasoning step internally. To give developers more control over this internal process, model APIs are introducing parameters like `thinking_budget` or `extended_reasoning`, allowing you to specify how much computational effort the model should dedicate to planning before acting.
 
@@ -285,7 +285,7 @@ response = model.generate_content(user_query, tools=tools, thinking_budget="high
 
 While these advancements make building agents easier, they do not make the underlying patterns obsolete. As an engineer, understanding ReAct and Plan-and-Execute remains crucial. These patterns give you a mental model for how the agent *should* behave. This is essential for designing effective tools, setting up system-level guardrails, and debugging when the model's internal reasoning goes wrong. Even if the model handles the loop, you are still responsible for designing the system that enables and controls it.
 
-## **Conclusion**
+## Conclusion
 
 In this lesson, we moved from basic actions to intelligent planning and reasoning, the capabilities that separate a simple tool from an autonomous agent. We've seen that building reliable agents requires more than just giving an LLM access to tools; it requires a structured way for the agent to think, plan, and adapt.
 

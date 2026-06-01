@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def load_server_config(config_path: Path | None = None) -> dict:
     """Load the MCP servers configuration from JSON file.
-    
+
     Args:
         config_path: Optional path to config file. If None, uses default mcp_servers_to_compose.json
     """
@@ -30,10 +30,10 @@ def load_server_config(config_path: Path | None = None) -> dict:
         config_path = Path(__file__).parent.parent / "mcp_servers_to_compose.json"
     else:
         config_path = Path(config_path)
-    
+
     if not config_path.exists():
         raise FileNotFoundError(f"Configuration file not found: {config_path}")
-    
+
     with open(config_path) as f:
         return json.load(f)
 
@@ -41,10 +41,10 @@ def load_server_config(config_path: Path | None = None) -> dict:
 def create_composed_server(config_path: Path | None = None) -> FastMCP:
     """
     Create a composed MCP server by mounting Nova and Brown servers.
-    
+
     Args:
         config_path: Optional path to config file. If None, uses default mcp_servers_to_compose.json
-    
+
     Returns:
         FastMCP: The composed server instance with both servers mounted
     """
@@ -53,55 +53,55 @@ def create_composed_server(config_path: Path | None = None) -> FastMCP:
         name="Nova+Brown Composed Server",
         version="0.1.0",
     )
-    
+
     logger.info("Loading server configuration...")
     config = load_server_config(config_path)
-    
+
     servers_config = config.get("mcpServers", {})
-    
+
     if not servers_config:
         raise ValueError("No servers found in configuration")
-    
+
     logger.info(f"Found {len(servers_config)} servers to compose: {list(servers_config.keys())}")
-    
+
     # Create proxies and mount each server
     for server_name, server_config in servers_config.items():
         logger.info(f"Creating proxy for {server_name}...")
-        
+
         # Wrap the server config in the mcpServers structure expected by Client
         client_config = {"mcpServers": {server_name: server_config}}
-        
+
         # Create a client for this server
         client = Client(client_config)
-        
+
         # Create a proxy from the client
         proxy = FastMCP.as_proxy(client)
-        
+
         logger.info(f"Mounting {server_name} without prefix...")
         mcp.mount(proxy)
-    
+
     # Register the combined workflow prompt
     register_combined_prompt(mcp)
-    
+
     logger.info("Composed server created successfully!")
     return mcp
 
 
 def register_combined_prompt(mcp: FastMCP) -> None:
     """Register the combined research and writing workflow prompt."""
-    
+
     @mcp.prompt()
     def full_research_and_writing_workflow(dir_path: Path) -> str:
         """Complete workflow for research and article generation.
-        
+
         This prompt combines the Nova research agent workflow with the Brown
         article generation workflow, providing end-to-end instructions for
         conducting comprehensive research and generating an article from that research.
-        
+
         Args:
             dir_path: Path to the directory that will contain research resources
                      and the final article.
-        
+
         Returns:
             A formatted prompt string with complete workflow instructions.
         """
@@ -260,7 +260,7 @@ the "generate_article" tool of the Brown MCP Server, which will take care of eve
 
 if __name__ == "__main__":
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Composed MCP Server (Nova + Brown)")
     parser.add_argument(
         "--transport",
@@ -285,13 +285,13 @@ if __name__ == "__main__":
         help="Path to MCP servers configuration file (overrides default mcp_servers_to_compose.json)",
     )
     args = parser.parse_args()
-    
+
     logger.info("Starting composed MCP server...")
-    
+
     try:
         composed_server = create_composed_server(config_path=args.config)
         logger.info("Running composed server...")
-        
+
         # Run the server with the specified transport
         if args.transport == "streamable-http":
             composed_server.run(transport=args.transport, port=args.port)
@@ -300,4 +300,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Failed to start composed server: {e}")
         raise
-

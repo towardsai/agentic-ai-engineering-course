@@ -126,12 +126,17 @@ Here is the article profile, describing particularities on how the end-to-end ar
 ## Reviewing Process
 
 You will review the article against all the requirements above, creating a one-to-many relationship between each requirement and the 
-number of required reviews. In other words, for each requirement, you will create 0 to N reviews. If the article follows the 
-requirement 100%, you will not create any reviews for it. If it doesn't follow the requirement, you will create as many reviews 
-as required to ensure the article follows the requirement.
+number of required reviews. In other words, for each requirement, you will create 0 to N reviews. If the article follows the
+requirement 100%, you will not create any reviews for it. If it doesn't follow the requirement, you will create reviews
+to ensure the article follows the requirement.
+
+**You MUST return at most {max_reviews} reviews in total across all requirements.** Prioritize the most impactful issues first,
+following the reviewing rules priority order. If there are more issues than the limit allows, focus on the highest-priority ones
+and omit the least significant.
 
 Remember that these reviews will further be used to edit the article, ensuring it follows all the requirements. Thus, it's
-important to make a thorough review, covering all the requirements and not missing any detail.
+important to make a thorough review, covering all the requirements and not missing any detail, while staying within the limit
+of {max_reviews} reviews.
 
 ## Reviewing Rules
 
@@ -165,7 +170,7 @@ or "Implementing GraphRAG - Third paragraph"
 2. Read and analyze the <human_feedback>.
 3. Read and analyze all the requirements considering the <human_feedback> as a guiding force.
 4. Carefully compare the article against the requirements as instructed by the rules above.
-5. For each requirement, create 0 to N reviews
+5. For each requirement, create 0 to N reviews (up to {max_reviews} total)
 6. Return the reviews of the article.
 """
 
@@ -196,7 +201,7 @@ previous chain of thoughts:
 3. Read and analyze the <human_feedback>.
 4. Read and analyze all the requirements considering the <human_feedback> as a guiding force.
 5. Carefully compare the selected text against the requirements as instructed by the rules above.
-6. For each requirement, create 0 to N reviews
+6. For each requirement, create 0 to N reviews (up to {max_reviews} total)
 7. Return the reviews of the selected text.
 """
 
@@ -207,11 +212,13 @@ previous chain of thoughts:
         model: Runnable,
         article_profiles: ArticleProfiles,
         human_feedback: HumanFeedback | None = None,
+        max_reviews: int = 5,
     ) -> None:
         self.to_review = to_review
         self.article_guideline = article_guideline
         self.article_profiles = article_profiles
         self.human_feedback = human_feedback
+        self.max_reviews = max_reviews
 
         super().__init__(model, toolkit=Toolkit(tools=[]))
 
@@ -247,6 +254,7 @@ previous chain of thoughts:
             mechanics_profile=self.article_profiles.mechanics.to_context(),
             terminology_profile=self.article_profiles.terminology.to_context(),
             tonality_profile=self.article_profiles.tonality.to_context(),
+            max_reviews=self.max_reviews,
         )
         user_input_content = self.build_user_input_content(inputs=[system_prompt])
         inputs = [
@@ -260,7 +268,10 @@ previous chain of thoughts:
                 [
                     {
                         "role": "user",
-                        "content": self.selected_text_system_prompt_template.format(selected_text=self.to_review.to_context()),
+                        "content": self.selected_text_system_prompt_template.format(
+                            selected_text=self.to_review.to_context(),
+                            max_reviews=self.max_reviews,
+                        ),
                     }
                 ]
             )
