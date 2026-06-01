@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, dev, test]
   push:
-    branches: [main, test]
+    branches: [main]
 
 concurrency:
   group: ci-notebooks-${{ github.ref }}

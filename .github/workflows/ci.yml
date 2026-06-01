@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, dev, test]
   push:
-    branches: [main, test]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -73,4 +73,6 @@ jobs:
         run: uv sync
 
       - name: 🧪 Run tests
+        env:
+          OPIK_TRACK_DISABLE: "true"
         run: CONFIG_FILE=configs/debug.yaml uv run pytest
