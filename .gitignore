@@ -198,3 +198,4 @@ configs/
 inputs/
 !lessons/writing_workflow/configs/
 !lessons/writing_workflow/inputs/
+!lessons/writing_workflow/tests/fixtures/configs/

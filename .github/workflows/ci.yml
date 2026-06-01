@@ -73,4 +73,6 @@ jobs:
         run: uv sync
 
       - name: 🧪 Run tests
+        env:
+          OPIK_TRACK_DISABLE: "true"
         run: CONFIG_FILE=configs/debug.yaml uv run pytest
