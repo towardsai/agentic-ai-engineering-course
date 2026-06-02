@@ -61,6 +61,45 @@ git status --porcelain
 
 - If the output is non-empty, there are uncommitted/untracked changes. Switching branches could carry or clobber them. **STOP** and ask the user to commit, stash, or discard first — do not proceed automatically. (Untracked files that don't collide are usually harmless; use judgement, but when in doubt, stop and ask.)
 
+## Step 0.5 — Optional: bump (and publish) the package version — ALWAYS ask, NEVER automatic
+
+After the `dev` + clean-tree gate passes, **ask the user** whether they want to bump the package version before releasing — e.g. *"Want me to bump the package version with `make build` (and optionally publish to PyPI with `make publish`) before we stage the release?"*
+
+> **HARD RULE:** never run `make build` or `make publish` on your own initiative. Only run them when the user explicitly says yes in this step. If the user doesn't ask for a bump, skip straight to Step 1 and leave the version untouched.
+
+If the user says **no**, skip to Step 1.
+
+If the user says **yes**:
+
+1. **Confirm the bump level.** `make build` runs `uv version --bump $(VERSION_BUMP)` (default `patch`) then `uv build`. Ask whether they want `patch` (default), `minor`, or `major`, then run:
+
+   ```bash
+   make build                       # patch bump (default)
+   # or, for a different level:
+   make build VERSION_BUMP=minor    # or major
+   ```
+
+   This edits `pyproject.toml` and `uv.lock` in the working tree (and produces a build under `dist/`).
+
+2. **Ask before publishing.** Publishing to PyPI is outward-facing and irreversible — a version can't be re-uploaded. Only if the user explicitly wants it:
+
+   ```bash
+   make publish                     # uv publish --token $(PYPI_TOKEN)
+   ```
+
+   Skip this if they only want the version bump (e.g. they'll publish later or from CI).
+
+3. **Commit the bump on `dev`.** The bump dirtied the tree that Step 0 asserted clean. Commit it on `dev` so the new version is part of the release source:
+
+   ```bash
+   git add pyproject.toml uv.lock
+   git commit -m "chore: bump package version to <new-version>"
+   ```
+
+   (Read the new version from `pyproject.toml` after the bump.) Make sure the tree is clean again before continuing.
+
+4. **Add the version files to the release set.** Ensure `pyproject.toml` and `uv.lock` are included in `<files>` for the steps below, so the bump actually reaches `test` → `main`.
+
 ## Step 1 — Decide which files to release
 
 The user controls the file list. Resolve it in this order:
@@ -173,6 +212,7 @@ The PR is reviewed (diffs + reviewers) and merged on GitHub. Offer the user two 
 Summarize concisely:
 
 - the branch you released from (`dev`) and to (`test`),
+- whether a version bump/publish (Step 0.5) was run, and if so the new version and whether it was published to PyPI,
 - the exact files released,
 - the commit message and that the push succeeded,
 - confirmation you're back on `dev`,
@@ -186,6 +226,7 @@ Summarize concisely:
 - Only release the files the user explicitly selected — never a blanket "everything that differs."
 - **Always enforce the `lessons/NN_*` release content policy** (notebooks + inferred supporting media only; lesson 25 also ships its MCP configs; lesson 26 ships everything). Never release lesson article/research/metadata authoring artifacts.
 - Confirm with the user before `git commit` and `git push`.
+- **Never bump or publish automatically.** Run `make build` / `make publish` only when the user explicitly asks in Step 0.5; `make publish` is irreversible (a PyPI version can't be re-uploaded), so confirm it separately from the bump.
 - Never force-push; never touch `main` directly.
 - The `dev-test-sync-checker` subagent is read-only — it reports divergence but never commits, pushes, or deletes. Any cleanup it suggests needs explicit user confirmation as a separate step.
 - If any step errors, stop, report, and make sure the repo is left back on `dev`.
