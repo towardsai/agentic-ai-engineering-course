@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#folders
+notebook_colab_version/
+
 # C extensions
 *.so
 
