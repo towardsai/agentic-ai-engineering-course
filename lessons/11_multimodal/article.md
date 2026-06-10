@@ -567,20 +567,13 @@ Most modern multimodal RAG architectures use ColPali or a derivative of it to bu
 Now that we have covered the theory, let us see how this works in practice and build a simple multimodal RAG system from scratch.
 
 ## Implementing Multimodal RAG for Images, PDFs, and Text
-To connect everything we have learned in this lesson and lesson 10 on RAG, we will build a simple multimodal RAG system. For this mini-project, we will populate an in-memory vector index with a mix of images, raw text snippets, and a PDF — all embedded **directly** into one shared vector space with Gemini's multimodal embedding model, `gemini-embedding-2`. This demonstrates how to handle diverse content types in a single retrieval system, with no text-description workaround.
+To connect everything we have learned in this lesson and lesson 10 on RAG, we will build a simple multimodal RAG system. For this mini-project, we will populate an in-memory vector index with a mix of images, raw text snippets, and a PDF. This demonstrates how to handle diverse content types in a single retrieval system, with no text-description workaround.
 
 ![*Figure 18: Architecture of our simplified multimodal RAG example.*](article_media/image%205.png)
 
 *Figure 18: Architecture of our simplified multimodal RAG example.*
 
-Our RAG system embeds each item — image, PDF, or text — **directly** into a shared vector space using `gemini-embedding-2`, Gemini's multimodal embedding model [[22]](https://ai.google.dev/gemini-api/docs/embeddings). Because every modality lands in the same space, no intermediate text description is required. These vectors are stored in our in-memory index. When you provide a query (text *or* an image), we embed it with the **same** model and run a cosine-similarity search against the index to find the most relevant items.
-
-<aside>
-💡
-
-**A note on multimodal embeddings.** Earlier versions of this mini-project used a workaround: generate a text description of each image, then embed the *text* with a text-only embedding model. That step was necessary when the Gemini embedding API could only embed text. With `gemini-embedding-2`, Gemini now maps **text, images, audio, video, and PDFs into the same vector space** natively, so we can drop the description step entirely and embed raw bytes directly. This avoids the information loss that comes from translating images to text — exactly the production-grade setup we recommended earlier. If you prefer other providers, the same pattern works with Voyage, Cohere, Google Embeddings on Vertex AI, or open-source CLIP models [[6]](https://github.com/openai/CLIP), [[7]](https://huggingface.co/docs/transformers/v4.22.1/en/model_doc/clip), [[18]](https://docs.oracle.com/en/database/oracle/oracle-database/23/vecse/onnx-pipeline-models-multi-modal-embedding.html), [[19]](https://docs.oracle.com/en/database/oracle/oracle-database/23/vecse/generate-multi-modal-embeddings-using-clip.html), [[20]](https://docs.weaviate.io/weaviate/model-providers/transformers/embeddings-multimodal).
-
-</aside>
+Our RAG system embeds each item — image, PDF, or text — **directly** into a shared vector space using `gemini-embedding-2`, Gemini's multimodal embedding model [[22]](https://ai.google.dev/gemini-api/docs/embeddings). Because every modality sits in the same space, no intermediate text description is required. These vectors are stored in our in-memory index. When you provide a query (text *or* an image), we embed it with the **same** model and run a cosine-similarity search against the index to find the most relevant items.
 
 Now, let us get to the code.
 
@@ -676,7 +669,7 @@ Figure 19: A grid of images used within our multimodal RAG system example.
         return list(await asyncio.gather(*(_embed_one(c, m) for c, m in items)))
     ```
     
-3. With the embedding functions in place, `create_vector_index` simply loads each image as bytes and embeds them all in one batched call — **no description step**. For this example, we mock the vector index as a simple Python list because we have only a few items. In a real-world application, you would use a dedicated vector database, such as Qdrant or Milvus, which employs efficient indexing algorithms like HNSW to scale to millions of documents:
+3. With the embedding functions in place, `create_vector_index` simply loads each image as bytes and embeds them all in one batched call. For this example, we mock the vector index as a simple Python list because we have only a few items. In a real-world application, you would use a dedicated vector database, such as Qdrant or Milvus, which employs efficient indexing algorithms like HNSW to scale to millions of documents:
     
     ```python
     from typing import cast
@@ -732,7 +725,7 @@ Figure 19: A grid of images used within our multimodal RAG system example.
         return [{**vector_index[idx], "similarity": similarities[idx]} for idx in top_indices.tolist()]
     ```
     
-5. Now, let us test our multimodal RAG system. We will search with a text query for an image containing the architecture of the Transformer network. The system correctly retrieves the page from the paper containing the model diagram — comparing the text query directly against the **image** embeddings, with no description in between:
+5. Now, let us test our multimodal RAG system. We will search with a text query for an image containing the architecture of the Transformer network. The system correctly retrieves the page from the paper containing the model diagram:
     
     ```python
     query = "what is the architecture of the transformer neural network?"
@@ -765,6 +758,7 @@ Figure 21: The retrieved image for the query "a kitten with a robot.
 This simple implementation demonstrates the power of multimodal RAG. Because every item — standard images and PDF pages alike — is embedded **directly** into one shared vector space, we use the same unified vector index to search across all of them with a single text query. You could extend this even further by sampling video footage or translating audio data to spectrograms.
 
 ## Going Deeper with Multimodal Embeddings
+
 Because every modality now lives in the **same** vector space, a few patterns open up that simply were not possible with a text-only embedder:
 
 - **Reverse search** — query the index *with an image* (or a PDF) instead of text.
@@ -773,7 +767,7 @@ Because every modality now lives in the **same** vector space, a few patterns op
 
 ### Image-as-Query (Reverse Search)
 
-Since text and image embeddings share a space, we can flip the query side: feed an **image** into the same `search_multimodal` function and retrieve the most visually similar items from the index. Here we use the kitten-and-robot photo as the query — the index returns that same image first (a sanity check), then the next most-similar item:
+Since text and image embeddings share a space, we can flip the query side: feed an **image** into the same `search_multimodal` function and retrieve the most visually similar items from the index. Here we use the kitten-and-robot photo as the query, where the index returns that same image first (a sanity check), then the next most-similar item:
 
 ```python
 query_image_path = Path("images") / "image_1.jpeg"
@@ -804,7 +798,6 @@ def add_text_to_index(vector_index: list[dict], text: str, title: str) -> None:
     )
 
 def add_pdf_to_index(vector_index: list[dict], pdf_path: Path) -> None:
-    # gemini-embedding-2 accepts up to 6 PDF pages per request; chunk page-wise for longer docs.
     pdf_bytes = pdf_path.read_bytes()
     embedding = embed(pdf_bytes, mime_type="application/pdf")
     vector_index.append(
@@ -851,13 +844,13 @@ Q: 'a diagram of the Transformer encoder-decoder architecture' -> [image] images
 <aside>
 💡
 
-**A note for production: cross-modal score calibration.** In practice, text↔text cosine similarities tend to sit in a different (usually higher) range than text↔image or text↔PDF similarities, so a single global threshold biases retrieval toward whichever modality dominates your corpus. Three common fixes are: **per-modality score normalisation** (z-score or min-max within each modality bucket before merging), **modality-aware re-ranking** (retrieve top-K per modality, then re-rank with a cross-encoder, e.g. a small Gemini call that scores each candidate against the query), and **hybrid scoring** (combine dense similarity with a sparse signal like BM25 or filename keywords to break ties). This is not unique to Gemini. Every multimodal embedder exhibits some modality bias.
+**A note for production: cross-modal score calibration.** In practice, text↔text cosine similarities tend to sit in a different (usually higher) range than text↔image or text↔PDF similarities, so a single global threshold biases retrieval toward whichever modality dominates your corpus. Three common fixes are: **per-modality score normalisation** (z-score or min-max within each modality bucket before merging), **modality-aware re-ranking** (retrieve top-K per modality, then re-rank with a cross-encoder, e.g. a small Gemini call that scores each candidate against the query), and **hybrid scoring** (combine dense similarity with a sparse signal like BM25 or filename keywords to break ties). This is not unique to Gemini. Every multimodal embedding model has this type of bias.
 
 </aside>
 
 ### Matryoshka: Flexible Dimensions to Cut Cost and Latency
 
-`gemini-embedding-2` is trained with **Matryoshka Representation Learning** (MRL), so you can request a smaller embedding (down to 128 dims) and still get a usable subspace of the full 3072-dim vector [[23]](https://arxiv.org/abs/2205.13147). In production this trades a small accuracy hit for cheaper storage and faster approximate-nearest-neighbour lookups. We just pass `output_dimensionality` to `embed`/`embed_batch`:
+`gemini-embedding-2` is trained with **Matryoshka Representation Learning** (MRL), so you can request a smaller embedding (down to 128 dims) and still get a usable subspace of the full 3072-dim vector [[23]](https://arxiv.org/abs/2205.13147). In production this trades a small accuracy hit for cheaper storage and faster approximate-nearest-neighbour (ANN) lookups. We just pass `output_dimensionality` to `embed`/`embed_batch`:
 
 ```python
 DIM_SMALL = 768
@@ -867,7 +860,14 @@ small_embeddings = await embed_batch([(b, "image/webp") for b in small_image_byt
 
 query = "what is the architecture of the transformer neural network?"
 query_emb = embed(query, output_dimensionality=DIM_SMALL)
-# ... then rank small_embeddings by cosine similarity against query_emb
+
+sims = cosine_similarity(
+    [query_emb],
+    [d["embedding"] for d in small_index],
+).flatten()
+top = int(np.argsort(sims)[::-1][0])
+
+pretty_print.wrapped(f"Top-1 @ 768 dims for {query!r}:\n  -> {small_index[top]['filename']}  (sim={sims[top]:.3f})")
 ```
 
 Running the full re-embedding and search at 768 dimensions prints:
@@ -893,7 +893,7 @@ Let’s illustrate both methods within a single use case. We will build a ReAct 
 
 Let us implement this.
 
-1. First, we wrap our `search_multimodal` function into a tool the agent can call, using LangChain's `@tool` decorator. The big change from earlier versions: the tool returns the **top-`k` candidates** and hands each one back to the model in its native form — a text snippet stays text, while an image or PDF is returned as a Gemini `Part`. This lets the multimodal LLM re-rank and reason over the raw content itself instead of a description:
+1. First, we wrap our `search_multimodal` function into a tool the agent can call, using LangChain's `@tool` decorator. The tool returns the **top-`k` candidates** and hands each one back to the model in its native form. A text snippet stays text, while an image or PDF is returned as a Gemini `Part`. This lets the multimodal LLM re-rank and reason over the raw content itself instead of a description:
     
     ```python
     from langchain_core.tools import tool
@@ -973,7 +973,7 @@ Figure 23: A high-level view of the LangGraph ReAct agent architecture.
         print(f"Q: {question}\nA: {final}\n")
     ```
     
-    For the kitten question the agent picks the **image** candidate and answers from the pixels; for the deepest-point question it picks the **text** snippet; and for the paper summary it pulls back the **PDF** and summarises it directly — all from the same tool and the same index. For example, the kitten answer is:
+    For the kitten question the agent picks the **image** candidate and answers from the pixels, for the deepest-point question it picks the **text** snippet and for the paper summary it pulls back the **PDF** and summarises it directly. All from the same tool and the same index. For example, the kitten answer is:
     
     ```
     The kitten in the image is a fluffy grey tabby.
@@ -1049,9 +1049,7 @@ This time the search spans modalities, and the agent reports the related pages p
 Based on the page you provided, I found the following related items in my knowledge base:
 
 *   The full PDF document of the paper "Attention Is All You Need".
-*   Three other pages from the same paper, specifically pages 2, 3, and 4.
-
-📄 Also retrieved (not rendered inline): pdfs/attention_is_all_you_need_paper.pdf
+*   Two other pages from the same paper, specifically pages 1 and 2.
 ```
 
 Notice candidate #4 — an unrelated *Pacific Ocean* text snippet — slips in through cross-modal score bias (see the calibration note above), but because the agent inspects every candidate it correctly reports only the related pages and the PDF. Same tool, same index, same embedding model — only the input modality changes.
@@ -1059,6 +1057,7 @@ Notice candidate #4 — an unrelated *Pacific Ocean* text snippet — slips in t
 This example combines structured outputs, tools, ReAct, RAG, native multimodal embeddings, and both text and image inputs to create a functional multimodal agentic RAG proof-of-concept.
 
 ## Conclusion
+
 This lesson completes our journey through the fundamentals of AI engineering in Part 1. We have seen how to move beyond text-only systems and build powerful multimodal agents that can see and interpret the world more like humans do. By combining concepts like structured outputs, tools, ReAct, and RAG, we constructed a proof-of-concept that can reason about visual data.
 
 These skills will be crucial for the capstone project in Part 2, where we will develop a multi-agent system capable of handling multiple data formats. The research agent will need to process PDFs, videos, and images to extract information or rank relevant resources. Then it will be passed to the writer agent, which will need to process all this information to properly extract key facts from the research when writing.
