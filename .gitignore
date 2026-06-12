@@ -3,10 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-#folders
-notebook_colab_version/
-
-
 # C extensions
 *.so
 
@@ -197,7 +193,9 @@ outputs/
 .research
 
 # Lessons
-# Ignore all configs and inputs folders except those from lessons/writing_workflow
+notebook_colab_version/
+
+## Ignore all configs and inputs folders except those from lessons/writing_workflow
 configs/
 inputs/
 !lessons/writing_workflow/configs/
