@@ -163,8 +163,12 @@ class TestRunJobs:
     def test_run_jobs_with_progress(self) -> None:
         """Test running jobs with progress bar."""
         jobs = [self._test_job() for _ in range(3)]
+
+        async def gather_jobs() -> list[int]:
+            return await asyncio.gather(*jobs)
+
         with patch("tqdm.asyncio.tqdm_asyncio") as mock_tqdm:
-            mock_tqdm.gather.return_value = asyncio.gather(*jobs)
+            mock_tqdm.gather.return_value = gather_jobs()
             results = asyncio_run(run_jobs(jobs, show_progress=True, desc="Test jobs"))
             assert results == [10, 10, 10]
             mock_tqdm.gather.assert_called_once()

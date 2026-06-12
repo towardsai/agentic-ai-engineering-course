@@ -77,8 +77,8 @@ These workflows accept human feedback, which is plugged directly into the review
 
 To enable this flexible approach, we decoupled the article generation workflow from the editing workflows using MCP servers. The `generate_article`, `edit_article`, and `edit_selected_text` workflows are each exposed as independent MCP tools. This architecture allows you to generate an article, review it, and then selectively apply editing workflows with your feedback until you are satisfied.
 
-https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l24_writing_workflow.png
-Image 3: A flowchart illustrating the Brown writing workflow with human-in-the-loop, showing three independent MCP tools and a human feedback loop. (Source: https://raw.githubusercontent.com/iusztinpaul/agentic-ai-engineering-course-data/main/images/l24_writing_workflow.png)
+https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l24_writing_workflow.png
+Image 3: A flowchart illustrating the Brown writing workflow with human-in-the-loop, showing three independent MCP tools and a human feedback loop. (Source: https://raw.githubusercontent.com/towardsai/agentic-ai-engineering-course/main/assets/images/l24_writing_workflow.png)
 
 Editing the entire article can be an overreaction, as it might make changes where you do not want any. This is why we also implemented the `edit_selected_text` workflow. It allows you to apply the same logic but only to a selected portion of the text, giving you precise control.
 
