@@ -7,7 +7,7 @@ authors = [
     {name = "Paul Iusztin", email = "p.b.iusztin@gmail.com"},
 ]
 license = { text = "MIT" }
-requires-python = "==3.12.11"
+requires-python = "==3.14.4"
 dependencies = [
     "click>=8.1.8",
     "loguru>=0.7.3",
@@ -24,6 +24,7 @@ dependencies = [
     "httpx>=0.28.1",
     "google-genai>=1.24.0",
     "fastmcp==2.12.0",
+    "nest-asyncio2>=1.7.2",
 ]
 
 [dependency-groups]

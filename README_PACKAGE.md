@@ -1,6 +1,6 @@
 # Agentic AI Engineering Course
 
-Python modules for the Agentic AI Engineering course by Towards AI and Paul Iusztin. [Find more about the course](https://academy.towardsai.net/courses/agent-engineering).
+Python modules for the `Agent Engineering: Building Multi-Agent Systems` course by Towards AI and Paul Iusztin. [Find more about the course](https://academy.towardsai.net/courses/agent-engineering).
 
 ## Installation
 
