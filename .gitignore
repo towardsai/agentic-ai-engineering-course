@@ -5,6 +5,10 @@ __pycache__/
 
 #folders
 notebook_colab_version/
+pyproject.toml
+lessons/writing_workflow/
+uv.lock
+
 
 # C extensions
 *.so

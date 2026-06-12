@@ -127,12 +127,12 @@ def run_async_tasks(
     tasks_to_execute: List[Any] = tasks
     if show_progress:
         try:
-            import nest_asyncio
+            import nest_asyncio2
             from tqdm.asyncio import tqdm
 
             # jupyter notebooks already have an event loop running
             # we need to reuse it instead of creating a new one
-            nest_asyncio.apply()
+            nest_asyncio2.apply()
             loop = asyncio.get_event_loop()
 
             async def _tqdm_gather() -> List[Any]:

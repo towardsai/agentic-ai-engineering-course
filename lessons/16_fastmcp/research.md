@@ -3,571 +3,184 @@
 ## Research Results
 
 <details>
-<summary>What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?</summary>
+<summary>What are the best practices for structuring a FastMCP server application in Python, specifically regarding routers for tools, resources, and prompts?</summary>
 
-### Source [1]: https://pypi.org/project/fastmcp/2.2.0/
+### Source [1]: https://gofastmcp.com/getting-started/welcome
 
-Query: What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?
+Query: What are the best practices for structuring a FastMCP server application in Python, specifically regarding routers for tools, resources, and prompts?
 
-Answer: FastMCP is designed to make building MCP servers and clients simple and intuitive for Python developers. The core object is the `FastMCP` server, which handles connection management, protocol details, and routing. You create a server instance with a name and, optionally, dependencies needed for deployment. The server is then populated with tools, resources, and prompts using decorators.
+Answer: The FastMCP official documentation explains that a **server** is responsible for exposing Python functions as MCP-compliant **tools**, **resources**, and **prompts**.[1] It emphasizes that these three primitives are the core pillars, and a well-structured server organizes its logic around them rather than mixing concerns arbitrarily.[1]
 
-**Tools** are defined by decorating Python functions (sync or async) with `@mcp.tool()`. These functions can perform computations, call external APIs, or execute side effects. FastMCP automatically generates the MCP schema from Python type hints and docstrings, and supports Pydantic models for complex inputs. Tools are ideal for actions that change state or interact with external systems.
+According to the docs, FastMCP is designed so that you wrap existing Python functions into these primitives, instead of tightly coupling business logic with protocol handling.[1] This implies a structural best practice: keep your domain logic in normal Python modules and use FastMCP decorators or configuration only at the boundary where you expose that logic as tools, resources, or prompts.[1]
 
-**Resources** expose read-only data, analogous to GET endpoints in a web API. While the PyPI page does not explicitly show the `@mcp.resource()` decorator, it emphasizes that resources are a core concept, allowing you to load information into the LLM’s context. Resources are typically defined by associating a Python function with a URI.
+The documentation also highlights that **servers**, **clients**, and **apps** are separate concepts: servers expose capabilities, clients connect to them, and apps provide UIs.[1] For structuring a server application, this separation encourages keeping MCP server code self-contained, with a clear entrypoint (typically a `server.py` or similar) that instantiates the FastMCP server and registers the different primitives.[1]
 
-**Prompts** are reusable templates for interaction patterns, though the PyPI page does not provide a code example for prompts. The documentation suggests that prompts are another building block alongside tools and resources.
+The site notes that any page in the docs can be accessed as markdown via a `.md` suffix, which is intended to integrate with MCP itself.[1] While not a code-structure rule, this reinforces the architectural idea that the server should present clearly defined resources and prompts that map cleanly to the external interface. In practice, this suggests grouping related resources (e.g., documentation-like content) under coherent URIs and prompt definitions rather than scattering them across unrelated modules.[1]
 
-The server can be run locally using the `fastmcp run server.py` command. FastMCP abstracts away protocol and server management, letting you focus on defining your tools, resources, and prompts in clean, Pythonic code. The decorator-based approach is central to structuring your server, making it easy to organize and maintain as your application grows.
-
------
-
------
-
-### Source [2]: https://github.com/modelcontextprotocol/python-sdk
-
-Query: What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?
-
-Answer: The official Python SDK for Model Context Protocol provides detailed examples and advanced patterns for structuring FastMCP servers. A key feature is the **lifespan context**, which allows you to manage application-wide resources (like database connections) in a type-safe way. You define an async context manager (`app_lifespan`) that yields an application context object (e.g., `AppContext` containing a database). This context is passed to the `FastMCP` constructor, making it available to all tools via the `Context` parameter.
-
-**Tools** can access the lifespan context to utilize initialized resources (e.g., a database). This pattern is useful for dependency injection and ensures resources are properly initialized and cleaned up. The example shows a tool (`query_db`) that uses the database from the lifespan context.
-
-The SDK emphasizes **strong typing** throughout, including for tool inputs, outputs, and application context. This helps maintain clarity and safety as your server grows. While the example focuses on tools and lifespan management, the same principles apply to organizing resources and prompts: define them as decorated functions, and use context objects for shared state or dependencies.
-
-This source does not explicitly discuss multiple routers, but the pattern of grouping related tools, resources, and prompts into modules—each potentially with its own context—is a natural extension of the provided examples. The lifespan and context system is especially valuable for larger, modular servers.
+Overall, the official overview points toward a design where tools, resources, and prompts are first-class, explicitly registered components of the server, backed by cleanly separated application code.[1]
 
 -----
 
 -----
 
-### Source [3]: https://github.com/jlowin/fastmcp
+### Source [2]: https://github.com/prefecthq/fastmcp
 
-Query: What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?
+Query: What are the best practices for structuring a FastMCP server application in Python, specifically regarding routers for tools, resources, and prompts?
 
-Answer: The jlowin/fastmcp repository provides comprehensive documentation on core FastMCP concepts. The **FastMCP Server** is the central object that holds your tools, resources, and prompts, manages connections, and supports configuration (e.g., authentication).
+Answer: The FastMCP README states that FastMCP is "the fast, Pythonic way to build MCP servers" and that **servers wrap your Python functions into MCP-compliant tools, resources, and prompts**.[7] This framing implies a best-practice structure: treat your FastMCP server as an adapter layer that exposes existing Python code rather than embedding all logic inside decorators.[7]
 
-**Tools** are added via the `@mcp.tool` decorator on Python functions. FastMCP generates schemas from type hints and docstrings, supporting both synchronous and asynchronous functions. Tools can return a variety of types, including JSON-serializable objects, text, or media (with helper classes).
+The repository describes three pillars:
+- **Tools** for executable functions.
+- **Resources** for data you expose.
+- **Prompts** for reusable, structured prompt templates.[7]
 
-**Resources** expose read-only data and are defined with the `@mcp.resource("your://uri")` decorator. You can create both static and dynamic resources; dynamic resources use `{placeholders}` in the URI to accept parameters, enabling clients to request specific data subsets (e.g., `users://{user_id}/profile`).
+A typical structural pattern implied by the examples is:
+- Create a central module (often something like `server.py` or `main.py`) that instantiates `FastMCP` and serves as the MCP entrypoint.
+- Place domain logic and data access in separate modules or packages (for example, `services/`, `models/`, or `lib/`).
+- In the server module, import those functions and expose them as tools/resources/prompts using the FastMCP APIs (e.g., decorators or helper constructors).[7]
 
-**Prompts** are mentioned as a core concept but are not detailed in the provided snippet. The documentation suggests that prompts, like tools and resources, are registered with the server instance.
+The README’s positioning that servers “wrap” functions further suggests that your **routers** (or registration layer) should be thin: they bind names, descriptions, and parameter schemas to underlying Python callables, but do not themselves implement business logic.[7]
 
-The repository encourages organizing your server by **grouping related tools, resources, and prompts into logical modules**. For example, you might have separate modules for user management, analytics, and system configuration, each exposing their own tools and resources. The server instance acts as the central registry and router for all these components.
-
-Configuration (e.g., host, port, log level) can be passed directly to the `FastMCP` constructor for easy setup. The decorator-based approach and modular organization make it straightforward to scale and maintain complex MCP servers.
-
------
-
------
-
-### Source [4]: https://apidog.com/blog/fastmcp/
-
-Query: What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?
-
-Answer: Apidog’s beginner’s guide to FastMCP provides practical examples for structuring a server. You start by creating a `FastMCP` instance, optionally passing server settings (e.g., `port`, `host`, `log_level`) as keyword arguments.
-
-**Tools** are added by decorating functions with `@mcp.tool()`. FastMCP leverages Python type hints to define input and output schemas, making tools self-documenting and type-safe. Example tools include simple computations (`add`) and greetings (`greet`).
-
-**Resources** are exposed via the `@mcp.resource()` decorator, which takes a URI string. Resources return data (e.g., application config) and are read-only. The example shows a static resource (`data://config`) returning a dictionary.
-
-The guide emphasizes **modularity**: you can define tools and resources in separate Python files and import them into your main server file. This makes it easy to organize a larger codebase, with each module focusing on a specific domain (e.g., authentication, data access, utilities). The `FastMCP` instance serves as the central router, collecting all registered components.
-
-While the guide does not discuss prompts, the pattern is clear: use Python modules and imports to logically separate your tools, resources, and (by extension) prompts, then register them all with the central server instance. This approach scales well and keeps your codebase maintainable.
+By distinguishing **servers**, **clients**, and **apps**, the project encourages a clear boundary for MCP-specific code: the FastMCP server module is responsible for registering tools/resources/prompts, while other Python modules remain protocol-agnostic.[7] This model naturally extends to organizing separate submodules or "routers" for groups of tools (e.g., `tools/files.py`, `tools/users.py`) and then registering them centrally, mirroring common patterns from web frameworks, although the repository does not prescribe a specific router API.[7]
 
 -----
 
 -----
 
-### Source [6]: https://modelcontextprotocol.io/docs/develop/build-server
+### Source [4]: https://circleci.com/blog/building-and-deploying-a-python-mcp-server-with-fastmcp/
 
-Query: What are best practices for structuring a Python FastMCP server with multiple routers for tools, resources, and prompts?
+Query: What are the best practices for structuring a FastMCP server application in Python, specifically regarding routers for tools, resources, and prompts?
 
-Answer: This source reiterates that the `FastMCP` class uses Python type hints and docstrings to automatically generate tool definitions, making it easy to create and maintain MCP tools. However, it does not provide specific guidance on structuring a server with multiple routers or organizing tools, resources, and prompts into separate modules. The focus is on the ease of tool creation rather than architectural patterns.
+Answer: The CircleCI tutorial on building and deploying a Python MCP server with FastMCP presents a concrete directory layout and usage of FastMCP that imply best practices for structuring a server.[2]
 
------
+It first recommends creating a **project directory structure** with a dedicated package and server module:
+- `src/document_brain/`
+- `src/document_brain/__init__.py`
+- `src/document_brain/server.py`[2]
 
-</details>
+This layout separates the MCP server from the rest of the code and encourages packaging the server as a Python distribution. The article explains that MCP servers consist of three key components:
+- **Tools** for model-controlled actions.
+- **Resources** for application-controlled data sources.
+- **Prompts** for user-controlled templates to structure interaction.[2]
 
-<details>
-<summary>What are the benefits of using server-hosted prompts in MCP for defining and reusing agent workflows across different clients?</summary>
+Within `server.py`, the tutorial defines tools, resources, and prompts via FastMCP and then runs the server, which matches a pattern where one module serves as the **central router/entrypoint** for all primitives.[2] While it does not introduce a router object by name, the structure effectively routes requests: FastMCP uses the decorated functions in `server.py` as the implementation of each tool/resource/prompt.[2]
 
-### Source [16]: https://modelcontextprotocol.info/docs/concepts/prompts/
+The tutorial also shows how to test the MCP server using the FastMCP Inspector, where tools, resources, and prompts appear in separate tabs.[2] This reinforces the idea that server structure should map cleanly to these categories, making it easier to reason about and debug.
 
-Query: What are the benefits of using server-hosted prompts in MCP for defining and reusing agent workflows across different clients?
-
-Answer: The Model Context Protocol (MCP) allows servers to define, store, and serve reusable prompt templates and workflows, which clients—such as different AI agents or applications—can easily access and use[1]. By hosting prompts on the server, developers can centralize the management of prompt logic, ensuring that updates and improvements are propagated automatically to all clients. Each prompt can specify required and optional arguments (e.g., code to explain, programming language), enabling flexible, context-aware interactions. For instance, a "git-commit" prompt might require a description of changes, while an "explain-code" prompt could take both code and an optional language parameter. Clients request prompts by name and provide the necessary arguments, receiving back structured messages ready for LLM consumption. This approach abstracts prompt engineering from client implementation, allowing non-expert users or applications to leverage sophisticated, pre-tested prompts without needing to understand their internal structure. The server can validate requests, handle errors (e.g., missing prompts), and return appropriate responses, making the system robust and user-friendly. Overall, server-hosted prompts in MCP streamline the development of agent workflows by promoting reuse, consistency, and maintainability across diverse clients and use cases[1].
-
------
-
------
-
-### Source [17]: https://skywork.ai/skypage/en/ai-potential-prompts-library/1979031702181892096
-
-Query: What are the benefits of using server-hosted prompts in MCP for defining and reusing agent workflows across different clients?
-
-Answer: The Prompts Library MCP Server exemplifies how server-hosted prompts bring order and structure to prompt management by treating prompts as first-class, versioned assets accessible programmatically to any MCP-compatible client[2]. Prompts are stored as Markdown files with YAML frontmatter for metadata (e.g., version, author, tags), enabling easy creation, editing, and organization without a database. The server provides a live, interactive API for CRUD operations, allowing both users and AI agents to dynamically manage the prompt library during conversations. Real-time file watching ensures that edits are instantly reflected, eliminating the need for server restarts. This setup contrasts with static or Git-based prompt collections, which are less interactive and not natively accessible to AI agents. By centralizing prompts on a server, teams avoid the “prompt chaos” of scattered templates and custom integrations, instead benefiting from a single source of truth that is both human- and machine-accessible. The lightweight, open-source architecture (TypeScript/Node.js) ensures the solution is easy to deploy and customize. In summary, the Prompts Library MCP Server demonstrates how server-hosted prompts enable dynamic, organized, and scalable management of agent workflows across clients, fostering collaboration and reducing integration overhead[2].
+Finally, it demonstrates packaging and distribution steps (build with `python -m build`, install via `pip`, and run entrypoint like `mcp-document-brain`).[2] This supports a best practice of organizing your server as an installable package with a clear CLI entrypoint that internally instantiates the FastMCP server and registers all tools/resources/prompts in a predictable module.[2]
 
 -----
 
 -----
 
-### Source [18]: https://realpython.com/python-mcp/
+### Source [5]: https://www.firecrawl.dev/blog/fastmcp-tutorial-building-mcp-servers-python
 
-Query: What are the benefits of using server-hosted prompts in MCP for defining and reusing agent workflows across different clients?
+Query: What are the best practices for structuring a FastMCP server application in Python, specifically regarding routers for tools, resources, and prompts?
 
-Answer: MCP servers support prompts as one of three core primitives (alongside resources and tools), allowing developers to define reusable templates that guide LLM interactions[3]. These prompts can accept arguments, reference external context, and orchestrate multi-step workflows, making them far more powerful than static text snippets. By storing prompts on the server, teams can reuse effective instructions across different projects and clients, ensuring consistency and reducing duplication. For example, a prompt for summarizing customer reviews can be defined once and invoked by any client with the appropriate context and question. This not only saves development time but also ensures that best practices in prompt engineering are shared organization-wide. The ability to parameterize prompts and embed them in larger workflows enables sophisticated, context-aware agent behaviors that are easy to maintain and evolve. Server-hosted prompts thus act as a shared knowledge base for LLM interactions, streamlining the development of complex, multi-agent systems and making it easier to onboard new clients or applications[3].
+Answer: Firecrawl’s FastMCP tutorial provides a step-by-step example of building a Python MCP server and indicates structural patterns for tools, resources, and prompts.[8]
 
------
+The tutorial shows defining tools as regular Python functions decorated with FastMCP’s tooling API, keeping each tool focused on a single task (e.g., web crawling, scraping, or processing.[8]) This demonstrates a practice of **thin wrappers**: tools primarily validate/forward parameters to underlying service functions.
 
------
+For **resources**, the tutorial illustrates exposing data such as crawl results or configuration via resource definitions, separate from tools that perform actions.[8] This separation ensures that read-only or contextual data access is not conflated with operations that trigger side effects. Resources are organized with clear URIs and return predictable data structures.[8]
 
-### Source [19]: https://directus.io/docs/guides/ai/mcp/prompts/
+The article also introduces **prompts** as structured templates that orchestrate how tools and resources are used by the model.[8] Prompts reference tools indirectly by describing how the model should call them, and the tutorial keeps prompt definitions alongside but conceptually separate from the computation and I/O logic.[8]
 
-Query: What are the benefits of using server-hosted prompts in MCP for defining and reusing agent workflows across different clients?
+The project is structured so that:
+- There is a main server file that initializes the FastMCP server.
+- Domain-specific logic (e.g., crawling, parsing) resides in separate modules.
+- Tools/resources/prompts are registered via decorators in the server or closely-related modules.[8]
 
-Answer: Directus highlights that server-hosted prompts in MCP enable the creation of reusable interactions for AI assistants, which is particularly valuable for standardizing responses, creating guided workflows, and ensuring consistent content creation across clients[4]. By storing prompts in a dedicated collection (database table), organizations can manage them centrally, applying permissions and access controls as needed. This setup allows different clients (e.g., various AI assistants or applications) to fetch and execute the same prompts, ensuring that all interactions follow the same rules and quality standards. The system supports both creating new prompt collections and adapting existing ones, with automatic validation to ensure all required fields are present. Directus also emphasizes the importance of setting appropriate permissions so that only authorized users or clients can read or modify prompts. In practice, this means that updates to prompts—whether for improving clarity, fixing issues, or adding new features—are immediately available to all clients, reducing the risk of inconsistency or fragmentation. Server-hosted prompts thus provide a scalable, secure, and maintainable way to define and reuse agent workflows in heterogeneous client environments[4].
+While the article does not define a formal router abstraction, the pattern is similar: the FastMCP server module plays the role of a router, mapping tool/resource/prompt names to specific Python callables. The tutorial thus suggests organizing code so that routing/registration is centralized, and implementation logic lives in decoupled modules, which is conducive to scaling a larger MCP server.[8]
 
 -----
 
 </details>
 
 <details>
-<summary>How can you implement and test a ReAct-style agent loop in a Python MCP client that performs capability discovery and tool execution?</summary>
+<summary>What is the design rationale for hosting workflow instructions as server-side 'MCP Prompts' versus embedding them in the client?</summary>
 
-### Source [20]: https://neo4j.com/blog/developer/react-agent-langgraph-mcp/
+### Source [12]: https://dev.to/aws-heroes/mcp-prompts-and-resources-the-primitives-youre-not-using-3oo1
 
-Query: How can you implement and test a ReAct-style agent loop in a Python MCP client that performs capability discovery and tool execution?
+Query: What is the design rationale for hosting workflow instructions as server-side 'MCP Prompts' versus embedding them in the client?
 
-Answer: The implementation of a **ReAct-style agent loop in a Python MCP client** can be achieved using LangGraph and MCP adapters. The process is as follows:
+Answer: This article explicitly addresses why prompts should live on the MCP server rather than be hard‑coded on the client.
 
-- **Agent Workflow**:
-  - The agent receives an input question from the user.
-  - It decides which tool to call in order to answer the question.
-  - Executes the chosen tool.
-  - Appends the tool execution result to the context.
-  - Analyzes the updated context, deciding if further tool calls or reasoning are needed.
-  - This loop (steps 2–5) is repeated until the agent has enough context to answer.
-  - Returns the final answer to the user.
+It explains that **MCP prompts move workflow state and structure out of the LLM’s transient context and into explicit, server‑side execution**. This reduces the LLM’s decision space because the server exposes well‑defined, reusable workflows instead of forcing the model to infer the entire interaction pattern from a generic client‑side prompt every time. By narrowing the decision space with server‑defined prompts, behavior becomes more predictable and consistent across different clients.
 
-- **Setup and Imports**:
-  - Required libraries include `langchain_core`, `langgraph`, `langchain_mcp_adapters`, and `mcp` for the Python MCP client.
-  - Tools can be loaded from the MCP server using `load_mcp_tools`.
-  - Both MCP-hosted tools and locally defined tools can be incorporated.
+The article notes that prompts and resources are **server‑side primitives**, in contrast to tools which execute logic, and that this design allows the server to encapsulate both **workflow templates and domain knowledge** close to the systems they operate on. Implementing prompts on the server lets the same workflows be reused by multiple MCP‑aware clients without duplicating or re‑implementing instructions in each client.
 
-- **Agent Creation**:
-  - Use `create_react_agent` from LangGraph to instantiate the agent, providing it with the language model and the set of discovered tools.
-  - Example: The agent can choose between tools like `find_movie_recommendations` or Neo4j-specific tools such as `get_neo4j_schema` and `read_neo4j_cypher` based on the question.
+A key rationale given is that **workflow state management is shifted from the LLM’s volatile token context into durable server‑side constructs**. Instead of relying on the model to remember prior instructions or implicit workflow rules embedded in a long client prompt, the server exposes prompts as explicit, structured templates that can be invoked deterministically. This makes workflows easier to version, test, and evolve in one place (the server), while clients simply discover and call them.
 
-- **Testing**:
-  - The agent can be tested via a command-line chat interface (e.g., running `python3 agent.py`).
-  - It is observed to correctly select and sequence tool invocations, such as fetching a schema before querying.
-
-- **Adaptation**:
-  - For different databases or application domains, update the `.env` file for credentials, swap out tool definitions, and adjust the system prompt accordingly.
-
-This structure provides a template for building and testing ReAct loop agents that leverage both capability discovery (via MCP) and tool execution in Python.
+Overall, the article frames server‑side MCP prompts as a way to centralize workflow definition, reduce prompt brittleness in clients, and improve reliability and reuse of workflows across tools and applications.
 
 -----
 
 -----
 
------
+### Source [13]: https://www.speakeasy.com/mcp/core-concepts/prompts
 
-### Source [21]: https://octopus.com/blog/agentic-ai-with-mcp
+Query: What is the design rationale for hosting workflow instructions as server-side 'MCP Prompts' versus embedding them in the client?
 
-Query: How can you implement and test a ReAct-style agent loop in a Python MCP client that performs capability discovery and tool execution?
+Answer: The Speakeasy documentation defines **MCP prompts** as reusable, structured message templates that are **exposed by MCP servers** rather than embedded in clients. It highlights that prompts are returned by the server via `prompts/list` and `prompts/get`, so clients discover them dynamically instead of hard‑coding their contents.
 
-Answer: A **ReAct-style agent loop** using a Python MCP client can be implemented and tested using the following approach:
+The docs emphasize that prompts are **declarative and composable**, intended primarily for **user‑initiated workflows** such as slash commands, quick actions, and task‑specific flows (e.g., summarization or code explanation). Because prompts are server‑defined, UI clients can present a catalog of available workflows and arguments, without needing to encode the workflow instructions themselves.
 
-- **Multi-Server MCP Client**:
-  - Use `MultiServerMCPClient` to interact with multiple MCP servers, enabling dynamic tool discovery and execution from different sources (e.g., Octopus and GitHub MCP servers).
+Each prompt is a **named, parameterized template** with a name, optional description, and a structured list of arguments. These arguments are validated and interpreted server‑side. The server responds to `prompts/get` with a predefined list of messages that initiate consistent model behavior. This structured, server‑side representation ensures that multiple clients invoking the same prompt obtain the same initial workflow instructions, which would be harder to guarantee if each client embedded its own variant.
 
-- **Agent Construction**:
-  - Retrieve tools supported by the MCP servers with `await client.get_tools()`.
-  - Create the agent using `create_react_agent`, supplying the language model and the discovered tools.
+The documentation distinguishes prompts from tools and resources: tools execute logic and resources provide data, while prompts **only return messages**, not logic or data. Hosting prompts on the server enforces this separation of concerns and keeps workflow definition near the systems and data the server already manages.
 
-- **Agent Loop Execution**:
-  - Provide the agent with a prompt describing the multi-step task.
-  - The agent internally decides which tools to invoke for each step, executes them, and incorporates results into its context before reasoning on the next step.
-
-- **Response Handling**:
-  - Utility functions can process and clean the agent's response (e.g., stripping `<think>...</think>` tags).
-  - The agent's output can be printed or programmatically evaluated.
-
-- **Testing**:
-  - The agent is run asynchronously (`asyncio.run(main())`), performing end-to-end tasks such as retrieving projects, releases, and diffs, then summarizing risks.
-  - The observed behavior demonstrates correct sequencing of tool calls, cross-server data retrieval, and synthesis into a final answer.
-
-- **Prompt and Model Dependency**:
-  - The agent’s performance depends on both the prompt quality and the underlying language model's ability to select and use tools effectively. Prompt engineering is sometimes necessary to guide the agent to the correct actions.
-
-This example demonstrates practical implementation and testing of a ReAct-style agent loop, highlighting dynamic tool discovery and orchestration through a Python MCP client in complex, multi-system environments.
-
------
+By centralizing prompts on the server, changes to workflows (new arguments, modified instructions, improved templates) can be rolled out once at the server level and immediately discovered by all MCP‑aware clients via the standardized prompt listing and retrieval APIs, instead of requiring client updates.
 
 -----
 
 </details>
 
 <details>
-<summary>What are common security practices for MCP servers, specifically regarding authentication and authorization when moving from local development (stdio) to a deployed environment?</summary>
+<summary>Can you provide a code example of an MCP client discovering and then calling a specific tool from a FastMCP server using the in-memory transport for testing?</summary>
 
-### Source [22]: https://modelcontextprotocol.io/specification/draft/basic/security_best_practices
+### Source [18]: https://gofastmcp.com/clients/client
 
-Query: What are common security practices for MCP servers, specifically regarding authentication and authorization when moving from local development (stdio) to a deployed environment?
+Query: Can you provide a code example of an MCP client discovering and then calling a specific tool from a FastMCP server using the in-memory transport for testing?
 
-Answer: The official MCP specification outlines key **security practices** for MCP servers, especially regarding authentication and authorization in production environments. 
+Answer: This official FastMCP client documentation shows exactly how to use the **in‑memory transport** to connect a Python client directly to a FastMCP server instance for testing.[6]
 
-- **Authentication**: MCP servers **MUST NOT use sessions for authentication**. Instead, secure, non-deterministic session IDs (such as UUIDs) generated with secure random number generators are required. Avoid predictable or sequential session identifiers to prevent guessing by attackers.
-- **Session Management**: Session IDs should be rotated or expired to further reduce risk. MCP servers should bind session IDs to user-specific information (e.g., `<user_id>:<session_id>`) so that even if a session ID is guessed, impersonation is not possible.
-- **Authorization**: All inbound requests **MUST be verified**. Authorization checks must be enforced systematically.
-- **Transport Security**: When using stdio transport for local development, access can be limited to the MCP client. For HTTP transports, restrict access by requiring an authorization token and using IPC mechanisms like Unix domain sockets with restricted access.
-- **Consent and Privilege Management**: For one-click local MCP server configuration, explicit user consent is mandatory before executing commands. Users must see the full command, warnings about potentially dangerous operations, and be allowed to cancel. Sandboxing and minimal privilege execution are recommended.
-- **Mitigation Measures**: 
-  - Warn users about commands accessing sensitive locations or containing dangerous patterns (e.g., `sudo`, `rm -rf`).
-  - Default execution in sandboxed environments with restricted file system and network access.
-  - Mechanisms for explicit privilege escalation by user consent.
-  - Use platform-specific sandboxing tools (containers, chroot, etc.).
-  - Prevent unauthorized usage from malicious processes by restricting transport access and requiring tokens or secure IPC.
+It explains that the **in‑memory transport** "connects directly to a FastMCP server instance within the same Python process" and is intended for **testing and development** scenarios where you do not want to deal with stdio, HTTP/SSE, or WebSocket plumbing.[6]
 
-These practices help transition MCP servers from local development to secure deployment, with strong emphasis on authentication, authorization, consent, and process isolation[1].
+The page documents that you use the FastMCP **Client** class together with an **InMemoryTransport** (or equivalent helper) and a server instance created with the FastMCP server API.[6] The typical high‑level flow is:
 
------
+1. **Create the FastMCP server** instance (e.g., via the `FastMCP`/`Server` class and decorated tools).
+2. **Construct an in‑memory transport**, wiring it to that server instance so client requests are routed directly in process.[6]
+3. **Create a Client** object, passing the in‑memory transport into the client constructor.[6]
+4. **Open an MCP session** from the client; during this, the client performs the MCP handshake and **discovers tools** from the server (i.e., it calls the protocol’s `capabilities` and `tools/list` methods so you can see available tools and their schemas).[6]
+5. Once the session is open, you can **inspect the discovered tools** on the client side and then **call a specific tool** by name with appropriate JSON‑serializable arguments.[6]
+
+While this page does not give a full standalone code listing, it establishes the pattern that a test client using in‑memory transport will: create the server object; create an in‑memory transport bound to that server; create a `Client` with that transport; then use the client’s session object to discover and invoke tools by name (e.g., `session.call_tool("tool_name", args={...})`).[6] This is the exact pattern you would follow to build a test that discovers and then calls a specific tool from a FastMCP server using in‑memory transport.
 
 -----
 
 </details>
 
 <details>
-<summary>What are best practices for implementing a Python MCP client that can switch between in-memory and stdio transports for development and testing?</summary>
+<summary>How does decoupling orchestration (in an MCP client) from tool execution (in an MCP server) improve token efficiency and context management for LLM-based agents?</summary>
 
-### Source [25]: https://modelcontextprotocol.io/docs/develop/build-client
+### Source [22]: https://www.anthropic.com/engineering/code-execution-with-mcp
 
-Query: What are best practices for implementing a Python MCP client that can switch between in-memory and stdio transports for development and testing?
+Query: How does decoupling orchestration (in an MCP client) from tool execution (in an MCP server) improve token efficiency and context management for LLM-based agents?
 
-Answer: The official MCP documentation provides best practices and code examples for implementing a Python MCP client that can flexibly switch between in-memory and stdio transports, crucial for development and testing scenarios.
+Answer: This source explains that traditional MCP setups tightly couple **orchestration** (the LLM deciding which tools to use and in what order) with **tool execution** (the MCP server running those tools) by exposing every tool directly in the model’s prompt as a callable function.[1] This means all tool schemas and most intermediate results must live inside the model’s context window, which inflates token usage and constrains how many tools or how much state the agent can handle efficiently.[1]
 
-- **Client Structure:** Use classes to encapsulate client logic, managing session objects and asynchronous resources using `AsyncExitStack`. This enables easy cleanup and flexible context management for different transports.
-- **Transport Switching:** To connect over stdio (e.g., spawning a subprocess and communicating via its stdin/stdout), use `StdioServerParameters` and `stdio_client`:
-    ```python
-    server_params = StdioServerParameters(command="python", args=[server_script_path])
-    stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
-    self.stdio, self.write = stdio_transport
-    self.session = await self.exit_stack.enter_async_context(ClientSession(self.stdio, self.write))
-    ```
-    The design allows the transport to be swapped (for example, you could replace `stdio_client` with an in-memory transport for testing).
-- **Error Handling:** Always wrap tool calls and connection logic in try-catch blocks, and provide meaningful error messages. Gracefully handle connection issues to improve reliability and testability.
-- **Initialization:** After establishing the transport and session, explicitly call `initialize()` and confirm tool availability (e.g., via `list_tools()`).
-- **Environment Management:** Use environment variables (e.g., via `dotenv`) to control configuration parameters such as server paths and transport types, allowing overrides for development vs. production.
-- **Development and Testing:** By abstracting transport creation and using dependency injection (passing in the desired transport), the client can easily switch between stdio (for integration with real servers) and in-memory transports (for unit testing and mock scenarios).
+Decoupling orchestration from execution via **code execution with MCP** changes the pattern: the model runs in a code execution environment and treats MCP servers as **code APIs** rather than as direct tools.[1] The LLM’s role is to write code (e.g., Python) that calls MCP tools through a small API; the actual calls, data routing, and intermediate state live in the execution environment and MCP server, *outside* the LLM context.[1]
 
-This approach ensures flexibility and maintainability, making it straightforward to adapt the client for different environments without code duplication or complex branching logic[1].
+For **token efficiency**, this has two main effects:
+- The agent can **load tool definitions on demand** instead of including all schemas upfront in the prompt, so only the tools needed for the current subtask are fetched and described.[1] In Anthropic’s example, this reduced tool-definition tokens from ~150,000 to ~2,000 (about **98.7%** savings).[1]
+- Intermediate results stay in the execution environment by default; only selected outputs or summaries are logged back to the model, so large data flows between tools never consume context tokens.[1]
 
------
+For **context management**, this decoupling means:
+- The execution environment maintains **state and intermediate variables** across steps without re-serializing them into the prompt on every call.[1]
+- The model’s context is reserved for **high-level plans, code, and concise outputs**, rather than schemas and raw tool I/O.[1]
+- Sensitive or bulky data can transit through tools without ever entering model context, improving both privacy and context budget usage.[1]
 
------
-
------
-
-### Source [26]: https://composio.dev/blog/mcp-client-step-by-step-guide-to-building-from-scratch
-
-Query: What are best practices for implementing a Python MCP client that can switch between in-memory and stdio transports for development and testing?
-
-Answer: This step-by-step guide demonstrates building a terminal-based MCP client from scratch, with a focus on structure and modularity that supports switching transports for development and testing.
-
-- **Workspace Organization:** Create a clear directory structure separating servers, clients, and workspace/results. This modular setup aids in managing different client and server implementations, including those with different transports.
-- **Virtual Environment:** Use a Python virtual environment for dependency isolation, making it easier to manage packages and configurations for various development and test setups.
-- **Client Invocation:** The client is designed to connect to any MCP server using a command-line invocation, e.g., `python <path-to-client> <path-to-server>`. This makes it easy to switch between local (stdio) and potentially in-memory or remote servers via command-line arguments or environment variables.
-- **Result Verification:** The guide encourages testing interactions (such as file operations) and verifying results in a dedicated workspace directory. This supports both manual and automated testing, regardless of the underlying transport.
-- **Extensibility:** The design makes it straightforward to integrate with hosted MCP servers or switch to different backend repositories, further supporting the ability to change transports as needed for development or production.
-
-Although the guide does not explicitly show in-memory vs. stdio transport switching, its emphasis on modularity, clear separation of client/server logic, and command-line configurability provides a strong foundation for implementing such a feature[2].
-
------
-
------
-
------
-
-### Source [27]: https://modelcontextprotocol.info/docs/best-practices/
-
-Query: What are best practices for implementing a Python MCP client that can switch between in-memory and stdio transports for development and testing?
-
-Answer: The architectural best practices for MCP development emphasize configuration management and environment-specific overrides, which are directly relevant to implementing flexible transport layers in a client.
-
-- **Configuration Management:** Externalize all configuration, such as the choice of transport (in-memory vs. stdio), using environment variables or configuration files (`.env`, YAML, etc.). This enables seamless switching of client behavior without code changes.
-- **Validation:** Use robust configuration validation (with libraries like `pydantic`) to ensure that all parameters, including those affecting transport, are set correctly for each environment.
-- **Environment Overrides:** Provide different configuration files or environment variable sets for development, testing, and production. For example, a development config could specify in-memory transport, while production uses stdio.
-- **Security and Consistency:** Consistent configuration handling reduces the risk of accidental misconfiguration and ensures that the client can be reliably tested under different scenarios.
-
-These practices allow for clean separation between code and environment, making it trivial to switch transports by changing configuration rather than modifying code[3].
-
------
-
------
-
-</details>
-
-<details>
-<summary>How can Pydantic settings be effectively used in a FastMCP server to manage configuration for different environments, such as development and production?</summary>
-
-### Source [28]: https://gofastmcp.com/servers/server
-
-Query: How can Pydantic settings be effectively used in a FastMCP server to manage configuration for different environments, such as development and production?
-
-Answer: FastMCP server configuration can be managed using a combination of initialization arguments, global settings, and transport-specific settings. FastMCP supports configuration for different environments via **global settings** that are set using environment variables (prefixed with `FASTMCP_`) or through a `.env` file. This allows the separation of configuration logic for development, production, or other environments without changing code.
-
-Key settings include:
-- **`log_level`** (`FASTMCP_LOG_LEVEL`): Controls logging verbosity. Set to `"DEBUG"` for development or `"INFO"`/`"ERROR"` for production.
-- **`mask_error_details`** (`FASTMCP_MASK_ERROR_DETAILS`): Hides error details from clients, typically enabled in production for security.
-- **`resource_prefix_format`** (`FASTMCP_RESOURCE_PREFIX_FORMAT`): Adjusts resource naming conventions.
-- **`strict_input_validation`** (`FASTMCP_STRICT_INPUT_VALIDATION`): Controls validation strictness, useful for enforcing stricter input validation in production.
-- **`include_fastmcp_meta`** (`FASTMCP_INCLUDE_FASTMCP_META`): Toggles inclusion of FastMCP metadata.
-- **`env_file`** (`FASTMCP_ENV_FILE`): Specifies the path to the environment file, allowing distinct `.env` files for development and production.
-
-This approach leverages Pydantic settings under the hood, meaning changes to environment variables or `.env` files are automatically reflected in FastMCP’s configuration. For example, you can have `.env.production` and `.env.development` files, selecting which to use with `FASTMCP_ENV_FILE`. This pattern supports best practices for environment-specific configuration management, keeping secrets and operational settings outside the codebase[1].
-
------
-
------
-
------
-
-### Source [29]: https://ai.pydantic.dev/mcp/client/
-
-Query: How can Pydantic settings be effectively used in a FastMCP server to manage configuration for different environments, such as development and production?
-
-Answer: Pydantic AI provides a mechanism to load MCP servers from a JSON configuration file using `load_mcp_servers()`. This allows you to define different server configurations externally and switch between them for different environments (e.g., development vs. production) without modifying application code.
-
-Configuration is specified in a JSON file under the `"mcpServers"` key, with each server definition containing unique parameters such as `command`, `args`, or `url`. For example:
-```json
-{
-  "mcpServers": {
-    "dev-server": {
-      "url": "http://localhost:8000/mcp"
-    },
-    "prod-server": {
-      "url": "https://api.example.com/mcp"
-    }
-  }
-}
-```
-You can then load and use these settings in your application:
-```python
-from pydantic_ai.mcp import load_mcp_servers
-servers = load_mcp_servers('mcp_config.json')
-```
-This method enables the separation of configuration from code and supports environment-specific deployment patterns by simply switching configuration files. It aligns with the principle of using external, version-controlled configuration for managing different environments[2].
-
------
-
------
-
------
-
-### Source [31]: https://github.com/modelcontextprotocol/python-sdk/pull/1244
-
-Query: How can Pydantic settings be effectively used in a FastMCP server to manage configuration for different environments, such as development and production?
-
-Answer: This update to the FastMCP constructor ensures that only explicitly provided parameters are passed to the Pydantic Settings constructor, respecting Pydantic’s intended priority order for configuration sources. This means FastMCP will correctly prioritize settings from environment variables, `.env` files, and defaults as defined by Pydantic’s configuration system.
-
-As a result, developers can confidently use environment variables or `.env` files to override configuration for different environments (development, production, etc.), knowing that only explicitly set values are passed and the correct precedence is maintained. This improves reliability and predictability in configuration management for MCP servers, especially when deploying across multiple environments[4].
-
------
-
------
-
-</details>
-
-<details>
-<summary>What is the role of the MCP Inspector tool in the development and debugging workflow of a FastMCP server and client?</summary>
-
-### Source [32]: https://www.firecrawl.dev/blog/fastmcp-tutorial-building-mcp-servers-python
-
-Query: What is the role of the MCP Inspector tool in the development and debugging workflow of a FastMCP server and client?
-
-Answer: The MCP Inspector serves as a built-in debugging interface that significantly simplifies the development and testing process for FastMCP servers. Developers can launch the Inspector by running `mcp dev document_reader.py`, which starts a web interface at `http://127.0.0.1:6274` for testing all server components.
-
-The Inspector provides a comprehensive testing workflow that includes several key capabilities. First, developers establish server communication by clicking a "Connect" button. Once connected, they can test each tool with various input parameters to verify functionality. The Inspector also enables resource validation, allowing developers to verify resource access and test dynamic parameter handling. Additionally, it provides prompt preview functionality, letting developers preview prompt templates with different argument values to ensure they work as expected.
-
-A particularly valuable feature is the ability to test error scenarios with invalid inputs, helping developers ensure their error handling is robust. This interactive approach makes it much easier to identify and fix issues during development compared to manual testing methods. The web-based interface provides immediate feedback on how the server responds to different requests, streamlining the debugging process and helping developers build more reliable MCP servers.
-
------
-
------
-
-### Source [33]: https://modelcontextprotocol.io/docs/tools/inspector
-
-Query: What is the role of the MCP Inspector tool in the development and debugging workflow of a FastMCP server and client?
-
-Answer: The MCP Inspector is an interactive developer tool designed specifically for testing and debugging MCP servers. It runs directly through `npx` without requiring installation, making it easily accessible with commands like `npx @modelcontextprotocol/inspector <command>`.
-
-The Inspector supports multiple ways to inspect servers, including servers from npm or PyPI packages, as well as locally developed servers or those downloaded as repositories. For npm/PyPI packages, developers use commands like `npx -y @modelcontextprotocol/inspector npx @modelcontextprotocol/server-filesystem /Users/username/Desktop`. For local servers, the typical command is `npx @modelcontextprotocol/inspector node path/to/server/index.js args...`.
-
-The Inspector's interface provides several organized features through different tabs and panes. The **Server connection pane** allows selecting the transport for connecting to the server and supports customizing command-line arguments and environment for local servers. The **Resources tab** lists all available resources, shows resource metadata including MIME types and descriptions, allows resource content inspection, and supports subscription testing. The **Prompts tab** displays available prompt templates, shows prompt arguments and descriptions, enables prompt testing with custom arguments, and previews generated messages.
-
-The **Tools tab** lists available tools, shows tool schemas and descriptions, enables tool testing with custom inputs, and displays tool execution results. Finally, the **Notifications pane** presents all logs recorded from the server and shows notifications received from the server, providing comprehensive visibility into server operations during development and debugging.
-
------
-
------
-
-### Source [34]: https://github.com/jlowin/fastmcp
-
-Query: What is the role of the MCP Inspector tool in the development and debugging workflow of a FastMCP server and client?
-
-Answer: The FastMCP framework emphasizes efficient testing capabilities through its client implementation. The `fastmcp.Client` plays a crucial role in the development workflow by supporting various transports including Stdio, SSE, and critically, **In-Memory** transport. This in-memory testing capability is particularly significant for development and debugging workflows.
-
-The client enables efficient in-memory testing of servers by connecting directly to a `FastMCP` server instance via the `FastMCPTransport`, eliminating the need for process management or network calls during tests. This approach significantly streamlines the testing process compared to traditional methods that require spinning up separate processes or network connections.
-
-The testing pattern is straightforward: developers can create a FastMCP server instance and then connect to it directly using the Client in an async context. For example, by passing the server instance directly to the Client constructor (`async with Client(mcp) as client:`), developers can test their server's tools, resources, and prompts without the overhead of external processes.
-
-Additionally, the Client supports connecting to multiple servers through a single unified client using the standard MCP configuration format, which is valuable for testing complex scenarios involving multiple server interactions. The client can interact with any MCP server programmatically, allowing developers to test tool calls, list available tools, access resources, and verify the entire MCP server functionality. This programmatic access makes it easy to integrate automated tests into development workflows, ensuring servers behave correctly before deployment.
-
------
-
-</details>
-
-<details>
-<summary>What are common patterns for parsing user commands versus agent-bound messages in a ReAct-style agent loop within an MCP client?</summary>
-
-### Source [35]: https://neo4j.com/blog/developer/react-agent-langgraph-mcp/
-
-Query: What are common patterns for parsing user commands versus agent-bound messages in a ReAct-style agent loop within an MCP client?
-
-Answer: A ReAct agent built with LangGraph and MCP in an MCP client separates **user command parsing** from **agent-bound messages** by employing a conversational loop and context management.
-
-- **User commands** are captured as raw text input from the command line and passed into the agent loop. The client recognizes exit commands such as `exit`, `quit`, or `q` to terminate the session. This pattern ensures that only genuine user queries proceed to the agent, while control commands are intercepted at the client level before agent processing.
-- The agent uses a **pre-model hook** to preprocess messages before passing them to the model, enabling token counting and message trimming, which is essential for context management in long conversations.
-- **Agent-bound messages** (such as tool invocation results or system messages) are appended to the conversation context and managed via an in-memory checkpoint (e.g., `InMemorySaver`). This preserves agent state and conversation structure across turns.
-- The agent loop proceeds by: receiving user input, invoking tools as needed (via MCP or local mechanisms), appending results to the context, analyzing updated context, and repeating until a final response is ready. Only after the agent processes and synthesizes context—including both user queries and tool results—is a response returned to the user.
-- The separation is thus primarily handled via input filtering (for user commands) and structured context management (for agent messages), with clear demarcation between user-originated input and agent/tool-generated context[1].
-
------
-
------
-
------
-
-### Source [36]: https://composio.dev/blog/mcp-client-step-by-step-guide-to-building-from-scratch
-
-Query: What are common patterns for parsing user commands versus agent-bound messages in a ReAct-style agent loop within an MCP client?
-
-Answer: In the Composio MCP client guide, **user command parsing** and **agent-bound message handling** follow distinct patterns:
-
-- The agent enters a **chat loop** that waits for user input. User commands (queries) are accepted as text, which is sent to the agent for processing.
-- The loop continuously processes input until the user types a control command (`quit`), which is intercepted by the client and terminates the session. This ensures that only non-control user input reaches the agent.
-- **Agent-bound messages**—including tool responses and formatted outputs—are handled within the loop, formatted using a custom JSON encoder, and printed to the console for the user. The agent receives user queries, determines necessary tool invocations, and integrates the results into its response.
-- The separation is enforced by the client’s main loop: it filters user input for control commands before forwarding to the agent, while agent-bound messages (tool results, responses) are formatted and output after agent processing.
-- The use of **Server-Sent Events (SSE)** for the MCP connection allows real-time streaming of agent-bound messages, further distinguishing agent responses from raw user input and enabling asynchronous message handling[2].
-
------
-
------
-
------
-
-### Source [37]: https://becomingahacker.org/integrating-agentic-rag-with-mcp-servers-technical-implementation-guide-1aba8fd4e442
-
-Query: What are common patterns for parsing user commands versus agent-bound messages in a ReAct-style agent loop within an MCP client?
-
-Answer: This technical guide for integrating Agentic RAG with MCP servers describes message patterns as follows:
-
-- **User command ingestion** is the first stage: the agent receives a natural language query or command from the user interface.
-- The agent then performs **planning**—analyzing the user request and deciding which MCP-bound tools or servers to invoke. This is typically a step-by-step process (e.g., retrieve data, process results, compose final output).
-- **Agent-bound messages** are generated through standardized MCP API calls (e.g., invoking methods like `searchDocuments` or `getRecord`). These messages encapsulate tool invocation requests and responses, formatted as JSON or structured RPC messages.
-- The agent’s main loop distinguishes between user-originated queries and agent-originated tool action requests/responses. User queries are only parsed at the beginning of each loop, while agent-bound messages (tool results, intermediate calculations) are handled internally and appended to the agent’s prompt/context for subsequent reasoning.
-- The clear separation is maintained by passing only user commands into the agent’s initial planning step and handling agent-bound tool and context messages via the MCP client’s standardized API and internal context management[3].
-
------
-
------
-
------
-
-### Source [38]: https://modelcontextprotocol.io/docs/develop/build-client
-
-Query: What are common patterns for parsing user commands versus agent-bound messages in a ReAct-style agent loop within an MCP client?
-
-Answer: The official MCP documentation for building a client outlines the message handling flow:
-
-- The client accepts **user commands** as text input, which are sent to the agent via the MCP protocol.
-- The client differentiates between user commands (queries) and control commands (such as session management or shutdown). Control commands are intercepted and handled by the client, not forwarded to the agent.
-- The agent processes user messages and may generate **agent-bound messages** such as tool invocation requests, context updates, or server queries. These are managed by the MCP client and routed to the appropriate MCP servers using standardized communication (e.g., STDIO, HTTP, or SSE).
-- Responses from MCP servers (tool results, data retrieval) are formatted and sent back to the agent, which may use them for further reasoning before generating a final response.
-- The separation is achieved by explicit client-side message filtering (for user commands and control signals) and structured routing of agent-bound messages to and from MCP servers, in accordance with the MCP protocol specification[4].
-
------
-
------
-
-</details>
-
-<details>
-<summary>What are the key security considerations and best practices when moving an MCP server from a local `stdio` development environment to a deployed production environment that might use a networked transport?</summary>
-
-### Source [39]: https://www.truefoundry.com/blog/mcp-server-security-best-practices
-
-Query: What are the key security considerations and best practices when moving an MCP server from a local `stdio` development environment to a deployed production environment that might use a networked transport?
-
-Answer: When deploying an MCP server from a local `stdio` development environment to a production system using networked transport, the following key security considerations and best practices must be addressed:
-
-- **Strong Authentication:** Use OAuth 2.0 or OIDC with enterprise identity providers (such as Okta, Azure AD, Auth0) to ensure robust authentication. Avoid static tokens in production since they are hard to rotate and audit. Prefer short-lived tokens and implement PKCE for added resilience against interception attacks. Integrate with federated identity providers for single sign-on (SSO) and centralized control.
-
-- **Fine-Grained Authorization (RBAC):** Implement role-based access control to limit actions to authorized users only. Assign tool-level permissions to ensure only specific roles can trigger sensitive tasks, and always follow the principle of least privilege so no more access is granted than necessary.
-
-- **Input Validation & Schema Enforcement:** Validate all incoming JSON-RPC requests against schemas to reject malformed or unrecognized inputs, thereby preventing prompt injection attacks. Sanitize data before execution, especially when tools perform database or file operations.
-
-These practices ensure that MCP servers are protected against authentication and authorization risks, input manipulation, and privilege escalation when exposed to networked environments[1].
-
------
-
------
-
------
-
-### Source [40]: https://scalesec.com/blog/mcp-server-security-best-practices
-
-Query: What are the key security considerations and best practices when moving an MCP server from a local `stdio` development environment to a deployed production environment that might use a networked transport?
-
-Answer: When transitioning MCP servers to production and using networked transport, several critical security controls must be implemented:
-
-- **Principle of Least Privilege:** Each AI agent should have granular permissions—dedicated, scoped credentials for each tool or integration. Avoid shared service accounts and use time-limited credentials. Advanced configurations leverage Zero Standing Privilege, where agents get just-in-time, short-lived access only for approved actions.
-
-- **Input Validation and Sanitation:** Multi-layer validation is crucial. Use API gateways or reverse proxies to block malformed requests and injection patterns before they reach the MCP server. Implement sanitization services for inspecting AI-generated queries and file operations. Deploy behavioral monitoring and anomaly detection to flag unexpected activity.
-
-- **Network Segmentation and Isolation:** Host MCP servers in dedicated network zones (subnets or VLANs), restrict firewall rules to only necessary systems and ports, and block unauthorized outbound connections. Regularly test segmentation controls through red team simulations.
-
-- **Comprehensive Logging and Monitoring:** Record full-context logs (prompts, commands, results) and aggregate logs centrally. Use anomaly detection systems trained on normal AI agent behavior. Retain logs long enough for forensic investigations.
-
-- **Regular Security Assessments:** Include AI-specific tests for prompt injection, privilege escalation, and supply chain manipulation. Simulate realistic attacks and validate that controls prevent unauthorized actions and capture sufficient audit data.
-
-Security teams should start with a thorough inventory of existing deployments and privileges before applying these practices[2].
-
------
-
------
-
------
-
-### Source [41]: https://modelcontextprotocol.io/specification/draft/basic/security_best_practices
-
-Query: What are the key security considerations and best practices when moving an MCP server from a local `stdio` development environment to a deployed production environment that might use a networked transport?
-
-Answer: The MCP protocol specification outlines several security best practices essential for moving MCP servers to production, especially when using networked transport:
-
-- **Session Management:** MCP servers must use secure, non-deterministic session IDs (e.g., UUIDs generated by secure random number generators). Predictable or sequential session IDs must be avoided. Rotating or expiring session IDs further reduces risk.
-
-- **Authorization Verification:** Every inbound request must be verified for authorization. Sessions must not be used as authentication mechanisms, and session data should be bound to user-specific information (e.g., storing session IDs as `<user_id>:<session_id>`).
-
-- **Consent and Command Execution:** If a client supports one-click local server configuration, explicit user consent must be obtained before executing commands. Display full command details, warn about dangerous operations, and require explicit approval.
-
-- **Sandboxing and Privilege Restriction:** Execute server commands in sandboxed environments with minimal privileges. Restrict access to the file system, network, and system resources by default, with mechanisms for explicit privilege escalation only when necessary.
-
-- **Transport Security:** When using HTTP transport, require authorization tokens. Use Unix domain sockets or IPC mechanisms with restricted access to limit exposure.
-
-These practices protect MCP servers from session hijacking, event injection, unauthorized code execution, and privilege escalation, which are critical when transitioning to a networked production environment[3].
-
------
+Anthropic frames this as applying standard software patterns (APIs, local variables, control flow) to agents so that MCP servers scale to many tools while keeping the LLM context compact and focused.[1]
 
 -----
 
@@ -577,2754 +190,37 @@ These practices protect MCP servers from session hijacking, event injection, una
 ## Sources Scraped From Research Results
 
 <details>
-<summary>MCP Python SDK</summary>
+<summary>{'type': 'text', 'text': 'Extending Large Language Models (LLMs) with custom tools has become increasingly valuable in today’s AI landscape. Model Context Protocol (MCP) servers provide a standardized way to connect external tools and resources to LLMs. This can enhance their capabilities beyond basic text generation.\n\nWhile thousands of pre-built MCP servers exist, creating your own allows you to address specific workflows. You can implement use cases that off-the-shelf solutions cannot handle. This is where the real power lies.\n\nIn this tutorial, you will learn to build a document parsing server that enables MCP hosts to understand various file formats. You will use FastMCP—the leading library for building MCPs in Python. You will also bundle your application into a Python package and publish on PyPI using an automated CI/CD pipeline.\n\nBy the end, you will have a fully functional document reader MCP server that extracts text from various document formats.\n\nHere is a demo of what you will build.\n\nhttps://images.ctfassets.net/il1yandlcjgk/2Hc7rEy3yFEqreSD7aUVsz/d520643311bfe644198f211075cd6042/2025-05-13-mcp-document-brain-demo.gif?w=1003&fm=webp&q=60\n\n## Prerequisites\n\nBefore diving in, make sure you have:\n\n- [Python 3.10+](https://www.python.org/downloads/) or newer installed on your system\n- Basic understanding of [Python packaging concepts](https://packaging.python.org/en/latest/tutorials/packaging-projects/)\n- A [PyPI account](https://pypi.org/account/register/) for publishing your package\n- A [GitHub account](https://github.com/signup) for version control\n- A [CircleCI account](https://app.circleci.com/signup) connected to your GitHub account for creating CI/CD pipelines\n- [Claude Desktop](https://claude.ai/download) for using your MCP server\n\n## Setting up the development environment\n\nBuilding an MCP server opens up exciting possibilities for extending LLM capabilities with custom tools and resources. FastMCP simplifies this process with a clean API using decorators that handle server protocol complexities.\n\nYou can visit this [GitHub repository](https://github.com/ArmstrongA/document-brain.git) to explore the code for the server you are about to build.\n\n### Initializing the project directory\n\nFirst, let us create a new directory for our project and set up the basic structure:\n\n```bash\nmkdir document-brain\ncd document-brain\n```\n\n### Installing `UV`\n\nFor dependency management, you will use `uv`—a modern, fast package manager for Python. Open powershell and run this command to install `uv`on Windows:\n\n```bash\npowershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"\n```\n\nRestart your terminal completely. Then verify the installation:\n\n```bash\nuv --version\n```\n\nYou can also install `uv` using pip:\n\n```bash\n# Using pip\npip install uv\n\nOn Unix-based systems like macOS run:\n\n```bash\ncurl -sSf https://install.python-uv.org | bash\n# Or using Homebrew\nbrew install uv\n```\n\nNow initialize your project with `uv`:\n\n```bash\nuv init\n```\n\nThis command automatically creates:\n\n- **`.python-version`**: Ensures consistent Python versions across environments\n- **`.gitignore`**: Lists files and directories for Git to ignore.\n- **`main.py`**: A starting point for development.\n- **`pyproject.toml`**: Defines project metadata and dependencies.\n- **`README.md`**: An overview of the project’s purpose, usage instructions, and other relevant information.\n\nThese files collectively set up a [foundational structure for a Python project](https://www.reddit.com/r/learnpython/comments/1jbo88t/uv_for_python_project_and_version_management/). This facilitates development and collaboration.\n\n### Creating a virtual environment and installing dependencies\n\nWhen installing packages and dependencies, `uv` automatically creates a virtual environment name `.venv`.\n\nInstall the necessary packages for developing and testing your MCP server. Run:\n\n```bash\nuv add "mcp[cli]"\nuv add "markitdown[all]"\nuv add --dev pytest build twine\n```\n\nThese packages provide:\n\n- FastMCP with CLI tools for development and debugging\n- Markitdown for document parsing functionality\n- Testing (pytest)\n- Building your package (build)\n- Publishing to PyPI (twine)\n\nBefore creating your MCP server, create the project directory structure:\n\n```bash\nmkdir -p src/document_brain\ntouch src/document_brain/__init__.py\ntouch src/document_brain/server.py\n```\n\nYour project structure looks like this:\n\n```text\nproject_root/\n├── src/\n│   └── document_brain/\n│       ├── __init__.py        # Initializes server\n│       └── server.py          # Contains the \'mcp\' instance and definitions\n├── tests/\n│   ├── __init__.py            # Makes tests discoverable\n│   └── test_server.py         # Tests for your MCP server\n├── main.py\n├── pyproject.toml             # Project configuration\n└── README.md                  # Project documentation\n```\n\nThis structure follows the recommended Python packaging standards with src-layout. The approach prevents import issues during development.\n\n## Building the MCP Server with FastMCP\n\nIn this part, you will begin by understanding three primary components of MCP servers (tools, resources, and prompts).\n\n### Understanding the core components\n\nMCP servers consists of three key components:\n\n- **Tools:** Model-controlled functions that LLMs can call to perform actions or interact with external systems.\n- **Resources:** Application-controlled data sources that inject contextual information from your systems into the conversation.\n- **Prompts:** User-controlled templates that can be invoked through UI elements to help users interact with the LLM in structured ways.\n\nNow, let us implement your document brain server in `src/document_brain/server.py`:\n\n```python\nfrom mcp.server.fastmcp import FastMCP\nfrom mcp.server.fastmcp.prompts import base\nfrom mcp.server.fastmcp.resources import DirectoryResource\nfrom pathlib import Path\nimport os\nfrom markitdown import MarkItDown\n\nmd = MarkItDown()\n\n# Initialize the FastMCP server\nmcp = FastMCP("DocumentBrain", dependencies=["markitdown[all]"])\n\n@mcp.tool(\n    annotations={\n        "title": "Read Any Document",\n        "readOnlyHint": True,\n        "openWorldHint": False\n    }\n)\ndef read_any_document(file_path: str) -> str:\n    """Read any supported document and return its text content, including OCR for images.\n    Args:\n        file_path: Path to the document to process.\n    Returns:\n        Extracted text content as a string.\n    """\n    try:\n        expanded_path = os.path.expanduser(file_path)\n        return md.convert(expanded_path).text_content\n    except Exception as e:\n        return f"Error reading file: {str(e)}"\n\n@mcp.tool(\n    annotations={\n        "title": "Save File to PC",\n        "readOnlyHint": False,\n        "openWorldHint": True\n    }\n)\ndef save_file_to_pc(filepath: str, content: str) -> str:\n    """\n    Save content to a file on the desktop.\n    Args:\n        filename: Name of the file to save (can include subdirectory)\n        content: Content to write to the file\n    Returns:\n        A success or error message\n    """\n    try:\n        # Expand the desktop path\n        desktop_path = os.path.expanduser(filepath)\n        # Ensure the filename doesn\'t contain any path traversal attempts\n        safe_filename = os.path.basename(filepath)\n        # Create the full file path\n        full_path = os.path.join(desktop_path, safe_filename)\n        # Ensure the directory exists\n        os.makedirs(os.path.dirname(full_path), exist_ok=True)\n        # Write the content to the file\n        with open(full_path, \'w\', encoding=\'utf-8\') as f:\n            f.write(content)\n        return f"File successfully saved to {full_path}"\n    except Exception as e:\n        return f"Error saving file: {str(e)}"\n\n# Now add a resource\n# Define the path to the current directory\ndocuments_path = Path(".").resolve()\n\n# Create a DirectoryResource to list files in the current directory\ndocuments_resource = DirectoryResource(\n    uri="docs://files",\n    path=documents_path,\n    name="Local Document Directory",\n    description="Lists all files in the current working directory.",\n    recursive=False  # Set to True if you want to include subdirectories\n)\n\n# Add the resource to your FastMCP server\nmcp.add_resource(documents_resource)\n\n@mcp.resource("docs://file/{filename}")\ndef get_document_content(filename: str) -> str:\n    """Retrieve the content of a specified document."""\n    try:\n        file_path = documents_path / filename\n        if not file_path.exists():\n            return f"File not found: {filename}"\n        return md.convert(str(file_path)).text_content\n    except Exception as e:\n        return f"Error reading file {filename}: {str(e)}"\n\n# Prompt: Summarize document\n@mcp.prompt()\ndef analyze_data(text: str) -> list[base.Message]:\n    """Prompt to generate a summary of the provided document text.\n    Args:\n        text: The content of the document to be summarized.\n    Returns:\n        A list of messages guiding the LLM to produce a summary.\n    """\n    return [\n        base.Message(\n            role="user",\n            content=[\n                base.TextContent(\n                    text=f"Assume the role of a data analyst specializing in academic research. \\\n                    Your task is to critically analyze the data presented in the file of the attached academic document. \\\n                    Start by summarizing the key data points and notable findings. Identify any patterns, trends, correlations, or anomalies within the dataset.:\\n\\n{text}"\n                )\n            ]\n        )\n    ]\n\ndef main():\n    """Entry point for the MCP server."""\n    mcp.run()\n\nif __name__ == "__main__":\n    main()\n```\n\nHere is a breakdown what you’ve created:\n\n1. **Tools**: Two functions decorated with `@mcp.tool()`. The `read_any_document` extracts text from documents and `save_file_to_pc` saves files to pc.\n2. **Resources**: A dynamic resource that provides access to documents in the current directory and a function to retrieve document content.\n3. **Prompts**: A prompt that users can invoke to analyze document content.\n4. **Main function**: The `main()` function serves as an entry point for running the server.\n\nNow, update the `src/document_brain/__init__.py` file to expose server components:\n\n```python\n"""Document Reader MCP server for extracting text from various document formats."""\n\nfrom .server import mcp, read_any_document, main\n```\n\n## Testing the MCP Server\n\nIn this part you will run your server and test what it can do. Before testing your MCP server, activate your virtual environment:\n\n```bash\n.venv\\Scripts\\activate # On Unix-based systesms: source .venv/bin/activate\n```\n\nNow proceed to test the MCP server using MCP inspector. Make sure you are connected to the internet.\n\n### Manual testing with the MCP Inspector\n\nFastMCP includes a built-in debugging tool called the MCP Inspector. To test your server:\n\n```bash\nmcp dev src/document_brain/server.py\n```\n\nThis starts the server and opens the Inspector in your browser (typically at `http://127.0.0.1:6274`). Click **Connect** and explore the Tools, Resources, and Prompts tabs to test your implementation.\n\nYou can verify that your server is running.\n\nhttps://images.ctfassets.net/il1yandlcjgk/4P4icEMNhEN0zEeaQmUufT/9d59bd65db67d11096c4c68a682099b8/2025-05-13-mcp-development-debugger.png?w=1003&fm=webp&q=60\n\nIn the Tools tab, there are two tools:\n\n- `read_any_document`\n- `save_file_to_pc`.\n\nYou can click on any tool and test it. For example, clicking on the `read_any_document` tool will show an input field for the file path. Enter the full path to any supported file (such as Excel) on your machine. Click `Run Tool` and the tool will convert the Excel file to markdown, displying the extracted text content.\n\nhttps://images.ctfassets.net/il1yandlcjgk/2hD7ExfyKL3PrumPZSPy8w/5737d4b9153c2998bec911a38956af1f/2025-05-13-mcp-development-debugger-testing-tools.png?w=1003&fm=webp&q=60\n\nYou can also test your MCP Server in Claude Desktop by running:\n\n```bash\nmcp install src/document_brain/server.py\n```\n\nRestart Claude Desktop and the MCP server will be attached. See screenshot below.\n\nhttps://images.ctfassets.net/il1yandlcjgk/5vy52OBZ4IMBi9BBgFlxUe/fa19b3fe76bd6075b0b5ea5e43df6f0f/2025-05-13-mcp-host-claude-desktop.png?w=1003&fm=webp&q=60\n\nNow ask Claude to analyze data in an Excel file `global_inflation_data.xlsx`, saved locally.\n\nhttps://images.ctfassets.net/il1yandlcjgk/3NgRCZVfGf2pJ4UOKab0Wx/c7d9fcf5256a103e450317e95bb83b7e/2025-05-13-claude-desktop-uses-read-any-document-tool.png?w=1003&fm=webp&q=60\n\nYour MCP Server is fully operational in Claude Desktop.\n\n### Setting up automated testing\n\nTo set up a simple test for our MCP server, create a test directory:\n\n```bash\nmkdir -p tests\ntouch tests/test_server.py\ntouch tests/__init__.py\n```\n\nNow, add basic tests in `tests/test_server.py`:\n\n```python\nimport pytest\nfrom src.document_brain.server import read_any_document\n\n# Fixture to create a temporary text file\n@pytest.fixture\ndef temp_text_file(tmp_path):\n    file_path = tmp_path / "test_document.txt"\n    file_path.write_text("This is a test document.")\n    return file_path\n\n# Test reading a valid text file\ndef test_read_valid_document(temp_text_file):\n    content = read_any_document(str(temp_text_file))\n    assert "This is a test document." in content\n\n# Test reading a non-existent file\ndef test_read_nonexistent_file():\n    content = read_any_document("nonexistent_file.txt")\n    assert "Error reading file" in content\n```\n\nThese tests verify that our document reader functions work correctly. Run the tests:\n\n```bash\npytest tests/ -v\n```\n\nThe `-v` flag tells pytest to output detailed logs about the tests.\n\nhttps://images.ctfassets.net/il1yandlcjgk/XVjwY9CSoUi72wDnDNkuO/5b4655309df0beaf0c5d463bc745309b/2025-05-13-tests-pass-before-building-package.png?w=1003&fm=webp&q=60\n\n## Packaging the Python project\n\nTo prepare your application for distribution, configure the metadata in `pyproject.toml`:\n\n```toml\n[build-system]\nrequires = ["setuptools>=61.0", "wheel"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "mcp-document-brain"\nversion = "0.1.1"\ndescription = "MCP server for converting files to markdown using Markitdown"\nreadme = "README.md"\nauthors = [\n    {name = "Your name", email = "example.email@domain.com"}\n]\nlicense = {text = "MIT"}\nclassifiers = [\n    "Programming Language :: Python :: 3",\n    "License :: OSI Approved :: MIT License",\n    "Operating System :: OS Independent",\n]\nrequires-python = ">=3.12"\ndependencies = [\n    "mcp[cli]>=1.8.0",\n    "Markitdown[all]>=0.1.1",\n]\n\n[project.optional-dependencies]\ndev = [\n    "build>=1.2.2.post1",\n    "pytest>=8.3.5",\n    "twine>=6.1.0",\n]\n[project.scripts]\nmcp-document-brain = "document_brain.server:main"\n\n[tool.setuptools]\npackage-dir = {"" = "src"}\n\n[tool.pytest.ini_options]\ntestpaths = ["tests"]\n```\n\nThis configuration:\n\n- Sets up basic package metadata\n- Declares dependencies\n- Creates a command-line entry point\n- Configures our development tools\n\nNow, add some documentation in `README.md` to provide users with more details about your package.\n\nBuild your package using the build tool:\n\n```bash\npython -m build\n```\n\nThis generates distribution files in the `dist/` directory.\n\n## Publishing your package to PyPI\n\nBefore uploading your package to [PyPI](https://pypi.org/) (the Python Package Index), you will need to complete a few important steps:\n\n1. **Create a PyPI account** if you don’t have one already:\n\n   - Go to the [PyPI registration page](https://pypi.org/account/register/)\n   - Verify your email address after registering\n   - Set up [two-factor authentication](https://pypi.org/help/#twofa) (2FA) for better security\n2. **Generate an API token** instead of using your password:\n\n   - Log in to your PyPI account\n   - Go to [Account Settings → API tokens](https://pypi.org/manage/account/#api-tokens)\n   - Click “Add API token”, give it a name (like “document-brain-upload”), and create it\n   - Save the token somewhere safe - you will need it later on in the tutorial.\n3. **Upload your package** using Twine:\n\n   ```bash\n   twine upload dist/*\n   ```\n\n4. **When prompted for credentials, enter**:\n\n   - Username: `__token__` (type this exactly, including the underscores)\n   - Password: paste your API token\n\nFor extra security, you can store your PyPI credentials in a [`.pypirc` file](https://packaging.python.org/en/latest/specifications/pypirc/) in your home directory. Run:\n\n```text\n[pypi]\nusername = __token__\npassword = pypi-AgEI...your-token-here...\n```\n\nOnce your package is published, anyone can install it with:\n\n```bash\npip install mcp-document-brain\n# Or using uv\nuv add mcp-document-brain\n```\n\nRun it directly:\n\n```bash\nmcp-document-brain\n```\n\nYou can view your published package at `https://pypi.org/project/mcp-document-brain/`\n\n### Troubleshooting tips\n\n- If you get an error about the package name being taken, choose a different name in your `pyproject.toml` file\n- If uploads fail, make sure your token has the right permissions and has not expired\n- Check the [PyPI help docs](https://pypi.org/help/) if you run into problems.\n\n## Automating Python package publishing with CircleCI and `uv`\n\nAutomating your Python package publishing flow can save you hours of manual effort and reduce human error. In this part, you will learn how to use [CircleCI](https://circleci.com/) to automate testing, building, and publishing a Python package to PyPI.\n\nThis section walks through a complete CircleCI setup using the [uv](https://github.com/astral-sh/uv) package manager to handle dependencies. You will create a robust workflow that kicks in when you push changes to your `main` branch. This ensures publishing of your package only when it is production-ready.\n\n### Setting up CircleCI configuration\n\nCreate a CircleCI configuration file to automate testing, building, and publishing:\n\n```bash\nmkdir -p .circleci\ntouch .circleci/config.yml\n```\n\nBefore breaking it down, here is the full `.circleci/config.yml`:\n\n```yaml\nversion: 2.1\n\njobs:\n  build:\n    docker:\n      - image: cimg/python:3.12\n    steps:\n      - checkout\n\n      - run:\n          name: Install uv\n          command: |\n            curl -Ls https://astral.sh/uv/install.sh | sh\n            echo \'export PATH="$HOME/.cargo/bin:$PATH"\' >> $BASH_ENV\n            source $BASH_ENV\n\n      - run:\n          name: Install dependencies using uv\n          command: uv pip install --system -r <(uv pip compile --extra dev pyproject.toml)\n\n      - run:\n          name: Run tests\n          command: python -m pytest tests/ -v\n\n      - run:\n          name: Build package\n          command: |\n            python -m build\n\n      - persist_to_workspace:\n          root: .\n          paths:\n            - dist\n\n  publish:\n    docker:\n      - image: cimg/python:3.12\n    steps:\n      - checkout\n      - attach_workspace:\n          at: .\n      - run:\n          name: Install twine\n          command: pip install --upgrade twine\n      - run:\n          name: Upload to PyPI\n          command: twine upload dist/* -u "$PYPI_USERNAME" -p "$PYPI_PASSWORD"\n\nworkflows:\n  build-test-publish:\n    jobs:\n      - build\n      - publish:\n          requires:\n            - build\n          filters:\n            branches:\n              only: main\n```\n\n**Understanding the CircleCI configuration**\n\nThis setup creates two `jobs`:\n\n1. `build` job\n\nThis is where you define tasks before a release:\n\n- **Docker image:** Uses CircleCI’s official `cimg/python:3.12` image.\n- **Install uv:** `uv` is a faster and stable dependency manager. It replaces `pip` and `pip-tools`.\n- **Install dependencies:**\n\n```bash\nuv pip install --system -r <(uv pip compile --extra dev pyproject.toml)\n```\n\nThis command compiles and installs your `pyproject.toml`, including both your main and optional `dev` dependencies. The `--system` flag installs them into the current Python environment.\n\n- **Run tests:** Executes your test suite with `pytest`. You use `pytest` to run all tests inside the `tests/` folder and print verbose output.\n- **Build the package:** Uses `python -m build` to generate the `dist/` folder, which includes `.tar.gz` and `.whl` files for your package.\n- **Persist the build artifacts:** These are saved to a “workspace”, a temporary shared storage between jobs.\n\n2. `publish` job\n\nThis job picks up where `build` left off.\n\n- **Attach the workspace:** Brings the previously built `dist/` folder into this job.\n- **Install Twine:** Twine is the recommended tool to securely upload packages to PyPI.\n- **Upload to PyPI:** The actual publishing step happens here with:\n\n```bash\ntwine upload dist/* -u "$PYPI_USERNAME" -p "$PYPI_PASSWORD"\n```\n\nYou need to store your credentials as environment variables in your CircleCI project settings.\n\n**`workflows`: CI/CD logic**\nThis block defines when and how your jobs run.\n\n```yml\nworkflows:\n  build-test-publish:\n    jobs:\n      - build\n      - publish:\n          requires:\n            - build\n          filters:\n            branches:\n              only: main\n```\n\nHere is what it means:\n\n- The `build` job always runs.\n- The `publish` job only runs after `build` completes successfully.\n- It only triggers if the commit is pushed to the `main` branch.\n\nThis design ensures you do not accidentally publish from feature branches or failed builds.\n\n### Managing secrets in CircleCI\n\nTo securely publish to PyPI, add these environmental variables in CircleCI project settings:\n- `PYPI_USERNAME`: Set to `__token__`\n- `PYPI_PASSWORD`: Your PyPI API token\n\n## Publishing to PyPI\n\nIn this section, you will trigger the `build` and `publish` jobs.\n\n### Automating the publishing process\n\nWith your CircleCI configuration in place, you will trigger deployment as follows:\n\n1. Make changes to your code and commit them\n2. Push to GitHub\n3. Create a new project in CircleCI and link your repository\n4. When you are ready to release, either:\n   - Merge to the main branch, or\n   - Create and push a tag starting with “v” (e.g., `v0.1.0`)\n5. CircleCI tests, builds, and publishes your package to PyPI\n\nThe build and publish jobs should run successfully.\n\nhttps://images.ctfassets.net/il1yandlcjgk/TgZchXLcwD0SeoRalHTUF/b93dad7ddb66d1239f6836ff6dd0e406/2025-05-13-successful-circleci-run.png?w=1003&fm=webp&q=60\n\n### Versioning strategy\n\nFor versioning, follow Semantic Versioning:\n\n- **MAJOR** version for incompatible API changes\n- **MINOR** version for backwards-compatible functionality\n- **PATCH** version for backwards-compatible bug fixes\n\nTo release a new version:\n\n1. Update the version in `pyproject.toml`\n2. Commit the change\n3. Create and push a tag:\n\n   ```bash\n   git tag v0.1.1\n   git push origin v0.1.1\n   ```\n\n## Verifying the deployment\n\nAfter the CI pipeline completes, verify that your package by visiting its repository on PyPI. For example, this project is available at `https://pypi.org/project/mcp-document-brain/`.\n\nYou can also test the installation:\n\n```bash\n# Create a new virtual environment\npython -m venv test_env\nsource test_env/bin/activate  # On Windows: test_env\\Scripts\\activate\n\n# Install your package from PyPI\npip install mcp-document-brain\n\n# Test that it works\nmcp-document-brain --help\n```\n\nFor a thorough test, create sample documents and try using your MCP server with an LLM platform that supports the MCP.\n\n## Conclusion\n\nCongratulations! You have built a complete MCP server that extends LLM capabilities with document processing tools. You have packaged it for distribution and set up an automated CI/CD pipeline for publishing on PyPI using CircleCI.\n\nThis knowledge provides a foundation for creating more sophisticated MCP servers that could:\n\n- Connect to databases or APIs\n- Process specialized data formats\n- Integrate with external services\n- Execute domain-specific algorithms\n\nMCP opens up exciting possibilities for extending LLM capabilities in standardized ways. By combining Python’s flexibility, FastMCP’s developer-friendly API, and CircleCI’s automation, you can build powerful AI-powered tools tailored to specific workflows.\n\nWhy does this matter? As AI becomes increasingly integrated into our workflows, the ability to extend LLMs with custom capabilities will be a crucial differentiator. Your custom MCP servers can provide unique value that generic AI solutions simply cannot match.', 'extras': {'signature': 'EpwjCpkjAQw51sdAvzxuTQJQb7lc9LS+U+Txz3qRWGUuaixqRF1bImcWFXC2ENL+Zy1+UkEa0s+yTz1GDrS0mUzViPjfkL8UTKomEjdoEv0+v2+8+SlFepuk0XIeOy/YIphxSosnV/Bi+Td7hQySJV0zEYLZDgP8sPdw3vHBW/vujXnHCJxqJK6skZs7dMc4zs0WqXNfH7DUilMFUHbbuHDJ2RxccRSWtRYy5zkj7K7ohdpfgJTGJmVa7I1ze6wGDPCnzeQEhdE6OLXE7SMHS1L+CEVXL2PUah+hsGE8O9EwWWbd//qJGBW+VjQACuR/y2Gklemk8+U+FsCT3/tY2T7WlIVjnUXmte/2K8mCjChJ3Ig2e7iy4lSYSV1I+8Kht197mpsTWZXuc/MmjgqqsUjNnILmc7IRGEWiWXx7rz89CYvZiriiMsNgrB4Ks4UOLPalx+PGAwm4160tSGi5EbENL3NFC/ODk3I3wYy6HikDoF44XSUn7II/uTlpXHJbR3T7pzzpHmVu8KSUq4uR/L1Ipdyt7CnDX0Am2/X5VYJ4RvxSuhgwJ4CUhpeJSFubLtyHYJf1jSc7aok1ehEktO5wZQSd/H/z7tzA00TjwBAsp1y0iL03sWEnNRZ3m2T3fohwWtVHI4ui2cqefg1NKggXh9ffGueS7CX/+/z1HAKwZ8ON0M7rL+wKzzUYhQ0Kz2tIJ4UYuIkCBedZm9iOZKHI3hwXBsNm1OkdlLSHYO/18wA7OUM/OEaeGm9hzvQibtGHxp2F9vxmOoj9V8yspy7Xk68tHxkgbhJbL6LpkLhH5BmVY4fe8dUpCAiPiFehOtNK3UUs8Attud0l3Y26lWLh0+78a0B9/R0J8cqPOFYZlaHMPWYne/rMmV/9gXRoQOnUeY884aliPtJX2BsTkgCDosOC/oXFfC1O8v3fC0EFMAbY0fmDvbsNJvbizRWk42YQtmv6UvPFETf5FxHMEw5zVWDFU+U+fFhRLPyhJPM7iZaI0/XQVAK0GOeKmxP3wrRTO5Cpbc8lGeMxdp9h8W4uaAwS1oNppV057eIVMVn6EMRdfng+sl05FMDkuFO0aPDUVfLKueMSHnU0czQZRJj6HhSDsDoE1GFkzS2hVSkqBxfpukf5U81DOPTpzKdw+evgJ2XN3Q1a6hpVsTdT04cpgp3samgUwI4vw/xJNyRXZJgTUWvdZjOr6Aw0ic66US0chXa5fXpaLByr9ifWF/LUg0srwmQGTRpQ9AVYgetbzi1v/2j+0nsnlZfNETrFSGQ+Nx6h+uXGPG92hEUUw6HCDMDsytBxzOBHTxZe4FoP6newoFzffCAJcwXkuZ5sJeXecESngxiwv4RjagbOxiOZPLt5tRFgsDlrxS/Rd6svH88gkkyn6zW6tMeOlzSE8JWEDzx7inqeih/eoRcUOL1y/WF+PMIrWxHevK7xzBFnMYa8yquSLUDMYij05FuYrjOsSYw3QFC6encmOmQdx28Wor/d38W7xVDMAuQHcCMT12T48bbsfDUs3arczYqJD1fbqidxuIsefQ5mSK7n9A44ZC/vcrIquogYMqg9iM1zsA8iRny97lHYwcnDqGdzz1PdIhaEX73dj8JG7GFThRPM2brIykwKADfx+Nt2K05cWRj5B0P42aqzMr54VV+V+XXraFiz4F+eSFqGdXe0PrVxSLJXMn/nnV3jOIBCLb+0RSLYRqSL+khOnEx149qdKgyEx6HZ/++FkTWw15VtNBXW5tfqFcWcWTxToN66RHqR8wjIha4ZLaLCJse4Fd1BfdjT1aGALtugaRnktBwOc3SIr4Etru/eHwyOWizDqY0G+4WHsa6/8wbPfXipvIIrmn9ROvolvF1OisVA/UH2OWXB7EWbfy9Q1wjXZ78dGtgD6TOeJk1sJ2hgcQ5LCoaNbuHObi80yAo1Bve74bPTgskj9ZiF+83WdTbKO05exeTsO/B/3zLyOtXTT7rt7Dm+f7bALmV1TNF2/RSGWx4/REbPz6iMrhuPgEfZm1YoemGdHTZwZuJZW5LWJvuO7hu7yyTglSY43QlRMoxgUS3s+JTogl5E3+BPAyHpjDDqceJFrcgo9F5Ljz77NxZaKHdYrdcYi7V/L73Qpp8GhzbyBXWbSARnuIg4BzUtXoyV55hIZ5UwIF7oPQwWD8wzW4uSvUnGcgqhBmo1L9jYdME+F2flkfuNHzce+/MVVDBSJ4cbaPC7yuDxCNMWEak4DTION1zBUYW8MeFFZNj9QZ1ZuQNoeViNH/0Zfg4ZcfvIe3iMzeIyWt+7O03/FwRBRF53Qwz1ICUQdSoLvIQwjGZpE3U7yUa9UvbIj9c5GD1mygrP8MHEEihCzgsTHyd5kKNuX0eXf8RYwWCj0/8tgnuayKK3LAZPCOH1TgUUe0k9ww9dDR10DCCwG09g69ZmdXsV8LBX+lSfA7KpgRAiY6LMd6EJGCaixY3TG4YOvJWPUW5aP+rIlrqyNfqAaRJmQtJRtp66cRsnSyj7A0vR0+6J2L31Iw6rRKPwrEfWXcNm/PTGqXBwuxltWjuYweFNWXK8xH7QGW/ifKHxCOohAH4k+0ocbIXVZoPcBoqxmlkWVSBdZvcRy5sobJa7yHFPdYXo+x59bXf2OmiEpL3+yWh0wWp9v9ZAb4kEm6Km9t0uLwgWxaalNWV/WArSMWdzEaSa9CGGQjKaYEJZ58yU+/5bwbt4aFcBGlt7tHjgu0PZ9sNQx+9FtVASCdaKkzpKVVmB+oJTjttk9dZA7lbNdFT9RUzoYXJqRTywd1TQvHhPVWYsGXs9FHsC3WOlT07xLKRd1LwDqyWSHGl/kbM1ajNO8Wl5AFvEJZ7mpC/kY11qOcXa8TtwVCzv7fuxcwfnvdTjDI+V6Inf1Y13MrarUSmytlyiLzm8jErSDA8c82PxlYbWY/H+EDabs/Zd7oYGPQp1siVQMCdoBTDIPc705815zy0HGbQ5wTzhyCVTjGsY5WXV5GTBhRGaGR1s4dyuksso8ju6aaMuoSICwfAHJcR0dylYo2vg8z4s1FXSxJd+idN5PKwC7Rb9bMbfE3aVTprNmrg2dCWJ5PljIDufANzYuC8/Aa8oaCG6hNIW8siK/QNbRCNEhXlwgzQ+EXeQ0+G+2+VyS4HDsHsOkEEce6+y5qCSKsovyXDdYZOYGxNHQBFxwcFenVPTxaRqP0vEjtiioCWuUrc7vySS5zqlckLEFCSzZRKeDwMUXj5hx39Un6NG2OLJMbd1yXDvgxSW+ISU4JHh7x/TlQirVPZdKLgHwSkwDXQPL31+WVdy1ETaHMg67PqPoPyQQpwQUTWu3mTewsEr9GA+fXzbToJBRvBe6vaaBan7fyf62GbeP51vHd8MknZwjrLFYYupcBm6U9BBeumhUe/1T5QTqTAPud5GIae/n/P/Y8m405D9Cy08Qw4aFHpO2FpE8IW8udmveQV5rA+MZ/DK45SQTRjc2E7f3jBONDYJrvnm1XdRVoNbBuDlFfnP2rVSx4btTkLfv8TSSUF2QGgUR6cfu2cFNo7TnERivhlGuhHDvLki2bZmBiyv716o+8qC8/QCwj2yHiDYI0V0+IpzPdQAKxCWeY/XpoBXoQKwCzseWtmequqDqJPech3rD520Ryx8pH+erOEpiYni+0DNQYbDvaXkl/F8J89/zZULz5pJwXRfXA3jb+OEcrER+/md1Czqv9wkdFmxyGAwXyJoD+yItX8kz4PeSHZGr6Xl0mPdAmePEZoQnxKKW5lf40HTBqx+YJeFBqt6rp9fev6WSzNNmx+JyR/lb93sGU7RLEX34bnYvJ8e1KEf0mnmp27hH4eQpoxj00vuHMJCF28EJ62rhbGIedQLKys6WJt0xPxRtT++vRkjc915X8One4Q8j1Wjcy1lqSDFvJV1HIJYQXgmV2ZDPugjqgvTw0yFVjMnZRbqHNRaOLLfJ41o6mqU5B3hn+N/E32+TjE78mh+dyB8xAzDQKuI5+sBry1pMrbr+3UYjHyICUfVl/XBedrIw7FkIWoZd33OaJuPwAIt1f6+j/VQ9DWFoWOYzOzdxF+qRNW10vFBX4EWbJP/xdBrgcK3dD2Zx5gE4/1WlP+LQXqGQ7FUQeuTW1lFNYIxocFKsreqo/qa3N4BUPWirYeDaYpU8MMoUI4K+u2NawrsGsu5SDp8vZ3O7uBn9vNR18RJvx/9QK0I9Qd8S2tVh7hiH7dWLUN4K+5XTQLkCKBB8yBmaf6b/wLWVFj7KmDPyt+JTeXOGsLtNUAJSSPGtuwq+h4wDqWyT54RF3XYwfLYzOrgTTQYoUSGVVKIcexgXjlVq6xcdI/zNdukdWW7rC2rjngULkYH8mLmcgW8PnvKvdYF3qqRT8OAO+JkmIww3aJoag4dBqhuL3f/UBt1kawaS+Rca2i9W6ERSgCVF8V8a9CbCoaw1gEBFLrTHjC7SpLy2Wz51nVWZTUcCd/4Dg7WHzpCMiXKpwaJWXbngNkaUQ0bjvkWD5vh6CIjbTScmL2GluXWAScJOhw5Kytkddm2HP/S+7f0hfyic7SWy4IBVZtWA25ZOU3rVQm7UVELkyMPabfqvjozJ188RGhzjcZEjbioXxATHIKWKhp9IN29KAorF5F+WmKTv/2WPySoB9PC6DqGzWGTqWegPMxsmRJigDbAd+sW0wsttE/qKblFQeBa3d+73PIE6EofZEe32Cu6Hj0jMvDlrbfT2TXJCmg/DNudLOsMY3o/OQ9nn5iofWTTngqLRPgr55BuRb02htkA+tWmwJ1E51R6GgMt5sxj4PW05CJo5XqRydbVgLvpFcoa/SQDDForlv13khkBWUpZ+vDKAEVpjANx18bJAMd+IpqF2qjgjPNls+CV9TYPoxsYwjdjPnn1ksEHaTyofAt3dgykTNLhRjSA9e1MyrpIdKga7NJ7TeB8dYbcY17bC6T7UhCJqncK44ipLt01DmrbB0nlZSi46gtJ2fEdqk/UGETIjDRGgUKpwu5ugyF4Qd4kjXwG12iBeXAD93AKRfupGBcr41ONWbDGm53qswPmyOPtgesC0kvuQyzOA5+OkzYOCsmX2Ghnvwbo+3necJGU0VtgBnUCtEnSPOY0Gjmp+bdOqCqgiijSKumpZI3E7NXLkKarlGLZlZnIPCUoLKgJJy2r5esAb+VCG1UW3UKwCuPL+ChJTvbhTGuvG61Z0ZQ7Sl3pJqJkDqKbfiEI6MbAZqpsfK1iY86GKiEr15D5JPp5dfl/0IsdJqA+u+WyuD8ygXZJb+K6pjz6ob/o/+j+yE5BgcCXtMjPN/R7gKwccg85+/Vy+HNus+F5+bjWssPMaUv3ljV/lkpzDhHP07oEvcvcv+a4kJWOnIyXXTC6vAXrshJk2GAq1SuWFkO9lU4rqoEoW+S8u0TQ94xF8Xcp2QVfEr38r+7QbuuUbcBGcx8wLF5DE9G1e3s8YIqGejrKHCwkeBunT8IhY+EaunJU5JFKHwIQlqMU6CAW/5r6Xyk9uy+/1/jfaOPBuVqmGne+bQmDA4t+YnkDS0N65dRFZAIfk7gr8BqI/zPpaTW5Xk4CUDQwDIY82k58ttYXey9H6nGgfDIfFOR/URzI9U60r0PlOZkYjNJM/j/2UMLRHgMMoYkGyWdtYg3VUcFmRUSgSWJxoD1a2Ep0vL0d0kaWZ/k4YyIYlmLjbfb+EJtmmOwDj0XFhHfcjokIkus+wthCF9VkVQ2c0xy4F8CJ6OzRef4Tmj2Egg1BkN5mXbsumvMHMmXF26VEzs79cDGRvTeGGQRAnFdcbhKbo0l0lxWbr6r3Kyrz5MDCEjtUVyviYv+q11MfnPMo39ooPMX1VmJ6vx6kdt5Wzo7B2PpesGiC+ifv9nM8yLhKXqa/wjPHZdtLt3XJ2f4e2H3azorB7GbK849xNJjuVJ11B5BnN19VLxAaLHFMmfnp3wc1mZEw+2Y4q63Zw4wTaZkX4v6vBmQCM/4YDJ0ozO/U5IhGtIGcBj0bk8zkiG2hiPhs74htadihb2GYHW4='}}</summary>
 
-# MCP Python SDK
-
-**Python implementation of the Model Context Protocol (MCP)**
-
-[https://camo.githubusercontent.com/e6ba71e25e692956bce8d9b0b4e043d9b7171186941670af455088139928be55/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f6d63702e737667](https://pypi.org/project/mcp/)[https://camo.githubusercontent.com/98147347f1be2b00361083e2aac1a18781acb3109ca688b1cd1940980e9f1201/68747470733a2f2f696d672e736869656c64732e696f2f707970692f6c2f6d63702e737667](https://github.com/modelcontextprotocol/python-sdk/blob/main/LICENSE)[https://camo.githubusercontent.com/b33b4fb36a9335985026e9b5b20cf5b1e548b7fff9f215b25abd31c9eaaa04ff/68747470733a2f2f696d672e736869656c64732e696f2f707970692f707976657273696f6e732f6d63702e737667](https://www.python.org/downloads/)[https://camo.githubusercontent.com/4f3fd5d9d842ca7951267b8ff579068d91caf8e23c4a2cf6cd12fe7321228111/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f646f63732d707974686f6e2d2d73646b2d626c75652e737667](https://modelcontextprotocol.github.io/python-sdk/)[https://camo.githubusercontent.com/adb94bad0e5b3ec2d49ac1ac5a133395fe15daf7b7e93fd3200c3efbefbf50e5/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f70726f746f636f6c2d6d6f64656c636f6e7465787470726f746f636f6c2e696f2d626c75652e737667](https://modelcontextprotocol.io/)[https://camo.githubusercontent.com/0e20327998ce56e7a24c9b61227bb10976c5c3b6188551c2bd37e357ad67e7da/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737065632d737065632e6d6f64656c636f6e7465787470726f746f636f6c2e696f2d626c75652e737667](https://modelcontextprotocol.io/specification/latest)
-
-## Table of Contents
-
-- [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk#mcp-python-sdk)
-  - [Overview](https://github.com/modelcontextprotocol/python-sdk#overview)
-  - [Installation](https://github.com/modelcontextprotocol/python-sdk#installation)
-    - [Adding MCP to your python project](https://github.com/modelcontextprotocol/python-sdk#adding-mcp-to-your-python-project)
-    - [Running the standalone MCP development tools](https://github.com/modelcontextprotocol/python-sdk#running-the-standalone-mcp-development-tools)
-  - [Quickstart](https://github.com/modelcontextprotocol/python-sdk#quickstart)
-  - [What is MCP?](https://github.com/modelcontextprotocol/python-sdk#what-is-mcp)
-  - [Core Concepts](https://github.com/modelcontextprotocol/python-sdk#core-concepts)
-    - [Server](https://github.com/modelcontextprotocol/python-sdk#server)
-    - [Resources](https://github.com/modelcontextprotocol/python-sdk#resources)
-    - [Tools](https://github.com/modelcontextprotocol/python-sdk#tools)
-      - [Structured Output](https://github.com/modelcontextprotocol/python-sdk#structured-output)
-    - [Prompts](https://github.com/modelcontextprotocol/python-sdk#prompts)
-    - [Images](https://github.com/modelcontextprotocol/python-sdk#images)
-    - [Context](https://github.com/modelcontextprotocol/python-sdk#context)
-      - [Getting Context in Functions](https://github.com/modelcontextprotocol/python-sdk#getting-context-in-functions)
-      - [Context Properties and Methods](https://github.com/modelcontextprotocol/python-sdk#context-properties-and-methods)
-    - [Completions](https://github.com/modelcontextprotocol/python-sdk#completions)
-    - [Elicitation](https://github.com/modelcontextprotocol/python-sdk#elicitation)
-    - [Sampling](https://github.com/modelcontextprotocol/python-sdk#sampling)
-    - [Logging and Notifications](https://github.com/modelcontextprotocol/python-sdk#logging-and-notifications)
-    - [Authentication](https://github.com/modelcontextprotocol/python-sdk#authentication)
-    - [FastMCP Properties](https://github.com/modelcontextprotocol/python-sdk#fastmcp-properties)
-    - [Session Properties and Methods](https://github.com/modelcontextprotocol/python-sdk#session-properties-and-methods)
-    - [Request Context Properties](https://github.com/modelcontextprotocol/python-sdk#request-context-properties)
-  - [Running Your Server](https://github.com/modelcontextprotocol/python-sdk#running-your-server)
-    - [Development Mode](https://github.com/modelcontextprotocol/python-sdk#development-mode)
-    - [Claude Desktop Integration](https://github.com/modelcontextprotocol/python-sdk#claude-desktop-integration)
-    - [Direct Execution](https://github.com/modelcontextprotocol/python-sdk#direct-execution)
-    - [Streamable HTTP Transport](https://github.com/modelcontextprotocol/python-sdk#streamable-http-transport)
-      - [CORS Configuration for Browser-Based Clients](https://github.com/modelcontextprotocol/python-sdk#cors-configuration-for-browser-based-clients)
-    - [Mounting to an Existing ASGI Server](https://github.com/modelcontextprotocol/python-sdk#mounting-to-an-existing-asgi-server)
-      - [StreamableHTTP servers](https://github.com/modelcontextprotocol/python-sdk#streamablehttp-servers)
-        - [Basic mounting](https://github.com/modelcontextprotocol/python-sdk#basic-mounting)
-        - [Host-based routing](https://github.com/modelcontextprotocol/python-sdk#host-based-routing)
-        - [Multiple servers with path configuration](https://github.com/modelcontextprotocol/python-sdk#multiple-servers-with-path-configuration)
-        - [Path configuration at initialization](https://github.com/modelcontextprotocol/python-sdk#path-configuration-at-initialization)
-      - [SSE servers](https://github.com/modelcontextprotocol/python-sdk#sse-servers)
-  - [Advanced Usage](https://github.com/modelcontextprotocol/python-sdk#advanced-usage)
-    - [Low-Level Server](https://github.com/modelcontextprotocol/python-sdk#low-level-server)
-      - [Structured Output Support](https://github.com/modelcontextprotocol/python-sdk#structured-output-support)
-    - [Pagination (Advanced)](https://github.com/modelcontextprotocol/python-sdk#pagination-advanced)
-    - [Writing MCP Clients](https://github.com/modelcontextprotocol/python-sdk#writing-mcp-clients)
-    - [Client Display Utilities](https://github.com/modelcontextprotocol/python-sdk#client-display-utilities)
-    - [OAuth Authentication for Clients](https://github.com/modelcontextprotocol/python-sdk#oauth-authentication-for-clients)
-    - [Parsing Tool Results](https://github.com/modelcontextprotocol/python-sdk#parsing-tool-results)
-    - [MCP Primitives](https://github.com/modelcontextprotocol/python-sdk#mcp-primitives)
-    - [Server Capabilities](https://github.com/modelcontextprotocol/python-sdk#server-capabilities)
-  - [Documentation](https://github.com/modelcontextprotocol/python-sdk#documentation)
-  - [Contributing](https://github.com/modelcontextprotocol/python-sdk#contributing)
-  - [License](https://github.com/modelcontextprotocol/python-sdk#license)
-
-## Overview
-
-The Model Context Protocol allows applications to provide context for LLMs in a standardized way, separating the concerns of providing context from the actual LLM interaction. This Python SDK implements the full MCP specification, making it easy to:
-
-- Build MCP clients that can connect to any MCP server
-- Create MCP servers that expose resources, prompts and tools
-- Use standard transports like stdio, SSE, and Streamable HTTP
-- Handle all MCP protocol messages and lifecycle events
-
-## Installation
-
-### Adding MCP to your python project
-
-We recommend using [uv](https://docs.astral.sh/uv/) to manage your Python projects.
-
-If you haven't created a uv-managed project yet, create one:
-
-```
-uv init mcp-server-demo
-cd mcp-server-demo
-```
-
-Then add MCP to your project dependencies:
-
-```
-uv add "mcp[cli]"
-```
-
-Alternatively, for projects using pip for dependencies:
-
-```
-pip install "mcp[cli]"
-```
-
-### Running the standalone MCP development tools
-
-To run the mcp command with uv:
-
-```
-uv run mcp
-```
-
-## Quickstart
-
-Let's create a simple MCP server that exposes a calculator tool and some data:
-
-```
-"""
-FastMCP quickstart example.
-
-cd to the `examples/snippets/clients` directory and run:
-    uv run server fastmcp_quickstart stdio
-"""
-
-from mcp.server.fastmcp import FastMCP
-
-# Create an MCP server
-mcp = FastMCP("Demo")
-
-# Add an addition tool
-@mcp.tool()
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
-
-# Add a dynamic greeting resource
-@mcp.resource("greeting://{name}")
-def get_greeting(name: str) -> str:
-    """Get a personalized greeting"""
-    return f"Hello, {name}!"
-
-# Add a prompt
-@mcp.prompt()
-def greet_user(name: str, style: str = "friendly") -> str:
-    """Generate a greeting prompt"""
-    styles = {
-        "friendly": "Please write a warm, friendly greeting",
-        "formal": "Please write a formal, professional greeting",
-        "casual": "Please write a casual, relaxed greeting",
-    }
-
-    return f"{styles.get(style, styles['friendly'])} for someone named {name}."
-```
-
-_Full example: [examples/snippets/servers/fastmcp\_quickstart.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/fastmcp_quickstart.py)_
-
-You can install this server in [Claude Desktop](https://claude.ai/download) and interact with it right away by running:
-
-```
-uv run mcp install server.py
-```
-
-Alternatively, you can test it with the MCP Inspector:
-
-```
-uv run mcp dev server.py
-```
-
-## What is MCP?
-
-The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. Think of it like a web API, but specifically designed for LLM interactions. MCP servers can:
-
-- Expose data through **Resources** (think of these sort of like GET endpoints; they are used to load information into the LLM's context)
-- Provide functionality through **Tools** (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
-- Define interaction patterns through **Prompts** (reusable templates for LLM interactions)
-- And more!
-
-## Core Concepts
-
-### Server
-
-The FastMCP server is your core interface to the MCP protocol. It handles connection management, protocol compliance, and message routing:
-
-```
-"""Example showing lifespan support for startup/shutdown with strong typing."""
-
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
-from dataclasses import dataclass
-
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-
-# Mock database class for example
-class Database:
-    """Mock database class for example."""
-
-    @classmethod
-    async def connect(cls) -> "Database":
-        """Connect to database."""
-        return cls()
-
-    async def disconnect(self) -> None:
-        """Disconnect from database."""
-        pass
-
-    def query(self) -> str:
-        """Execute a query."""
-        return "Query result"
-
-@dataclass
-class AppContext:
-    """Application context with typed dependencies."""
-
-    db: Database
-
-@asynccontextmanager
-async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
-    """Manage application lifecycle with type-safe context."""
-    # Initialize on startup
-    db = await Database.connect()
-    try:
-        yield AppContext(db=db)
-    finally:
-        # Cleanup on shutdown
-        await db.disconnect()
-
-# Pass lifespan to server
-mcp = FastMCP("My App", lifespan=app_lifespan)
-
-# Access type-safe lifespan context in tools
-@mcp.tool()
-def query_db(ctx: Context[ServerSession, AppContext]) -> str:
-    """Tool that uses initialized resources."""
-    db = ctx.request_context.lifespan_context.db
-    return db.query()
-```
-
-_Full example: [examples/snippets/servers/lifespan\_example.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lifespan_example.py)_
-
-### Resources
-
-Resources are how you expose data to LLMs. They're similar to GET endpoints in a REST API - they provide data but shouldn't perform significant computation or have side effects:
-
-```
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP(name="Resource Example")
-
-@mcp.resource("file://documents/{name}")
-def read_document(name: str) -> str:
-    """Read a document by name."""
-    # This would normally read from disk
-    return f"Content of {name}"
-
-@mcp.resource("config://settings")
-def get_settings() -> str:
-    """Get application settings."""
-    return """{
-  "theme": "dark",
-  "language": "en",
-  "debug": false
-}"""
-```
-
-_Full example: [examples/snippets/servers/basic\_resource.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/basic_resource.py)_
-
-### Tools
-
-Tools let LLMs take actions through your server. Unlike resources, tools are expected to perform computation and have side effects:
-
-```
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP(name="Tool Example")
-
-@mcp.tool()
-def sum(a: int, b: int) -> int:
-    """Add two numbers together."""
-    return a + b
-
-@mcp.tool()
-def get_weather(city: str, unit: str = "celsius") -> str:
-    """Get weather for a city."""
-    # This would normally call a weather API
-    return f"Weather in {city}: 22degrees{unit[0].upper()}"
-```
-
-_Full example: [examples/snippets/servers/basic\_tool.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/basic_tool.py)_
-
-Tools can optionally receive a Context object by including a parameter with the `Context` type annotation. This context is automatically injected by the FastMCP framework and provides access to MCP capabilities:
-
-```
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-
-mcp = FastMCP(name="Progress Example")
-
-@mcp.tool()
-async def long_running_task(task_name: str, ctx: Context[ServerSession, None], steps: int = 5) -> str:
-    """Execute a task with progress updates."""
-    await ctx.info(f"Starting: {task_name}")
-
-    for i in range(steps):
-        progress = (i + 1) / steps
-        await ctx.report_progress(
-            progress=progress,
-            total=1.0,
-            message=f"Step {i + 1}/{steps}",
-        )
-        await ctx.debug(f"Completed step {i + 1}")
-
-    return f"Task '{task_name}' completed"
-```
-
-_Full example: [examples/snippets/servers/tool\_progress.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/tool_progress.py)_
-
-#### Structured Output
-
-Tools will return structured results by default, if their return type
-annotation is compatible. Otherwise, they will return unstructured results.
-
-Structured output supports these return types:
-
-- Pydantic models (BaseModel subclasses)
-- TypedDicts
-- Dataclasses and other classes with type hints
-- `dict[str, T]` (where T is any JSON-serializable type)
-- Primitive types (str, int, float, bool, bytes, None) - wrapped in `{"result": value}`
-- Generic types (list, tuple, Union, Optional, etc.) - wrapped in `{"result": value}`
-
-Classes without type hints cannot be serialized for structured output. Only
-classes with properly annotated attributes will be converted to Pydantic models
-for schema generation and validation.
-
-Structured results are automatically validated against the output schema
-generated from the annotation. This ensures the tool returns well-typed,
-validated data that clients can easily process.
-
-**Note:** For backward compatibility, unstructured results are also
-returned. Unstructured results are provided for backward compatibility
-with previous versions of the MCP specification, and are quirks-compatible
-with previous versions of FastMCP in the current version of the SDK.
-
-**Note:** In cases where a tool function's return type annotation
-causes the tool to be classified as structured _and this is undesirable_,
-the classification can be suppressed by passing `structured_output=False`
-to the `@tool` decorator.
-
-##### Advanced: Direct CallToolResult
-
-For full control over tool responses including the `_meta` field (for passing data to client applications without exposing it to the model), you can return `CallToolResult` directly:
-
-```
-"""Example showing direct CallToolResult return for advanced control."""
-
-from typing import Annotated
-
-from pydantic import BaseModel
-
-from mcp.server.fastmcp import FastMCP
-from mcp.types import CallToolResult, TextContent
-
-mcp = FastMCP("CallToolResult Example")
-
-class ValidationModel(BaseModel):
-    """Model for validating structured output."""
-
-    status: str
-    data: dict[str, int]
-
-@mcp.tool()
-def advanced_tool() -> CallToolResult:
-    """Return CallToolResult directly for full control including _meta field."""
-    return CallToolResult(
-        content=[TextContent(type="text", text="Response visible to the model")],
-        _meta={"hidden": "data for client applications only"},
-    )
-
-@mcp.tool()
-def validated_tool() -> Annotated[CallToolResult, ValidationModel]:
-    """Return CallToolResult with structured output validation."""
-    return CallToolResult(
-        content=[TextContent(type="text", text="Validated response")],
-        structuredContent={"status": "success", "data": {"result": 42}},
-        _meta={"internal": "metadata"},
-    )
-
-@mcp.tool()
-def empty_result_tool() -> CallToolResult:
-    """For empty results, return CallToolResult with empty content."""
-    return CallToolResult(content=[])
-```
-
-_Full example: [examples/snippets/servers/direct\_call\_tool\_result.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/direct_call_tool_result.py)_
-
-**Important:** `CallToolResult` must always be returned (no `Optional` or `Union`). For empty results, use `CallToolResult(content=[])`. For optional simple types, use `str | None` without `CallToolResult`.
-
-```
-"""Example showing structured output with tools."""
-
-from typing import TypedDict
-
-from pydantic import BaseModel, Field
-
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP("Structured Output Example")
-
-# Using Pydantic models for rich structured data
-class WeatherData(BaseModel):
-    """Weather information structure."""
-
-    temperature: float = Field(description="Temperature in Celsius")
-    humidity: float = Field(description="Humidity percentage")
-    condition: str
-    wind_speed: float
-
-@mcp.tool()
-def get_weather(city: str) -> WeatherData:
-    """Get weather for a city - returns structured data."""
-    # Simulated weather data
-    return WeatherData(
-        temperature=22.5,
-        humidity=45.0,
-        condition="sunny",
-        wind_speed=5.2,
-    )
-
-# Using TypedDict for simpler structures
-class LocationInfo(TypedDict):
-    latitude: float
-    longitude: float
-    name: str
-
-@mcp.tool()
-def get_location(address: str) -> LocationInfo:
-    """Get location coordinates"""
-    return LocationInfo(latitude=51.5074, longitude=-0.1278, name="London, UK")
-
-# Using dict[str, Any] for flexible schemas
-@mcp.tool()
-def get_statistics(data_type: str) -> dict[str, float]:
-    """Get various statistics"""
-    return {"mean": 42.5, "median": 40.0, "std_dev": 5.2}
-
-# Ordinary classes with type hints work for structured output
-class UserProfile:
-    name: str
-    age: int
-    email: str | None = None
-
-    def __init__(self, name: str, age: int, email: str | None = None):
-        self.name = name
-        self.age = age
-        self.email = email
-
-@mcp.tool()
-def get_user(user_id: str) -> UserProfile:
-    """Get user profile - returns structured data"""
-    return UserProfile(name="Alice", age=30, email="alice@example.com")
-
-# Classes WITHOUT type hints cannot be used for structured output
-class UntypedConfig:
-    def __init__(self, setting1, setting2):  # type: ignore[reportMissingParameterType]
-        self.setting1 = setting1
-        self.setting2 = setting2
-
-@mcp.tool()
-def get_config() -> UntypedConfig:
-    """This returns unstructured output - no schema generated"""
-    return UntypedConfig("value1", "value2")
-
-# Lists and other types are wrapped automatically
-@mcp.tool()
-def list_cities() -> list[str]:
-    """Get a list of cities"""
-    return ["London", "Paris", "Tokyo"]
-    # Returns: {"result": ["London", "Paris", "Tokyo"]}
-
-@mcp.tool()
-def get_temperature(city: str) -> float:
-    """Get temperature as a simple float"""
-    return 22.5
-    # Returns: {"result": 22.5}
-```
-
-_Full example: [examples/snippets/servers/structured\_output.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/structured_output.py)_
-
-### Prompts
-
-Prompts are reusable templates that help LLMs interact with your server effectively:
-
-```
-from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.prompts import base
-
-mcp = FastMCP(name="Prompt Example")
-
-@mcp.prompt(title="Code Review")
-def review_code(code: str) -> str:
-    return f"Please review this code:\n\n{code}"
-
-@mcp.prompt(title="Debug Assistant")
-def debug_error(error: str) -> list[base.Message]:
-    return [\
-        base.UserMessage("I'm seeing this error:"),\
-        base.UserMessage(error),\
-        base.AssistantMessage("I'll help debug that. What have you tried so far?"),\
-    ]
-```
-
-_Full example: [examples/snippets/servers/basic\_prompt.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/basic_prompt.py)_
-
-### Icons
-
-MCP servers can provide icons for UI display. Icons can be added to the server implementation, tools, resources, and prompts:
-
-```
-from mcp.server.fastmcp import FastMCP, Icon
-
-# Create an icon from a file path or URL
-icon = Icon(
-    src="icon.png",
-    mimeType="image/png",
-    sizes="64x64"
-)
-
-# Add icons to server
-mcp = FastMCP(
-    "My Server",
-    website_url="https://example.com",
-    icons=[icon]
-)
-
-# Add icons to tools, resources, and prompts
-@mcp.tool(icons=[icon])
-def my_tool():
-    """Tool with an icon."""
-    return "result"
-
-@mcp.resource("demo://resource", icons=[icon])
-def my_resource():
-    """Resource with an icon."""
-    return "content"
-```
-
-_Full example: [examples/fastmcp/icons\_demo.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/fastmcp/icons_demo.py)_
-
-### Images
-
-FastMCP provides an `Image` class that automatically handles image data:
-
-```
-"""Example showing image handling with FastMCP."""
-
-from PIL import Image as PILImage
-
-from mcp.server.fastmcp import FastMCP, Image
-
-mcp = FastMCP("Image Example")
-
-@mcp.tool()
-def create_thumbnail(image_path: str) -> Image:
-    """Create a thumbnail from an image"""
-    img = PILImage.open(image_path)
-    img.thumbnail((100, 100))
-    return Image(data=img.tobytes(), format="png")
-```
-
-_Full example: [examples/snippets/servers/images.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/images.py)_
-
-### Context
-
-The Context object is automatically injected into tool and resource functions that request it via type hints. It provides access to MCP capabilities like logging, progress reporting, resource reading, user interaction, and request metadata.
-
-#### Getting Context in Functions
-
-To use context in a tool or resource function, add a parameter with the `Context` type annotation:
-
-```
-from mcp.server.fastmcp import Context, FastMCP
-
-mcp = FastMCP(name="Context Example")
-
-@mcp.tool()
-async def my_tool(x: int, ctx: Context) -> str:
-    """Tool that uses context capabilities."""
-    # The context parameter can have any name as long as it's type-annotated
-    return await process_with_context(x, ctx)
-```
-
-#### Context Properties and Methods
-
-The Context object provides the following capabilities:
-
-- `ctx.request_id` \- Unique ID for the current request
-- `ctx.client_id` \- Client ID if available
-- `ctx.fastmcp` \- Access to the FastMCP server instance (see [FastMCP Properties](https://github.com/modelcontextprotocol/python-sdk#fastmcp-properties))
-- `ctx.session` \- Access to the underlying session for advanced communication (see [Session Properties and Methods](https://github.com/modelcontextprotocol/python-sdk#session-properties-and-methods))
-- `ctx.request_context` \- Access to request-specific data and lifespan resources (see [Request Context Properties](https://github.com/modelcontextprotocol/python-sdk#request-context-properties))
-- `await ctx.debug(message)` \- Send debug log message
-- `await ctx.info(message)` \- Send info log message
-- `await ctx.warning(message)` \- Send warning log message
-- `await ctx.error(message)` \- Send error log message
-- `await ctx.log(level, message, logger_name=None)` \- Send log with custom level
-- `await ctx.report_progress(progress, total=None, message=None)` \- Report operation progress
-- `await ctx.read_resource(uri)` \- Read a resource by URI
-- `await ctx.elicit(message, schema)` \- Request additional information from user with validation
-
-```
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-
-mcp = FastMCP(name="Progress Example")
-
-@mcp.tool()
-async def long_running_task(task_name: str, ctx: Context[ServerSession, None], steps: int = 5) -> str:
-    """Execute a task with progress updates."""
-    await ctx.info(f"Starting: {task_name}")
-
-    for i in range(steps):
-        progress = (i + 1) / steps
-        await ctx.report_progress(
-            progress=progress,
-            total=1.0,
-            message=f"Step {i + 1}/{steps}",
-        )
-        await ctx.debug(f"Completed step {i + 1}")
-
-    return f"Task '{task_name}' completed"
-```
-
-_Full example: [examples/snippets/servers/tool\_progress.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/tool_progress.py)_
-
-### Completions
-
-MCP supports providing completion suggestions for prompt arguments and resource template parameters. With the context parameter, servers can provide completions based on previously resolved values:
-
-Client usage:
-
-```
-"""
-cd to the `examples/snippets` directory and run:
-    uv run completion-client
-"""
-
-import asyncio
-import os
-
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-from mcp.types import PromptReference, ResourceTemplateReference
-
-# Create server parameters for stdio connection
-server_params = StdioServerParameters(
-    command="uv",  # Using uv to run the server
-    args=["run", "server", "completion", "stdio"],  # Server with completion support
-    env={"UV_INDEX": os.environ.get("UV_INDEX", "")},
-)
-
-async def run():
-    """Run the completion client example."""
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the connection
-            await session.initialize()
-
-            # List available resource templates
-            templates = await session.list_resource_templates()
-            print("Available resource templates:")
-            for template in templates.resourceTemplates:
-                print(f"  - {template.uriTemplate}")
-
-            # List available prompts
-            prompts = await session.list_prompts()
-            print("\nAvailable prompts:")
-            for prompt in prompts.prompts:
-                print(f"  - {prompt.name}")
-
-            # Complete resource template arguments
-            if templates.resourceTemplates:
-                template = templates.resourceTemplates[0]
-                print(f"\nCompleting arguments for resource template: {template.uriTemplate}")
-
-                # Complete without context
-                result = await session.complete(
-                    ref=ResourceTemplateReference(type="ref/resource", uri=template.uriTemplate),
-                    argument={"name": "owner", "value": "model"},
-                )
-                print(f"Completions for 'owner' starting with 'model': {result.completion.values}")
-
-                # Complete with context - repo suggestions based on owner
-                result = await session.complete(
-                    ref=ResourceTemplateReference(type="ref/resource", uri=template.uriTemplate),
-                    argument={"name": "repo", "value": ""},
-                    context_arguments={"owner": "modelcontextprotocol"},
-                )
-                print(f"Completions for 'repo' with owner='modelcontextprotocol': {result.completion.values}")
-
-            # Complete prompt arguments
-            if prompts.prompts:
-                prompt_name = prompts.prompts[0].name
-                print(f"\nCompleting arguments for prompt: {prompt_name}")
-
-                result = await session.complete(
-                    ref=PromptReference(type="ref/prompt", name=prompt_name),
-                    argument={"name": "style", "value": ""},
-                )
-                print(f"Completions for 'style' argument: {result.completion.values}")
-
-def main():
-    """Entry point for the completion client."""
-    asyncio.run(run())
-
-if __name__ == "__main__":
-    main()
-```
-
-_Full example: [examples/snippets/clients/completion\_client.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/completion_client.py)_
-
-### Elicitation
-
-Request additional information from users. This example shows an Elicitation during a Tool Call:
-
-```
-from pydantic import BaseModel, Field
-
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-
-mcp = FastMCP(name="Elicitation Example")
-
-class BookingPreferences(BaseModel):
-    """Schema for collecting user preferences."""
-
-    checkAlternative: bool = Field(description="Would you like to check another date?")
-    alternativeDate: str = Field(
-        default="2024-12-26",
-        description="Alternative date (YYYY-MM-DD)",
-    )
-
-@mcp.tool()
-async def book_table(date: str, time: str, party_size: int, ctx: Context[ServerSession, None]) -> str:
-    """Book a table with date availability check."""
-    # Check if date is available
-    if date == "2024-12-25":
-        # Date unavailable - ask user for alternative
-        result = await ctx.elicit(
-            message=(f"No tables available for {party_size} on {date}. Would you like to try another date?"),
-            schema=BookingPreferences,
-        )
-
-        if result.action == "accept" and result.data:
-            if result.data.checkAlternative:
-                return f"[SUCCESS] Booked for {result.data.alternativeDate}"
-            return "[CANCELLED] No booking made"
-        return "[CANCELLED] Booking cancelled"
-
-    # Date available
-    return f"[SUCCESS] Booked for {date} at {time}"
-```
-
-_Full example: [examples/snippets/servers/elicitation.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/elicitation.py)_
-
-Elicitation schemas support default values for all field types. Default values are automatically included in the JSON schema sent to clients, allowing them to pre-populate forms.
-
-The `elicit()` method returns an `ElicitationResult` with:
-
-- `action`: "accept", "decline", or "cancel"
-- `data`: The validated response (only when accepted)
-- `validation_error`: Any validation error message
-
-### Sampling
-
-Tools can interact with LLMs through sampling (generating text):
-
-```
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-from mcp.types import SamplingMessage, TextContent
-
-mcp = FastMCP(name="Sampling Example")
-
-@mcp.tool()
-async def generate_poem(topic: str, ctx: Context[ServerSession, None]) -> str:
-    """Generate a poem using LLM sampling."""
-    prompt = f"Write a short poem about {topic}"
-
-    result = await ctx.session.create_message(
-        messages=[\
-            SamplingMessage(\
-                role="user",\
-                content=TextContent(type="text", text=prompt),\
-            )\
-        ],
-        max_tokens=100,
-    )
-
-    if result.content.type == "text":
-        return result.content.text
-    return str(result.content)
-```
-
-_Full example: [examples/snippets/servers/sampling.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/sampling.py)_
-
-### Logging and Notifications
-
-Tools can send logs and notifications through the context:
-
-```
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.session import ServerSession
-
-mcp = FastMCP(name="Notifications Example")
-
-@mcp.tool()
-async def process_data(data: str, ctx: Context[ServerSession, None]) -> str:
-    """Process data with logging."""
-    # Different log levels
-    await ctx.debug(f"Debug: Processing '{data}'")
-    await ctx.info("Info: Starting processing")
-    await ctx.warning("Warning: This is experimental")
-    await ctx.error("Error: (This is just a demo)")
-
-    # Notify about resource changes
-    await ctx.session.send_resource_list_changed()
-
-    return f"Processed: {data}"
-```
-
-_Full example: [examples/snippets/servers/notifications.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/notifications.py)_
-
-### Authentication
-
-Authentication can be used by servers that want to expose tools accessing protected resources.
-
-`mcp.server.auth` implements OAuth 2.1 resource server functionality, where MCP servers act as Resource Servers (RS) that validate tokens issued by separate Authorization Servers (AS). This follows the [MCP authorization specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) and implements RFC 9728 (Protected Resource Metadata) for AS discovery.
-
-MCP servers can use authentication by providing an implementation of the `TokenVerifier` protocol:
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/servers/oauth_server.py
-"""
-
-from pydantic import AnyHttpUrl
-
-from mcp.server.auth.provider import AccessToken, TokenVerifier
-from mcp.server.auth.settings import AuthSettings
-from mcp.server.fastmcp import FastMCP
-
-class SimpleTokenVerifier(TokenVerifier):
-    """Simple token verifier for demonstration."""
-
-    async def verify_token(self, token: str) -> AccessToken | None:
-        pass  # This is where you would implement actual token validation
-
-# Create FastMCP instance as a Resource Server
-mcp = FastMCP(
-    "Weather Service",
-    # Token verifier for authentication
-    token_verifier=SimpleTokenVerifier(),
-    # Auth settings for RFC 9728 Protected Resource Metadata
-    auth=AuthSettings(
-        issuer_url=AnyHttpUrl("https://auth.example.com"),  # Authorization Server URL
-        resource_server_url=AnyHttpUrl("http://localhost:3001"),  # This server's URL
-        required_scopes=["user"],
-    ),
-)
-
-@mcp.tool()
-async def get_weather(city: str = "London") -> dict[str, str]:
-    """Get weather data for a city"""
-    return {
-        "city": city,
-        "temperature": "22",
-        "condition": "Partly cloudy",
-        "humidity": "65%",
-    }
-
-if __name__ == "__main__":
-    mcp.run(transport="streamable-http")
-```
-
-_Full example: [examples/snippets/servers/oauth\_server.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/oauth_server.py)_
-
-For a complete example with separate Authorization Server and Resource Server implementations, see [`examples/servers/simple-auth/`](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/servers/simple-auth).
-
-**Architecture:**
-
-- **Authorization Server (AS)**: Handles OAuth flows, user authentication, and token issuance
-- **Resource Server (RS)**: Your MCP server that validates tokens and serves protected resources
-- **Client**: Discovers AS through RFC 9728, obtains tokens, and uses them with the MCP server
-
-See [TokenVerifier](https://github.com/modelcontextprotocol/python-sdk/blob/main/src/mcp/server/auth/provider.py) for more details on implementing token validation.
-
-### FastMCP Properties
-
-The FastMCP server instance accessible via `ctx.fastmcp` provides access to server configuration and metadata:
-
-- `ctx.fastmcp.name` \- The server's name as defined during initialization
-- `ctx.fastmcp.instructions` \- Server instructions/description provided to clients
-- `ctx.fastmcp.website_url` \- Optional website URL for the server
-- `ctx.fastmcp.icons` \- Optional list of icons for UI display
-- `ctx.fastmcp.settings` \- Complete server configuration object containing:
-  - `debug` \- Debug mode flag
-  - `log_level` \- Current logging level
-  - `host` and `port` \- Server network configuration
-  - `mount_path`, `sse_path`, `streamable_http_path` \- Transport paths
-  - `stateless_http` \- Whether the server operates in stateless mode
-  - And other configuration options
-
-```
-@mcp.tool()
-def server_info(ctx: Context) -> dict:
-    """Get information about the current server."""
-    return {
-        "name": ctx.fastmcp.name,
-        "instructions": ctx.fastmcp.instructions,
-        "debug_mode": ctx.fastmcp.settings.debug,
-        "log_level": ctx.fastmcp.settings.log_level,
-        "host": ctx.fastmcp.settings.host,
-        "port": ctx.fastmcp.settings.port,
-    }
-```
-
-### Session Properties and Methods
-
-The session object accessible via `ctx.session` provides advanced control over client communication:
-
-- `ctx.session.client_params` \- Client initialization parameters and declared capabilities
-- `await ctx.session.send_log_message(level, data, logger)` \- Send log messages with full control
-- `await ctx.session.create_message(messages, max_tokens)` \- Request LLM sampling/completion
-- `await ctx.session.send_progress_notification(token, progress, total, message)` \- Direct progress updates
-- `await ctx.session.send_resource_updated(uri)` \- Notify clients that a specific resource changed
-- `await ctx.session.send_resource_list_changed()` \- Notify clients that the resource list changed
-- `await ctx.session.send_tool_list_changed()` \- Notify clients that the tool list changed
-- `await ctx.session.send_prompt_list_changed()` \- Notify clients that the prompt list changed
-
-```
-@mcp.tool()
-async def notify_data_update(resource_uri: str, ctx: Context) -> str:
-    """Update data and notify clients of the change."""
-    # Perform data update logic here
-
-    # Notify clients that this specific resource changed
-    await ctx.session.send_resource_updated(AnyUrl(resource_uri))
-
-    # If this affects the overall resource list, notify about that too
-    await ctx.session.send_resource_list_changed()
-
-    return f"Updated {resource_uri} and notified clients"
-```
-
-### Request Context Properties
-
-The request context accessible via `ctx.request_context` contains request-specific information and resources:
-
-- `ctx.request_context.lifespan_context` \- Access to resources initialized during server startup
-  - Database connections, configuration objects, shared services
-  - Type-safe access to resources defined in your server's lifespan function
-- `ctx.request_context.meta` \- Request metadata from the client including:
-  - `progressToken` \- Token for progress notifications
-  - Other client-provided metadata
-- `ctx.request_context.request` \- The original MCP request object for advanced processing
-- `ctx.request_context.request_id` \- Unique identifier for this request
-
-```
-# Example with typed lifespan context
-@dataclass
-class AppContext:
-    db: Database
-    config: AppConfig
-
-@mcp.tool()
-def query_with_config(query: str, ctx: Context) -> str:
-    """Execute a query using shared database and configuration."""
-    # Access typed lifespan context
-    app_ctx: AppContext = ctx.request_context.lifespan_context
-
-    # Use shared resources
-    connection = app_ctx.db
-    settings = app_ctx.config
-
-    # Execute query with configuration
-    result = connection.execute(query, timeout=settings.query_timeout)
-    return str(result)
-```
-
-_Full lifespan example: [examples/snippets/servers/lifespan\_example.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lifespan_example.py)_
-
-## Running Your Server
-
-### Development Mode
-
-The fastest way to test and debug your server is with the MCP Inspector:
-
-```
-uv run mcp dev server.py
-
-# Add dependencies
-uv run mcp dev server.py --with pandas --with numpy
-
-# Mount local code
-uv run mcp dev server.py --with-editable .
-```
-
-### Claude Desktop Integration
-
-Once your server is ready, install it in Claude Desktop:
-
-```
-uv run mcp install server.py
-
-# Custom name
-uv run mcp install server.py --name "My Analytics Server"
-
-# Environment variables
-uv run mcp install server.py -v API_KEY=abc123 -v DB_URL=postgres://...
-uv run mcp install server.py -f .env
-```
-
-### Direct Execution
-
-For advanced scenarios like custom deployments:
-
-```
-"""Example showing direct execution of an MCP server.
-
-This is the simplest way to run an MCP server directly.
-cd to the `examples/snippets` directory and run:
-    uv run direct-execution-server
-    or
-    python servers/direct_execution.py
-"""
-
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP("My App")
-
-@mcp.tool()
-def hello(name: str = "World") -> str:
-    """Say hello to someone."""
-    return f"Hello, {name}!"
-
-def main():
-    """Entry point for the direct execution server."""
-    mcp.run()
-
-if __name__ == "__main__":
-    main()
-```
-
-_Full example: [examples/snippets/servers/direct\_execution.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/direct_execution.py)_
-
-Run it with:
-
-```
-python servers/direct_execution.py
-# or
-uv run mcp run servers/direct_execution.py
-```
-
-Note that `uv run mcp run` or `uv run mcp dev` only supports server using FastMCP and not the low-level server variant.
-
-### Streamable HTTP Transport
-
-> **Note**: Streamable HTTP transport is superseding SSE transport for production deployments.
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/servers/streamable_config.py
-"""
-
-from mcp.server.fastmcp import FastMCP
-
-# Stateful server (maintains session state)
-mcp = FastMCP("StatefulServer")
-
-# Other configuration options:
-# Stateless server (no session persistence)
-# mcp = FastMCP("StatelessServer", stateless_http=True)
-
-# Stateless server (no session persistence, no sse stream with supported client)
-# mcp = FastMCP("StatelessServer", stateless_http=True, json_response=True)
-
-# Add a simple tool to demonstrate the server
-@mcp.tool()
-def greet(name: str = "World") -> str:
-    """Greet someone by name."""
-    return f"Hello, {name}!"
-
-# Run server with streamable_http transport
-if __name__ == "__main__":
-    mcp.run(transport="streamable-http")
-```
-
-_Full example: [examples/snippets/servers/streamable\_config.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_config.py)_
-
-You can mount multiple FastMCP servers in a Starlette application:
-
-```
-"""
-Run from the repository root:
-    uvicorn examples.snippets.servers.streamable_starlette_mount:app --reload
-"""
-
-import contextlib
-
-from starlette.applications import Starlette
-from starlette.routing import Mount
-
-from mcp.server.fastmcp import FastMCP
-
-# Create the Echo server
-echo_mcp = FastMCP(name="EchoServer", stateless_http=True)
-
-@echo_mcp.tool()
-def echo(message: str) -> str:
-    """A simple echo tool"""
-    return f"Echo: {message}"
-
-# Create the Math server
-math_mcp = FastMCP(name="MathServer", stateless_http=True)
-
-@math_mcp.tool()
-def add_two(n: int) -> int:
-    """Tool to add two to the input"""
-    return n + 2
-
-# Create a combined lifespan to manage both session managers
-@contextlib.asynccontextmanager
-async def lifespan(app: Starlette):
-    async with contextlib.AsyncExitStack() as stack:
-        await stack.enter_async_context(echo_mcp.session_manager.run())
-        await stack.enter_async_context(math_mcp.session_manager.run())
-        yield
-
-# Create the Starlette app and mount the MCP servers
-app = Starlette(
-    routes=[\
-        Mount("/echo", echo_mcp.streamable_http_app()),\
-        Mount("/math", math_mcp.streamable_http_app()),\
-    ],
-    lifespan=lifespan,
-)
-
-# Note: Clients connect to http://localhost:8000/echo/mcp and http://localhost:8000/math/mcp
-# To mount at the root of each path (e.g., /echo instead of /echo/mcp):
-# echo_mcp.settings.streamable_http_path = "/"
-# math_mcp.settings.streamable_http_path = "/"
-```
-
-_Full example: [examples/snippets/servers/streamable\_starlette\_mount.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_starlette_mount.py)_
-
-For low level server with Streamable HTTP implementations, see:
-
-- Stateful server: [`examples/servers/simple-streamablehttp/`](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/servers/simple-streamablehttp)
-- Stateless server: [`examples/servers/simple-streamablehttp-stateless/`](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/servers/simple-streamablehttp-stateless)
-
-The streamable HTTP transport supports:
-
-- Stateful and stateless operation modes
-- Resumability with event stores
-- JSON or SSE response formats
-- Better scalability for multi-node deployments
-
-#### CORS Configuration for Browser-Based Clients
-
-If you'd like your server to be accessible by browser-based MCP clients, you'll need to configure CORS headers. The `Mcp-Session-Id` header must be exposed for browser clients to access it:
-
-```
-from starlette.applications import Starlette
-from starlette.middleware.cors import CORSMiddleware
-
-# Create your Starlette app first
-starlette_app = Starlette(routes=[...])
-
-# Then wrap it with CORS middleware
-starlette_app = CORSMiddleware(
-    starlette_app,
-    allow_origins=["*"],  # Configure appropriately for production
-    allow_methods=["GET", "POST", "DELETE"],  # MCP streamable HTTP methods
-    expose_headers=["Mcp-Session-Id"],
-)
-```
-
-This configuration is necessary because:
-
-- The MCP streamable HTTP transport uses the `Mcp-Session-Id` header for session management
-- Browsers restrict access to response headers unless explicitly exposed via CORS
-- Without this configuration, browser-based clients won't be able to read the session ID from initialization responses
-
-### Mounting to an Existing ASGI Server
-
-By default, SSE servers are mounted at `/sse` and Streamable HTTP servers are mounted at `/mcp`. You can customize these paths using the methods described below.
-
-For more information on mounting applications in Starlette, see the [Starlette documentation](https://www.starlette.io/routing/#submounting-routes).
-
-#### StreamableHTTP servers
-
-You can mount the StreamableHTTP server to an existing ASGI server using the `streamable_http_app` method. This allows you to integrate the StreamableHTTP server with other ASGI applications.
-
-##### Basic mounting
-
-```
-"""
-Basic example showing how to mount StreamableHTTP server in Starlette.
-
-Run from the repository root:
-    uvicorn examples.snippets.servers.streamable_http_basic_mounting:app --reload
-"""
-
-from starlette.applications import Starlette
-from starlette.routing import Mount
-
-from mcp.server.fastmcp import FastMCP
-
-# Create MCP server
-mcp = FastMCP("My App")
-
-@mcp.tool()
-def hello() -> str:
-    """A simple hello tool"""
-    return "Hello from MCP!"
-
-# Mount the StreamableHTTP server to the existing ASGI server
-app = Starlette(
-    routes=[\
-        Mount("/", app=mcp.streamable_http_app()),\
-    ]
-)
-```
-
-_Full example: [examples/snippets/servers/streamable\_http\_basic\_mounting.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_http_basic_mounting.py)_
-
-##### Host-based routing
-
-```
-"""
-Example showing how to mount StreamableHTTP server using Host-based routing.
-
-Run from the repository root:
-    uvicorn examples.snippets.servers.streamable_http_host_mounting:app --reload
-"""
-
-from starlette.applications import Starlette
-from starlette.routing import Host
-
-from mcp.server.fastmcp import FastMCP
-
-# Create MCP server
-mcp = FastMCP("MCP Host App")
-
-@mcp.tool()
-def domain_info() -> str:
-    """Get domain-specific information"""
-    return "This is served from mcp.acme.corp"
-
-# Mount using Host-based routing
-app = Starlette(
-    routes=[\
-        Host("mcp.acme.corp", app=mcp.streamable_http_app()),\
-    ]
-)
-```
-
-_Full example: [examples/snippets/servers/streamable\_http\_host\_mounting.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_http_host_mounting.py)_
-
-##### Multiple servers with path configuration
-
-```
-"""
-Example showing how to mount multiple StreamableHTTP servers with path configuration.
-
-Run from the repository root:
-    uvicorn examples.snippets.servers.streamable_http_multiple_servers:app --reload
-"""
-
-from starlette.applications import Starlette
-from starlette.routing import Mount
-
-from mcp.server.fastmcp import FastMCP
-
-# Create multiple MCP servers
-api_mcp = FastMCP("API Server")
-chat_mcp = FastMCP("Chat Server")
-
-@api_mcp.tool()
-def api_status() -> str:
-    """Get API status"""
-    return "API is running"
-
-@chat_mcp.tool()
-def send_message(message: str) -> str:
-    """Send a chat message"""
-    return f"Message sent: {message}"
-
-# Configure servers to mount at the root of each path
-# This means endpoints will be at /api and /chat instead of /api/mcp and /chat/mcp
-api_mcp.settings.streamable_http_path = "/"
-chat_mcp.settings.streamable_http_path = "/"
-
-# Mount the servers
-app = Starlette(
-    routes=[\
-        Mount("/api", app=api_mcp.streamable_http_app()),\
-        Mount("/chat", app=chat_mcp.streamable_http_app()),\
-    ]
-)
-```
-
-_Full example: [examples/snippets/servers/streamable\_http\_multiple\_servers.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_http_multiple_servers.py)_
-
-##### Path configuration at initialization
-
-```
-"""
-Example showing path configuration during FastMCP initialization.
-
-Run from the repository root:
-    uvicorn examples.snippets.servers.streamable_http_path_config:app --reload
-"""
-
-from starlette.applications import Starlette
-from starlette.routing import Mount
-
-from mcp.server.fastmcp import FastMCP
-
-# Configure streamable_http_path during initialization
-# This server will mount at the root of wherever it's mounted
-mcp_at_root = FastMCP("My Server", streamable_http_path="/")
-
-@mcp_at_root.tool()
-def process_data(data: str) -> str:
-    """Process some data"""
-    return f"Processed: {data}"
-
-# Mount at /process - endpoints will be at /process instead of /process/mcp
-app = Starlette(
-    routes=[\
-        Mount("/process", app=mcp_at_root.streamable_http_app()),\
-    ]
-)
-```
-
-_Full example: [examples/snippets/servers/streamable\_http\_path\_config.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/streamable_http_path_config.py)_
-
-#### SSE servers
-
-> **Note**: SSE transport is being superseded by [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
-
-You can mount the SSE server to an existing ASGI server using the `sse_app` method. This allows you to integrate the SSE server with other ASGI applications.
-
-```
-from starlette.applications import Starlette
-from starlette.routing import Mount, Host
-from mcp.server.fastmcp import FastMCP
-
-mcp = FastMCP("My App")
-
-# Mount the SSE server to the existing ASGI server
-app = Starlette(
-    routes=[\
-        Mount('/', app=mcp.sse_app()),\
-    ]
-)
-
-# or dynamically mount as host
-app.router.routes.append(Host('mcp.acme.corp', app=mcp.sse_app()))
-```
-
-When mounting multiple MCP servers under different paths, you can configure the mount path in several ways:
-
-```
-from starlette.applications import Starlette
-from starlette.routing import Mount
-from mcp.server.fastmcp import FastMCP
-
-# Create multiple MCP servers
-github_mcp = FastMCP("GitHub API")
-browser_mcp = FastMCP("Browser")
-curl_mcp = FastMCP("Curl")
-search_mcp = FastMCP("Search")
-
-# Method 1: Configure mount paths via settings (recommended for persistent configuration)
-github_mcp.settings.mount_path = "/github"
-browser_mcp.settings.mount_path = "/browser"
-
-# Method 2: Pass mount path directly to sse_app (preferred for ad-hoc mounting)
-# This approach doesn't modify the server's settings permanently
-
-# Create Starlette app with multiple mounted servers
-app = Starlette(
-    routes=[\
-        # Using settings-based configuration\
-        Mount("/github", app=github_mcp.sse_app()),\
-        Mount("/browser", app=browser_mcp.sse_app()),\
-        # Using direct mount path parameter\
-        Mount("/curl", app=curl_mcp.sse_app("/curl")),\
-        Mount("/search", app=search_mcp.sse_app("/search")),\
-    ]
-)
-
-# Method 3: For direct execution, you can also pass the mount path to run()
-if __name__ == "__main__":
-    search_mcp.run(transport="sse", mount_path="/search")
-```
-
-For more information on mounting applications in Starlette, see the [Starlette documentation](https://www.starlette.io/routing/#submounting-routes).
-
-## Advanced Usage
-
-### Low-Level Server
-
-For more control, you can use the low-level server implementation directly. This gives you full access to the protocol and allows you to customize every aspect of your server, including lifecycle management through the lifespan API:
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/servers/lowlevel/lifespan.py
-"""
-
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
-from typing import Any
-
-import mcp.server.stdio
-import mcp.types as types
-from mcp.server.lowlevel import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-
-# Mock database class for example
-class Database:
-    """Mock database class for example."""
-
-    @classmethod
-    async def connect(cls) -> "Database":
-        """Connect to database."""
-        print("Database connected")
-        return cls()
-
-    async def disconnect(self) -> None:
-        """Disconnect from database."""
-        print("Database disconnected")
-
-    async def query(self, query_str: str) -> list[dict[str, str]]:
-        """Execute a query."""
-        # Simulate database query
-        return [{"id": "1", "name": "Example", "query": query_str}]
-
-@asynccontextmanager
-async def server_lifespan(_server: Server) -> AsyncIterator[dict[str, Any]]:
-    """Manage server startup and shutdown lifecycle."""
-    # Initialize resources on startup
-    db = await Database.connect()
-    try:
-        yield {"db": db}
-    finally:
-        # Clean up on shutdown
-        await db.disconnect()
-
-# Pass lifespan to server
-server = Server("example-server", lifespan=server_lifespan)
-
-@server.list_tools()
-async def handle_list_tools() -> list[types.Tool]:
-    """List available tools."""
-    return [\
-        types.Tool(\
-            name="query_db",\
-            description="Query the database",\
-            inputSchema={\
-                "type": "object",\
-                "properties": {"query": {"type": "string", "description": "SQL query to execute"}},\
-                "required": ["query"],\
-            },\
-        )\
-    ]
-
-@server.call_tool()
-async def query_db(name: str, arguments: dict[str, Any]) -> list[types.TextContent]:
-    """Handle database query tool call."""
-    if name != "query_db":
-        raise ValueError(f"Unknown tool: {name}")
-
-    # Access lifespan context
-    ctx = server.request_context
-    db = ctx.lifespan_context["db"]
-
-    # Execute query
-    results = await db.query(arguments["query"])
-
-    return [types.TextContent(type="text", text=f"Query results: {results}")]
-
-async def run():
-    """Run the server with lifespan management."""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="example-server",
-                server_version="0.1.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(run())
-```
-
-_Full example: [examples/snippets/servers/lowlevel/lifespan.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lowlevel/lifespan.py)_
-
-The lifespan API provides:
-
-- A way to initialize resources when the server starts and clean them up when it stops
-- Access to initialized resources through the request context in handlers
-- Type-safe context passing between lifespan and request handlers
-
-```
-"""
-Run from the repository root:
-uv run examples/snippets/servers/lowlevel/basic.py
-"""
-
-import asyncio
-
-import mcp.server.stdio
-import mcp.types as types
-from mcp.server.lowlevel import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-
-# Create a server instance
-server = Server("example-server")
-
-@server.list_prompts()
-async def handle_list_prompts() -> list[types.Prompt]:
-    """List available prompts."""
-    return [\
-        types.Prompt(\
-            name="example-prompt",\
-            description="An example prompt template",\
-            arguments=[types.PromptArgument(name="arg1", description="Example argument", required=True)],\
-        )\
-    ]
-
-@server.get_prompt()
-async def handle_get_prompt(name: str, arguments: dict[str, str] | None) -> types.GetPromptResult:
-    """Get a specific prompt by name."""
-    if name != "example-prompt":
-        raise ValueError(f"Unknown prompt: {name}")
-
-    arg1_value = (arguments or {}).get("arg1", "default")
-
-    return types.GetPromptResult(
-        description="Example prompt",
-        messages=[\
-            types.PromptMessage(\
-                role="user",\
-                content=types.TextContent(type="text", text=f"Example prompt text with argument: {arg1_value}"),\
-            )\
-        ],
-    )
-
-async def run():
-    """Run the basic low-level server."""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="example",
-                server_version="0.1.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
-
-if __name__ == "__main__":
-    asyncio.run(run())
-```
-
-_Full example: [examples/snippets/servers/lowlevel/basic.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lowlevel/basic.py)_
-
-Caution: The `uv run mcp run` and `uv run mcp dev` tool doesn't support low-level server.
-
-#### Structured Output Support
-
-The low-level server supports structured output for tools, allowing you to return both human-readable content and machine-readable structured data. Tools can define an `outputSchema` to validate their structured output:
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/servers/lowlevel/structured_output.py
-"""
-
-import asyncio
-from typing import Any
-
-import mcp.server.stdio
-import mcp.types as types
-from mcp.server.lowlevel import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-
-server = Server("example-server")
-
-@server.list_tools()
-async def list_tools() -> list[types.Tool]:
-    """List available tools with structured output schemas."""
-    return [\
-        types.Tool(\
-            name="get_weather",\
-            description="Get current weather for a city",\
-            inputSchema={\
-                "type": "object",\
-                "properties": {"city": {"type": "string", "description": "City name"}},\
-                "required": ["city"],\
-            },\
-            outputSchema={\
-                "type": "object",\
-                "properties": {\
-                    "temperature": {"type": "number", "description": "Temperature in Celsius"},\
-                    "condition": {"type": "string", "description": "Weather condition"},\
-                    "humidity": {"type": "number", "description": "Humidity percentage"},\
-                    "city": {"type": "string", "description": "City name"},\
-                },\
-                "required": ["temperature", "condition", "humidity", "city"],\
-            },\
-        )\
-    ]
-
-@server.call_tool()
-async def call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-    """Handle tool calls with structured output."""
-    if name == "get_weather":
-        city = arguments["city"]
-
-        # Simulated weather data - in production, call a weather API
-        weather_data = {
-            "temperature": 22.5,
-            "condition": "partly cloudy",
-            "humidity": 65,
-            "city": city,  # Include the requested city
-        }
-
-        # low-level server will validate structured output against the tool's
-        # output schema, and additionally serialize it into a TextContent block
-        # for backwards compatibility with pre-2025-06-18 clients.
-        return weather_data
-    else:
-        raise ValueError(f"Unknown tool: {name}")
-
-async def run():
-    """Run the structured output server."""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="structured-output-example",
-                server_version="0.1.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
-
-if __name__ == "__main__":
-    asyncio.run(run())
-```
-
-_Full example: [examples/snippets/servers/lowlevel/structured\_output.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lowlevel/structured_output.py)_
-
-Tools can return data in four ways:
-
-1. **Content only**: Return a list of content blocks (default behavior before spec revision 2025-06-18)
-2. **Structured data only**: Return a dictionary that will be serialized to JSON (Introduced in spec revision 2025-06-18)
-3. **Both**: Return a tuple of (content, structured\_data) preferred option to use for backwards compatibility
-4. **Direct CallToolResult**: Return `CallToolResult` directly for full control (including `_meta` field)
-
-When an `outputSchema` is defined, the server automatically validates the structured output against the schema. This ensures type safety and helps catch errors early.
-
-##### Returning CallToolResult Directly
-
-For full control over the response including the `_meta` field (for passing data to client applications without exposing it to the model), return `CallToolResult` directly:
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/servers/lowlevel/direct_call_tool_result.py
-"""
-
-import asyncio
-from typing import Any
-
-import mcp.server.stdio
-import mcp.types as types
-from mcp.server.lowlevel import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-
-server = Server("example-server")
-
-@server.list_tools()
-async def list_tools() -> list[types.Tool]:
-    """List available tools."""
-    return [\
-        types.Tool(\
-            name="advanced_tool",\
-            description="Tool with full control including _meta field",\
-            inputSchema={\
-                "type": "object",\
-                "properties": {"message": {"type": "string"}},\
-                "required": ["message"],\
-            },\
-        )\
-    ]
-
-@server.call_tool()
-async def handle_call_tool(name: str, arguments: dict[str, Any]) -> types.CallToolResult:
-    """Handle tool calls by returning CallToolResult directly."""
-    if name == "advanced_tool":
-        message = str(arguments.get("message", ""))
-        return types.CallToolResult(
-            content=[types.TextContent(type="text", text=f"Processed: {message}")],
-            structuredContent={"result": "success", "message": message},
-            _meta={"hidden": "data for client applications only"},
-        )
-
-    raise ValueError(f"Unknown tool: {name}")
-
-async def run():
-    """Run the server."""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="example",
-                server_version="0.1.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
-
-if __name__ == "__main__":
-    asyncio.run(run())
-```
-
-_Full example: [examples/snippets/servers/lowlevel/direct\_call\_tool\_result.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/lowlevel/direct_call_tool_result.py)_
-
-**Note:** When returning `CallToolResult`, you bypass the automatic content/structured conversion. You must construct the complete response yourself.
-
-### Pagination (Advanced)
-
-For servers that need to handle large datasets, the low-level server provides paginated versions of list operations. This is an optional optimization - most servers won't need pagination unless they're dealing with hundreds or thousands of items.
-
-#### Server-side Implementation
-
-```
-"""
-Example of implementing pagination with MCP server decorators.
-"""
-
-from pydantic import AnyUrl
-
-import mcp.types as types
-from mcp.server.lowlevel import Server
-
-# Initialize the server
-server = Server("paginated-server")
-
-# Sample data to paginate
-ITEMS = [f"Item {i}" for i in range(1, 101)]  # 100 items
-
-@server.list_resources()
-async def list_resources_paginated(request: types.ListResourcesRequest) -> types.ListResourcesResult:
-    """List resources with pagination support."""
-    page_size = 10
-
-    # Extract cursor from request params
-    cursor = request.params.cursor if request.params is not None else None
-
-    # Parse cursor to get offset
-    start = 0 if cursor is None else int(cursor)
-    end = start + page_size
-
-    # Get page of resources
-    page_items = [\
-        types.Resource(uri=AnyUrl(f"resource://items/{item}"), name=item, description=f"Description for {item}")\
-        for item in ITEMS[start:end]\
-    ]
-
-    # Determine next cursor
-    next_cursor = str(end) if end < len(ITEMS) else None
-
-    return types.ListResourcesResult(resources=page_items, nextCursor=next_cursor)
-```
-
-_Full example: [examples/snippets/servers/pagination\_example.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/servers/pagination_example.py)_
-
-#### Client-side Consumption
-
-```
-"""
-Example of consuming paginated MCP endpoints from a client.
-"""
-
-import asyncio
-
-from mcp.client.session import ClientSession
-from mcp.client.stdio import StdioServerParameters, stdio_client
-from mcp.types import PaginatedRequestParams, Resource
-
-async def list_all_resources() -> None:
-    """Fetch all resources using pagination."""
-    async with stdio_client(StdioServerParameters(command="uv", args=["run", "mcp-simple-pagination"])) as (
-        read,
-        write,
-    ):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            all_resources: list[Resource] = []
-            cursor = None
-
-            while True:
-                # Fetch a page of resources
-                result = await session.list_resources(params=PaginatedRequestParams(cursor=cursor))
-                all_resources.extend(result.resources)
-
-                print(f"Fetched {len(result.resources)} resources")
-
-                # Check if there are more pages
-                if result.nextCursor:
-                    cursor = result.nextCursor
-                else:
-                    break
-
-            print(f"Total resources: {len(all_resources)}")
-
-if __name__ == "__main__":
-    asyncio.run(list_all_resources())
-```
-
-_Full example: [examples/snippets/clients/pagination\_client.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/pagination_client.py)_
-
-#### Key Points
-
-- **Cursors are opaque strings** \- the server defines the format (numeric offsets, timestamps, etc.)
-- **Return `nextCursor=None`** when there are no more pages
-- **Backward compatible** \- clients that don't support pagination will still work (they'll just get the first page)
-- **Flexible page sizes** \- Each endpoint can define its own page size based on data characteristics
-
-See the [simple-pagination example](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/servers/simple-pagination) for a complete implementation.
-
-### Writing MCP Clients
-
-The SDK provides a high-level client interface for connecting to MCP servers using various [transports](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports):
-
-```
-"""
-cd to the `examples/snippets/clients` directory and run:
-    uv run client
-"""
-
-import asyncio
-import os
-
-from pydantic import AnyUrl
-
-from mcp import ClientSession, StdioServerParameters, types
-from mcp.client.stdio import stdio_client
-from mcp.shared.context import RequestContext
-
-# Create server parameters for stdio connection
-server_params = StdioServerParameters(
-    command="uv",  # Using uv to run the server
-    args=["run", "server", "fastmcp_quickstart", "stdio"],  # We're already in snippets dir
-    env={"UV_INDEX": os.environ.get("UV_INDEX", "")},
-)
-
-# Optional: create a sampling callback
-async def handle_sampling_message(
-    context: RequestContext[ClientSession, None], params: types.CreateMessageRequestParams
-) -> types.CreateMessageResult:
-    print(f"Sampling request: {params.messages}")
-    return types.CreateMessageResult(
-        role="assistant",
-        content=types.TextContent(
-            type="text",
-            text="Hello, world! from model",
-        ),
-        model="gpt-3.5-turbo",
-        stopReason="endTurn",
-    )
-
-async def run():
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write, sampling_callback=handle_sampling_message) as session:
-            # Initialize the connection
-            await session.initialize()
-
-            # List available prompts
-            prompts = await session.list_prompts()
-            print(f"Available prompts: {[p.name for p in prompts.prompts]}")
-
-            # Get a prompt (greet_user prompt from fastmcp_quickstart)
-            if prompts.prompts:
-                prompt = await session.get_prompt("greet_user", arguments={"name": "Alice", "style": "friendly"})
-                print(f"Prompt result: {prompt.messages[0].content}")
-
-            # List available resources
-            resources = await session.list_resources()
-            print(f"Available resources: {[r.uri for r in resources.resources]}")
-
-            # List available tools
-            tools = await session.list_tools()
-            print(f"Available tools: {[t.name for t in tools.tools]}")
-
-            # Read a resource (greeting resource from fastmcp_quickstart)
-            resource_content = await session.read_resource(AnyUrl("greeting://World"))
-            content_block = resource_content.contents[0]
-            if isinstance(content_block, types.TextContent):
-                print(f"Resource content: {content_block.text}")
-
-            # Call a tool (add tool from fastmcp_quickstart)
-            result = await session.call_tool("add", arguments={"a": 5, "b": 3})
-            result_unstructured = result.content[0]
-            if isinstance(result_unstructured, types.TextContent):
-                print(f"Tool result: {result_unstructured.text}")
-            result_structured = result.structuredContent
-            print(f"Structured tool result: {result_structured}")
-
-def main():
-    """Entry point for the client script."""
-    asyncio.run(run())
-
-if __name__ == "__main__":
-    main()
-```
-
-_Full example: [examples/snippets/clients/stdio\_client.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/stdio_client.py)_
-
-Clients can also connect using [Streamable HTTP transport](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http):
-
-```
-"""
-Run from the repository root:
-    uv run examples/snippets/clients/streamable_basic.py
-"""
-
-import asyncio
-
-from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
-
-async def main():
-    # Connect to a streamable HTTP server
-    async with streamablehttp_client("http://localhost:8000/mcp") as (
-        read_stream,
-        write_stream,
-        _,
-    ):
-        # Create a session using the client streams
-        async with ClientSession(read_stream, write_stream) as session:
-            # Initialize the connection
-            await session.initialize()
-            # List available tools
-            tools = await session.list_tools()
-            print(f"Available tools: {[tool.name for tool in tools.tools]}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-_Full example: [examples/snippets/clients/streamable\_basic.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/streamable_basic.py)_
-
-### Client Display Utilities
-
-When building MCP clients, the SDK provides utilities to help display human-readable names for tools, resources, and prompts:
-
-```
-"""
-cd to the `examples/snippets` directory and run:
-    uv run display-utilities-client
-"""
-
-import asyncio
-import os
-
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-from mcp.shared.metadata_utils import get_display_name
-
-# Create server parameters for stdio connection
-server_params = StdioServerParameters(
-    command="uv",  # Using uv to run the server
-    args=["run", "server", "fastmcp_quickstart", "stdio"],
-    env={"UV_INDEX": os.environ.get("UV_INDEX", "")},
-)
-
-async def display_tools(session: ClientSession):
-    """Display available tools with human-readable names"""
-    tools_response = await session.list_tools()
-
-    for tool in tools_response.tools:
-        # get_display_name() returns the title if available, otherwise the name
-        display_name = get_display_name(tool)
-        print(f"Tool: {display_name}")
-        if tool.description:
-            print(f"   {tool.description}")
-
-async def display_resources(session: ClientSession):
-    """Display available resources with human-readable names"""
-    resources_response = await session.list_resources()
-
-    for resource in resources_response.resources:
-        display_name = get_display_name(resource)
-        print(f"Resource: {display_name} ({resource.uri})")
-
-    templates_response = await session.list_resource_templates()
-    for template in templates_response.resourceTemplates:
-        display_name = get_display_name(template)
-        print(f"Resource Template: {display_name}")
-
-async def run():
-    """Run the display utilities example."""
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            # Initialize the connection
-            await session.initialize()
-
-            print("=== Available Tools ===")
-            await display_tools(session)
-
-            print("\n=== Available Resources ===")
-            await display_resources(session)
-
-def main():
-    """Entry point for the display utilities client."""
-    asyncio.run(run())
-
-if __name__ == "__main__":
-    main()
-```
-
-_Full example: [examples/snippets/clients/display\_utilities.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/display_utilities.py)_
-
-The `get_display_name()` function implements the proper precedence rules for displaying names:
-
-- For tools: `title` \> `annotations.title` \> `name`
-- For other objects: `title` \> `name`
-
-This ensures your client UI shows the most user-friendly names that servers provide.
-
-### OAuth Authentication for Clients
-
-The SDK includes [authorization support](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) for connecting to protected MCP servers:
-
-```
-"""
-Before running, specify running MCP RS server URL.
-To spin up RS server locally, see
-    examples/servers/simple-auth/README.md
-
-cd to the `examples/snippets` directory and run:
-    uv run oauth-client
-"""
-
-import asyncio
-from urllib.parse import parse_qs, urlparse
-
-from pydantic import AnyUrl
-
-from mcp import ClientSession
-from mcp.client.auth import OAuthClientProvider, TokenStorage
-from mcp.client.streamable_http import streamablehttp_client
-from mcp.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
-
-class InMemoryTokenStorage(TokenStorage):
-    """Demo In-memory token storage implementation."""
-
-    def __init__(self):
-        self.tokens: OAuthToken | None = None
-        self.client_info: OAuthClientInformationFull | None = None
-
-    async def get_tokens(self) -> OAuthToken | None:
-        """Get stored tokens."""
-        return self.tokens
-
-    async def set_tokens(self, tokens: OAuthToken) -> None:
-        """Store tokens."""
-        self.tokens = tokens
-
-    async def get_client_info(self) -> OAuthClientInformationFull | None:
-        """Get stored client information."""
-        return self.client_info
-
-    async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
-        """Store client information."""
-        self.client_info = client_info
-
-async def handle_redirect(auth_url: str) -> None:
-    print(f"Visit: {auth_url}")
-
-async def handle_callback() -> tuple[str, str | None]:
-    callback_url = input("Paste callback URL: ")
-    params = parse_qs(urlparse(callback_url).query)
-    return params["code"][0], params.get("state", [None])[0]
-
-async def main():
-    """Run the OAuth client example."""
-    oauth_auth = OAuthClientProvider(
-        server_url="http://localhost:8001",
-        client_metadata=OAuthClientMetadata(
-            client_name="Example MCP Client",
-            redirect_uris=[AnyUrl("http://localhost:3000/callback")],
-            grant_types=["authorization_code", "refresh_token"],
-            response_types=["code"],
-            scope="user",
-        ),
-        storage=InMemoryTokenStorage(),
-        redirect_handler=handle_redirect,
-        callback_handler=handle_callback,
-    )
-
-    async with streamablehttp_client("http://localhost:8001/mcp", auth=oauth_auth) as (read, write, _):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            tools = await session.list_tools()
-            print(f"Available tools: {[tool.name for tool in tools.tools]}")
-
-            resources = await session.list_resources()
-            print(f"Available resources: {[r.uri for r in resources.resources]}")
-
-def run():
-    asyncio.run(main())
-
-if __name__ == "__main__":
-    run()
-```
-
-_Full example: [examples/snippets/clients/oauth\_client.py](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/snippets/clients/oauth_client.py)_
-
-For a complete working example, see [`examples/clients/simple-auth-client/`](https://github.com/modelcontextprotocol/python-sdk/blob/main/examples/clients/simple-auth-client).
-
-### Parsing Tool Results
-
-When calling tools through MCP, the `CallToolResult` object contains the tool's response in a structured format. Understanding how to parse this result is essential for properly handling tool outputs.
-
-```
-"""examples/snippets/clients/parsing_tool_results.py"""
-
-import asyncio
-
-from mcp import ClientSession, StdioServerParameters, types
-from mcp.client.stdio import stdio_client
-
-async def parse_tool_results():
-    """Demonstrates how to parse different types of content in CallToolResult."""
-    server_params = StdioServerParameters(
-        command="python", args=["path/to/mcp_server.py"]
-    )
-
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            # Example 1: Parsing text content
-            result = await session.call_tool("get_data", {"format": "text"})
-            for content in result.content:
-                if isinstance(content, types.TextContent):
-                    print(f"Text: {content.text}")
-
-            # Example 2: Parsing structured content from JSON tools
-            result = await session.call_tool("get_user", {"id": "123"})
-            if hasattr(result, "structuredContent") and result.structuredContent:
-                # Access structured data directly
-                user_data = result.structuredContent
-                print(f"User: {user_data.get('name')}, Age: {user_data.get('age')}")
-
-            # Example 3: Parsing embedded resources
-            result = await session.call_tool("read_config", {})
-            for content in result.content:
-                if isinstance(content, types.EmbeddedResource):
-                    resource = content.resource
-                    if isinstance(resource, types.TextResourceContents):
-                        print(f"Config from {resource.uri}: {resource.text}")
-                    elif isinstance(resource, types.BlobResourceContents):
-                        print(f"Binary data from {resource.uri}")
-
-            # Example 4: Parsing image content
-            result = await session.call_tool("generate_chart", {"data": [1, 2, 3]})
-            for content in result.content:
-                if isinstance(content, types.ImageContent):
-                    print(f"Image ({content.mimeType}): {len(content.data)} bytes")
-
-            # Example 5: Handling errors
-            result = await session.call_tool("failing_tool", {})
-            if result.isError:
-                print("Tool execution failed!")
-                for content in result.content:
-                    if isinstance(content, types.TextContent):
-                        print(f"Error: {content.text}")
-
-async def main():
-    await parse_tool_results()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-### MCP Primitives
-
-The MCP protocol defines three core primitives that servers can implement:
-
-| Primitive | Control | Description | Example Use |
-| --- | --- | --- | --- |
-| Prompts | User-controlled | Interactive templates invoked by user choice | Slash commands, menu options |
-| Resources | Application-controlled | Contextual data managed by the client application | File contents, API responses |
-| Tools | Model-controlled | Functions exposed to the LLM to take actions | API calls, data updates |
-
-### Server Capabilities
-
-MCP servers declare capabilities during initialization:
-
-| Capability | Feature Flag | Description |
-| --- | --- | --- |
-| `prompts` | `listChanged` | Prompt template management |
-| `resources` | `subscribe`<br>`listChanged` | Resource exposure and updates |
-| `tools` | `listChanged` | Tool discovery and execution |
-| `logging` | - | Server logging configuration |
-| `completions` | - | Argument completion suggestions |
-
-## Documentation
-
-- [API Reference](https://modelcontextprotocol.github.io/python-sdk/api/)
-- [Model Context Protocol documentation](https://modelcontextprotocol.io/)
-- [Model Context Protocol specification](https://modelcontextprotocol.io/specification/latest)
-- [Officially supported servers](https://github.com/modelcontextprotocol/servers)
-
-## Contributing
-
-We are passionate about supporting contributors of all levels of experience and would love to see you get involved in the project. See the [contributing guide](https://github.com/modelcontextprotocol/python-sdk/blob/main/CONTRIBUTING.md) to get started.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+{'type': 'text', 'text': 'Extending Large Language Models (LLMs) with custom tools has become increasingly valuable in today’s AI landscape. Model Context Protocol (MCP) servers provide a standardized way to connect external tools and resources to LLMs. This can enhance their capabilities beyond basic text generation.\n\nWhile thousands of pre-built MCP servers exist, creating your own allows you to address specific workflows. You can implement use cases that off-the-shelf solutions cannot handle. This is where the real power lies.\n\nIn this tutorial, you will learn to build a document parsing server that enables MCP hosts to understand various file formats. You will use FastMCP—the leading library for building MCPs in Python. You will also bundle your application into a Python package and publish on PyPI using an automated CI/CD pipeline.\n\nBy the end, you will have a fully functional document reader MCP server that extracts text from various document formats.\n\nHere is a demo of what you will build.\n\nhttps://images.ctfassets.net/il1yandlcjgk/2Hc7rEy3yFEqreSD7aUVsz/d520643311bfe644198f211075cd6042/2025-05-13-mcp-document-brain-demo.gif?w=1003&fm=webp&q=60\n\n## Prerequisites\n\nBefore diving in, make sure you have:\n\n- [Python 3.10+](https://www.python.org/downloads/) or newer installed on your system\n- Basic understanding of [Python packaging concepts](https://packaging.python.org/en/latest/tutorials/packaging-projects/)\n- A [PyPI account](https://pypi.org/account/register/) for publishing your package\n- A [GitHub account](https://github.com/signup) for version control\n- A [CircleCI account](https://app.circleci.com/signup) connected to your GitHub account for creating CI/CD pipelines\n- [Claude Desktop](https://claude.ai/download) for using your MCP server\n\n## Setting up the development environment\n\nBuilding an MCP server opens up exciting possibilities for extending LLM capabilities with custom tools and resources. FastMCP simplifies this process with a clean API using decorators that handle server protocol complexities.\n\nYou can visit this [GitHub repository](https://github.com/ArmstrongA/document-brain.git) to explore the code for the server you are about to build.\n\n### Initializing the project directory\n\nFirst, let us create a new directory for our project and set up the basic structure:\n\n```bash\nmkdir document-brain\ncd document-brain\n```\n\n### Installing `UV`\n\nFor dependency management, you will use `uv`—a modern, fast package manager for Python. Open powershell and run this command to install `uv`on Windows:\n\n```bash\npowershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"\n```\n\nRestart your terminal completely. Then verify the installation:\n\n```bash\nuv --version\n```\n\nYou can also install `uv` using pip:\n\n```bash\n# Using pip\npip install uv\n\nOn Unix-based systems like macOS run:\n\n```bash\ncurl -sSf https://install.python-uv.org | bash\n# Or using Homebrew\nbrew install uv\n```\n\nNow initialize your project with `uv`:\n\n```bash\nuv init\n```\n\nThis command automatically creates:\n\n- **`.python-version`**: Ensures consistent Python versions across environments\n- **`.gitignore`**: Lists files and directories for Git to ignore.\n- **`main.py`**: A starting point for development.\n- **`pyproject.toml`**: Defines project metadata and dependencies.\n- **`README.md`**: An overview of the project’s purpose, usage instructions, and other relevant information.\n\nThese files collectively set up a [foundational structure for a Python project](https://www.reddit.com/r/learnpython/comments/1jbo88t/uv_for_python_project_and_version_management/). This facilitates development and collaboration.\n\n### Creating a virtual environment and installing dependencies\n\nWhen installing packages and dependencies, `uv` automatically creates a virtual environment name `.venv`.\n\nInstall the necessary packages for developing and testing your MCP server. Run:\n\n```bash\nuv add "mcp[cli]"\nuv add "markitdown[all]"\nuv add --dev pytest build twine\n```\n\nThese packages provide:\n\n- FastMCP with CLI tools for development and debugging\n- Markitdown for document parsing functionality\n- Testing (pytest)\n- Building your package (build)\n- Publishing to PyPI (twine)\n\nBefore creating your MCP server, create the project directory structure:\n\n```bash\nmkdir -p src/document_brain\ntouch src/document_brain/__init__.py\ntouch src/document_brain/server.py\n```\n\nYour project structure looks like this:\n\n```text\nproject_root/\n├── src/\n│   └── document_brain/\n│       ├── __init__.py        # Initializes server\n│       └── server.py          # Contains the \'mcp\' instance and definitions\n├── tests/\n│   ├── __init__.py            # Makes tests discoverable\n│   └── test_server.py         # Tests for your MCP server\n├── main.py\n├── pyproject.toml             # Project configuration\n└── README.md                  # Project documentation\n```\n\nThis structure follows the recommended Python packaging standards with src-layout. The approach prevents import issues during development.\n\n## Building the MCP Server with FastMCP\n\nIn this part, you will begin by understanding three primary components of MCP servers (tools, resources, and prompts).\n\n### Understanding the core components\n\nMCP servers consists of three key components:\n\n- **Tools:** Model-controlled functions that LLMs can call to perform actions or interact with external systems.\n- **Resources:** Application-controlled data sources that inject contextual information from your systems into the conversation.\n- **Prompts:** User-controlled templates that can be invoked through UI elements to help users interact with the LLM in structured ways.\n\nNow, let us implement your document brain server in `src/document_brain/server.py`:\n\n```python\nfrom mcp.server.fastmcp import FastMCP\nfrom mcp.server.fastmcp.prompts import base\nfrom mcp.server.fastmcp.resources import DirectoryResource\nfrom pathlib import Path\nimport os\nfrom markitdown import MarkItDown\n\nmd = MarkItDown()\n\n# Initialize the FastMCP server\nmcp = FastMCP("DocumentBrain", dependencies=["markitdown[all]"])\n\n@mcp.tool(\n    annotations={\n        "title": "Read Any Document",\n        "readOnlyHint": True,\n        "openWorldHint": False\n    }\n)\ndef read_any_document(file_path: str) -> str:\n    """Read any supported document and return its text content, including OCR for images.\n    Args:\n        file_path: Path to the document to process.\n    Returns:\n        Extracted text content as a string.\n    """\n    try:\n        expanded_path = os.path.expanduser(file_path)\n        return md.convert(expanded_path).text_content\n    except Exception as e:\n        return f"Error reading file: {str(e)}"\n\n@mcp.tool(\n    annotations={\n        "title": "Save File to PC",\n        "readOnlyHint": False,\n        "openWorldHint": True\n    }\n)\ndef save_file_to_pc(filepath: str, content: str) -> str:\n    """\n    Save content to a file on the desktop.\n    Args:\n        filename: Name of the file to save (can include subdirectory)\n        content: Content to write to the file\n    Returns:\n        A success or error message\n    """\n    try:\n        # Expand the desktop path\n        desktop_path = os.path.expanduser(filepath)\n        # Ensure the filename doesn\'t contain any path traversal attempts\n        safe_filename = os.path.basename(filepath)\n        # Create the full file path\n        full_path = os.path.join(desktop_path, safe_filename)\n        # Ensure the directory exists\n        os.makedirs(os.path.dirname(full_path), exist_ok=True)\n        # Write the content to the file\n        with open(full_path, \'w\', encoding=\'utf-8\') as f:\n            f.write(content)\n        return f"File successfully saved to {full_path}"\n    except Exception as e:\n        return f"Error saving file: {str(e)}"\n\n# Now add a resource\n# Define the path to the current directory\ndocuments_path = Path(".").resolve()\n\n# Create a DirectoryResource to list files in the current directory\ndocuments_resource = DirectoryResource(\n    uri="docs://files",\n    path=documents_path,\n    name="Local Document Directory",\n    description="Lists all files in the current working directory.",\n    recursive=False  # Set to True if you want to include subdirectories\n)\n\n# Add the resource to your FastMCP server\nmcp.add_resource(documents_resource)\n\n@mcp.resource("docs://file/{filename}")\ndef get_document_content(filename: str) -> str:\n    """Retrieve the content of a specified document."""\n    try:\n        file_path = documents_path / filename\n        if not file_path.exists():\n            return f"File not found: {filename}"\n        return md.convert(str(file_path)).text_content\n    except Exception as e:\n        return f"Error reading file {filename}: {str(e)}"\n\n# Prompt: Summarize document\n@mcp.prompt()\ndef analyze_data(text: str) -> list[base.Message]:\n    """Prompt to generate a summary of the provided document text.\n    Args:\n        text: The content of the document to be summarized.\n    Returns:\n        A list of messages guiding the LLM to produce a summary.\n    """\n    return [\n        base.Message(\n            role="user",\n            content=[\n                base.TextContent(\n                    text=f"Assume the role of a data analyst specializing in academic research. \\\n                    Your task is to critically analyze the data presented in the file of the attached academic document. \\\n                    Start by summarizing the key data points and notable findings. Identify any patterns, trends, correlations, or anomalies within the dataset.:\\n\\n{text}"\n                )\n            ]\n        )\n    ]\n\ndef main():\n    """Entry point for the MCP server."""\n    mcp.run()\n\nif __name__ == "__main__":\n    main()\n```\n\nHere is a breakdown what you’ve created:\n\n1. **Tools**: Two functions decorated with `@mcp.tool()`. The `read_any_document` extracts text from documents and `save_file_to_pc` saves files to pc.\n2. **Resources**: A dynamic resource that provides access to documents in the current directory and a function to retrieve document content.\n3. **Prompts**: A prompt that users can invoke to analyze document content.\n4. **Main function**: The `main()` function serves as an entry point for running the server.\n\nNow, update the `src/document_brain/__init__.py` file to expose server components:\n\n```python\n"""Document Reader MCP server for extracting text from various document formats."""\n\nfrom .server import mcp, read_any_document, main\n```\n\n## Testing the MCP Server\n\nIn this part you will run your server and test what it can do. Before testing your MCP server, activate your virtual environment:\n\n```bash\n.venv\\Scripts\\activate # On Unix-based systesms: source .venv/bin/activate\n```\n\nNow proceed to test the MCP server using MCP inspector. Make sure you are connected to the internet.\n\n### Manual testing with the MCP Inspector\n\nFastMCP includes a built-in debugging tool called the MCP Inspector. To test your server:\n\n```bash\nmcp dev src/document_brain/server.py\n```\n\nThis starts the server and opens the Inspector in your browser (typically at `http://127.0.0.1:6274`). Click **Connect** and explore the Tools, Resources, and Prompts tabs to test your implementation.\n\nYou can verify that your server is running.\n\nhttps://images.ctfassets.net/il1yandlcjgk/4P4icEMNhEN0zEeaQmUufT/9d59bd65db67d11096c4c68a682099b8/2025-05-13-mcp-development-debugger.png?w=1003&fm=webp&q=60\n\nIn the Tools tab, there are two tools:\n\n- `read_any_document`\n- `save_file_to_pc`.\n\nYou can click on any tool and test it. For example, clicking on the `read_any_document` tool will show an input field for the file path. Enter the full path to any supported file (such as Excel) on your machine. Click `Run Tool` and the tool will convert the Excel file to markdown, displying the extracted text content.\n\nhttps://images.ctfassets.net/il1yandlcjgk/2hD7ExfyKL3PrumPZSPy8w/5737d4b9153c2998bec911a38956af1f/2025-05-13-mcp-development-debugger-testing-tools.png?w=1003&fm=webp&q=60\n\nYou can also test your MCP Server in Claude Desktop by running:\n\n```bash\nmcp install src/document_brain/server.py\n```\n\nRestart Claude Desktop and the MCP server will be attached. See screenshot below.\n\nhttps://images.ctfassets.net/il1yandlcjgk/5vy52OBZ4IMBi9BBgFlxUe/fa19b3fe76bd6075b0b5ea5e43df6f0f/2025-05-13-mcp-host-claude-desktop.png?w=1003&fm=webp&q=60\n\nNow ask Claude to analyze data in an Excel file `global_inflation_data.xlsx`, saved locally.\n\nhttps://images.ctfassets.net/il1yandlcjgk/3NgRCZVfGf2pJ4UOKab0Wx/c7d9fcf5256a103e450317e95bb83b7e/2025-05-13-claude-desktop-uses-read-any-document-tool.png?w=1003&fm=webp&q=60\n\nYour MCP Server is fully operational in Claude Desktop.\n\n### Setting up automated testing\n\nTo set up a simple test for our MCP server, create a test directory:\n\n```bash\nmkdir -p tests\ntouch tests/test_server.py\ntouch tests/__init__.py\n```\n\nNow, add basic tests in `tests/test_server.py`:\n\n```python\nimport pytest\nfrom src.document_brain.server import read_any_document\n\n# Fixture to create a temporary text file\n@pytest.fixture\ndef temp_text_file(tmp_path):\n    file_path = tmp_path / "test_document.txt"\n    file_path.write_text("This is a test document.")\n    return file_path\n\n# Test reading a valid text file\ndef test_read_valid_document(temp_text_file):\n    content = read_any_document(str(temp_text_file))\n    assert "This is a test document." in content\n\n# Test reading a non-existent file\ndef test_read_nonexistent_file():\n    content = read_any_document("nonexistent_file.txt")\n    assert "Error reading file" in content\n```\n\nThese tests verify that our document reader functions work correctly. Run the tests:\n\n```bash\npytest tests/ -v\n```\n\nThe `-v` flag tells pytest to output detailed logs about the tests.\n\nhttps://images.ctfassets.net/il1yandlcjgk/XVjwY9CSoUi72wDnDNkuO/5b4655309df0beaf0c5d463bc745309b/2025-05-13-tests-pass-before-building-package.png?w=1003&fm=webp&q=60\n\n## Packaging the Python project\n\nTo prepare your application for distribution, configure the metadata in `pyproject.toml`:\n\n```toml\n[build-system]\nrequires = ["setuptools>=61.0", "wheel"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "mcp-document-brain"\nversion = "0.1.1"\ndescription = "MCP server for converting files to markdown using Markitdown"\nreadme = "README.md"\nauthors = [\n    {name = "Your name", email = "example.email@domain.com"}\n]\nlicense = {text = "MIT"}\nclassifiers = [\n    "Programming Language :: Python :: 3",\n    "License :: OSI Approved :: MIT License",\n    "Operating System :: OS Independent",\n]\nrequires-python = ">=3.12"\ndependencies = [\n    "mcp[cli]>=1.8.0",\n    "Markitdown[all]>=0.1.1",\n]\n\n[project.optional-dependencies]\ndev = [\n    "build>=1.2.2.post1",\n    "pytest>=8.3.5",\n    "twine>=6.1.0",\n]\n[project.scripts]\nmcp-document-brain = "document_brain.server:main"\n\n[tool.setuptools]\npackage-dir = {"" = "src"}\n\n[tool.pytest.ini_options]\ntestpaths = ["tests"]\n```\n\nThis configuration:\n\n- Sets up basic package metadata\n- Declares dependencies\n- Creates a command-line entry point\n- Configures our development tools\n\nNow, add some documentation in `README.md` to provide users with more details about your package.\n\nBuild your package using the build tool:\n\n```bash\npython -m build\n```\n\nThis generates distribution files in the `dist/` directory.\n\n## Publishing your package to PyPI\n\nBefore uploading your package to [PyPI](https://pypi.org/) (the Python Package Index), you will need to complete a few important steps:\n\n1. **Create a PyPI account** if you don’t have one already:\n\n   - Go to the [PyPI registration page](https://pypi.org/account/register/)\n   - Verify your email address after registering\n   - Set up [two-factor authentication](https://pypi.org/help/#twofa) (2FA) for better security\n2. **Generate an API token** instead of using your password:\n\n   - Log in to your PyPI account\n   - Go to [Account Settings → API tokens](https://pypi.org/manage/account/#api-tokens)\n   - Click “Add API token”, give it a name (like “document-brain-upload”), and create it\n   - Save the token somewhere safe - you will need it later on in the tutorial.\n3. **Upload your package** using Twine:\n\n   ```bash\n   twine upload dist/*\n   ```\n\n4. **When prompted for credentials, enter**:\n\n   - Username: `__token__` (type this exactly, including the underscores)\n   - Password: paste your API token\n\nFor extra security, you can store your PyPI credentials in a [`.pypirc` file](https://packaging.python.org/en/latest/specifications/pypirc/) in your home directory. Run:\n\n```text\n[pypi]\nusername = __token__\npassword = pypi-AgEI...your-token-here...\n```\n\nOnce your package is published, anyone can install it with:\n\n```bash\npip install mcp-document-brain\n# Or using uv\nuv add mcp-document-brain\n```\n\nRun it directly:\n\n```bash\nmcp-document-brain\n```\n\nYou can view your published package at `https://pypi.org/project/mcp-document-brain/`\n\n### Troubleshooting tips\n\n- If you get an error about the package name being taken, choose a different name in your `pyproject.toml` file\n- If uploads fail, make sure your token has the right permissions and has not expired\n- Check the [PyPI help docs](https://pypi.org/help/) if you run into problems.\n\n## Automating Python package publishing with CircleCI and `uv`\n\nAutomating your Python package publishing flow can save you hours of manual effort and reduce human error. In this part, you will learn how to use [CircleCI](https://circleci.com/) to automate testing, building, and publishing a Python package to PyPI.\n\nThis section walks through a complete CircleCI setup using the [uv](https://github.com/astral-sh/uv) package manager to handle dependencies. You will create a robust workflow that kicks in when you push changes to your `main` branch. This ensures publishing of your package only when it is production-ready.\n\n### Setting up CircleCI configuration\n\nCreate a CircleCI configuration file to automate testing, building, and publishing:\n\n```bash\nmkdir -p .circleci\ntouch .circleci/config.yml\n```\n\nBefore breaking it down, here is the full `.circleci/config.yml`:\n\n```yaml\nversion: 2.1\n\njobs:\n  build:\n    docker:\n      - image: cimg/python:3.12\n    steps:\n      - checkout\n\n      - run:\n          name: Install uv\n          command: |\n            curl -Ls https://astral.sh/uv/install.sh | sh\n            echo \'export PATH="$HOME/.cargo/bin:$PATH"\' >> $BASH_ENV\n            source $BASH_ENV\n\n      - run:\n          name: Install dependencies using uv\n          command: uv pip install --system -r <(uv pip compile --extra dev pyproject.toml)\n\n      - run:\n          name: Run tests\n          command: python -m pytest tests/ -v\n\n      - run:\n          name: Build package\n          command: |\n            python -m build\n\n      - persist_to_workspace:\n          root: .\n          paths:\n            - dist\n\n  publish:\n    docker:\n      - image: cimg/python:3.12\n    steps:\n      - checkout\n      - attach_workspace:\n          at: .\n      - run:\n          name: Install twine\n          command: pip install --upgrade twine\n      - run:\n          name: Upload to PyPI\n          command: twine upload dist/* -u "$PYPI_USERNAME" -p "$PYPI_PASSWORD"\n\nworkflows:\n  build-test-publish:\n    jobs:\n      - build\n      - publish:\n          requires:\n            - build\n          filters:\n            branches:\n              only: main\n```\n\n**Understanding the CircleCI configuration**\n\nThis setup creates two `jobs`:\n\n1. `build` job\n\nThis is where you define tasks before a release:\n\n- **Docker image:** Uses CircleCI’s official `cimg/python:3.12` image.\n- **Install uv:** `uv` is a faster and stable dependency manager. It replaces `pip` and `pip-tools`.\n- **Install dependencies:**\n\n```bash\nuv pip install --system -r <(uv pip compile --extra dev pyproject.toml)\n```\n\nThis command compiles and installs your `pyproject.toml`, including both your main and optional `dev` dependencies. The `--system` flag installs them into the current Python environment.\n\n- **Run tests:** Executes your test suite with `pytest`. You use `pytest` to run all tests inside the `tests/` folder and print verbose output.\n- **Build the package:** Uses `python -m build` to generate the `dist/` folder, which includes `.tar.gz` and `.whl` files for your package.\n- **Persist the build artifacts:** These are saved to a “workspace”, a temporary shared storage between jobs.\n\n2. `publish` job\n\nThis job picks up where `build` left off.\n\n- **Attach the workspace:** Brings the previously built `dist/` folder into this job.\n- **Install Twine:** Twine is the recommended tool to securely upload packages to PyPI.\n- **Upload to PyPI:** The actual publishing step happens here with:\n\n```bash\ntwine upload dist/* -u "$PYPI_USERNAME" -p "$PYPI_PASSWORD"\n```\n\nYou need to store your credentials as environment variables in your CircleCI project settings.\n\n**`workflows`: CI/CD logic**\nThis block defines when and how your jobs run.\n\n```yml\nworkflows:\n  build-test-publish:\n    jobs:\n      - build\n      - publish:\n          requires:\n            - build\n          filters:\n            branches:\n              only: main\n```\n\nHere is what it means:\n\n- The `build` job always runs.\n- The `publish` job only runs after `build` completes successfully.\n- It only triggers if the commit is pushed to the `main` branch.\n\nThis design ensures you do not accidentally publish from feature branches or failed builds.\n\n### Managing secrets in CircleCI\n\nTo securely publish to PyPI, add these environmental variables in CircleCI project settings:\n- `PYPI_USERNAME`: Set to `__token__`\n- `PYPI_PASSWORD`: Your PyPI API token\n\n## Publishing to PyPI\n\nIn this section, you will trigger the `build` and `publish` jobs.\n\n### Automating the publishing process\n\nWith your CircleCI configuration in place, you will trigger deployment as follows:\n\n1. Make changes to your code and commit them\n2. Push to GitHub\n3. Create a new project in CircleCI and link your repository\n4. When you are ready to release, either:\n   - Merge to the main branch, or\n   - Create and push a tag starting with “v” (e.g., `v0.1.0`)\n5. CircleCI tests, builds, and publishes your package to PyPI\n\nThe build and publish jobs should run successfully.\n\nhttps://images.ctfassets.net/il1yandlcjgk/TgZchXLcwD0SeoRalHTUF/b93dad7ddb66d1239f6836ff6dd0e406/2025-05-13-successful-circleci-run.png?w=1003&fm=webp&q=60\n\n### Versioning strategy\n\nFor versioning, follow Semantic Versioning:\n\n- **MAJOR** version for incompatible API changes\n- **MINOR** version for backwards-compatible functionality\n- **PATCH** version for backwards-compatible bug fixes\n\nTo release a new version:\n\n1. Update the version in `pyproject.toml`\n2. Commit the change\n3. Create and push a tag:\n\n   ```bash\n   git tag v0.1.1\n   git push origin v0.1.1\n   ```\n\n## Verifying the deployment\n\nAfter the CI pipeline completes, verify that your package by visiting its repository on PyPI. For example, this project is available at `https://pypi.org/project/mcp-document-brain/`.\n\nYou can also test the installation:\n\n```bash\n# Create a new virtual environment\npython -m venv test_env\nsource test_env/bin/activate  # On Windows: test_env\\Scripts\\activate\n\n# Install your package from PyPI\npip install mcp-document-brain\n\n# Test that it works\nmcp-document-brain --help\n```\n\nFor a thorough test, create sample documents and try using your MCP server with an LLM platform that supports the MCP.\n\n## Conclusion\n\nCongratulations! You have built a complete MCP server that extends LLM capabilities with document processing tools. You have packaged it for distribution and set up an automated CI/CD pipeline for publishing on PyPI using CircleCI.\n\nThis knowledge provides a foundation for creating more sophisticated MCP servers that could:\n\n- Connect to databases or APIs\n- Process specialized data formats\n- Integrate with external services\n- Execute domain-specific algorithms\n\nMCP opens up exciting possibilities for extending LLM capabilities in standardized ways. By combining Python’s flexibility, FastMCP’s developer-friendly API, and CircleCI’s automation, you can build powerful AI-powered tools tailored to specific workflows.\n\nWhy does this matter? As AI becomes increasingly integrated into our workflows, the ability to extend LLMs with custom capabilities will be a crucial differentiator. Your custom MCP servers can provide unique value that generic AI solutions simply cannot match.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
-<summary>The central piece of a FastMCP application is the `FastMCP` server class. This class acts as the main container for your application’s tools, resources, and prompts, and manages communication with MCP clients.</summary>
+<summary>{'type': 'text', 'text': 'Your user asks for a weekly sales report. The LLM has four tools available: querying the database, aggregating data, calculating trends, and formatting the output. It chains them together. Steps 1 and 2 go fine. Step 3 goes wrong: the LLM tries to calculate week-over-week percentage changes itself, mixes up which week is the baseline, and produces a report showing 340% growth in a category that actually declined. The user gets a polished, confident, completely wrong report.\n\nThis isn\'t a contrived scenario. It\'s the predictable outcome of asking an LLM to choreograph a multi-step workflow where some steps require symbolic computation. The LLM is good at language. It is bad at arithmetic. And when you give it tools for each individual step, you\'re asking it to be good at something else entirely: sequencing, data flow management, and knowing which steps it should delegate versus attempt itself.\n\nNow consider the alternative. The same user clicks a single prompt: "Weekly Sales Report." The server executes the deterministic steps: queries the database, aggregates by category, calculates trends server-side using exact arithmetic, and hands the LLM a precomputed dataset with one instruction: format this as an executive summary. The report is correct every time because the server handled the parts that require precision, and the LLM handled the parts that require language.\n\nIf you read [our article on tool design](https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc), you know how to build tools that LLMs can use well. But tools solve individual tasks. What about multi-step workflows where the steps must happen in a specific order, with data flowing between them, and some steps requiring computation that LLMs shouldn\'t be doing? That\'s where MCP\'s second primitive comes in: prompts.\n\nThe **business analyst** — one of the two human corners of the Capability Square we introduced in that article — knows which workflows their business users run every week. The right operating model is domain-led, engineering-implemented, platform-governed: the analyst brings the workflow knowledge, engineers implement it, and the platform team governs how it runs in production. That is what lets the weekly sales report, the incident response runbook, or the customer onboarding checklist show up as a reliable one-click workflow for the person who actually runs it.\n\n## What Is MCP? (The 30-Second Version)\n\nThe Model Context Protocol (MCP, [spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)) defines three primitives for connecting AI models to external services: tools, prompts, and resources. The [previous article](https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc) covered tools, which are model-controlled primitives that let LLMs invoke server-side operations. This article covers the other two: prompts, which are user-controlled workflow packages, and resources, which provide application-controlled context. Together, the three primitives form a complete system for AI-service integration.\n\nThe enterprise mental model is the same one from the previous article: MCP for AI is what HTTP-based applications are for humans. MCP servers are the AI-facing web servers or mobile applications for your organization\'s data systems, which is why they are usually remote services rather than local helpers. They should also be thin and mostly stateless: an interface layer over internal systems, not a stateful application tier of their own. The main exception is explicit long-running task handling, where state is persisted deliberately because the work itself outlives a single request, aka MCP Tasks. We will describe Tasks in a future article in the series.\n\n## The Three Control Planes\n\nMCP\'s three primitives aren\'t just three types of capability. They represent three distinct control planes, or three answers to the question "who decides when this gets used?"\n\n**Tools are model-controlled.** The LLM (model) decides when to invoke them. When a user asks, "Where\'s my order?", the LLM selects `track_latest_order` from the available tools. The user never explicitly chose that tool; the LLM\'s reasoning did. This is the right model for individual tasks where the LLM\'s judgment about which tool to call is sufficient.\n\n**Prompts are user-controlled.** The human explicitly triggers them. In Claude Desktop, they appear as slash commands. In other clients, they show up as menu items or quick actions. The user sees "Weekly Sales Report" and clicks it, entering a week number. There\'s no ambiguity about what will happen, no LLM judgment about which workflow to run. The user chose.\n\n**Resources are application-controlled.** The host application decides when to pull them into context. A resource might be a database schema, a configuration file, or a live dashboard. The application injects it into the conversation when relevant. For example, loading an API schema before a coding task. Neither the user nor the LLM explicitly requested it; the application determined it was needed.\n\nThis taxonomy tells you which primitive to use. If the LLM should decide, use a tool. If the user decides, use a prompt. If the application decides to use a resource.\n\nIn practice, many enterprise deployments add one more concept on top of these three primitives: **Tasks**. Tasks are not part of the base three-way split. They are an extension pattern for long-running operations such as scans, report generation, provisioning, or approvals. They are also the main exception to the normal stateless model. The request/response interface remains stateless, but the server explicitly persists task state and exposes progress or completion, rather than relying on sticky in-memory sessions.\n\nThis maps cleanly onto the Capability Square from the previous article — and prompts are where the split between the two human corners pays off the most:\n\n| Control Plane | Who Triggers at Runtime | Square Corner(s) | Strength |\n| --- | --- | --- | --- |\n| Tools | The LLM (model) | LLM | Intent interpretation, tool selection |\n| Prompts | The business user | Business Analyst (authors) + Business User (triggers) | Workflow knowledge encoded once, invoked many times |\n| Resources | The host application | Host + Server | Context management, data access |\n\nhttps://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fb7qf7k2pfbysr8vbutzw.png\n\nPrompts span both human corners of the square. The business analyst — the domain lead for workflow design — encodes an expert workflow into a prompt at design time. Engineers implement that workflow, and the platform team governs its deployment and control. The business user triggers it with one click at runtime. The prompt is literally the handoff artifact between the two humans: the analyst\'s workflow knowledge, packaged so a user doesn\'t need to recreate it every Monday morning. Tools, by contrast, sit under the LLM corner because the model\'s judgment determines when they are called. Resources sit at the boundary between the host application and the MCP server: the host decides _when_ to pull a resource into context, but the server _provides_ the content. This is the one primitive in which two actors collaborate without either human being directly in the loop, which partly explains why its ecosystem support lags behind that of tools and prompts. When all three control planes work together, the system covers every type of interaction: ad-hoc tasks (tools), structured workflows (prompts), and ambient context (resources). And because resource loading is application-dependent, the host may or may not inject the right resource at the right time — so an important role of prompt workflows is to explicitly load the relevant resources into context as part of the workflow definition. This ensures the LLM has the context it needs, regardless of what the host application decided to provide.\n\n## The Primitive You\'re Not Using\n\nMost MCP servers expose tools. A growing number expose resources. Almost none expose prompts.\n\nBrowse the MCP ecosystem, the tutorial repositories, the example servers, and the community showcases, and you\'ll find tool after tool after tool. Prompts are either absent entirely or limited to trivial "system message" wrappers that add no value beyond what the user could type themselves. The MCP official blog didn\'t publish its first [prompts-for-automation post](https://blog.modelcontextprotocol.io/posts/2025-07-29-prompts-for-automation/) until mid-2025, months after the protocol launched. The ecosystem followed suit: tools are easy to demo, prompts require thinking about workflows, and most tutorials took the easy path.\n\nThere\'s another reason prompts are underutilized: minimal SDK support. Most MCP SDKs treat prompts as simple message templates: you return a list of messages, and that\'s it. There\'s no built-in abstraction for multi-step workflows, data flow between steps, or hybrid execution where the server handles some steps and the LLM handles others. This is precisely why the PMCP (Pragmatic MCP) SDK added deep support for workflow prompts as an enterprise feature, the `SequentialWorkflow` abstraction we\'ll demonstrate in this article. Without SDK support, building reliable workflow prompts requires significant boilerplate that most teams don\'t invest in.\n\nThis is a missed opportunity. Prompts solve a reliability problem that tools cannot solve for known, repeatable workflows.\n\nConsider the gap. When you leave a multi-step workflow entirely to the LLM, using only tools, you\'re relying on instruction-only orchestration: the LLM reads the tool descriptions, figures out the right sequence, handles data flow between steps, and decides which computations to delegate versus attempt. In our experience building production MCP servers with the PMCP SDK, testing multi-step workflows like report generation, data pipelines, and incident response across multiple LLM models, instruction-only approaches typically achieve 60-70% compliance for complex workflows. That means 30-40% of the time, the LLM gets something wrong: a step out of order, a calculation it shouldn\'t have attempted, a variable lost between tool calls.\n\nNow compare hybrid execution, where the prompt defines the workflow, the server executes the deterministic steps, and the LLM fills in only where its language intelligence is needed. In the same test scenarios, hybrid execution typically achieves 85-95% compliance. These numbers come from internal benchmarks, not published studies, and will vary by model, workflow complexity, and domain, but the direction is consistent: reducing the LLM\'s decision space materially improves reliability.\n\nThe reason is straightforward. Prompts reduce the LLM\'s decision space and move **workflow state management** from the LLM\'s volatile context to explicit server-side execution state. In a multi-step tool chain, the LLM must track variables between calls, remember which step it\'s on, and pass results forward correctly, all in its context window, where information degrades with distance. In a workflow prompt, the server manages that state deterministically through request-scoped execution and, when necessary, explicitly persisted state. The LLM receives a pre-built plan with most steps already completed. It only needs to handle the parts that genuinely require language understanding: summarization, formatting, and inference.\n\nThe most common failure mode has a name: **calculation hallucination**. When an LLM sees a "calculate" tool and a "format" tool, it often skips the calculation tool to save a round trip and attempts the arithmetic itself. The result looks plausible, and the format is right; however, the numbers are wrong. Hybrid execution prevents this entirely: the server runs the calculation, the LLM never sees the raw numbers, and the result is correct by construction.\n\nIf you\'re measuring task completion across diverse requests, and you should be, as we argued in the tool design article, prompts are how you push completion rates from "usually works" to "reliably works" for your most common workflows.\n\n## From Protocol to Workflow\n\nAt the protocol level, a prompt is simple: the client calls `prompts/get` with a name and arguments, and the server returns a `GetPromptResult` containing a sequence of `PromptMessage` values. Each message has a role (`System` or `User`) and content (text, images, or embedded resources). The client uses these messages to populate the conversation and guide the LLM\'s response. Clients discover available prompts via `prompts/list` \\-\\- parallel to `tools/list` \\-\\- and present them to users as slash commands, menu items, or quick actions. The key difference from tools: the user explicitly selects them. There\'s no LLM reasoning about which prompt to invoke.\n\nAt this protocol level, prompts are message templates. Useful for setting up context, but not fundamentally different from what the user could type themselves. The real power emerges when you move from templates to workflows: multi-step processes in which data flows between steps, and the server executes what it can before handing off to the LLM. In a production deployment, that workflow engine should still fit the same remote, mostly stateless service model: deterministic steps execute within the request, and truly long-running work is broken out into explicit tasks.\n\n**An important distinction:** base MCP prompts are message templates. The server-executed workflow behavior shown below is a PMCP SDK abstraction built on top of prompts, tools, and resources. It uses the prompt protocol as the entry point, but adds a workflow engine that executes deterministic steps server-side before returning the message sequence to the client. This is not part of the MCP spec -- it\'s what a well-designed SDK can layer on top of it.\n\n## The Weekly Sales Report: One Click, Complex Result\n\nHere\'s the weekly sales report as a `SequentialWorkflow` \\-\\- a PMCP abstraction where each step can feed data into the next:\n\n```rust\nuse pmcp::server::workflow::{\n    dsl::{constant, field, from_step, prompt_arg},\n    SequentialWorkflow, ToolHandle, WorkflowStep,\n};\nuse serde_json::json;\n\n// SequentialWorkflow: a multi-step prompt where data flows between steps.\n// Unlike SyncPrompt (which builds static messages), SequentialWorkflow\n// orchestrates tool calls with typed data bindings between steps.\nlet sales_report = SequentialWorkflow::new(\n    "weekly_sales_report",\n    "Generate a formatted weekly sales report with trends and key metrics."\n)\n// Arguments: what the user provides when triggering this prompt\n.argument("week", "Week identifier (e.g., \'2026-W12\')", true)\n.argument("format", "Output format: summary or detailed", false)\n\n// Step 1: Query sales database (server executes -- deterministic)\n// The server calls query_database with constant + user-provided args.\n// No LLM needed: this is pure data retrieval.\n.step(\n    WorkflowStep::new("query_sales", ToolHandle::new("query_database"))\n        .arg("query_type", constant(json!("weekly_sales")))\n        .arg("week", prompt_arg("week"))\n        .bind("sales_data")  // output available as "sales_data" for later steps\n)\n\n// Step 2: Aggregate by category (server executes -- deterministic)\n// Uses the output from step 1. The server chains these automatically.\n.step(\n    WorkflowStep::new("aggregate", ToolHandle::new("aggregate_metrics"))\n        .arg("data", from_step("sales_data"))  // entire output from step 1\n        .arg("group_by", constant(json!("product_category")))\n        .bind("aggregated")\n)\n\n// Step 3: Calculate week-over-week trends (server executes -- deterministic)\n// This is the step that failed in our opening scenario when the LLM\n// tried to do it. The server handles the arithmetic correctly every time.\n.step(\n    WorkflowStep::new("calc_trends", ToolHandle::new("calculate_trends"))\n        .arg("current_week", from_step("aggregated"))\n        .arg("comparison", constant(json!("previous_week")))\n        .bind("trends")\n)\n\n// Step 4: Format as executive summary (LLM needed -- natural language)\n// This step requires intelligence: choosing which metrics to highlight,\n// writing prose summaries, deciding what "noteworthy" means.\n// The server provides the data and guidance; the LLM provides the writing.\n.step(\n    WorkflowStep::new("format_report", ToolHandle::new("format_output"))\n        .with_guidance(\n            "Format the aggregated data into an executive summary for week {week}.\\n\\\n             Highlight the top 3 performing categories and any \\\n             week-over-week trends that exceed 10% change.\\n\\\n             Use the report template for consistent formatting."\n        )\n        .with_resource("template://reports/weekly-sales")\n        .expect("Report template resource")\n        .arg("data", from_step("aggregated"))\n        .arg("trends", from_step("trends"))\n        .arg("format", prompt_arg("format"))\n        .bind("report")\n);\n```\n\nFollow the data flow through the DSL helpers. `prompt_arg("week")` pulls the user-provided week into step 1. `from_step("sales_data")` feeds step 1\'s entire output into step 2. `from_step("aggregated")` chains step 2\'s result into step 3. Each `bind("name")` names a step\'s output, allowing subsequent steps to reference it. The data flows forward through the workflow without any LLM involvement in the plumbing.\n\nSteps 1-3 are deterministic. The server executes them because each parameter can be resolved from prompt arguments (`prompt_arg`), constants (`constant`), or prior-step bindings (`from_step`). No judgment required. No natural language interpretation. Just data retrieval, aggregation, and arithmetic.\n\nStep 4 is where the server stops and hands off. The `format_output` tool needs LLM intelligence for natural language summarization: choosing which metrics to highlight, writing prose, deciding what "noteworthy" means. The server provides everything the LLM needs -- the aggregated data (from steps 1-3), the guidance (what to highlight), and a report template resource. The LLM\'s job is reduced to writing.\n\nRemember the opening scenario? The LLM tried to calculate week-over-week trends and got the arithmetic wrong—mixing up baselines and producing a report showing 340% growth in a category that actually declined. With this workflow, the server handles the arithmetic in step 3. Deterministically. Correctly. Every time. The LLM only enters at step 4, where its strength—natural language—is needed.\n\nRegistration ties the workflow to the server\'s existing tools:\n\n```rust\nServer::builder()\n    .tool("query_database", query_db_tool)\n    .tool("aggregate_metrics", aggregate_tool)\n    .tool("calculate_trends", trends_tool)\n    .tool("format_output", format_tool)\n    .resources(report_templates)\n    .prompt_workflow(sales_report)?  // validates bindings and registers as prompt\n    .build()?\n    .run_streamable_http("0.0.0.0:3000").await?;\n```\n\nNotice `.prompt_workflow()` validates the workflow\'s bindings at registration time. If you reference a binding that doesn\'t exist -- say, `from_step("sales_data")` with a typo -- you get an error at startup, not a runtime surprise when a user triggers the prompt. The tools you already built become the building blocks. The workflow just orchestrate them.\n\nThe user clicks one prompt. Three database operations, one aggregation, and one trend calculation happen server-side in milliseconds. The LLM receives the complete data and writes the summary. One click, complex result.\n\n## Partial Execution Plans: The Server Does What It Can\n\nWhen a user invokes the weekly sales report prompt, the server doesn\'t just return instructions. It returns a _partial execution plan_: a conversation trace showing what was already done and what remains.\n\nThe server executed steps 1-3 and embedded the actual results. Here\'s a simplified version of what the client LLM receives:\n\n```\nMessage 1 (User): "Generate weekly sales report for 2026-W12"\nMessage 2 (Assistant): "Plan: 1. Query sales DB  2. Aggregate  3. Calculate trends  4. Format"\nMessage 3 (Assistant): "Calling query_database..."\nMessage 4 (Tool Result): {"total_revenue": 284500, "transactions": 1247, ...}  ← PRE-EXECUTED by server\nMessage 5 (Assistant): "Calling aggregate_metrics..."\nMessage 6 (Tool Result): {"categories": [{"name": "Enterprise", "revenue": 142000}, ...]}  ← PRE-EXECUTED by server\nMessage 7 (Assistant): "Calling calculate_trends..."\nMessage 8 (Tool Result): {"enterprise": "+12%", "smb": "-3%", "startup": "+28%", ...}  ← PRE-EXECUTED by server\nMessage 9 (Assistant): "Format the aggregated data into an executive summary for 2026-W12..."\nMessage 10 (Resource): [weekly-sales template content]\n```\n\nMessages 1-8 are done. The tool results (Messages 4, 6, 8) were pre-executed by the server; the LLM didn\'t call those tools. It receives actual data —real revenue numbers, real category breakdowns, real trend percentages—not instructions to fetch that data. The server already queried the database, already aggregated, already calculated. The results are embedded in the conversation trace as if the tools had been called, but no LLM decision-making was involved.\n\nMessage 9 is the guidance for the remaining step. Message 10 is the resource template. The LLM\'s job is reduced to: take this data, follow this guidance, use this template, write prose. That\'s one decision (how to write the summary) instead of the dozens of decisions the instruction-only approach requires (which tools to call, in what order, how to handle errors, whether to do the arithmetic itself).\n\nThis is not a template. It\'s an execution plan where the server has already completed the deterministic portion. The distinction matters: a template says "do these steps." A partial execution plan says, "these steps are done and here are the results, now do the remaining steps." The LLM starts from step 4, not step 1.\n\nThis is the Capability Square operating at the workflow level. The **server** handles deterministic computation — its strength. The **LLM** handles natural language — its strength. The **business analyst** designed the workflow at design time, identifying which steps are deterministic and which require intelligence — their strength. And the **business user** invoked it at runtime with the specific parameters (the week, the service, the severity) that only they, living inside the working context, can provide — their strength. All four corners working together, not on a single tool call, but across an entire workflow.\n\nThe compliance improvement is consistent across our internal benchmarks. Instruction-only approaches, where the prompt simply says "follow these steps: 1. Query the sales DB, 2. Aggregate by category, 3. Calculate trends, 4. Format as a summary:" and leave every decision to the LLM. It might skip steps, reorder them, call different tools, or do the arithmetic itself (badly). Hybrid execution, where steps 1-3 are already done, and the LLM just needs to format, dramatically narrows the decision space. Far fewer decisions, far fewer failure points, far more reliable output.\n\nTest this with your own workflows. Take a 4-step process that your team runs weekly. Build it as an instruction-only prompt, then as a SequentialWorkflow with hybrid execution. Run both 20 times. The difference in successful completions will make the case.\n\n## Incident Response: When the Server Needs the LLM\n\nThe sales report workflow was mostly deterministic: three server-executed steps, one LLM step. But not every workflow splits that cleanly. Consider incident response, where the server gathers data, but the LLM needs to do the hard part of synthesis and recommendation.\n\nA 5-step incident response workflow:\n\n1. Check service status (server executes -- API call, deterministic)\n2. Pull recent error logs (server executes -- log query, deterministic)\n3. Correlate with recent deployments (server executes -- git/deploy history lookup, deterministic)\n4. Draft incident summary (LLM needed -- synthesis, pattern recognition, writing)\n5. Suggest mitigation steps (LLM needed -- reasoning about root cause, recommending actions)\n\nHere\'s the sketch -- not a full implementation, but enough to see the pattern:\n\n```rust\nSequentialWorkflow::new("incident_response", "Investigate and summarize a service incident")\n    .argument("service", "Service name or ID", true)\n    .argument("severity", "Severity level: P1, P2, P3", true)\n\n    // Steps 1-3: Server handles (deterministic data gathering)\n    .step(/* check_service_status -- server executes */)\n    .step(/* query_error_logs -- server executes */)\n    .step(/* check_recent_deploys -- server executes */)\n\n    // Steps 4-5: LLM handles (intelligence required)\n    .step(\n        WorkflowStep::new("draft_summary", ToolHandle::new("create_incident_report"))\n            .with_guidance(\n                "Analyze the service status, error logs, and deployment history.\\n\\\n                 Draft an incident summary for {service} at severity {severity}.\\n\\\n                 Include: timeline, affected systems, error patterns, and \\\n                 correlation with recent deployments."\n            )\n            .arg("status", from_step("service_status"))\n            .arg("logs", from_step("error_logs"))\n            .arg("deploys", from_step("deploy_history"))\n            .bind("summary")\n    )\n    .step(\n        WorkflowStep::new("suggest_mitigation", ToolHandle::new("recommend_actions"))\n            .with_guidance(\n                "Based on the incident summary, suggest 2-3 mitigation steps.\\n\\\n                 If the incident correlates with a recent deployment, include \\\n                 a rollback recommendation."\n            )\n            .arg("summary", from_step("summary"))\n            .bind("recommendations")\n    )\n```\n\nThe split is different from the sales report. The sales report was a 3-step server, 1-step LLM—mostly deterministic. The incident response is 3 steps for the server; 2 steps for the LLM. The analysis and recommendation require genuine intelligence. But the constant is the same: the server gathers all the data the LLM needs before handing off. The LLM doesn\'t have to figure out which APIs to call or which logs to check. It receives the service status, error logs, and deployment history, then applies its strengths: synthesis and reasoning.\n\nNotice that step 5 depends on step 4\'s output (`from_step("summary")`). The LLM executes both steps, but the data dependency is explicit in the workflow. The business analyst who designed this workflow decided that the mitigation suggestions should be based on the incident summary rather than the raw data. That\'s domain knowledge encoded in the workflow structure.\n\nThe partial execution plan for this workflow looks different, too. The server executes steps 1-3 and embeds the results. The LLM receives three steps\' worth of data and two steps\' worth of guidance. It drafts the summary, then uses that summary to suggest mitigations. The workflow is longer, the LLM does more, but the pattern is identical: the server handles the deterministic parts, the LLM handles the intelligence parts.\n\n## The Business Analyst\'s Playbook: Learning What Business Users Need\n\nThe weekly sales report and the incident response share something important: someone who understands the organization\'s workflows designed them. That someone is the **business analyst** — one of the two human corners of the Capability Square. In a strong enterprise setup, workflow design is domain-led, engineering-implemented, and platform-governed. The analyst shares a domain with the business users they\'re designing for, and their role doesn\'t end at tool design. It extends to workflow design: identifying which processes their business users run repeatedly, which steps are deterministic, and where the LLM\'s intelligence adds value.\n\nThe following diagram illustrates the benefits of adding workflow prompts to the MCP servers, as they dramatically reduce the effort for busy business people and significantly increase the completion rate of requests and their consistency:\n\nhttps://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7hdnkp197kssqj3xz7or.png\n\nHere\'s how to approach workflow prompt design in practice:\n\n1. **Observe your users.** What tasks do they repeat weekly? Monthly? What multi-step processes do they describe as "the usual"? These are prompt candidates. Every Monday, the sales team generates a weekly report. Every time there\'s an outage, the ops team runs the same diagnostic sequence. Every quarter, the finance team reconciles accounts. These are not ad hoc tasks, as they are workflows that run on a schedule, with the same steps and for the same reasons.\n\n2. **Identify the deterministic core.** For each repeating workflow, ask: which steps are always the same? Which steps require judgment? The always-the-same steps become server-executed workflow steps with `constant()` and `from_step()` bindings. The judgment steps become LLM-guided steps with `.with_guidance()`. The sales report\'s trend calculation is always the same arithmetic. The incident response\'s mitigation recommendation always requires judgment. The split is usually obvious once you look for it.\n\n3. **Start with one prompt.** Don\'t build 20 prompts. Build the one prompt that saves the most time for the most users. Measure its completion rate. Iterate. This mirrors the tool design advice from the [previous article](https://../01-tool-design/article.md): start with the 20% that serves 80%. For prompts, start with the one workflow your team runs most often.\n\n4. **Connect prompts to tools.** Prompts don\'t replace tools -- they orchestrate them. Your existing tools become the building blocks of workflow prompts. A SequentialWorkflow\'s steps call your tools via `ToolHandle`. The `query_database`, `aggregate_metrics`, and `calculate_trends` tools existed independently before the sales report workflow was built. The workflow just wired them together with data flow and execution order.\n\n5. **Iterate based on failure modes.** If the LLM consistently gets step N wrong, move step N to the server side. If the server can\'t handle step M because it requires judgment, move it to the LLM with clear guidance. The boundary between deterministic and intelligent steps is not fixed -- it\'s something you discover through observation and measurement.\n\nThe business analyst\'s role is to encode organizational knowledge into the MCP server — knowledge they are qualified to encode precisely because they share a domain with the business users who will invoke it. Tools encode individual capabilities. Prompts encode workflows — the sequences, the data flow, the decision about which steps need human-level intelligence and which don\'t. You know which workflows matter. You know which steps are deterministic. You know where the LLM\'s intelligence adds value. Encode that knowledge in prompts.\n\nTrack prompt invocation frequency and completion rates. A prompt that\'s invoked 50 times a week with 90% completion is saving your team hours of manual orchestration. A prompt that\'s never invoked is telling you something about your understanding of user needs. Both signals are useful -- one tells you what to optimize, the other tells you what to rethink.\n\nNone of this removes the need for security-by-design. Prompts are not "just UX." They package access to real systems and real workflows. The same controls apply here as in tools: per-request authn and authz, policy checks on downstream operations, audit logs, rate limits, secret isolation, and clear boundaries on which systems the workflow may touch. If a workflow includes code mode, the controls need to be tighter still: validate first, approve when the risk warrants it, and execute only within a constrained sandbox.\n\n## Resources: The Application-Controlled Plane\n\nWe\'ve covered tools (model-controlled) and prompts (user-controlled). The third primitive is resources: application-controlled context that the host application pulls into the conversation.\n\nResources are read-only reference material -- documentation, schemas, configuration, templates. They provide context that helps agents make better decisions. Where tools perform actions and prompts orchestrate workflows, resources serve information on request. They are passive: the server publishes them, and the client or prompt reads them when needed.\n\nHere\'s a resource using the PMCP SDK:\n\n```rust\nuse pmcp::{StaticResource, ResourceCollection};\n\n// Resources provide context data that agents can read before acting.\n// Unlike tools (which perform actions) or prompts (which orchestrate workflows),\n// resources are passive: they serve information on request.\nlet resources = ResourceCollection::new()\n    .add_resource(\n        StaticResource::new_text(\n            "docs://sales/schema",\n            "# Sales Database Schema\\n\\n\\\n             ## Tables\\n\\\n             - `orders`: order_id, customer_id, total, created_at\\n\\\n             - `products`: product_id, name, category, price\\n\\\n             - `customers`: customer_id, name, email, segment\\n\\n\\\n             ## Common Queries\\n\\\n             Weekly sales: GROUP BY date_trunc(\'week\', created_at)\\n\\\n             By category: JOIN products ON orders.product_id = products.product_id"\n        )\n        .with_name("Sales Database Schema")\n        .with_description(\n            "Database schema and common query patterns for the sales system. \\\n             Read this before constructing database queries."\n        )\n        .with_mime_type("text/markdown")\n    );\n```\n\nURI design matters. Use scheme prefixes to organize your resources: `docs://` for documentation, `config://` for configuration, `data://` for structured data, `template://` for report and output templates. The URI is a stable identifier that clients and prompts reference -- `docs://sales/schema` tells both humans and agents what they\'ll find before reading it.\n\nThe `.with_description()` call serves the same purpose as tool descriptions: it helps agents decide whether a resource is relevant before reading its content. A well-described resource lets an agent skip resources it doesn\'t need, reducing unnecessary context in the conversation.\n\nNotice how this connects to the weekly sales report prompt. In that workflow, step 4 used `.with_resource("template://reports/weekly-sales")` to fetch a report template and embed its content in the conversation trace. Resources provide the context that makes prompts more effective -- the LLM reads the schema to understand the data it\'s formatting, reads the template to follow the expected output structure. Resources and prompts are designed to work together.\n\n## The Ecosystem Reality Check\n\nResources are the least mature of the three MCP primitives in terms of client support. The spec defines them comprehensively -- annotations, subscriptions, URI templates, content types. The PMCP SDK supports them fully. But client implementations lag behind.\n\nMost MCP clients implement the `resources/list` and `resources/read` protocol operations, but the user experience varies significantly. Claude Desktop requires users to explicitly select resources from a list. There is no standardized resource picker UI across clients. And critically, resource access is a client-side operation -- the LLM has no built-in way to request a resource the way it can call a tool. Unless the client proactively injects resources into context, or the server wraps resource access as a tool, the LLM never sees them.\n\nThe gap between spec and ecosystem is real. The MCP specification describes a rich resource system with subscriptions for change notifications, URI templates for parameterized access, and annotations for priority and freshness signals. In practice, most clients implement the basics (list and read) and skip the rest. If you build a resource-heavy server today, you\'re building ahead of client support.\n\nThis doesn\'t mean you shouldn\'t build resources. It means you should build them with realistic expectations about how they\'ll be consumed today, while designing for where the ecosystem is headed. The patterns in the next section bridge the gap.\n\n## Pragmatic Bridge Patterns: Making Resources Work Today\n\nFour patterns let you get value from resources today, regardless of client support.\n\n**1\\. Wrap resources as tools** (most reliable today). Instead of serving a resource at `docs://sales/schema`, create a `get_sales_schema` tool that returns the same content. The LLM discovers and calls tools reliably -- this is the pragmatic path when you need agents to access reference data without depending on client resource support.\n\n```rust\n// Bridge pattern: expose resource content as a tool.\n// Until clients reliably handle resources, tools are the safe path.\n.tool("get_sales_schema", /* returns the same content as docs://sales/schema */)\n```\n\nThis isn\'t elegant, but it works everywhere. You can maintain both the resource (for clients that support it) and the tool wrapper (for clients that don\'t), serving the same underlying content through both channels.\n\n**2\\. Resource templates as parameterized access.** URI templates like `docs://reports/{report_type}` let the server generate URIs from parameters. When clients support resource templates, they can offer auto-complete for resource URIs -- the user types `docs://reports/` and sees available report types. This pattern is worth implementing now because it costs nothing extra and will work well as clients catch up.\n\n**3\\. Prompt-mediated resource loading.** This is the pattern we already saw: `.with_resource(uri)` in SequentialWorkflow steps. The server fetches the resource during prompt execution and embeds it in the conversation. This works today because it doesn\'t depend on client resource support at all -- the server handles the resource loading internally, and the client just sees the content in the prompt messages.\n\n**4\\. Subscribe and automatic injection** (future pattern). Clients can subscribe to resource changes via `resources/subscribe`. When the resource updates, the server sends a notification, and the client can refresh its context. This enables "always up-to-date context" without manual polling -- imagine an agent that automatically gets the latest API schema whenever it changes. This is where resources are headed. When client support catches up, automatic resource injection will make context management seamless.\n\nBuild your resources now. Use bridge patterns for today\'s clients. As the ecosystem matures, your resources will work natively -- and you\'ll already have the content, the URIs, and the descriptions in place.\n\n## Key Takeaways\n\n1. **Three control planes, three primitives.** Tools are model-controlled (the LLM decides). Prompts are user-controlled (the human decides). Resources are application-controlled (the host decides). Knowing which to use is the first design decision for any MCP capability.\n\n2. **Prompts solve the workflow reliability problem.** For known, repeatable workflows, hybrid execution -- where the server handles deterministic steps and the LLM handles intelligence -- consistently outperforms instruction-only orchestration in our benchmarks. Each party does what it\'s built for.\n\n3. **Partial execution plans are the key differentiator.** A prompt doesn\'t just send instructions. It returns a conversation trace with completed tool results, guidance for remaining steps, and embedded resource content. The LLM receives data, not directions.\n\n4. **The business analyst designs workflows, not just tools.** Observe which tasks your business users repeat. Identify the deterministic core. Package it as a SequentialWorkflow. Start with one prompt for your team\'s most common workflow and measure its completion rate. This is the handoff between the two human corners of the square: the analyst encodes once at design time, the business user triggers many times at runtime.\n\n5. **Resources are underbuilt but worth building.** Client support is thin today. Use bridge patterns -- wrap as tools, prompt-mediated loading -- for immediate value. Design for where the ecosystem is going, and your resources will be ready when clients catch up.\n\n6. **Tasks are the explicit exception to the stateless rule.** Most MCP interactions should stay stateless. When work outlives a single request, model it as a task with persisted state, progress tracking, and clear completion semantics instead of smuggling session state into the server process.\n\n7. **Prompts and tools are complementary.** Prompts orchestrate tools. Your existing tools become the building blocks of workflow prompts. Good tool design (from the [previous article](https://../01-tool-design/article.md)) makes good prompt design possible.\n\n8. **Measure prompt completion rates.** Track invocation frequency and success across diverse users. If a prompt is never invoked, your understanding of user needs may be wrong. If it fails consistently at step N, move step N server-side. Both signals guide iteration.', 'extras': {'signature': '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'}}</summary>
 
-The central piece of a FastMCP application is the `FastMCP` server class. This class acts as the main container for your application’s tools, resources, and prompts, and manages communication with MCP clients.
+{'type': 'text', 'text': 'Your user asks for a weekly sales report. The LLM has four tools available: querying the database, aggregating data, calculating trends, and formatting the output. It chains them together. Steps 1 and 2 go fine. Step 3 goes wrong: the LLM tries to calculate week-over-week percentage changes itself, mixes up which week is the baseline, and produces a report showing 340% growth in a category that actually declined. The user gets a polished, confident, completely wrong report.\n\nThis isn\'t a contrived scenario. It\'s the predictable outcome of asking an LLM to choreograph a multi-step workflow where some steps require symbolic computation. The LLM is good at language. It is bad at arithmetic. And when you give it tools for each individual step, you\'re asking it to be good at something else entirely: sequencing, data flow management, and knowing which steps it should delegate versus attempt itself.\n\nNow consider the alternative. The same user clicks a single prompt: "Weekly Sales Report." The server executes the deterministic steps: queries the database, aggregates by category, calculates trends server-side using exact arithmetic, and hands the LLM a precomputed dataset with one instruction: format this as an executive summary. The report is correct every time because the server handled the parts that require precision, and the LLM handled the parts that require language.\n\nIf you read [our article on tool design](https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc), you know how to build tools that LLMs can use well. But tools solve individual tasks. What about multi-step workflows where the steps must happen in a specific order, with data flowing between them, and some steps requiring computation that LLMs shouldn\'t be doing? That\'s where MCP\'s second primitive comes in: prompts.\n\nThe **business analyst** — one of the two human corners of the Capability Square we introduced in that article — knows which workflows their business users run every week. The right operating model is domain-led, engineering-implemented, platform-governed: the analyst brings the workflow knowledge, engineers implement it, and the platform team governs how it runs in production. That is what lets the weekly sales report, the incident response runbook, or the customer onboarding checklist show up as a reliable one-click workflow for the person who actually runs it.\n\n## What Is MCP? (The 30-Second Version)\n\nThe Model Context Protocol (MCP, [spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)) defines three primitives for connecting AI models to external services: tools, prompts, and resources. The [previous article](https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc) covered tools, which are model-controlled primitives that let LLMs invoke server-side operations. This article covers the other two: prompts, which are user-controlled workflow packages, and resources, which provide application-controlled context. Together, the three primitives form a complete system for AI-service integration.\n\nThe enterprise mental model is the same one from the previous article: MCP for AI is what HTTP-based applications are for humans. MCP servers are the AI-facing web servers or mobile applications for your organization\'s data systems, which is why they are usually remote services rather than local helpers. They should also be thin and mostly stateless: an interface layer over internal systems, not a stateful application tier of their own. The main exception is explicit long-running task handling, where state is persisted deliberately because the work itself outlives a single request, aka MCP Tasks. We will describe Tasks in a future article in the series.\n\n## The Three Control Planes\n\nMCP\'s three primitives aren\'t just three types of capability. They represent three distinct control planes, or three answers to the question "who decides when this gets used?"\n\n**Tools are model-controlled.** The LLM (model) decides when to invoke them. When a user asks, "Where\'s my order?", the LLM selects `track_latest_order` from the available tools. The user never explicitly chose that tool; the LLM\'s reasoning did. This is the right model for individual tasks where the LLM\'s judgment about which tool to call is sufficient.\n\n**Prompts are user-controlled.** The human explicitly triggers them. In Claude Desktop, they appear as slash commands. In other clients, they show up as menu items or quick actions. The user sees "Weekly Sales Report" and clicks it, entering a week number. There\'s no ambiguity about what will happen, no LLM judgment about which workflow to run. The user chose.\n\n**Resources are application-controlled.** The host application decides when to pull them into context. A resource might be a database schema, a configuration file, or a live dashboard. The application injects it into the conversation when relevant. For example, loading an API schema before a coding task. Neither the user nor the LLM explicitly requested it; the application determined it was needed.\n\nThis taxonomy tells you which primitive to use. If the LLM should decide, use a tool. If the user decides, use a prompt. If the application decides to use a resource.\n\nIn practice, many enterprise deployments add one more concept on top of these three primitives: **Tasks**. Tasks are not part of the base three-way split. They are an extension pattern for long-running operations such as scans, report generation, provisioning, or approvals. They are also the main exception to the normal stateless model. The request/response interface remains stateless, but the server explicitly persists task state and exposes progress or completion, rather than relying on sticky in-memory sessions.\n\nThis maps cleanly onto the Capability Square from the previous article — and prompts are where the split between the two human corners pays off the most:\n\n| Control Plane | Who Triggers at Runtime | Square Corner(s) | Strength |\n| --- | --- | --- | --- |\n| Tools | The LLM (model) | LLM | Intent interpretation, tool selection |\n| Prompts | The business user | Business Analyst (authors) + Business User (triggers) | Workflow knowledge encoded once, invoked many times |\n| Resources | The host application | Host + Server | Context management, data access |\n\nhttps://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fb7qf7k2pfbysr8vbutzw.png\n\nPrompts span both human corners of the square. The business analyst — the domain lead for workflow design — encodes an expert workflow into a prompt at design time. Engineers implement that workflow, and the platform team governs its deployment and control. The business user triggers it with one click at runtime. The prompt is literally the handoff artifact between the two humans: the analyst\'s workflow knowledge, packaged so a user doesn\'t need to recreate it every Monday morning. Tools, by contrast, sit under the LLM corner because the model\'s judgment determines when they are called. Resources sit at the boundary between the host application and the MCP server: the host decides _when_ to pull a resource into context, but the server _provides_ the content. This is the one primitive in which two actors collaborate without either human being directly in the loop, which partly explains why its ecosystem support lags behind that of tools and prompts. When all three control planes work together, the system covers every type of interaction: ad-hoc tasks (tools), structured workflows (prompts), and ambient context (resources). And because resource loading is application-dependent, the host may or may not inject the right resource at the right time — so an important role of prompt workflows is to explicitly load the relevant resources into context as part of the workflow definition. This ensures the LLM has the context it needs, regardless of what the host application decided to provide.\n\n## The Primitive You\'re Not Using\n\nMost MCP servers expose tools. A growing number expose resources. Almost none expose prompts.\n\nBrowse the MCP ecosystem, the tutorial repositories, the example servers, and the community showcases, and you\'ll find tool after tool after tool. Prompts are either absent entirely or limited to trivial "system message" wrappers that add no value beyond what the user could type themselves. The MCP official blog didn\'t publish its first [prompts-for-automation post](https://blog.modelcontextprotocol.io/posts/2025-07-29-prompts-for-automation/) until mid-2025, months after the protocol launched. The ecosystem followed suit: tools are easy to demo, prompts require thinking about workflows, and most tutorials took the easy path.\n\nThere\'s another reason prompts are underutilized: minimal SDK support. Most MCP SDKs treat prompts as simple message templates: you return a list of messages, and that\'s it. There\'s no built-in abstraction for multi-step workflows, data flow between steps, or hybrid execution where the server handles some steps and the LLM handles others. This is precisely why the PMCP (Pragmatic MCP) SDK added deep support for workflow prompts as an enterprise feature, the `SequentialWorkflow` abstraction we\'ll demonstrate in this article. Without SDK support, building reliable workflow prompts requires significant boilerplate that most teams don\'t invest in.\n\nThis is a missed opportunity. Prompts solve a reliability problem that tools cannot solve for known, repeatable workflows.\n\nConsider the gap. When you leave a multi-step workflow entirely to the LLM, using only tools, you\'re relying on instruction-only orchestration: the LLM reads the tool descriptions, figures out the right sequence, handles data flow between steps, and decides which computations to delegate versus attempt. In our experience building production MCP servers with the PMCP SDK, testing multi-step workflows like report generation, data pipelines, and incident response across multiple LLM models, instruction-only approaches typically achieve 60-70% compliance for complex workflows. That means 30-40% of the time, the LLM gets something wrong: a step out of order, a calculation it shouldn\'t have attempted, a variable lost between tool calls.\n\nNow compare hybrid execution, where the prompt defines the workflow, the server executes the deterministic steps, and the LLM fills in only where its language intelligence is needed. In the same test scenarios, hybrid execution typically achieves 85-95% compliance. These numbers come from internal benchmarks, not published studies, and will vary by model, workflow complexity, and domain, but the direction is consistent: reducing the LLM\'s decision space materially improves reliability.\n\nThe reason is straightforward. Prompts reduce the LLM\'s decision space and move **workflow state management** from the LLM\'s volatile context to explicit server-side execution state. In a multi-step tool chain, the LLM must track variables between calls, remember which step it\'s on, and pass results forward correctly, all in its context window, where information degrades with distance. In a workflow prompt, the server manages that state deterministically through request-scoped execution and, when necessary, explicitly persisted state. The LLM receives a pre-built plan with most steps already completed. It only needs to handle the parts that genuinely require language understanding: summarization, formatting, and inference.\n\nThe most common failure mode has a name: **calculation hallucination**. When an LLM sees a "calculate" tool and a "format" tool, it often skips the calculation tool to save a round trip and attempts the arithmetic itself. The result looks plausible, and the format is right; however, the numbers are wrong. Hybrid execution prevents this entirely: the server runs the calculation, the LLM never sees the raw numbers, and the result is correct by construction.\n\nIf you\'re measuring task completion across diverse requests, and you should be, as we argued in the tool design article, prompts are how you push completion rates from "usually works" to "reliably works" for your most common workflows.\n\n## From Protocol to Workflow\n\nAt the protocol level, a prompt is simple: the client calls `prompts/get` with a name and arguments, and the server returns a `GetPromptResult` containing a sequence of `PromptMessage` values. Each message has a role (`System` or `User`) and content (text, images, or embedded resources). The client uses these messages to populate the conversation and guide the LLM\'s response. Clients discover available prompts via `prompts/list` \\-\\- parallel to `tools/list` \\-\\- and present them to users as slash commands, menu items, or quick actions. The key difference from tools: the user explicitly selects them. There\'s no LLM reasoning about which prompt to invoke.\n\nAt this protocol level, prompts are message templates. Useful for setting up context, but not fundamentally different from what the user could type themselves. The real power emerges when you move from templates to workflows: multi-step processes in which data flows between steps, and the server executes what it can before handing off to the LLM. In a production deployment, that workflow engine should still fit the same remote, mostly stateless service model: deterministic steps execute within the request, and truly long-running work is broken out into explicit tasks.\n\n**An important distinction:** base MCP prompts are message templates. The server-executed workflow behavior shown below is a PMCP SDK abstraction built on top of prompts, tools, and resources. It uses the prompt protocol as the entry point, but adds a workflow engine that executes deterministic steps server-side before returning the message sequence to the client. This is not part of the MCP spec -- it\'s what a well-designed SDK can layer on top of it.\n\n## The Weekly Sales Report: One Click, Complex Result\n\nHere\'s the weekly sales report as a `SequentialWorkflow` \\-\\- a PMCP abstraction where each step can feed data into the next:\n\n```rust\nuse pmcp::server::workflow::{\n    dsl::{constant, field, from_step, prompt_arg},\n    SequentialWorkflow, ToolHandle, WorkflowStep,\n};\nuse serde_json::json;\n\n// SequentialWorkflow: a multi-step prompt where data flows between steps.\n// Unlike SyncPrompt (which builds static messages), SequentialWorkflow\n// orchestrates tool calls with typed data bindings between steps.\nlet sales_report = SequentialWorkflow::new(\n    "weekly_sales_report",\n    "Generate a formatted weekly sales report with trends and key metrics."\n)\n// Arguments: what the user provides when triggering this prompt\n.argument("week", "Week identifier (e.g., \'2026-W12\')", true)\n.argument("format", "Output format: summary or detailed", false)\n\n// Step 1: Query sales database (server executes -- deterministic)\n// The server calls query_database with constant + user-provided args.\n// No LLM needed: this is pure data retrieval.\n.step(\n    WorkflowStep::new("query_sales", ToolHandle::new("query_database"))\n        .arg("query_type", constant(json!("weekly_sales")))\n        .arg("week", prompt_arg("week"))\n        .bind("sales_data")  // output available as "sales_data" for later steps\n)\n\n// Step 2: Aggregate by category (server executes -- deterministic)\n// Uses the output from step 1. The server chains these automatically.\n.step(\n    WorkflowStep::new("aggregate", ToolHandle::new("aggregate_metrics"))\n        .arg("data", from_step("sales_data"))  // entire output from step 1\n        .arg("group_by", constant(json!("product_category")))\n        .bind("aggregated")\n)\n\n// Step 3: Calculate week-over-week trends (server executes -- deterministic)\n// This is the step that failed in our opening scenario when the LLM\n// tried to do it. The server handles the arithmetic correctly every time.\n.step(\n    WorkflowStep::new("calc_trends", ToolHandle::new("calculate_trends"))\n        .arg("current_week", from_step("aggregated"))\n        .arg("comparison", constant(json!("previous_week")))\n        .bind("trends")\n)\n\n// Step 4: Format as executive summary (LLM needed -- natural language)\n// This step requires intelligence: choosing which metrics to highlight,\n// writing prose summaries, deciding what "noteworthy" means.\n// The server provides the data and guidance; the LLM provides the writing.\n.step(\n    WorkflowStep::new("format_report", ToolHandle::new("format_output"))\n        .with_guidance(\n            "Format the aggregated data into an executive summary for week {week}.\\n\\\n             Highlight the top 3 performing categories and any \\\n             week-over-week trends that exceed 10% change.\\n\\\n             Use the report template for consistent formatting."\n        )\n        .with_resource("template://reports/weekly-sales")\n        .expect("Report template resource")\n        .arg("data", from_step("aggregated"))\n        .arg("trends", from_step("trends"))\n        .arg("format", prompt_arg("format"))\n        .bind("report")\n);\n```\n\nFollow the data flow through the DSL helpers. `prompt_arg("week")` pulls the user-provided week into step 1. `from_step("sales_data")` feeds step 1\'s entire output into step 2. `from_step("aggregated")` chains step 2\'s result into step 3. Each `bind("name")` names a step\'s output, allowing subsequent steps to reference it. The data flows forward through the workflow without any LLM involvement in the plumbing.\n\nSteps 1-3 are deterministic. The server executes them because each parameter can be resolved from prompt arguments (`prompt_arg`), constants (`constant`), or prior-step bindings (`from_step`). No judgment required. No natural language interpretation. Just data retrieval, aggregation, and arithmetic.\n\nStep 4 is where the server stops and hands off. The `format_output` tool needs LLM intelligence for natural language summarization: choosing which metrics to highlight, writing prose, deciding what "noteworthy" means. The server provides everything the LLM needs -- the aggregated data (from steps 1-3), the guidance (what to highlight), and a report template resource. The LLM\'s job is reduced to writing.\n\nRemember the opening scenario? The LLM tried to calculate week-over-week trends and got the arithmetic wrong—mixing up baselines and producing a report showing 340% growth in a category that actually declined. With this workflow, the server handles the arithmetic in step 3. Deterministically. Correctly. Every time. The LLM only enters at step 4, where its strength—natural language—is needed.\n\nRegistration ties the workflow to the server\'s existing tools:\n\n```rust\nServer::builder()\n    .tool("query_database", query_db_tool)\n    .tool("aggregate_metrics", aggregate_tool)\n    .tool("calculate_trends", trends_tool)\n    .tool("format_output", format_tool)\n    .resources(report_templates)\n    .prompt_workflow(sales_report)?  // validates bindings and registers as prompt\n    .build()?\n    .run_streamable_http("0.0.0.0:3000").await?;\n```\n\nNotice `.prompt_workflow()` validates the workflow\'s bindings at registration time. If you reference a binding that doesn\'t exist -- say, `from_step("sales_data")` with a typo -- you get an error at startup, not a runtime surprise when a user triggers the prompt. The tools you already built become the building blocks. The workflow just orchestrate them.\n\nThe user clicks one prompt. Three database operations, one aggregation, and one trend calculation happen server-side in milliseconds. The LLM receives the complete data and writes the summary. One click, complex result.\n\n## Partial Execution Plans: The Server Does What It Can\n\nWhen a user invokes the weekly sales report prompt, the server doesn\'t just return instructions. It returns a _partial execution plan_: a conversation trace showing what was already done and what remains.\n\nThe server executed steps 1-3 and embedded the actual results. Here\'s a simplified version of what the client LLM receives:\n\n```\nMessage 1 (User): "Generate weekly sales report for 2026-W12"\nMessage 2 (Assistant): "Plan: 1. Query sales DB  2. Aggregate  3. Calculate trends  4. Format"\nMessage 3 (Assistant): "Calling query_database..."\nMessage 4 (Tool Result): {"total_revenue": 284500, "transactions": 1247, ...}  ← PRE-EXECUTED by server\nMessage 5 (Assistant): "Calling aggregate_metrics..."\nMessage 6 (Tool Result): {"categories": [{"name": "Enterprise", "revenue": 142000}, ...]}  ← PRE-EXECUTED by server\nMessage 7 (Assistant): "Calling calculate_trends..."\nMessage 8 (Tool Result): {"enterprise": "+12%", "smb": "-3%", "startup": "+28%", ...}  ← PRE-EXECUTED by server\nMessage 9 (Assistant): "Format the aggregated data into an executive summary for 2026-W12..."\nMessage 10 (Resource): [weekly-sales template content]\n```\n\nMessages 1-8 are done. The tool results (Messages 4, 6, 8) were pre-executed by the server; the LLM didn\'t call those tools. It receives actual data —real revenue numbers, real category breakdowns, real trend percentages—not instructions to fetch that data. The server already queried the database, already aggregated, already calculated. The results are embedded in the conversation trace as if the tools had been called, but no LLM decision-making was involved.\n\nMessage 9 is the guidance for the remaining step. Message 10 is the resource template. The LLM\'s job is reduced to: take this data, follow this guidance, use this template, write prose. That\'s one decision (how to write the summary) instead of the dozens of decisions the instruction-only approach requires (which tools to call, in what order, how to handle errors, whether to do the arithmetic itself).\n\nThis is not a template. It\'s an execution plan where the server has already completed the deterministic portion. The distinction matters: a template says "do these steps." A partial execution plan says, "these steps are done and here are the results, now do the remaining steps." The LLM starts from step 4, not step 1.\n\nThis is the Capability Square operating at the workflow level. The **server** handles deterministic computation — its strength. The **LLM** handles natural language — its strength. The **business analyst** designed the workflow at design time, identifying which steps are deterministic and which require intelligence — their strength. And the **business user** invoked it at runtime with the specific parameters (the week, the service, the severity) that only they, living inside the working context, can provide — their strength. All four corners working together, not on a single tool call, but across an entire workflow.\n\nThe compliance improvement is consistent across our internal benchmarks. Instruction-only approaches, where the prompt simply says "follow these steps: 1. Query the sales DB, 2. Aggregate by category, 3. Calculate trends, 4. Format as a summary:" and leave every decision to the LLM. It might skip steps, reorder them, call different tools, or do the arithmetic itself (badly). Hybrid execution, where steps 1-3 are already done, and the LLM just needs to format, dramatically narrows the decision space. Far fewer decisions, far fewer failure points, far more reliable output.\n\nTest this with your own workflows. Take a 4-step process that your team runs weekly. Build it as an instruction-only prompt, then as a SequentialWorkflow with hybrid execution. Run both 20 times. The difference in successful completions will make the case.\n\n## Incident Response: When the Server Needs the LLM\n\nThe sales report workflow was mostly deterministic: three server-executed steps, one LLM step. But not every workflow splits that cleanly. Consider incident response, where the server gathers data, but the LLM needs to do the hard part of synthesis and recommendation.\n\nA 5-step incident response workflow:\n\n1. Check service status (server executes -- API call, deterministic)\n2. Pull recent error logs (server executes -- log query, deterministic)\n3. Correlate with recent deployments (server executes -- git/deploy history lookup, deterministic)\n4. Draft incident summary (LLM needed -- synthesis, pattern recognition, writing)\n5. Suggest mitigation steps (LLM needed -- reasoning about root cause, recommending actions)\n\nHere\'s the sketch -- not a full implementation, but enough to see the pattern:\n\n```rust\nSequentialWorkflow::new("incident_response", "Investigate and summarize a service incident")\n    .argument("service", "Service name or ID", true)\n    .argument("severity", "Severity level: P1, P2, P3", true)\n\n    // Steps 1-3: Server handles (deterministic data gathering)\n    .step(/* check_service_status -- server executes */)\n    .step(/* query_error_logs -- server executes */)\n    .step(/* check_recent_deploys -- server executes */)\n\n    // Steps 4-5: LLM handles (intelligence required)\n    .step(\n        WorkflowStep::new("draft_summary", ToolHandle::new("create_incident_report"))\n            .with_guidance(\n                "Analyze the service status, error logs, and deployment history.\\n\\\n                 Draft an incident summary for {service} at severity {severity}.\\n\\\n                 Include: timeline, affected systems, error patterns, and \\\n                 correlation with recent deployments."\n            )\n            .arg("status", from_step("service_status"))\n            .arg("logs", from_step("error_logs"))\n            .arg("deploys", from_step("deploy_history"))\n            .bind("summary")\n    )\n    .step(\n        WorkflowStep::new("suggest_mitigation", ToolHandle::new("recommend_actions"))\n            .with_guidance(\n                "Based on the incident summary, suggest 2-3 mitigation steps.\\n\\\n                 If the incident correlates with a recent deployment, include \\\n                 a rollback recommendation."\n            )\n            .arg("summary", from_step("summary"))\n            .bind("recommendations")\n    )\n```\n\nThe split is different from the sales report. The sales report was a 3-step server, 1-step LLM—mostly deterministic. The incident response is 3 steps for the server; 2 steps for the LLM. The analysis and recommendation require genuine intelligence. But the constant is the same: the server gathers all the data the LLM needs before handing off. The LLM doesn\'t have to figure out which APIs to call or which logs to check. It receives the service status, error logs, and deployment history, then applies its strengths: synthesis and reasoning.\n\nNotice that step 5 depends on step 4\'s output (`from_step("summary")`). The LLM executes both steps, but the data dependency is explicit in the workflow. The business analyst who designed this workflow decided that the mitigation suggestions should be based on the incident summary rather than the raw data. That\'s domain knowledge encoded in the workflow structure.\n\nThe partial execution plan for this workflow looks different, too. The server executes steps 1-3 and embeds the results. The LLM receives three steps\' worth of data and two steps\' worth of guidance. It drafts the summary, then uses that summary to suggest mitigations. The workflow is longer, the LLM does more, but the pattern is identical: the server handles the deterministic parts, the LLM handles the intelligence parts.\n\n## The Business Analyst\'s Playbook: Learning What Business Users Need\n\nThe weekly sales report and the incident response share something important: someone who understands the organization\'s workflows designed them. That someone is the **business analyst** — one of the two human corners of the Capability Square. In a strong enterprise setup, workflow design is domain-led, engineering-implemented, and platform-governed. The analyst shares a domain with the business users they\'re designing for, and their role doesn\'t end at tool design. It extends to workflow design: identifying which processes their business users run repeatedly, which steps are deterministic, and where the LLM\'s intelligence adds value.\n\nThe following diagram illustrates the benefits of adding workflow prompts to the MCP servers, as they dramatically reduce the effort for busy business people and significantly increase the completion rate of requests and their consistency:\n\nhttps://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7hdnkp197kssqj3xz7or.png\n\nHere\'s how to approach workflow prompt design in practice:\n\n1. **Observe your users.** What tasks do they repeat weekly? Monthly? What multi-step processes do they describe as "the usual"? These are prompt candidates. Every Monday, the sales team generates a weekly report. Every time there\'s an outage, the ops team runs the same diagnostic sequence. Every quarter, the finance team reconciles accounts. These are not ad hoc tasks, as they are workflows that run on a schedule, with the same steps and for the same reasons.\n\n2. **Identify the deterministic core.** For each repeating workflow, ask: which steps are always the same? Which steps require judgment? The always-the-same steps become server-executed workflow steps with `constant()` and `from_step()` bindings. The judgment steps become LLM-guided steps with `.with_guidance()`. The sales report\'s trend calculation is always the same arithmetic. The incident response\'s mitigation recommendation always requires judgment. The split is usually obvious once you look for it.\n\n3. **Start with one prompt.** Don\'t build 20 prompts. Build the one prompt that saves the most time for the most users. Measure its completion rate. Iterate. This mirrors the tool design advice from the [previous article](https://../01-tool-design/article.md): start with the 20% that serves 80%. For prompts, start with the one workflow your team runs most often.\n\n4. **Connect prompts to tools.** Prompts don\'t replace tools -- they orchestrate them. Your existing tools become the building blocks of workflow prompts. A SequentialWorkflow\'s steps call your tools via `ToolHandle`. The `query_database`, `aggregate_metrics`, and `calculate_trends` tools existed independently before the sales report workflow was built. The workflow just wired them together with data flow and execution order.\n\n5. **Iterate based on failure modes.** If the LLM consistently gets step N wrong, move step N to the server side. If the server can\'t handle step M because it requires judgment, move it to the LLM with clear guidance. The boundary between deterministic and intelligent steps is not fixed -- it\'s something you discover through observation and measurement.\n\nThe business analyst\'s role is to encode organizational knowledge into the MCP server — knowledge they are qualified to encode precisely because they share a domain with the business users who will invoke it. Tools encode individual capabilities. Prompts encode workflows — the sequences, the data flow, the decision about which steps need human-level intelligence and which don\'t. You know which workflows matter. You know which steps are deterministic. You know where the LLM\'s intelligence adds value. Encode that knowledge in prompts.\n\nTrack prompt invocation frequency and completion rates. A prompt that\'s invoked 50 times a week with 90% completion is saving your team hours of manual orchestration. A prompt that\'s never invoked is telling you something about your understanding of user needs. Both signals are useful -- one tells you what to optimize, the other tells you what to rethink.\n\nNone of this removes the need for security-by-design. Prompts are not "just UX." They package access to real systems and real workflows. The same controls apply here as in tools: per-request authn and authz, policy checks on downstream operations, audit logs, rate limits, secret isolation, and clear boundaries on which systems the workflow may touch. If a workflow includes code mode, the controls need to be tighter still: validate first, approve when the risk warrants it, and execute only within a constrained sandbox.\n\n## Resources: The Application-Controlled Plane\n\nWe\'ve covered tools (model-controlled) and prompts (user-controlled). The third primitive is resources: application-controlled context that the host application pulls into the conversation.\n\nResources are read-only reference material -- documentation, schemas, configuration, templates. They provide context that helps agents make better decisions. Where tools perform actions and prompts orchestrate workflows, resources serve information on request. They are passive: the server publishes them, and the client or prompt reads them when needed.\n\nHere\'s a resource using the PMCP SDK:\n\n```rust\nuse pmcp::{StaticResource, ResourceCollection};\n\n// Resources provide context data that agents can read before acting.\n// Unlike tools (which perform actions) or prompts (which orchestrate workflows),\n// resources are passive: they serve information on request.\nlet resources = ResourceCollection::new()\n    .add_resource(\n        StaticResource::new_text(\n            "docs://sales/schema",\n            "# Sales Database Schema\\n\\n\\\n             ## Tables\\n\\\n             - `orders`: order_id, customer_id, total, created_at\\n\\\n             - `products`: product_id, name, category, price\\n\\\n             - `customers`: customer_id, name, email, segment\\n\\n\\\n             ## Common Queries\\n\\\n             Weekly sales: GROUP BY date_trunc(\'week\', created_at)\\n\\\n             By category: JOIN products ON orders.product_id = products.product_id"\n        )\n        .with_name("Sales Database Schema")\n        .with_description(\n            "Database schema and common query patterns for the sales system. \\\n             Read this before constructing database queries."\n        )\n        .with_mime_type("text/markdown")\n    );\n```\n\nURI design matters. Use scheme prefixes to organize your resources: `docs://` for documentation, `config://` for configuration, `data://` for structured data, `template://` for report and output templates. The URI is a stable identifier that clients and prompts reference -- `docs://sales/schema` tells both humans and agents what they\'ll find before reading it.\n\nThe `.with_description()` call serves the same purpose as tool descriptions: it helps agents decide whether a resource is relevant before reading its content. A well-described resource lets an agent skip resources it doesn\'t need, reducing unnecessary context in the conversation.\n\nNotice how this connects to the weekly sales report prompt. In that workflow, step 4 used `.with_resource("template://reports/weekly-sales")` to fetch a report template and embed its content in the conversation trace. Resources provide the context that makes prompts more effective -- the LLM reads the schema to understand the data it\'s formatting, reads the template to follow the expected output structure. Resources and prompts are designed to work together.\n\n## The Ecosystem Reality Check\n\nResources are the least mature of the three MCP primitives in terms of client support. The spec defines them comprehensively -- annotations, subscriptions, URI templates, content types. The PMCP SDK supports them fully. But client implementations lag behind.\n\nMost MCP clients implement the `resources/list` and `resources/read` protocol operations, but the user experience varies significantly. Claude Desktop requires users to explicitly select resources from a list. There is no standardized resource picker UI across clients. And critically, resource access is a client-side operation -- the LLM has no built-in way to request a resource the way it can call a tool. Unless the client proactively injects resources into context, or the server wraps resource access as a tool, the LLM never sees them.\n\nThe gap between spec and ecosystem is real. The MCP specification describes a rich resource system with subscriptions for change notifications, URI templates for parameterized access, and annotations for priority and freshness signals. In practice, most clients implement the basics (list and read) and skip the rest. If you build a resource-heavy server today, you\'re building ahead of client support.\n\nThis doesn\'t mean you shouldn\'t build resources. It means you should build them with realistic expectations about how they\'ll be consumed today, while designing for where the ecosystem is headed. The patterns in the next section bridge the gap.\n\n## Pragmatic Bridge Patterns: Making Resources Work Today\n\nFour patterns let you get value from resources today, regardless of client support.\n\n**1\\. Wrap resources as tools** (most reliable today). Instead of serving a resource at `docs://sales/schema`, create a `get_sales_schema` tool that returns the same content. The LLM discovers and calls tools reliably -- this is the pragmatic path when you need agents to access reference data without depending on client resource support.\n\n```rust\n// Bridge pattern: expose resource content as a tool.\n// Until clients reliably handle resources, tools are the safe path.\n.tool("get_sales_schema", /* returns the same content as docs://sales/schema */)\n```\n\nThis isn\'t elegant, but it works everywhere. You can maintain both the resource (for clients that support it) and the tool wrapper (for clients that don\'t), serving the same underlying content through both channels.\n\n**2\\. Resource templates as parameterized access.** URI templates like `docs://reports/{report_type}` let the server generate URIs from parameters. When clients support resource templates, they can offer auto-complete for resource URIs -- the user types `docs://reports/` and sees available report types. This pattern is worth implementing now because it costs nothing extra and will work well as clients catch up.\n\n**3\\. Prompt-mediated resource loading.** This is the pattern we already saw: `.with_resource(uri)` in SequentialWorkflow steps. The server fetches the resource during prompt execution and embeds it in the conversation. This works today because it doesn\'t depend on client resource support at all -- the server handles the resource loading internally, and the client just sees the content in the prompt messages.\n\n**4\\. Subscribe and automatic injection** (future pattern). Clients can subscribe to resource changes via `resources/subscribe`. When the resource updates, the server sends a notification, and the client can refresh its context. This enables "always up-to-date context" without manual polling -- imagine an agent that automatically gets the latest API schema whenever it changes. This is where resources are headed. When client support catches up, automatic resource injection will make context management seamless.\n\nBuild your resources now. Use bridge patterns for today\'s clients. As the ecosystem matures, your resources will work natively -- and you\'ll already have the content, the URIs, and the descriptions in place.\n\n## Key Takeaways\n\n1. **Three control planes, three primitives.** Tools are model-controlled (the LLM decides). Prompts are user-controlled (the human decides). Resources are application-controlled (the host decides). Knowing which to use is the first design decision for any MCP capability.\n\n2. **Prompts solve the workflow reliability problem.** For known, repeatable workflows, hybrid execution -- where the server handles deterministic steps and the LLM handles intelligence -- consistently outperforms instruction-only orchestration in our benchmarks. Each party does what it\'s built for.\n\n3. **Partial execution plans are the key differentiator.** A prompt doesn\'t just send instructions. It returns a conversation trace with completed tool results, guidance for remaining steps, and embedded resource content. The LLM receives data, not directions.\n\n4. **The business analyst designs workflows, not just tools.** Observe which tasks your business users repeat. Identify the deterministic core. Package it as a SequentialWorkflow. Start with one prompt for your team\'s most common workflow and measure its completion rate. This is the handoff between the two human corners of the square: the analyst encodes once at design time, the business user triggers many times at runtime.\n\n5. **Resources are underbuilt but worth building.** Client support is thin today. Use bridge patterns -- wrap as tools, prompt-mediated loading -- for immediate value. Design for where the ecosystem is going, and your resources will be ready when clients catch up.\n\n6. **Tasks are the explicit exception to the stateless rule.** Most MCP interactions should stay stateless. When work outlives a single request, model it as a task with persisted state, progress tracking, and clear completion semantics instead of smuggling session state into the server process.\n\n7. **Prompts and tools are complementary.** Prompts orchestrate tools. Your existing tools become the building blocks of workflow prompts. Good tool design (from the [previous article](https://../01-tool-design/article.md)) makes good prompt design possible.\n\n8. **Measure prompt completion rates.** Track invocation frequency and success across diverse users. If a prompt is never invoked, your understanding of user needs may be wrong. If it fails consistently at step N, move step N server-side. Both signals guide iteration.', 'extras': {'signature': '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'}}
 
-## [​](https://gofastmcp.com/servers/server\#creating-a-server)  Creating a Server
+</details>
 
-Instantiating a server is straightforward. You typically provide a name for your server, which helps identify it in client applications or logs.
+<details>
+<summary>{'type': 'text', 'text': 'The `fastmcp.Client` class provides a programmatic interface for interacting with any MCP server. It handles protocol details and connection management automatically, letting you focus on the operations you want to perform. The FastMCP Client is designed for deterministic, controlled interactions rather than autonomous behavior, making it ideal for testing MCP servers during development, building deterministic applications that need reliable MCP interactions, and creating the foundation for agentic or LLM-based clients with structured, type-safe operations.\n\nThis is a programmatic client that requires explicit function calls and provides direct control over all MCP operations. Use it as a building block for higher-level systems.\n\n## Creating a Client\n\nYou provide a server source and the client automatically infers the appropriate transport mechanism.\n\n```python\nimport asyncio\nfrom fastmcp import Client, FastMCP\n\n# In-memory server (ideal for testing)\nserver = FastMCP("TestServer")\nclient = Client(server)\n\n# HTTP server\nclient = Client("https://example.com/mcp")\n\n# Local Python script\nclient = Client("my_mcp_server.py")\n\nasync def main():\n    async with client:\n        # Basic server interaction\n        await client.ping()\n\n        # List available operations\n        tools = await client.list_tools()\n        resources = await client.list_resources()\n        prompts = await client.list_prompts()\n\n        # Execute operations\n        result = await client.call_tool("example_tool", {"param": "value"})\n        print(result)\n\nasyncio.run(main())\n```\n\nAll client operations require using the `async with` context manager for proper connection lifecycle management.\n\n## Choosing a Transport\n\nThe client automatically selects a transport based on what you pass to it, but different transports have different characteristics that matter for your use case.\n\n**In-memory transport** connects directly to a FastMCP server instance within the same Python process. Use this for testing and development where you want to eliminate subprocess and network complexity. The server shares your process’s environment and memory space.\n\n```python\nfrom fastmcp import Client, FastMCP\n\nserver = FastMCP("TestServer")\nclient = Client(server)  # In-memory, no network or subprocess\n```\n\n**STDIO transport** launches a server as a subprocess and communicates through stdin/stdout pipes. This is the standard mechanism used by desktop clients like Claude Desktop. The subprocess runs in an isolated environment, so you must explicitly pass any environment variables the server needs.\n\n```python\nfrom fastmcp import Client\n\n# Simple inference from file path\nclient = Client("my_server.py")\n\n# With explicit environment configuration\nclient = Client("my_server.py", env={"API_KEY": "secret"})\n```\n\n**HTTP transport** connects to servers running as web services. Use this for production deployments where the server runs independently and manages its own lifecycle.\n\n```python\nfrom fastmcp import Client\n\nclient = Client("https://api.example.com/mcp")\n```\n\n## Connection Lifecycle\n\nThe client uses context managers for connection management. When you enter the context, the client establishes a connection and performs an MCP initialization handshake with the server. This handshake exchanges capabilities, server metadata, and instructions.\n\n```python\nfrom fastmcp import Client, FastMCP\n\nmcp = FastMCP(name="MyServer", instructions="Use the greet tool to say hello!")\n\n@mcp.tool\ndef greet(name: str) -> str:\n    """Greet a user by name."""\n    return f"Hello, {name}!"\n\nasync with Client(mcp) as client:\n    # Initialization already happened automatically\n    print(f"Server: {client.initialize_result.serverInfo.name}")\n    print(f"Instructions: {client.initialize_result.instructions}")\n    print(f"Capabilities: {client.initialize_result.capabilities.tools}")\n```\n\nFor advanced scenarios where you need precise control over when initialization happens, disable automatic initialization and call `initialize()` manually:\n\n```python\nfrom fastmcp import Client\n\nclient = Client("my_mcp_server.py", auto_initialize=False)\n\nasync with client:\n    # Connection established, but not initialized yet\n    print(f"Connected: {client.is_connected()}")\n    print(f"Initialized: {client.initialize_result is not None}")  # False\n\n    # Initialize manually with custom timeout\n    result = await client.initialize(timeout=10.0)\n    print(f"Server: {result.serverInfo.name}")\n\n    # Now ready for operations\n    tools = await client.list_tools()\n```\n\n## Operations\n\nFastMCP clients interact with three types of server components.\n\n**Tools** are server-side functions that the client can execute with arguments. Call them with `call_tool()` and receive structured results.\n\n```python\nasync with client:\n    tools = await client.list_tools()\n    result = await client.call_tool("multiply", {"a": 5, "b": 3})\n    print(result.data)  # 15\n```\n\n**Resources** are data sources that the client can read, either static or templated. Access them with `read_resource()` using URIs.\n\n```python\nasync with client:\n    resources = await client.list_resources()\n    content = await client.read_resource("file:///config/settings.json")\n    print(content[0].text)\n```\n\n**Prompts** are reusable message templates that can accept arguments. Retrieve rendered prompts with `get_prompt()`.\n\n```python\nasync with client:\n    prompts = await client.list_prompts()\n    messages = await client.get_prompt("analyze_data", {"data": [1, 2, 3]})\n    print(messages.messages)\n```', 'extras': {'signature': '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'}}</summary>
 
-```
-from fastmcp import FastMCP
+{'type': 'text', 'text': 'The `fastmcp.Client` class provides a programmatic interface for interacting with any MCP server. It handles protocol details and connection management automatically, letting you focus on the operations you want to perform. The FastMCP Client is designed for deterministic, controlled interactions rather than autonomous behavior, making it ideal for testing MCP servers during development, building deterministic applications that need reliable MCP interactions, and creating the foundation for agentic or LLM-based clients with structured, type-safe operations.\n\nThis is a programmatic client that requires explicit function calls and provides direct control over all MCP operations. Use it as a building block for higher-level systems.\n\n## Creating a Client\n\nYou provide a server source and the client automatically infers the appropriate transport mechanism.\n\n```python\nimport asyncio\nfrom fastmcp import Client, FastMCP\n\n# In-memory server (ideal for testing)\nserver = FastMCP("TestServer")\nclient = Client(server)\n\n# HTTP server\nclient = Client("https://example.com/mcp")\n\n# Local Python script\nclient = Client("my_mcp_server.py")\n\nasync def main():\n    async with client:\n        # Basic server interaction\n        await client.ping()\n\n        # List available operations\n        tools = await client.list_tools()\n        resources = await client.list_resources()\n        prompts = await client.list_prompts()\n\n        # Execute operations\n        result = await client.call_tool("example_tool", {"param": "value"})\n        print(result)\n\nasyncio.run(main())\n```\n\nAll client operations require using the `async with` context manager for proper connection lifecycle management.\n\n## Choosing a Transport\n\nThe client automatically selects a transport based on what you pass to it, but different transports have different characteristics that matter for your use case.\n\n**In-memory transport** connects directly to a FastMCP server instance within the same Python process. Use this for testing and development where you want to eliminate subprocess and network complexity. The server shares your process’s environment and memory space.\n\n```python\nfrom fastmcp import Client, FastMCP\n\nserver = FastMCP("TestServer")\nclient = Client(server)  # In-memory, no network or subprocess\n```\n\n**STDIO transport** launches a server as a subprocess and communicates through stdin/stdout pipes. This is the standard mechanism used by desktop clients like Claude Desktop. The subprocess runs in an isolated environment, so you must explicitly pass any environment variables the server needs.\n\n```python\nfrom fastmcp import Client\n\n# Simple inference from file path\nclient = Client("my_server.py")\n\n# With explicit environment configuration\nclient = Client("my_server.py", env={"API_KEY": "secret"})\n```\n\n**HTTP transport** connects to servers running as web services. Use this for production deployments where the server runs independently and manages its own lifecycle.\n\n```python\nfrom fastmcp import Client\n\nclient = Client("https://api.example.com/mcp")\n```\n\n## Connection Lifecycle\n\nThe client uses context managers for connection management. When you enter the context, the client establishes a connection and performs an MCP initialization handshake with the server. This handshake exchanges capabilities, server metadata, and instructions.\n\n```python\nfrom fastmcp import Client, FastMCP\n\nmcp = FastMCP(name="MyServer", instructions="Use the greet tool to say hello!")\n\n@mcp.tool\ndef greet(name: str) -> str:\n    """Greet a user by name."""\n    return f"Hello, {name}!"\n\nasync with Client(mcp) as client:\n    # Initialization already happened automatically\n    print(f"Server: {client.initialize_result.serverInfo.name}")\n    print(f"Instructions: {client.initialize_result.instructions}")\n    print(f"Capabilities: {client.initialize_result.capabilities.tools}")\n```\n\nFor advanced scenarios where you need precise control over when initialization happens, disable automatic initialization and call `initialize()` manually:\n\n```python\nfrom fastmcp import Client\n\nclient = Client("my_mcp_server.py", auto_initialize=False)\n\nasync with client:\n    # Connection established, but not initialized yet\n    print(f"Connected: {client.is_connected()}")\n    print(f"Initialized: {client.initialize_result is not None}")  # False\n\n    # Initialize manually with custom timeout\n    result = await client.initialize(timeout=10.0)\n    print(f"Server: {result.serverInfo.name}")\n\n    # Now ready for operations\n    tools = await client.list_tools()\n```\n\n## Operations\n\nFastMCP clients interact with three types of server components.\n\n**Tools** are server-side functions that the client can execute with arguments. Call them with `call_tool()` and receive structured results.\n\n```python\nasync with client:\n    tools = await client.list_tools()\n    result = await client.call_tool("multiply", {"a": 5, "b": 3})\n    print(result.data)  # 15\n```\n\n**Resources** are data sources that the client can read, either static or templated. Access them with `read_resource()` using URIs.\n\n```python\nasync with client:\n    resources = await client.list_resources()\n    content = await client.read_resource("file:///config/settings.json")\n    print(content[0].text)\n```\n\n**Prompts** are reusable message templates that can accept arguments. Retrieve rendered prompts with `get_prompt()`.\n\n```python\nasync with client:\n    prompts = await client.list_prompts()\n    messages = await client.get_prompt("analyze_data", {"data": [1, 2, 3]})\n    print(messages.messages)\n```', 'extras': {'signature': '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'}}
 
-# Create a basic server instance
-mcp = FastMCP(name="MyAssistantServer")
+</details>
 
-# You can also add instructions for how to interact with the server
-mcp_with_instructions = FastMCP(
-    name="HelpfulAssistant",
-    instructions="""
-        This server provides data analysis tools.
-        Call get_average() to analyze numerical data.
-    """,
-)
+<details>
+<summary>{'type': 'text', 'text': '**FastMCP is the standard framework for building MCP applications.** The Model Context Protocol (MCP) connects LLMs to tools and data. FastMCP gives you everything you need to go from prototype to production — build servers that expose capabilities, connect clients to any MCP service, and give your tools interactive UIs:\n\n```python\nfrom fastmcp import FastMCP\n\nmcp = FastMCP("Demo 🚀")\n\n@mcp.tool\ndef add(a: int, b: int) -> int:\n    """Add two numbers"""\n    return a + b\n\nif __name__ == "__main__":\n    mcp.run()\n```\n\n## Move Fast and Make Things\n\nThe Model Context Protocol (MCP) lets you give agents access to your tools and data. FastMCP handles all of it. Declare a tool with a Python function, and the schema, validation, and documentation are generated automatically. Connect to a server with a URL, and transport negotiation, authentication, and protocol lifecycle are managed for you.\n\nFastMCP has three pillars:\n\n*   **Servers:** Wrap your Python functions into MCP-compliant tools, resources, and prompts.\n*   **Clients:** Connect to any server with full protocol support.\n*   **Apps:** Give your tools interactive UIs rendered directly in the conversation.\n\n### Using FastMCP to Connect a Client\n\nYou can use FastMCP to connect to an MCP server and call tools programmatically:\n\n```python\nimport asyncio\nfrom fastmcp import Client\n\nasync def main():\n    async with Client("https://gofastmcp.com/mcp") as client:\n        result = await client.call_tool(\n            name="search_fast_mcp",\n            arguments={"query": "deploy a FastMCP server"}\n        )\n    print(result)\n\nasyncio.run(main())\n```', 'extras': {'signature': 'ErILCq8LAQw51seHONUmyh0CoXDYBTbm4/JI6bzBKnn2oPoS7x8HMZSCxF3p02/gMs55sd25By6F0kWeR9MKVPEO4YcP9eFX2XmDvw9WLC78JtzbLYB4j8rV/1QGqT+ZrUwni0OuoWDS+uaOGWCAcCVUw4FRzIGlJI6Z3Ln+OogSWBR8yQstwsJYucJjQ1OxgifAWhMkcX6tPspH/0kYpMWTBs17Sv3E6xk1id9EiuBWhVHKLr1fdjlN+C3ObPfluBFOne/exbopMCFjyZ/BGfmt79f7FPJ4899ttXmYtOPMSFhZWkgCojjK0vJxhBXRcI4qNNzErAsrKQCg5+e843l3R1KL1rqquO+PFnhbuooLx/Bj7Gs42Osa8YdURY8TR+G/dFzxcyOIYOmMR+TF2bs26KnBJ9OzpQmv56zBx2lkS12UTphO45DEXQWyJCu05TcOqUj/p+oXRmdrG3WXHh/VdN0fSbrii9JUbxp4Wp/g0h0lel/U6pYTh/IX10U6f75xL4JuglBTgvu3HE29ZA43lRXkhmNsW9N1aWSEK3oaDlvvQmCc307W//PYs+V+lnxPOUK+8JlYUoOIMS5ZPsH5BhiOVHo0DqcY+XDwT437/qx8P2m2ggu+lN6+2Fjon3qrPg3TPabW/ZuokB8SwsY3jSISytUNVZdQ0Xc+YsvsxGhRMJqNzJhLxBKwWGgI1QeyraAziQDqCOMFRf1Iqm30NpdChm73wCrP/CQ81xiwPmoPyRFdffE/aAr4gqbChbjRtZ+EUL0icE6znLYzVNm2BhVrEPPf+qwdIubql6CafVgJBjGm9g3VTJjqC/V8JqDPbUtwVHdymEmA5cgpSjGvR20dhUbRtuoSg/QXhoE9TOsIfVJpdi7xCafKj7Mf9pbrQl6o6ELUw/2PdfR2g24R3ouiA+8beEnRCIULGBFwb2P+iQlV3zDC39otwGVu35Xgwwd35s84c7XIFSAr7Mfkwyv4eJL3TLMHLIXx+E79ErAtfJHq4q10F5J3TNjVOD1oXNcF3GJWHHkU3Q/KxP+xWYh0CFIS7mkd6608hT0wNpuqsTtNHjxzXcJAIEEbyg5YERmOLfWwihmTsk1sWRmYJgoQMrva0AqNM861BTAWKlLA4M4cHBu83xRIMdwNkzHBfzllDhqa5Aajv582NJKNGSVB7JDZtKppSKKM/yiapd87itU2S88B++YuAbqYxT0RkSN3hy30zNCgzBAGy0C7BWu5Z5joRjw2hfWGg5adZT/1aJ1vfB4GHTx3vggYkJ+ySRLv3het8MiYiGqy333fHkOFIy94jo/P0NNDjUKnwTco3qx3eDrDOfWcatcWL/vu0HbX5iD04K6yuqJFAqGhYq7+3YLtd/lbYr3ZrGtQHB4cZQUfRy/o35hcyBhzV6NKEMWh0Eilwl2jtljFhMG7FwunovvOlxsFsjkj+HWSImDXDi3dKfVy3Wi7TnhvzOXhSxJHSpi+TVAU2dEjZtRbCScWSiv/rFyRlDjFm60ntK8A9RC/tRVxz2BpYSHKEG5n+j8HEYQpLYmUOfDDnP+BJNrG+X+Z9uJPF0xUTrzoPxHf68JTNpuYH7rJCLxG9DwBIC1UgOgRXtZxeAfg1zs/JfaYc59uEZc7pasI31jcZVF1pS9uxzQT4J/gtiud1etulvGhX5Z6LBTYNyHy+8icFdq+0ooDRAgISBMlJri14azkzkIqvugUYW1b9pfkMlnQilAmt3hng1KgWhVYGV6OO4gGGYjwZEXboiGy4/Pj6Mj1UcCtt6EnjJHU08p9yOwu9fvmnHaO2Xy8rSYZvNQjbM3xfPQyYUY031KYyIOECae/3zhZO/Ved27+xN0kaV+a0Ws1nWgJlVHtuac9B5PWIfPcC6TpTXFPLscwdtDsN6DaEnRTBBsnEagUaElF7jFNRV/dEWo4DJ5HKGXzmb0DKETd'}}</summary>
 
-```
+{'type': 'text', 'text': '**FastMCP is the standard framework for building MCP applications.** The Model Context Protocol (MCP) connects LLMs to tools and data. FastMCP gives you everything you need to go from prototype to production — build servers that expose capabilities, connect clients to any MCP service, and give your tools interactive UIs:\n\n```python\nfrom fastmcp import FastMCP\n\nmcp = FastMCP("Demo 🚀")\n\n@mcp.tool\ndef add(a: int, b: int) -> int:\n    """Add two numbers"""\n    return a + b\n\nif __name__ == "__main__":\n    mcp.run()\n```\n\n## Move Fast and Make Things\n\nThe Model Context Protocol (MCP) lets you give agents access to your tools and data. FastMCP handles all of it. Declare a tool with a Python function, and the schema, validation, and documentation are generated automatically. Connect to a server with a URL, and transport negotiation, authentication, and protocol lifecycle are managed for you.\n\nFastMCP has three pillars:\n\n*   **Servers:** Wrap your Python functions into MCP-compliant tools, resources, and prompts.\n*   **Clients:** Connect to any server with full protocol support.\n*   **Apps:** Give your tools interactive UIs rendered directly in the conversation.\n\n### Using FastMCP to Connect a Client\n\nYou can use FastMCP to connect to an MCP server and call tools programmatically:\n\n```python\nimport asyncio\nfrom fastmcp import Client\n\nasync def main():\n    async with Client("https://gofastmcp.com/mcp") as client:\n        result = await client.call_tool(\n            name="search_fast_mcp",\n            arguments={"query": "deploy a FastMCP server"}\n        )\n    print(result)\n\nasyncio.run(main())\n```', 'extras': {'signature': 'ErILCq8LAQw51seHONUmyh0CoXDYBTbm4/JI6bzBKnn2oPoS7x8HMZSCxF3p02/gMs55sd25By6F0kWeR9MKVPEO4YcP9eFX2XmDvw9WLC78JtzbLYB4j8rV/1QGqT+ZrUwni0OuoWDS+uaOGWCAcCVUw4FRzIGlJI6Z3Ln+OogSWBR8yQstwsJYucJjQ1OxgifAWhMkcX6tPspH/0kYpMWTBs17Sv3E6xk1id9EiuBWhVHKLr1fdjlN+C3ObPfluBFOne/exbopMCFjyZ/BGfmt79f7FPJ4899ttXmYtOPMSFhZWkgCojjK0vJxhBXRcI4qNNzErAsrKQCg5+e843l3R1KL1rqquO+PFnhbuooLx/Bj7Gs42Osa8YdURY8TR+G/dFzxcyOIYOmMR+TF2bs26KnBJ9OzpQmv56zBx2lkS12UTphO45DEXQWyJCu05TcOqUj/p+oXRmdrG3WXHh/VdN0fSbrii9JUbxp4Wp/g0h0lel/U6pYTh/IX10U6f75xL4JuglBTgvu3HE29ZA43lRXkhmNsW9N1aWSEK3oaDlvvQmCc307W//PYs+V+lnxPOUK+8JlYUoOIMS5ZPsH5BhiOVHo0DqcY+XDwT437/qx8P2m2ggu+lN6+2Fjon3qrPg3TPabW/ZuokB8SwsY3jSISytUNVZdQ0Xc+YsvsxGhRMJqNzJhLxBKwWGgI1QeyraAziQDqCOMFRf1Iqm30NpdChm73wCrP/CQ81xiwPmoPyRFdffE/aAr4gqbChbjRtZ+EUL0icE6znLYzVNm2BhVrEPPf+qwdIubql6CafVgJBjGm9g3VTJjqC/V8JqDPbUtwVHdymEmA5cgpSjGvR20dhUbRtuoSg/QXhoE9TOsIfVJpdi7xCafKj7Mf9pbrQl6o6ELUw/2PdfR2g24R3ouiA+8beEnRCIULGBFwb2P+iQlV3zDC39otwGVu35Xgwwd35s84c7XIFSAr7Mfkwyv4eJL3TLMHLIXx+E79ErAtfJHq4q10F5J3TNjVOD1oXNcF3GJWHHkU3Q/KxP+xWYh0CFIS7mkd6608hT0wNpuqsTtNHjxzXcJAIEEbyg5YERmOLfWwihmTsk1sWRmYJgoQMrva0AqNM861BTAWKlLA4M4cHBu83xRIMdwNkzHBfzllDhqa5Aajv582NJKNGSVB7JDZtKppSKKM/yiapd87itU2S88B++YuAbqYxT0RkSN3hy30zNCgzBAGy0C7BWu5Z5joRjw2hfWGg5adZT/1aJ1vfB4GHTx3vggYkJ+ySRLv3het8MiYiGqy333fHkOFIy94jo/P0NNDjUKnwTco3qx3eDrDOfWcatcWL/vu0HbX5iD04K6yuqJFAqGhYq7+3YLtd/lbYr3ZrGtQHB4cZQUfRy/o35hcyBhzV6NKEMWh0Eilwl2jtljFhMG7FwunovvOlxsFsjkj+HWSImDXDi3dKfVy3Wi7TnhvzOXhSxJHSpi+TVAU2dEjZtRbCScWSiv/rFyRlDjFm60ntK8A9RC/tRVxz2BpYSHKEG5n+j8HEYQpLYmUOfDDnP+BJNrG+X+Z9uJPF0xUTrzoPxHf68JTNpuYH7rJCLxG9DwBIC1UgOgRXtZxeAfg1zs/JfaYc59uEZc7pasI31jcZVF1pS9uxzQT4J/gtiud1etulvGhX5Z6LBTYNyHy+8icFdq+0ooDRAgISBMlJri14azkzkIqvugUYW1b9pfkMlnQilAmt3hng1KgWhVYGV6OO4gGGYjwZEXboiGy4/Pj6Mj1UcCtt6EnjJHU08p9yOwu9fvmnHaO2Xy8rSYZvNQjbM3xfPQyYUY031KYyIOECae/3zhZO/Ved27+xN0kaV+a0Ws1nWgJlVHtuac9B5PWIfPcC6TpTXFPLscwdtDsN6DaEnRTBBsnEagUaElF7jFNRV/dEWo4DJ5HKGXzmb0DKETd'}}
 
-The `FastMCP` constructor accepts several arguments:
+</details>
 
-## FastMCP Constructor Parameters
+<details>
+<summary>{'type': 'text', 'text': '# What are MCP prompts?\n\nMCP prompts are reusable, structured message templates exposed by MCP servers to guide interactions with agents. Unlike tools (which execute logic) or resources (which provide read-only data), prompts return a predefined list of messages meant to initiate consistent model behavior.\n\nPrompts are declarative, composable, and designed for user-initiated workflows, such as:\n\n- Slash commands or quick actions triggered via UI\n- Task-specific interactions, like summarization or code explanation\n\nYou can use prompts when you want to define how users engage with the model but not to perform logic or to serve contextual data.\n\n## Prompt structure\n\nA prompt is a named, parameterized template. It defines:\n\n- A `name` (a unique identifier)\n- An optional `description`\n- An optional list of structured `arguments`\n\n```json\n{\n  "name": "summarize-errors",\n  "description": "Summarize recent error logs",\n  "arguments": [\n    {\n      "name": "logUri",\n      "description": "URI of the log resource",\n      "required": true\n    }\n  ]\n}\n```\n\nThe server exposes prompts via `prompts/list` and provides message content on `prompts/get`.\n\n### Discovering prompts\n\nClients use `prompts/list` to fetch available prompt definitions:\n\n```json\n{\n  "method": "prompts/list"\n}\n```\n\nThe response includes a list of prompts:\n\n```json\n{\n  "prompts": [\n    {\n      "name": "explain-code",\n      "description": "Explain how a function works",\n      "arguments": [{ "name": "code", "required": true }]\n    }\n  ]\n}\n```\n\n### Using prompts\n\nTo use a prompt, clients call `prompts/get` with a prompt `name` and `arguments`:\n\n```json\n{\n  "method": "prompts/get",\n  "params": {\n    "name": "explain-code",\n    "arguments": {\n      "code": "def hello(): print(\'hi\')"\n    }\n  }\n}\n```\n\nThe server responds with a `messages[]` array, ready to send to the model:\n\n```json\n{\n  "description": "Explain how a function works",\n  "messages": [\n    {\n      "role": "user",\n      "content": {\n        "type": "text",\n        "text": "Explain this Python code:\\n\\ndef hello(): print(\'hi\')"\n      }\n    }\n  ]\n}\n```\n\n## Defining and serving prompts in Python\n\nThe following example defines a simple MCP prompt called `git-commit` that helps users generate commit messages from change descriptions.\n\n```python\nfrom mcp.server import Server, stdio\nimport mcp.types as types\n\nimport asyncio\n\napp = Server("git-prompts-server")\n\n@app.list_prompts()\nasync def list_prompts() -> list[types.Prompt]:\n    return [\n        types.Prompt(\n            name="git-commit",\n            description="Generate a Git commit message from a code diff or change summary",\n            arguments=[\n                types.PromptArgument(\n                    name="changes",\n                    description="Code diff or explanation of the changes made",\n                    required=True\n                )\n            ]\n        )\n    ]\n\n@app.get_prompt()\nasync def get_prompt(name: str, arguments: dict[str, str]) -> types.GetPromptResult:\n    if name != "git-commit":\n        raise ValueError("Unknown prompt")\n\n    changes = arguments.get("changes", "")\n\n    return types.GetPromptResult(\n        messages=[\n            types.PromptMessage(\n                role="user",\n                content=types.TextContent(\n                    type="text",\n                    text=(\n                        "Generate a Git commit message summarizing these changes:\\n\\n"\n                        f"{changes}"\n                    )\n                )\n            )\n        ]\n    )\n```\n\nIn this example, we:\n\n- **Register a static prompt** named `git-commit` with a human-readable description and a required `changes` argument.\n- **Expose metadata via `@list_prompts`** so UIs and clients can discover the prompt.\n- **Implement prompt generation via `@get_prompt`**, which creates a single message that asks the agent to produce a commit message based on input.\n- **Avoid side effects**, as the server does not evaluate or format the response but it does structure a message.\n\n## Best practices and pitfalls to avoid\n\nHere are some best practices for implementing MCP prompts:\n\n- Use clear, actionable names (for example, `summarize-errors`, not `get-summarized-error-log-output`).\n- Validate all required arguments up front.\n- Keep prompts deterministic and stateless (using the same input should produce the same output).\n- Embed resources directly, if needed, for model context.\n- Provide concise descriptions to improve UI discoverability.\n\nWhen implementing MCP prompts, avoid the following common mistakes:\n\n- Allowing missing or malformed arguments\n- Using vague or overly long prompt names\n- Passing oversized inputs (such as full files or large diffs)\n- Failing to sanitize non-UTF-8 or injection-prone strings\n\n### Prompts vs tools vs resources\n\nThe table below compares the three core primitives in MCP:\n\n| Feature | Prompts | Tools | Resources |\n| --- | --- | --- | --- |\n| **Purpose** | Guide model interaction | Execute logic with side effects | Provide structured read-only data |\n| **Triggered by** | User or UI | Agent or client (`tools/call`) | Agent or client (`resources/read`) |\n| **Behavior** | Returns `messages[]` | Runs a function; returns a result | Returns static or dynamic content |\n| **Side effects** | None | Yes (I/O, API calls, mutations) | None |\n| **Composition** | Can embed arguments and resources | Accepts structured input | URI-scoped, optionally templated |\n| **Use cases** | Summarization, Q&A, message templates | File writing, API calls, workflows | Logs, config files, external data |\n\n## Practical implementation example\n\nMCP prompts are a powerful way to define reusable templates that combine context from your application with instructions for the LLM. Here’s how to implement a prompt using the TypeScript SDK.\n\nThis example creates a WhatsApp chat summarization prompt that retrieves chat data and formats it for the LLM:\n\n```typescript\nmcpServer.prompt(\n  "whatsapp_chat_summarizer",\n  "Summarize WhatsApp chat and provide insights",\n  {\n    chatName: z.string().describe("Name of the WhatsApp chat to summarize"),\n  },\n  async (args) => {\n    const { chatName = "" } = args;\n\n    // Find the chat by name\n    // A real implementation would be more robust\n    const targetChat = await chatService.findChatByName(chatName);\n\n    // Get recent messages for analysis\n    const messages = await messageService.getMessages(targetChat.id);\n\n    const promptText = `Analyze this WhatsApp chat data for insights:\n\nChat Information:\n- Chat Name: ${targetChat.name}\n- Chat Type: ${targetChat.isGroup ? "Group Chat" : "Individual Chat"}\n- Analysis Type: summary\n\nAnalysis Focus:\nProvide a comprehensive overview including key topics, sentiment, and notable patterns.\n\nRecent Messages (${messages.length} messages):\n${messages.map((msg) => msg._serializedContent).join("\\n")}\n\nPlease provide a detailed summary.`;\n\n    return {\n      description: `Summary of WhatsApp chat: ${targetChat.name}`,\n      messages: [\n        {\n          role: "user",\n          content: {\n            type: "text",\n            text: promptText,\n          },\n        },\n      ],\n    };\n  },\n);\n```\n\nThis defines a prompt called `whatsapp_chat_summarizer` that takes a `chatName` argument and generates a formatted prompt with the chat data.\n\n### How prompts work in practice\n\nThe LLM client presents a list of available prompts to the user, who can then select one to use. When the user selects a prompt with arguments, the client should display a modal or form allowing the user to fill in the required arguments.\n\nOnce the user submits the form, the MCP client sends a `prompts/get` request to the MCP server with the selected prompt and its arguments. The MCP server adds the relevant context to the prompt (in this case, the WhatsApp chat data) and returns the formatted messages to the MCP client. The client can then send these messages to the LLM for processing.\n\nThis is especially useful for repetitive tasks where a user needs to combine tool call results with a complex prompt. If you can anticipate the user’s needs, you can define a prompt that combines the necessary context and tool calls into a single reusable template.', 'extras': {'signature': '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'}}</summary>
 
-[​](https://gofastmcp.com/servers/server#param-name)
-
-name
-
-str
-
-default:"FastMCP"
-
-A human-readable name for your server
-
-[​](https://gofastmcp.com/servers/server#param-instructions)
-
-instructions
-
-str \| None
-
-Description of how to interact with this server. These instructions help clients understand the server’s purpose and available functionality
-
-[​](https://gofastmcp.com/servers/server#param-version)
-
-version
-
-str \| None
-
-Version string for your server. If not provided, defaults to the FastMCP library version
-
-[​](https://gofastmcp.com/servers/server#param-website-url)
-
-website\_url
-
-str \| None
-
-`New in version: 2.14.0` URL to a website with more information about your server. Displayed in client applications
-
-[​](https://gofastmcp.com/servers/server#param-icons)
-
-icons
-
-list\[Icon\] \| None
-
-`New in version: 2.14.0` List of icon representations for your server. Icons help users visually identify your server in client applications. See [Icons](https://gofastmcp.com/servers/icons) for detailed examples
-
-[​](https://gofastmcp.com/servers/server#param-auth)
-
-auth
-
-OAuthProvider \| TokenVerifier \| None
-
-Authentication provider for securing HTTP-based transports. See [Authentication](https://gofastmcp.com/servers/auth/authentication) for configuration options
-
-[​](https://gofastmcp.com/servers/server#param-lifespan)
-
-lifespan
-
-AsyncContextManager \| None
-
-An async context manager function for server startup and shutdown logic
-
-[​](https://gofastmcp.com/servers/server#param-tools)
-
-tools
-
-list\[Tool \| Callable\] \| None
-
-A list of tools (or functions to convert to tools) to add to the server. In some cases, providing tools programmatically may be more convenient than using the `@mcp.tool` decorator
-
-[​](https://gofastmcp.com/servers/server#param-include-tags)
-
-include\_tags
-
-set\[str\] \| None
-
-Only expose components with at least one matching tag
-
-[​](https://gofastmcp.com/servers/server#param-exclude-tags)
-
-exclude\_tags
-
-set\[str\] \| None
-
-Hide components with any matching tag
-
-[​](https://gofastmcp.com/servers/server#param-on-duplicate-tools)
-
-on\_duplicate\_tools
-
-Literal\["error", "warn", "replace"\]
-
-default:"error"
-
-How to handle duplicate tool registrations
-
-[​](https://gofastmcp.com/servers/server#param-on-duplicate-resources)
-
-on\_duplicate\_resources
-
-Literal\["error", "warn", "replace"\]
-
-default:"warn"
-
-How to handle duplicate resource registrations
-
-[​](https://gofastmcp.com/servers/server#param-on-duplicate-prompts)
-
-on\_duplicate\_prompts
-
-Literal\["error", "warn", "replace"\]
-
-default:"replace"
-
-How to handle duplicate prompt registrations
-
-[​](https://gofastmcp.com/servers/server#param-strict-input-validation)
-
-strict\_input\_validation
-
-bool
-
-default:"False"
-
-`New in version: 2.13.0` Controls how tool input parameters are validated. When `False` (default), FastMCP uses Pydantic’s flexible validation that coerces compatible inputs (e.g., `"10"` → `10` for int parameters). When `True`, uses the MCP SDK’s JSON Schema validation to validate inputs against the exact schema before passing them to your function, rejecting any type mismatches. The default mode improves compatibility with LLM clients while maintaining type safety. See [Input Validation Modes](https://gofastmcp.com/servers/tools#input-validation-modes) for details
-
-[​](https://gofastmcp.com/servers/server#param-include-fastmcp-meta)
-
-include\_fastmcp\_meta
-
-bool
-
-default:"True"
-
-`New in version: 2.11.0` Whether to include FastMCP metadata in component responses. When `True`, component tags and other FastMCP-specific metadata are included in the `_fastmcp` namespace within each component’s `meta` field. When `False`, this metadata is omitted, resulting in cleaner integration with external systems. Can be overridden globally via `FASTMCP_INCLUDE_FASTMCP_META` environment variable
-
-## [​](https://gofastmcp.com/servers/server\#components)  Components
-
-FastMCP servers expose several types of components to the client:
-
-### [​](https://gofastmcp.com/servers/server\#tools)  Tools
-
-Tools are functions that the client can call to perform actions or access external systems.
-
-```
-@mcp.tool
-def multiply(a: float, b: float) -> float:
-    """Multiplies two numbers together."""
-    return a * b
-
-```
-
-See [Tools](https://gofastmcp.com/servers/tools) for detailed documentation.
-
-### [​](https://gofastmcp.com/servers/server\#resources)  Resources
-
-Resources expose data sources that the client can read.
-
-```
-@mcp.resource("data://config")
-def get_config() -> dict:
-    """Provides the application configuration."""
-    return {"theme": "dark", "version": "1.0"}
-
-```
-
-See [Resources & Templates](https://gofastmcp.com/servers/resources) for detailed documentation.
-
-### [​](https://gofastmcp.com/servers/server\#resource-templates)  Resource Templates
-
-Resource templates are parameterized resources that allow the client to request specific data.
-
-```
-@mcp.resource("users://{user_id}/profile")
-def get_user_profile(user_id: int) -> dict:
-    """Retrieves a user's profile by ID."""
-    # The {user_id} in the URI is extracted and passed to this function
-    return {"id": user_id, "name": f"User {user_id}", "status": "active"}
-
-```
-
-See [Resources & Templates](https://gofastmcp.com/servers/resources) for detailed documentation.
-
-### [​](https://gofastmcp.com/servers/server\#prompts)  Prompts
-
-Prompts are reusable message templates for guiding the LLM.
-
-```
-@mcp.prompt
-def analyze_data(data_points: list[float]) -> str:
-    """Creates a prompt asking for analysis of numerical data."""
-    formatted_data = ", ".join(str(point) for point in data_points)
-    return f"Please analyze these data points: {formatted_data}"
-
-```
-
-See [Prompts](https://gofastmcp.com/servers/prompts) for detailed documentation.
-
-## [​](https://gofastmcp.com/servers/server\#tag-based-filtering)  Tag-Based Filtering
-
-`New in version: 2.8.0` FastMCP supports tag-based filtering to selectively expose components based on configurable include/exclude tag sets. This is useful for creating different views of your server for different environments or users.Components can be tagged when defined using the `tags` parameter:
-
-```
-@mcp.tool(tags={"public", "utility"})
-def public_tool() -> str:
-    return "This tool is public"
-
-@mcp.tool(tags={"internal", "admin"})
-def admin_tool() -> str:
-    return "This tool is for admins only"
-
-```
-
-The filtering logic works as follows:
-
-- **Include tags**: If specified, only components with at least one matching tag are exposed
-- **Exclude tags**: Components with any matching tag are filtered out
-- **Precedence**: Exclude tags always take priority over include tags
-
-To ensure a component is never exposed, you can set `enabled=False` on the component itself. To learn more, see the component-specific documentation.
-
-You configure tag-based filtering when creating your server:
-
-```
-# Only expose components tagged with "public"
-mcp = FastMCP(include_tags={"public"})
-
-# Hide components tagged as "internal" or "deprecated"
-mcp = FastMCP(exclude_tags={"internal", "deprecated"})
-
-# Combine both: show admin tools but hide deprecated ones
-mcp = FastMCP(include_tags={"admin"}, exclude_tags={"deprecated"})
-
-```
-
-This filtering applies to all component types (tools, resources, resource templates, and prompts) and affects both listing and access.
-
-## [​](https://gofastmcp.com/servers/server\#running-the-server)  Running the Server
-
-FastMCP servers need a transport mechanism to communicate with clients. You typically start your server by calling the `mcp.run()` method on your `FastMCP` instance, often within an `if __name__ == "__main__":` block in your main server script. This pattern ensures compatibility with various MCP clients.
-
-```
-# my_server.py
-from fastmcp import FastMCP
-
-mcp = FastMCP(name="MyServer")
-
-@mcp.tool
-def greet(name: str) -> str:
-    """Greet a user by name."""
-    return f"Hello, {name}!"
-
-if __name__ == "__main__":
-    # This runs the server, defaulting to STDIO transport
-    mcp.run()
-
-    # To use a different transport, e.g., HTTP:
-    # mcp.run(transport="http", host="127.0.0.1", port=9000)
-
-```
-
-FastMCP supports several transport options:
-
-- STDIO (default, for local tools)
-- HTTP (recommended for web services, uses Streamable HTTP protocol)
-- SSE (legacy web transport, deprecated)
-
-The server can also be run using the FastMCP CLI.For detailed information on each transport, how to configure them (host, port, paths), and when to use which, please refer to the [**Running Your FastMCP Server**](https://gofastmcp.com/deployment/running-server) guide.
-
-## [​](https://gofastmcp.com/servers/server\#custom-routes)  Custom Routes
-
-When running your server with HTTP transport, you can add custom web routes alongside your MCP endpoint using the `@custom_route` decorator. This is useful for simple endpoints like health checks that need to be served alongside your MCP server:
-
-```
-from fastmcp import FastMCP
-from starlette.requests import Request
-from starlette.responses import PlainTextResponse
-
-mcp = FastMCP("MyServer")
-
-@mcp.custom_route("/health", methods=["GET"])
-async def health_check(request: Request) -> PlainTextResponse:
-    return PlainTextResponse("OK")
-
-if __name__ == "__main__":
-    mcp.run(transport="http")  # Health check at http://localhost:8000/health
-
-```
-
-Custom routes are served alongside your MCP endpoint and are useful for:
-
-- Health check endpoints for monitoring
-- Simple status or info endpoints
-- Basic webhooks or callbacks
-
-For more complex web applications, consider [mounting your MCP server into a FastAPI or Starlette app](https://gofastmcp.com/deployment/http#integration-with-web-frameworks).
-
-## [​](https://gofastmcp.com/servers/server\#composing-servers)  Composing Servers
-
-`New in version: 2.2.0` FastMCP supports composing multiple servers together using `import_server` (static copy) and `mount` (live link). This allows you to organize large applications into modular components or reuse existing servers.See the [Server Composition](https://gofastmcp.com/servers/composition) guide for full details, best practices, and examples.
-
-```
-# Example: Importing a subserver
-from fastmcp import FastMCP
-import asyncio
-
-main = FastMCP(name="Main")
-sub = FastMCP(name="Sub")
-
-@sub.tool
-def hello():
-    return "hi"
-
-# Mount directly
-main.mount(sub, prefix="sub")
-
-```
-
-## [​](https://gofastmcp.com/servers/server\#proxying-servers)  Proxying Servers
-
-`New in version: 2.0.0` FastMCP can act as a proxy for any MCP server (local or remote) using `FastMCP.as_proxy`, letting you bridge transports or add a frontend to existing servers. For example, you can expose a remote SSE server locally via stdio, or vice versa.Proxies automatically handle concurrent operations safely by creating fresh sessions for each request when using disconnected clients.See the [Proxying Servers](https://gofastmcp.com/servers/proxy) guide for details and advanced usage.
-
-```
-from fastmcp import FastMCP, Client
-
-backend = Client("http://example.com/mcp/sse")
-proxy = FastMCP.as_proxy(backend, name="ProxyServer")
-# Now use the proxy like any FastMCP server
-
-```
-
-## [​](https://gofastmcp.com/servers/server\#openapi-integration)  OpenAPI Integration
-
-`New in version: 2.0.0` FastMCP can automatically generate servers from OpenAPI specifications or existing FastAPI applications using `FastMCP.from_openapi()` and `FastMCP.from_fastapi()`. This allows you to instantly convert existing APIs into MCP servers without manual tool creation.See the [FastAPI Integration](https://gofastmcp.com/integrations/fastapi) and [OpenAPI Integration](https://gofastmcp.com/integrations/openapi) guides for detailed examples and configuration options.
-
-```
-import httpx
-from fastmcp import FastMCP
-
-# From OpenAPI spec
-spec = httpx.get("https://api.example.com/openapi.json").json()
-mcp = FastMCP.from_openapi(openapi_spec=spec, client=httpx.AsyncClient())
-
-# From FastAPI app
-from fastapi import FastAPI
-app = FastAPI()
-mcp = FastMCP.from_fastapi(app=app)
-
-```
-
-## [​](https://gofastmcp.com/servers/server\#server-configuration)  Server Configuration
-
-Servers can be configured using a combination of initialization arguments, global settings, and transport-specific settings.
-
-### [​](https://gofastmcp.com/servers/server\#server-specific-configuration)  Server-Specific Configuration
-
-Server-specific settings are passed when creating the `FastMCP` instance and control server behavior:
-
-```
-from fastmcp import FastMCP
-
-# Configure server-specific settings
-mcp = FastMCP(
-    name="ConfiguredServer",
-    include_tags={"public", "api"},              # Only expose these tagged components
-    exclude_tags={"internal", "deprecated"},     # Hide these tagged components
-    on_duplicate_tools="error",                  # Handle duplicate registrations
-    on_duplicate_resources="warn",
-    on_duplicate_prompts="replace",
-    include_fastmcp_meta=False,                  # Disable FastMCP metadata for cleaner integration
-)
-
-```
-
-### [​](https://gofastmcp.com/servers/server\#global-settings)  Global Settings
-
-Global settings affect all FastMCP servers and can be configured via environment variables (prefixed with `FASTMCP_`) or in a `.env` file:
-
-```
-import fastmcp
-
-# Access global settings
-print(fastmcp.settings.log_level)        # Default: "INFO"
-print(fastmcp.settings.mask_error_details)  # Default: False
-print(fastmcp.settings.resource_prefix_format)  # Default: "path"
-print(fastmcp.settings.strict_input_validation)  # Default: False
-print(fastmcp.settings.include_fastmcp_meta)   # Default: True
-
-```
-
-Common global settings include:
-
-- **`log_level`**: Logging level (“DEBUG”, “INFO”, “WARNING”, “ERROR”, “CRITICAL”), set with `FASTMCP_LOG_LEVEL`
-- **`mask_error_details`**: Whether to hide detailed error information from clients, set with `FASTMCP_MASK_ERROR_DETAILS`
-- **`resource_prefix_format`**: How to format resource prefixes (“path” or “protocol”), set with `FASTMCP_RESOURCE_PREFIX_FORMAT`
-- **`strict_input_validation`**: Controls tool input validation mode (default: False for flexible coercion), set with `FASTMCP_STRICT_INPUT_VALIDATION`. See [Input Validation Modes](https://gofastmcp.com/servers/tools#input-validation-modes)
-- **`include_fastmcp_meta`**: Whether to include FastMCP metadata in component responses (default: True), set with `FASTMCP_INCLUDE_FASTMCP_META`
-- **`env_file`**: Path to the environment file to load settings from (default: “.env”), set with `FASTMCP_ENV_FILE`. Useful when your project uses a `.env` file with syntax incompatible with python-dotenv
-
-### [​](https://gofastmcp.com/servers/server\#transport-specific-configuration)  Transport-Specific Configuration
-
-Transport settings are provided when running the server and control network behavior:
-
-```
-# Configure transport when running
-mcp.run(
-    transport="http",
-    host="0.0.0.0",           # Bind to all interfaces
-    port=9000,                # Custom port
-    log_level="DEBUG",        # Override global log level
-)
-
-# Or for async usage
-await mcp.run_async(
-    transport="http",
-    host="127.0.0.1",
-    port=8080,
-)
-
-```
-
-### [​](https://gofastmcp.com/servers/server\#setting-global-configuration)  Setting Global Configuration
-
-Global FastMCP settings can be configured via environment variables (prefixed with `FASTMCP_`):
-
-```
-# Configure global FastMCP behavior
-export FASTMCP_LOG_LEVEL=DEBUG
-export FASTMCP_MASK_ERROR_DETAILS=True
-export FASTMCP_RESOURCE_PREFIX_FORMAT=protocol
-export FASTMCP_STRICT_INPUT_VALIDATION=False
-export FASTMCP_INCLUDE_FASTMCP_META=False
-
-```
-
-### [​](https://gofastmcp.com/servers/server\#custom-tool-serialization)  Custom Tool Serialization
-
-`New in version: 2.2.7` By default, FastMCP serializes tool return values to JSON when they need to be converted to text. You can customize this behavior by providing a `tool_serializer` function when creating your server:
-
-```
-import yaml
-from fastmcp import FastMCP
-
-# Define a custom serializer that formats dictionaries as YAML
-def yaml_serializer(data):
-    return yaml.dump(data, sort_keys=False)
-
-# Create a server with the custom serializer
-mcp = FastMCP(name="MyServer", tool_serializer=yaml_serializer)
-
-@mcp.tool
-def get_config():
-    """Returns configuration in YAML format."""
-    return {"api_key": "abc123", "debug": True, "rate_limit": 100}
-
-```
-
-The serializer function takes any data object and returns a string representation. This is applied to **all non-string return values** from your tools. Tools that already return strings bypass the serializer.This customization is useful when you want to:
-
-- Format data in a specific way (like YAML or custom formats)
-- Control specific serialization options (like indentation or sorting)
-- Add metadata or transform data before sending it to clients
-
-If the serializer function raises an exception, the tool will fall back to the default JSON serialization to avoid breaking the server.
+{'type': 'text', 'text': '# What are MCP prompts?\n\nMCP prompts are reusable, structured message templates exposed by MCP servers to guide interactions with agents. Unlike tools (which execute logic) or resources (which provide read-only data), prompts return a predefined list of messages meant to initiate consistent model behavior.\n\nPrompts are declarative, composable, and designed for user-initiated workflows, such as:\n\n- Slash commands or quick actions triggered via UI\n- Task-specific interactions, like summarization or code explanation\n\nYou can use prompts when you want to define how users engage with the model but not to perform logic or to serve contextual data.\n\n## Prompt structure\n\nA prompt is a named, parameterized template. It defines:\n\n- A `name` (a unique identifier)\n- An optional `description`\n- An optional list of structured `arguments`\n\n```json\n{\n  "name": "summarize-errors",\n  "description": "Summarize recent error logs",\n  "arguments": [\n    {\n      "name": "logUri",\n      "description": "URI of the log resource",\n      "required": true\n    }\n  ]\n}\n```\n\nThe server exposes prompts via `prompts/list` and provides message content on `prompts/get`.\n\n### Discovering prompts\n\nClients use `prompts/list` to fetch available prompt definitions:\n\n```json\n{\n  "method": "prompts/list"\n}\n```\n\nThe response includes a list of prompts:\n\n```json\n{\n  "prompts": [\n    {\n      "name": "explain-code",\n      "description": "Explain how a function works",\n      "arguments": [{ "name": "code", "required": true }]\n    }\n  ]\n}\n```\n\n### Using prompts\n\nTo use a prompt, clients call `prompts/get` with a prompt `name` and `arguments`:\n\n```json\n{\n  "method": "prompts/get",\n  "params": {\n    "name": "explain-code",\n    "arguments": {\n      "code": "def hello(): print(\'hi\')"\n    }\n  }\n}\n```\n\nThe server responds with a `messages[]` array, ready to send to the model:\n\n```json\n{\n  "description": "Explain how a function works",\n  "messages": [\n    {\n      "role": "user",\n      "content": {\n        "type": "text",\n        "text": "Explain this Python code:\\n\\ndef hello(): print(\'hi\')"\n      }\n    }\n  ]\n}\n```\n\n## Defining and serving prompts in Python\n\nThe following example defines a simple MCP prompt called `git-commit` that helps users generate commit messages from change descriptions.\n\n```python\nfrom mcp.server import Server, stdio\nimport mcp.types as types\n\nimport asyncio\n\napp = Server("git-prompts-server")\n\n@app.list_prompts()\nasync def list_prompts() -> list[types.Prompt]:\n    return [\n        types.Prompt(\n            name="git-commit",\n            description="Generate a Git commit message from a code diff or change summary",\n            arguments=[\n                types.PromptArgument(\n                    name="changes",\n                    description="Code diff or explanation of the changes made",\n                    required=True\n                )\n            ]\n        )\n    ]\n\n@app.get_prompt()\nasync def get_prompt(name: str, arguments: dict[str, str]) -> types.GetPromptResult:\n    if name != "git-commit":\n        raise ValueError("Unknown prompt")\n\n    changes = arguments.get("changes", "")\n\n    return types.GetPromptResult(\n        messages=[\n            types.PromptMessage(\n                role="user",\n                content=types.TextContent(\n                    type="text",\n                    text=(\n                        "Generate a Git commit message summarizing these changes:\\n\\n"\n                        f"{changes}"\n                    )\n                )\n            )\n        ]\n    )\n```\n\nIn this example, we:\n\n- **Register a static prompt** named `git-commit` with a human-readable description and a required `changes` argument.\n- **Expose metadata via `@list_prompts`** so UIs and clients can discover the prompt.\n- **Implement prompt generation via `@get_prompt`**, which creates a single message that asks the agent to produce a commit message based on input.\n- **Avoid side effects**, as the server does not evaluate or format the response but it does structure a message.\n\n## Best practices and pitfalls to avoid\n\nHere are some best practices for implementing MCP prompts:\n\n- Use clear, actionable names (for example, `summarize-errors`, not `get-summarized-error-log-output`).\n- Validate all required arguments up front.\n- Keep prompts deterministic and stateless (using the same input should produce the same output).\n- Embed resources directly, if needed, for model context.\n- Provide concise descriptions to improve UI discoverability.\n\nWhen implementing MCP prompts, avoid the following common mistakes:\n\n- Allowing missing or malformed arguments\n- Using vague or overly long prompt names\n- Passing oversized inputs (such as full files or large diffs)\n- Failing to sanitize non-UTF-8 or injection-prone strings\n\n### Prompts vs tools vs resources\n\nThe table below compares the three core primitives in MCP:\n\n| Feature | Prompts | Tools | Resources |\n| --- | --- | --- | --- |\n| **Purpose** | Guide model interaction | Execute logic with side effects | Provide structured read-only data |\n| **Triggered by** | User or UI | Agent or client (`tools/call`) | Agent or client (`resources/read`) |\n| **Behavior** | Returns `messages[]` | Runs a function; returns a result | Returns static or dynamic content |\n| **Side effects** | None | Yes (I/O, API calls, mutations) | None |\n| **Composition** | Can embed arguments and resources | Accepts structured input | URI-scoped, optionally templated |\n| **Use cases** | Summarization, Q&A, message templates | File writing, API calls, workflows | Logs, config files, external data |\n\n## Practical implementation example\n\nMCP prompts are a powerful way to define reusable templates that combine context from your application with instructions for the LLM. Here’s how to implement a prompt using the TypeScript SDK.\n\nThis example creates a WhatsApp chat summarization prompt that retrieves chat data and formats it for the LLM:\n\n```typescript\nmcpServer.prompt(\n  "whatsapp_chat_summarizer",\n  "Summarize WhatsApp chat and provide insights",\n  {\n    chatName: z.string().describe("Name of the WhatsApp chat to summarize"),\n  },\n  async (args) => {\n    const { chatName = "" } = args;\n\n    // Find the chat by name\n    // A real implementation would be more robust\n    const targetChat = await chatService.findChatByName(chatName);\n\n    // Get recent messages for analysis\n    const messages = await messageService.getMessages(targetChat.id);\n\n    const promptText = `Analyze this WhatsApp chat data for insights:\n\nChat Information:\n- Chat Name: ${targetChat.name}\n- Chat Type: ${targetChat.isGroup ? "Group Chat" : "Individual Chat"}\n- Analysis Type: summary\n\nAnalysis Focus:\nProvide a comprehensive overview including key topics, sentiment, and notable patterns.\n\nRecent Messages (${messages.length} messages):\n${messages.map((msg) => msg._serializedContent).join("\\n")}\n\nPlease provide a detailed summary.`;\n\n    return {\n      description: `Summary of WhatsApp chat: ${targetChat.name}`,\n      messages: [\n        {\n          role: "user",\n          content: {\n            type: "text",\n            text: promptText,\n          },\n        },\n      ],\n    };\n  },\n);\n```\n\nThis defines a prompt called `whatsapp_chat_summarizer` that takes a `chatName` argument and generates a formatted prompt with the chat data.\n\n### How prompts work in practice\n\nThe LLM client presents a list of available prompts to the user, who can then select one to use. When the user selects a prompt with arguments, the client should display a modal or form allowing the user to fill in the required arguments.\n\nOnce the user submits the form, the MCP client sends a `prompts/get` request to the MCP server with the selected prompt and its arguments. The MCP server adds the relevant context to the prompt (in this case, the WhatsApp chat data) and returns the formatted messages to the MCP client. The client can then send these messages to the LLM for processing.\n\nThis is especially useful for repetitive tasks where a user needs to combine tool call results with a complex prompt. If you can anticipate the user’s needs, you can define a prompt that combines the necessary context and tool calls into a single reusable template.', 'extras': {'signature': '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'}}
 
 </details>
 
@@ -3338,49 +234,97 @@ If the serializer function raises an exception, the tool will fall back to the d
 
 ## Summary
 Repository: jlowin/fastmcp
-Files analyzed: 631
+Commit: 3b8538e2422a1c43fdb69661c610de7985b785f2
+Files analyzed: 1151
 
-Estimated tokens: 1.2M
+Estimated tokens: 2.3M
 
 ## File tree
 ```Directory structure:
 └── jlowin-fastmcp/
     ├── README.md
-    ├── AGENTS.md
+    ├── CLAUDE.md
     ├── CODE_OF_CONDUCT.md
+    ├── CONTRIBUTING.md
     ├── justfile
     ├── LICENSE
     ├── logo.py
+    ├── loq.toml
     ├── pyproject.toml
     ├── SECURITY.md
     ├── .ccignore
+    ├── .coderabbit.yaml
     ├── .pre-commit-config.yaml
-    ├── .python-version
-    ├── CLAUDE.md -> AGENTS.md
+    ├── AGENTS.md -> CLAUDE.md
     ├── docs/
     │   ├── changelog.mdx
     │   ├── docs.json
+    │   ├── fastmcp-analytics.js
+    │   ├── prefab-demo-payloads.js
+    │   ├── python-sdk-pages.json
+    │   ├── unify-intent.js
     │   ├── updates.mdx
+    │   ├── v2-banner.js
+    │   ├── v2-navigation.json
     │   ├── .ccignore
+    │   ├── apps/
+    │   │   ├── architecture.mdx
+    │   │   ├── development.mdx
+    │   │   ├── examples.mdx
+    │   │   ├── fastmcp-app.mdx
+    │   │   ├── generative.mdx
+    │   │   ├── low-level.mdx
+    │   │   ├── overview.mdx
+    │   │   ├── prefab.mdx
+    │   │   ├── quickstart.mdx
+    │   │   ├── demos/
+    │   │   │   ├── bar-chart.py
+    │   │   │   ├── contacts.py
+    │   │   │   ├── dashboard.py
+    │   │   │   ├── data-table.py
+    │   │   │   ├── hitchhikers.py
+    │   │   │   ├── pie-chart.py
+    │   │   │   ├── reactive.py
+    │   │   │   ├── team-directory-reactive.py
+    │   │   │   └── team-directory.py
+    │   │   └── providers/
+    │   │       ├── approval.mdx
+    │   │       ├── choice.mdx
+    │   │       ├── file-upload.mdx
+    │   │       └── form.mdx
     │   ├── assets/
     │   │   └── schemas/
     │   │       └── mcp_server_config/
     │   │           ├── latest.json
     │   │           └── v1.json
+    │   ├── cli/
+    │   │   ├── auth.mdx
+    │   │   ├── client.mdx
+    │   │   ├── generate-cli.mdx
+    │   │   ├── inspecting.mdx
+    │   │   ├── install-mcp.mdx
+    │   │   ├── overview.mdx
+    │   │   └── running.mdx
     │   ├── clients/
+    │   │   ├── cli.mdx
+    │   │   ├── client-only-package.mdx
     │   │   ├── client.mdx
     │   │   ├── elicitation.mdx
+    │   │   ├── fastmcp-remote.mdx
+    │   │   ├── generate-cli.mdx
     │   │   ├── logging.mdx
-    │   │   ├── messages.mdx
+    │   │   ├── notifications.mdx
     │   │   ├── progress.mdx
     │   │   ├── prompts.mdx
     │   │   ├── resources.mdx
     │   │   ├── roots.mdx
     │   │   ├── sampling.mdx
+    │   │   ├── tasks.mdx
     │   │   ├── tools.mdx
     │   │   ├── transports.mdx
     │   │   └── auth/
     │   │       ├── bearer.mdx
+    │   │       ├── cimd.mdx
     │   │       └── oauth.mdx
     │   ├── community/
     │   │   ├── README.md
@@ -3391,19 +335,26 @@ Estimated tokens: 1.2M
     │   │   ├── style.css
     │   │   └── version-badge.css
     │   ├── deployment/
-    │   │   ├── fastmcp-cloud.mdx
     │   │   ├── http.mdx
+    │   │   ├── prefect-horizon.mdx
     │   │   ├── running-server.mdx
+    │   │   ├── sandboxed-agents.mdx
     │   │   └── server-configuration.mdx
     │   ├── development/
     │   │   ├── contributing.mdx
     │   │   ├── releases.mdx
     │   │   ├── tests.mdx
-    │   │   └── upgrade-guide.mdx
+    │   │   └── v3-notes/
+    │   │       ├── auth-provider-env-vars.mdx
+    │   │       └── v3-features.mdx
     │   ├── getting-started/
     │   │   ├── installation.mdx
     │   │   ├── quickstart.mdx
-    │   │   └── welcome.mdx
+    │   │   ├── welcome.mdx
+    │   │   └── upgrading/
+    │   │       ├── from-fastmcp-2.mdx
+    │   │       ├── from-low-level-sdk.mdx
+    │   │       └── from-mcp-sdk.mdx
     │   ├── integrations/
     │   │   ├── anthropic.mdx
     │   │   ├── auth0.mdx
@@ -3415,117 +366,78 @@ Estimated tokens: 1.2M
     │   │   ├── claude-desktop.mdx
     │   │   ├── cursor.mdx
     │   │   ├── descope.mdx
+    │   │   ├── discord.mdx
     │   │   ├── eunomia-authorization.mdx
     │   │   ├── fastapi.mdx
     │   │   ├── gemini-cli.mdx
     │   │   ├── gemini.mdx
     │   │   ├── github.mdx
     │   │   ├── google.mdx
+    │   │   ├── goose.mdx
+    │   │   ├── keycloak.mdx
     │   │   ├── mcp-json-configuration.mdx
+    │   │   ├── oci.mdx
     │   │   ├── openai.mdx
     │   │   ├── openapi.mdx
     │   │   ├── permit.mdx
+    │   │   ├── propelauth.mdx
+    │   │   ├── pydantic-ai.mdx
     │   │   ├── scalekit.mdx
+    │   │   ├── supabase.mdx
     │   │   └── workos.mdx
+    │   ├── more/
+    │   │   ├── faq.mdx
+    │   │   └── settings.mdx
     │   ├── patterns/
     │   │   ├── cli.mdx
     │   │   ├── contrib.mdx
-    │   │   ├── decorating-methods.mdx
-    │   │   ├── testing.mdx
-    │   │   └── tool-transformation.mdx
+    │   │   └── testing.mdx
     │   ├── public/
     │   │   └── schemas/
     │   │       └── fastmcp.json/
     │   │           ├── latest.json
     │   │           └── v1.json
     │   ├── python-sdk/
-    │   │   ├── fastmcp-cli-__init__.mdx
-    │   │   ├── fastmcp-cli-cli.mdx
-    │   │   ├── fastmcp-cli-install-__init__.mdx
-    │   │   ├── fastmcp-cli-install-claude_code.mdx
-    │   │   ├── fastmcp-cli-install-claude_desktop.mdx
-    │   │   ├── fastmcp-cli-install-cursor.mdx
-    │   │   ├── fastmcp-cli-install-gemini_cli.mdx
-    │   │   ├── fastmcp-cli-install-mcp_json.mdx
-    │   │   ├── fastmcp-cli-install-shared.mdx
-    │   │   ├── fastmcp-cli-run.mdx
-    │   │   ├── fastmcp-client-__init__.mdx
-    │   │   ├── fastmcp-client-auth-__init__.mdx
-    │   │   ├── fastmcp-client-auth-bearer.mdx
-    │   │   ├── fastmcp-client-auth-oauth.mdx
-    │   │   ├── fastmcp-client-client.mdx
-    │   │   ├── fastmcp-client-elicitation.mdx
-    │   │   ├── fastmcp-client-logging.mdx
-    │   │   ├── fastmcp-client-messages.mdx
-    │   │   ├── fastmcp-client-oauth_callback.mdx
-    │   │   ├── fastmcp-client-progress.mdx
-    │   │   ├── fastmcp-client-roots.mdx
-    │   │   ├── fastmcp-client-sampling.mdx
-    │   │   ├── fastmcp-client-transports.mdx
+    │   │   ├── fastmcp-apps-__init__.mdx
+    │   │   ├── fastmcp-apps-app.mdx
+    │   │   ├── fastmcp-apps-approval.mdx
+    │   │   ├── fastmcp-apps-choice.mdx
+    │   │   ├── fastmcp-apps-config.mdx
+    │   │   ├── fastmcp-apps-file_upload.mdx
+    │   │   ├── fastmcp-apps-form.mdx
+    │   │   ├── fastmcp-apps-generative.mdx
+    │   │   ├── fastmcp-cli.mdx
+    │   │   ├── fastmcp-client.mdx
+    │   │   ├── fastmcp-decorators.mdx
+    │   │   ├── fastmcp-dependencies.mdx
     │   │   ├── fastmcp-exceptions.mdx
+    │   │   ├── fastmcp-experimental-__init__.mdx
+    │   │   ├── fastmcp-experimental-sampling-__init__.mdx
+    │   │   ├── fastmcp-experimental-sampling-handlers.mdx
+    │   │   ├── fastmcp-experimental-transforms-__init__.mdx
+    │   │   ├── fastmcp-experimental-transforms-code_mode.mdx
     │   │   ├── fastmcp-mcp_config.mdx
-    │   │   ├── fastmcp-prompts-__init__.mdx
-    │   │   ├── fastmcp-prompts-prompt.mdx
-    │   │   ├── fastmcp-prompts-prompt_manager.mdx
-    │   │   ├── fastmcp-resources-__init__.mdx
-    │   │   ├── fastmcp-resources-resource.mdx
-    │   │   ├── fastmcp-resources-resource_manager.mdx
-    │   │   ├── fastmcp-resources-template.mdx
-    │   │   ├── fastmcp-resources-types.mdx
-    │   │   ├── fastmcp-server-__init__.mdx
-    │   │   ├── fastmcp-server-auth-__init__.mdx
-    │   │   ├── fastmcp-server-auth-auth.mdx
-    │   │   ├── fastmcp-server-auth-jwt_issuer.mdx
-    │   │   ├── fastmcp-server-auth-middleware.mdx
-    │   │   ├── fastmcp-server-auth-oauth_proxy.mdx
-    │   │   ├── fastmcp-server-auth-oidc_proxy.mdx
-    │   │   ├── fastmcp-server-auth-providers-__init__.mdx
-    │   │   ├── fastmcp-server-auth-providers-auth0.mdx
-    │   │   ├── fastmcp-server-auth-providers-aws.mdx
-    │   │   ├── fastmcp-server-auth-providers-azure.mdx
-    │   │   ├── fastmcp-server-auth-providers-bearer.mdx
-    │   │   ├── fastmcp-server-auth-providers-descope.mdx
-    │   │   ├── fastmcp-server-auth-providers-github.mdx
-    │   │   ├── fastmcp-server-auth-providers-google.mdx
-    │   │   ├── fastmcp-server-auth-providers-in_memory.mdx
-    │   │   ├── fastmcp-server-auth-providers-introspection.mdx
-    │   │   ├── fastmcp-server-auth-providers-jwt.mdx
-    │   │   ├── fastmcp-server-auth-providers-scalekit.mdx
-    │   │   ├── fastmcp-server-auth-providers-supabase.mdx
-    │   │   ├── fastmcp-server-auth-providers-workos.mdx
-    │   │   ├── fastmcp-server-auth-redirect_validation.mdx
-    │   │   ├── fastmcp-server-context.mdx
-    │   │   ├── fastmcp-server-dependencies.mdx
-    │   │   ├── fastmcp-server-elicitation.mdx
-    │   │   ├── fastmcp-server-http.mdx
-    │   │   ├── fastmcp-server-low_level.mdx
-    │   │   ├── fastmcp-server-middleware-__init__.mdx
-    │   │   ├── fastmcp-server-middleware-caching.mdx
-    │   │   ├── fastmcp-server-middleware-error_handling.mdx
-    │   │   ├── fastmcp-server-middleware-logging.mdx
-    │   │   ├── fastmcp-server-middleware-middleware.mdx
-    │   │   ├── fastmcp-server-middleware-rate_limiting.mdx
-    │   │   ├── fastmcp-server-middleware-timing.mdx
-    │   │   ├── fastmcp-server-middleware-tool_injection.mdx
-    │   │   ├── fastmcp-server-openapi.mdx
-    │   │   ├── fastmcp-server-proxy.mdx
-    │   │   ├── fastmcp-server-server.mdx
+    │   │   ├── fastmcp-prompts.mdx
+    │   │   ├── fastmcp-resources.mdx
+    │   │   ├── fastmcp-server.mdx
     │   │   ├── fastmcp-settings.mdx
-    │   │   ├── fastmcp-tools-__init__.mdx
-    │   │   ├── fastmcp-tools-tool.mdx
-    │   │   ├── fastmcp-tools-tool_manager.mdx
-    │   │   ├── fastmcp-tools-tool_transform.mdx
+    │   │   ├── fastmcp-telemetry.mdx
+    │   │   ├── fastmcp-tools.mdx
+    │   │   ├── fastmcp-types.mdx
     │   │   ├── fastmcp-utilities-__init__.mdx
+    │   │   ├── fastmcp-utilities-async_utils.mdx
     │   │   ├── fastmcp-utilities-auth.mdx
+    │   │   ├── fastmcp-utilities-authorization.mdx
     │   │   ├── fastmcp-utilities-cli.mdx
     │   │   ├── fastmcp-utilities-components.mdx
+    │   │   ├── fastmcp-utilities-docstring_parsing.mdx
     │   │   ├── fastmcp-utilities-exceptions.mdx
     │   │   ├── fastmcp-utilities-http.mdx
     │   │   ├── fastmcp-utilities-inspect.mdx
     │   │   ├── fastmcp-utilities-json_schema.mdx
     │   │   ├── fastmcp-utilities-json_schema_type.mdx
+    │   │   ├── fastmcp-utilities-lifespan.mdx
     │   │   ├── fastmcp-utilities-logging.mdx
-    │   │   ├── fastmcp-utilities-mcp_config.mdx
     │   │   ├── fastmcp-utilities-mcp_server_config-__init__.mdx
     │   │   ├── fastmcp-utilities-mcp_server_config-v1-__init__.mdx
     │   │   ├── fastmcp-utilities-mcp_server_config-v1-environments-__init__.mdx
@@ -3535,62 +447,230 @@ Estimated tokens: 1.2M
     │   │   ├── fastmcp-utilities-mcp_server_config-v1-sources-__init__.mdx
     │   │   ├── fastmcp-utilities-mcp_server_config-v1-sources-base.mdx
     │   │   ├── fastmcp-utilities-mcp_server_config-v1-sources-filesystem.mdx
+    │   │   ├── fastmcp-utilities-mime.mdx
     │   │   ├── fastmcp-utilities-openapi.mdx
+    │   │   ├── fastmcp-utilities-pagination.mdx
+    │   │   ├── fastmcp-utilities-skills.mdx
+    │   │   ├── fastmcp-utilities-tasks.mdx
     │   │   ├── fastmcp-utilities-tests.mdx
+    │   │   ├── fastmcp-utilities-timeout.mdx
+    │   │   ├── fastmcp-utilities-token_cache.mdx
     │   │   ├── fastmcp-utilities-types.mdx
-    │   │   └── fastmcp-utilities-ui.mdx
+    │   │   ├── fastmcp-utilities-ui.mdx
+    │   │   ├── fastmcp-utilities-version_check.mdx
+    │   │   └── fastmcp-utilities-versions.mdx
     │   ├── servers/
+    │   │   ├── authorization.mdx
     │   │   ├── composition.mdx
     │   │   ├── context.mdx
+    │   │   ├── dependency-injection.mdx
     │   │   ├── elicitation.mdx
     │   │   ├── icons.mdx
+    │   │   ├── lifespan.mdx
     │   │   ├── logging.mdx
     │   │   ├── middleware.mdx
+    │   │   ├── pagination.mdx
     │   │   ├── progress.mdx
     │   │   ├── prompts.mdx
-    │   │   ├── proxy.mdx
     │   │   ├── resources.mdx
     │   │   ├── sampling.mdx
     │   │   ├── server.mdx
     │   │   ├── storage-backends.mdx
+    │   │   ├── tasks.mdx
+    │   │   ├── telemetry.mdx
+    │   │   ├── testing.mdx
+    │   │   ├── tool-fingerprinting.mdx
     │   │   ├── tools.mdx
-    │   │   └── auth/
-    │   │       ├── authentication.mdx
-    │   │       ├── full-oauth-server.mdx
-    │   │       ├── oauth-proxy.mdx
-    │   │       ├── oidc-proxy.mdx
-    │   │       ├── remote-oauth.mdx
-    │   │       └── token-verification.mdx
+    │   │   ├── versioning.mdx
+    │   │   ├── visibility.mdx
+    │   │   ├── auth/
+    │   │   │   ├── authentication.mdx
+    │   │   │   ├── full-oauth-server.mdx
+    │   │   │   ├── multi-auth.mdx
+    │   │   │   ├── oauth-proxy.mdx
+    │   │   │   ├── oidc-proxy.mdx
+    │   │   │   ├── remote-oauth.mdx
+    │   │   │   └── token-verification.mdx
+    │   │   ├── providers/
+    │   │   │   ├── custom.mdx
+    │   │   │   ├── filesystem.mdx
+    │   │   │   ├── local.mdx
+    │   │   │   ├── overview.mdx
+    │   │   │   ├── proxy.mdx
+    │   │   │   └── skills.mdx
+    │   │   └── transforms/
+    │   │       ├── code-mode.mdx
+    │   │       ├── namespace.mdx
+    │   │       ├── namespacing.mdx
+    │   │       ├── prompts-as-tools.mdx
+    │   │       ├── resources-as-tools.mdx
+    │   │       ├── tool-search.mdx
+    │   │       ├── tool-transformation.mdx
+    │   │       └── transforms.mdx
     │   ├── snippets/
     │   │   ├── local-focus.mdx
+    │   │   ├── prefab-demo-frame.mdx
+    │   │   ├── prefab-pin-warning.mdx
     │   │   ├── version-badge.mdx
     │   │   └── youtube-embed.mdx
     │   ├── tutorials/
     │   │   ├── create-mcp-server.mdx
     │   │   ├── mcp.mdx
     │   │   └── rest-api.mdx
+    │   ├── v2/
+    │   │   ├── changelog.mdx
+    │   │   ├── updates.mdx
+    │   │   ├── clients/
+    │   │   │   ├── client.mdx
+    │   │   │   ├── elicitation.mdx
+    │   │   │   ├── logging.mdx
+    │   │   │   ├── messages.mdx
+    │   │   │   ├── progress.mdx
+    │   │   │   ├── prompts.mdx
+    │   │   │   ├── resources.mdx
+    │   │   │   ├── roots.mdx
+    │   │   │   ├── sampling.mdx
+    │   │   │   ├── tasks.mdx
+    │   │   │   ├── tools.mdx
+    │   │   │   ├── transports.mdx
+    │   │   │   └── auth/
+    │   │   │       ├── bearer.mdx
+    │   │   │       └── oauth.mdx
+    │   │   ├── community/
+    │   │   │   └── showcase.mdx
+    │   │   ├── deployment/
+    │   │   │   ├── http.mdx
+    │   │   │   ├── running-server.mdx
+    │   │   │   └── server-configuration.mdx
+    │   │   ├── development/
+    │   │   │   ├── contributing.mdx
+    │   │   │   ├── releases.mdx
+    │   │   │   ├── tests.mdx
+    │   │   │   └── upgrade-guide.mdx
+    │   │   ├── getting-started/
+    │   │   │   ├── installation.mdx
+    │   │   │   ├── quickstart.mdx
+    │   │   │   └── welcome.mdx
+    │   │   ├── integrations/
+    │   │   │   ├── anthropic.mdx
+    │   │   │   ├── auth0.mdx
+    │   │   │   ├── authkit.mdx
+    │   │   │   ├── aws-cognito.mdx
+    │   │   │   ├── azure.mdx
+    │   │   │   ├── chatgpt.mdx
+    │   │   │   ├── claude-code.mdx
+    │   │   │   ├── claude-desktop.mdx
+    │   │   │   ├── cursor.mdx
+    │   │   │   ├── descope.mdx
+    │   │   │   ├── discord.mdx
+    │   │   │   ├── eunomia-authorization.mdx
+    │   │   │   ├── fastapi.mdx
+    │   │   │   ├── gemini-cli.mdx
+    │   │   │   ├── gemini.mdx
+    │   │   │   ├── github.mdx
+    │   │   │   ├── google.mdx
+    │   │   │   ├── mcp-json-configuration.mdx
+    │   │   │   ├── oci.mdx
+    │   │   │   ├── openai.mdx
+    │   │   │   ├── openapi.mdx
+    │   │   │   ├── permit.mdx
+    │   │   │   ├── scalekit.mdx
+    │   │   │   ├── supabase.mdx
+    │   │   │   └── workos.mdx
+    │   │   ├── patterns/
+    │   │   │   ├── cli.mdx
+    │   │   │   ├── contrib.mdx
+    │   │   │   ├── decorating-methods.mdx
+    │   │   │   ├── testing.mdx
+    │   │   │   └── tool-transformation.mdx
+    │   │   ├── servers/
+    │   │   │   ├── composition.mdx
+    │   │   │   ├── context.mdx
+    │   │   │   ├── elicitation.mdx
+    │   │   │   ├── icons.mdx
+    │   │   │   ├── logging.mdx
+    │   │   │   ├── middleware.mdx
+    │   │   │   ├── progress.mdx
+    │   │   │   ├── prompts.mdx
+    │   │   │   ├── proxy.mdx
+    │   │   │   ├── resources.mdx
+    │   │   │   ├── sampling.mdx
+    │   │   │   ├── server.mdx
+    │   │   │   ├── storage-backends.mdx
+    │   │   │   ├── tasks.mdx
+    │   │   │   ├── tools.mdx
+    │   │   │   └── auth/
+    │   │   │       ├── authentication.mdx
+    │   │   │       ├── full-oauth-server.mdx
+    │   │   │       ├── oauth-proxy.mdx
+    │   │   │       ├── oidc-proxy.mdx
+    │   │   │       ├── remote-oauth.mdx
+    │   │   │       └── token-verification.mdx
+    │   │   └── tutorials/
+    │   │       ├── create-mcp-server.mdx
+    │   │       ├── mcp.mdx
+    │   │       └── rest-api.mdx
     │   └── .cursor/
     │       └── rules/
     │           └── mintlify.mdc
     ├── examples/
     │   ├── complex_inputs.py
     │   ├── config_server.py
+    │   ├── custom_tool_serializer_decorator.py
     │   ├── desktop.py
     │   ├── echo.py
+    │   ├── elicitation.py
     │   ├── get_file.py
     │   ├── in_memory_proxy_example.py
     │   ├── memory.fastmcp.json
     │   ├── memory.py
     │   ├── mount_example.fastmcp.json
     │   ├── mount_example.py
-    │   ├── sampling.py
-    │   ├── sampling_fallback.py
+    │   ├── run_with_tracing.py
     │   ├── screenshot.fastmcp.json
     │   ├── screenshot.py
-    │   ├── serializer.py
     │   ├── simple_echo.py
     │   ├── tags_example.py
+    │   ├── task_elicitation.py
     │   ├── text_me.py
+    │   ├── tool_result_echo.py
+    │   ├── apps/
+    │   │   ├── chart_server.py
+    │   │   ├── datatable_server.py
+    │   │   ├── generative_ui.py
+    │   │   ├── greet_server.py
+    │   │   ├── inspector_demo.py
+    │   │   ├── patterns_server.py
+    │   │   ├── showcase_server.py
+    │   │   ├── approval/
+    │   │   │   └── approval_server.py
+    │   │   ├── approvals/
+    │   │   │   └── approvals_server.py
+    │   │   ├── choice/
+    │   │   │   └── choice_server.py
+    │   │   ├── contacts/
+    │   │   │   └── contacts_server.py
+    │   │   ├── explorer/
+    │   │   │   └── explorer_server.py
+    │   │   ├── file_upload/
+    │   │   │   └── file_upload_server.py
+    │   │   ├── form/
+    │   │   │   └── form_server.py
+    │   │   ├── inventory/
+    │   │   │   └── inventory_server.py
+    │   │   ├── map/
+    │   │   │   └── map_server.py
+    │   │   ├── qr_server/
+    │   │   │   ├── README.md
+    │   │   │   ├── fastmcp.json
+    │   │   │   ├── pyproject.toml
+    │   │   │   └── qr_server.py
+    │   │   ├── quiz/
+    │   │   │   └── quiz_server.py
+    │   │   ├── sales_dashboard/
+    │   │   │   └── sales_dashboard_server.py
+    │   │   └── system_monitor/
+    │   │       └── system_monitor_server.py
     │   ├── atproto_mcp/
     │   │   ├── README.md
     │   │   ├── demo.py
@@ -3601,7 +681,6 @@ Estimated tokens: 1.2M
     │   │           ├── __init__.py
     │   │           ├── __main__.py
     │   │           ├── py.typed
-    │   │           ├── server.py
     │   │           ├── settings.py
     │   │           ├── types.py
     │   │           └── _atproto/
@@ -3612,98 +691,199 @@ Estimated tokens: 1.2M
     │   │               ├── _read.py
     │   │               └── _social.py
     │   ├── auth/
-    │   │   ├── authkit_dcr/
-    │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   └── server.py
+    │   │   ├── authkit/
+    │   │   │   └── README.md
     │   │   ├── aws_oauth/
     │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   ├── requirements.txt
-    │   │   │   └── server.py
+    │   │   │   └── requirements.txt
     │   │   ├── azure_oauth/
-    │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   └── server.py
+    │   │   │   └── README.md
+    │   │   ├── clerk_oauth/
+    │   │   │   └── README.md
+    │   │   ├── discord_oauth/
+    │   │   │   └── README.md
     │   │   ├── github_oauth/
-    │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   └── server.py
+    │   │   │   └── README.md
     │   │   ├── google_oauth/
-    │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   └── server.py
+    │   │   │   └── README.md
+    │   │   ├── keycloak_oauth/
+    │   │   │   └── README.md
+    │   │   ├── mounted/
+    │   │   │   └── README.md
+    │   │   ├── oci_oauth/
+    │   │   │   └── README.md
+    │   │   ├── propelauth_oauth/
+    │   │   │   └── README.md
     │   │   ├── scalekit_oauth/
-    │   │   │   ├── README.md
-    │   │   │   ├── client.py
-    │   │   │   └── server.py
+    │   │   │   └── README.md
     │   │   └── workos_oauth/
-    │   │       ├── README.md
-    │   │       ├── client.py
-    │   │       └── server.py
+    │   │       └── README.md
+    │   ├── code_mode/
+    │   │   └── README.md
+    │   ├── diagnostics/
+    │   │   └── client_with_tracing.py
     │   ├── fastmcp_config/
     │   │   ├── env_interpolation_example.json
     │   │   ├── fastmcp.json
     │   │   ├── full_example.fastmcp.json
-    │   │   ├── server.py
     │   │   └── simple.fastmcp.json
     │   ├── fastmcp_config_demo/
     │   │   ├── README.md
-    │   │   ├── fastmcp.json
-    │   │   └── server.py
-    │   └── smart_home/
-    │       ├── README.md
-    │       ├── hub.fastmcp.json
-    │       ├── lights.fastmcp.json
-    │       ├── pyproject.toml
-    │       └── src/
-    │           └── smart_home/
-    │               ├── __init__.py
-    │               ├── __main__.py
-    │               ├── hub.py
-    │               ├── py.typed
-    │               ├── settings.py
-    │               └── lights/
-    │                   ├── __init__.py
-    │                   ├── hue_utils.py
-    │                   └── server.py
-    ├── scripts/
-    │   ├── auto_close_duplicates.py
-    │   └── auto_close_needs_mre.py
-    ├── src/
+    │   │   └── fastmcp.json
+    │   ├── filesystem-provider/
+    │   │   └── components/
+    │   │       ├── prompts/
+    │   │       │   └── assistant.py
+    │   │       ├── resources/
+    │   │       │   └── config.py
+    │   │       └── tools/
+    │   │           ├── calculator.py
+    │   │           └── greeting.py
+    │   ├── namespace_activation/
+    │   │   └── README.md
+    │   ├── persistent_state/
+    │   │   ├── README.md
+    │   │   └── client_stdio.py
+    │   ├── providers/
+    │   │   └── sqlite/
+    │   │       ├── README.md
+    │   │       └── setup_db.py
+    │   ├── sampling/
+    │   │   ├── README.md
+    │   │   ├── server_fallback.py
+    │   │   ├── structured_output.py
+    │   │   ├── text.py
+    │   │   └── tool_use.py
+    │   ├── search/
+    │   │   ├── README.md
+    │   │   ├── client_bm25.py
+    │   │   ├── client_regex.py
+    │   │   ├── server_bm25.py
+    │   │   └── server_regex.py
+    │   ├── skills/
+    │   │   ├── README.md
+    │   │   ├── download_skills.py
+    │   │   └── sample_skills/
+    │   │       ├── code-review/
+    │   │       │   └── SKILL.md
+    │   │       └── pdf-processing/
+    │   │           ├── reference.md
+    │   │           └── SKILL.md
+    │   ├── smart_home/
+    │   │   ├── README.md
+    │   │   ├── hub.fastmcp.json
+    │   │   ├── lights.fastmcp.json
+    │   │   ├── pyproject.toml
+    │   │   └── src/
+    │   │       └── smart_home/
+    │   │           ├── __init__.py
+    │   │           ├── __main__.py
+    │   │           ├── hub.py
+    │   │           ├── py.typed
+    │   │           ├── settings.py
+    │   │           └── lights/
+    │   │               ├── __init__.py
+    │   │               └── hue_utils.py
+    │   ├── tasks/
+    │   │   ├── README.md
+    │   │   └── docker-compose.yml
+    │   ├── testing_demo/
+    │   │   ├── README.md
+    │   │   ├── pyproject.toml
+    │   │   └── tests/
+    │   │       └── test_server.py
+    │   └── versioning/
+    │       ├── client_version_selection.py
+    │       ├── version_filters.py
+    │       └── versioned_components.py
+    ├── fastmcp_remote/
+    │   ├── README.md
+    │   ├── pyproject.toml
+    │   └── fastmcp_remote/
+    │       ├── __init__.py
+    │       ├── cli.py
+    │       └── py.typed
+    ├── fastmcp_slim/
+    │   ├── README.md
+    │   ├── pyproject.toml
     │   └── fastmcp/
     │       ├── __init__.py
+    │       ├── _install_hints.py
+    │       ├── decorators.py
+    │       ├── dependencies.py
     │       ├── exceptions.py
     │       ├── mcp_config.py
     │       ├── py.typed
     │       ├── settings.py
+    │       ├── telemetry.py
+    │       ├── types.py
+    │       ├── apps/
+    │       │   ├── __init__.py
+    │       │   ├── app.py
+    │       │   ├── approval.py
+    │       │   ├── choice.py
+    │       │   ├── config.py
+    │       │   ├── file_upload.py
+    │       │   ├── form.py
+    │       │   └── generative.py
     │       ├── cli/
     │       │   ├── __init__.py
+    │       │   ├── __main__.py
+    │       │   ├── apps_dev.py
+    │       │   ├── auth.py
+    │       │   ├── cimd.py
     │       │   ├── cli.py
+    │       │   ├── discovery.py
+    │       │   ├── generate.py
     │       │   ├── run.py
+    │       │   ├── tasks.py
     │       │   └── install/
     │       │       ├── __init__.py
     │       │       ├── claude_code.py
     │       │       ├── claude_desktop.py
     │       │       ├── cursor.py
     │       │       ├── gemini_cli.py
+    │       │       ├── goose.py
     │       │       ├── mcp_json.py
-    │       │       └── shared.py
+    │       │       ├── shared.py
+    │       │       └── stdio.py
     │       ├── client/
     │       │   ├── __init__.py
-    │       │   ├── client.py
+    │       │   ├── dependencies.py
     │       │   ├── elicitation.py
     │       │   ├── logging.py
     │       │   ├── messages.py
     │       │   ├── oauth_callback.py
     │       │   ├── progress.py
     │       │   ├── roots.py
-    │       │   ├── sampling.py
-    │       │   ├── transports.py
-    │       │   └── auth/
+    │       │   ├── tasks.py
+    │       │   ├── telemetry.py
+    │       │   ├── auth/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── bearer.py
+    │       │   │   └── oauth.py
+    │       │   ├── mixins/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── prompts.py
+    │       │   │   ├── resources.py
+    │       │   │   ├── task_management.py
+    │       │   │   └── tools.py
+    │       │   ├── sampling/
+    │       │   │   ├── __init__.py
+    │       │   │   └── handlers/
+    │       │   │       ├── __init__.py
+    │       │   │       ├── anthropic.py
+    │       │   │       ├── google_genai.py
+    │       │   │       └── openai.py
+    │       │   └── transports/
     │       │       ├── __init__.py
-    │       │       ├── bearer.py
-    │       │       └── oauth.py
+    │       │       ├── base.py
+    │       │       ├── config.py
+    │       │       ├── http.py
+    │       │       ├── inference.py
+    │       │       ├── memory.py
+    │       │       ├── sse.py
+    │       │       └── stdio.py
     │       ├── contrib/
     │       │   ├── README.md
     │       │   ├── bulk_tool_caller/
@@ -3715,7 +895,6 @@ Estimated tokens: 1.2M
     │       │   │   ├── README.md
     │       │   │   ├── __init__.py
     │       │   │   ├── component_manager.py
-    │       │   │   ├── component_service.py
     │       │   │   └── example.py
     │       │   └── mcp_mixin/
     │       │       ├── README.md
@@ -3723,130 +902,255 @@ Estimated tokens: 1.2M
     │       │       ├── example.py
     │       │       └── mcp_mixin.py
     │       ├── experimental/
+    │       │   ├── __init__.py
     │       │   ├── sampling/
     │       │   │   ├── __init__.py
     │       │   │   └── handlers/
     │       │   │       ├── __init__.py
-    │       │   │       ├── base.py
     │       │   │       └── openai.py
     │       │   ├── server/
     │       │   │   └── openapi/
-    │       │   │       ├── README.md
-    │       │   │       ├── __init__.py
-    │       │   │       ├── components.py
-    │       │   │       ├── routing.py
-    │       │   │       └── server.py
+    │       │   │       └── __init__.py
+    │       │   ├── transforms/
+    │       │   │   ├── __init__.py
+    │       │   │   └── code_mode.py
     │       │   └── utilities/
     │       │       └── openapi/
-    │       │           ├── README.md
-    │       │           ├── __init__.py
-    │       │           ├── director.py
-    │       │           ├── formatters.py
-    │       │           ├── json_schema_converter.py
-    │       │           ├── models.py
-    │       │           ├── parser.py
-    │       │           └── schemas.py
+    │       │           └── __init__.py
     │       ├── prompts/
     │       │   ├── __init__.py
-    │       │   ├── prompt.py
-    │       │   └── prompt_manager.py
+    │       │   ├── base.py
+    │       │   └── function_prompt.py
     │       ├── resources/
     │       │   ├── __init__.py
-    │       │   ├── resource.py
-    │       │   ├── resource_manager.py
+    │       │   ├── base.py
+    │       │   ├── function_resource.py
     │       │   ├── template.py
     │       │   └── types.py
     │       ├── server/
     │       │   ├── __init__.py
+    │       │   ├── app.py
+    │       │   ├── apps.py
     │       │   ├── context.py
     │       │   ├── dependencies.py
     │       │   ├── elicitation.py
+    │       │   ├── event_store.py
     │       │   ├── http.py
+    │       │   ├── lifespan.py
     │       │   ├── low_level.py
-    │       │   ├── openapi.py
     │       │   ├── proxy.py
-    │       │   ├── server.py
+    │       │   ├── telemetry.py
     │       │   ├── auth/
     │       │   │   ├── __init__.py
     │       │   │   ├── auth.py
+    │       │   │   ├── authorization.py
+    │       │   │   ├── cimd.py
     │       │   │   ├── jwt_issuer.py
     │       │   │   ├── middleware.py
-    │       │   │   ├── oauth_proxy.py
     │       │   │   ├── oidc_proxy.py
     │       │   │   ├── redirect_validation.py
+    │       │   │   ├── ssrf.py
     │       │   │   ├── handlers/
+    │       │   │   │   ├── __init__.py
     │       │   │   │   └── authorize.py
+    │       │   │   ├── oauth_proxy/
+    │       │   │   │   ├── __init__.py
+    │       │   │   │   ├── consent.py
+    │       │   │   │   ├── models.py
+    │       │   │   │   ├── proxy.py
+    │       │   │   │   └── ui.py
     │       │   │   └── providers/
     │       │   │       ├── __init__.py
     │       │   │       ├── auth0.py
     │       │   │       ├── aws.py
     │       │   │       ├── azure.py
-    │       │   │       ├── bearer.py
+    │       │   │       ├── clerk.py
+    │       │   │       ├── debug.py
     │       │   │       ├── descope.py
+    │       │   │       ├── discord.py
     │       │   │       ├── github.py
     │       │   │       ├── google.py
     │       │   │       ├── in_memory.py
     │       │   │       ├── introspection.py
     │       │   │       ├── jwt.py
+    │       │   │       ├── keycloak.py
+    │       │   │       ├── oci.py
+    │       │   │       ├── propelauth.py
     │       │   │       ├── scalekit.py
     │       │   │       ├── supabase.py
     │       │   │       └── workos.py
     │       │   ├── middleware/
     │       │   │   ├── __init__.py
+    │       │   │   ├── authorization.py
     │       │   │   ├── caching.py
+    │       │   │   ├── dereference.py
     │       │   │   ├── error_handling.py
     │       │   │   ├── logging.py
     │       │   │   ├── middleware.py
+    │       │   │   ├── ping.py
     │       │   │   ├── rate_limiting.py
+    │       │   │   ├── response_limiting.py
     │       │   │   ├── timing.py
     │       │   │   └── tool_injection.py
-    │       │   └── sampling/
-    │       │       └── handler.py
+    │       │   ├── mixins/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── lifespan.py
+    │       │   │   ├── mcp_operations.py
+    │       │   │   └── transport.py
+    │       │   ├── openapi/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── components.py
+    │       │   │   └── routing.py
+    │       │   ├── providers/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── addressing.py
+    │       │   │   ├── aggregate.py
+    │       │   │   ├── base.py
+    │       │   │   ├── fastmcp_provider.py
+    │       │   │   ├── filesystem.py
+    │       │   │   ├── filesystem_discovery.py
+    │       │   │   ├── prefab_synthesis.py
+    │       │   │   ├── proxy.py
+    │       │   │   ├── wrapped_provider.py
+    │       │   │   ├── local_provider/
+    │       │   │   │   ├── __init__.py
+    │       │   │   │   ├── local_provider.py
+    │       │   │   │   └── decorators/
+    │       │   │   │       ├── __init__.py
+    │       │   │   │       ├── prompts.py
+    │       │   │   │       ├── resources.py
+    │       │   │   │       └── tools.py
+    │       │   │   ├── openapi/
+    │       │   │   │   ├── README.md
+    │       │   │   │   ├── __init__.py
+    │       │   │   │   ├── components.py
+    │       │   │   │   ├── provider.py
+    │       │   │   │   └── routing.py
+    │       │   │   └── skills/
+    │       │   │       ├── __init__.py
+    │       │   │       ├── _common.py
+    │       │   │       ├── claude_provider.py
+    │       │   │       ├── directory_provider.py
+    │       │   │       ├── skill_provider.py
+    │       │   │       └── vendor_providers.py
+    │       │   ├── sampling/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── run.py
+    │       │   │   └── sampling_tool.py
+    │       │   ├── tasks/
+    │       │   │   ├── __init__.py
+    │       │   │   ├── capabilities.py
+    │       │   │   ├── config.py
+    │       │   │   ├── context.py
+    │       │   │   ├── elicitation.py
+    │       │   │   ├── handlers.py
+    │       │   │   ├── keys.py
+    │       │   │   ├── notifications.py
+    │       │   │   ├── requests.py
+    │       │   │   ├── routing.py
+    │       │   │   └── subscriptions.py
+    │       │   └── transforms/
+    │       │       ├── __init__.py
+    │       │       ├── catalog.py
+    │       │       ├── namespace.py
+    │       │       ├── prompts_as_tools.py
+    │       │       ├── resources_as_tools.py
+    │       │       ├── tool_transform.py
+    │       │       ├── version_filter.py
+    │       │       ├── visibility.py
+    │       │       └── search/
+    │       │           ├── __init__.py
+    │       │           ├── base.py
+    │       │           ├── bm25.py
+    │       │           └── regex.py
     │       ├── tools/
     │       │   ├── __init__.py
-    │       │   ├── tool.py
-    │       │   ├── tool_manager.py
+    │       │   ├── base.py
+    │       │   ├── function_parsing.py
+    │       │   ├── function_tool.py
     │       │   └── tool_transform.py
     │       └── utilities/
     │           ├── __init__.py
+    │           ├── async_utils.py
     │           ├── auth.py
+    │           ├── authorization.py
     │           ├── cli.py
     │           ├── components.py
+    │           ├── docstring_parsing.py
     │           ├── exceptions.py
     │           ├── http.py
     │           ├── inspect.py
     │           ├── json_schema.py
     │           ├── json_schema_type.py
+    │           ├── lifespan.py
     │           ├── logging.py
-    │           ├── mcp_config.py
-    │           ├── openapi.py
+    │           ├── mime.py
+    │           ├── pagination.py
+    │           ├── skills.py
+    │           ├── tasks.py
     │           ├── tests.py
+    │           ├── timeout.py
+    │           ├── token_cache.py
     │           ├── types.py
     │           ├── ui.py
-    │           └── mcp_server_config/
+    │           ├── version_check.py
+    │           ├── versions.py
+    │           ├── mcp_server_config/
+    │           │   ├── __init__.py
+    │           │   └── v1/
+    │           │       ├── __init__.py
+    │           │       ├── mcp_server_config.py
+    │           │       ├── schema.json
+    │           │       ├── environments/
+    │           │       │   ├── __init__.py
+    │           │       │   ├── base.py
+    │           │       │   └── uv.py
+    │           │       └── sources/
+    │           │           ├── __init__.py
+    │           │           ├── base.py
+    │           │           └── filesystem.py
+    │           └── openapi/
+    │               ├── README.md
     │               ├── __init__.py
-    │               └── v1/
-    │                   ├── __init__.py
-    │                   ├── mcp_server_config.py
-    │                   ├── schema.json
-    │                   ├── environments/
-    │                   │   ├── __init__.py
-    │                   │   ├── base.py
-    │                   │   └── uv.py
-    │                   └── sources/
-    │                       ├── __init__.py
-    │                       ├── base.py
-    │                       └── filesystem.py
+    │               ├── director.py
+    │               ├── formatters.py
+    │               ├── json_schema_converter.py
+    │               ├── models.py
+    │               ├── parser.py
+    │               └── schemas.py
+    ├── scripts/
+    │   ├── auto_close_duplicates.py
+    │   ├── auto_close_needs_mre.py
+    │   └── benchmark_imports.py
+    ├── skills/
+    │   └── fastmcp-client-cli/
+    │       └── SKILL.md
     ├── tests/
     │   ├── __init__.py
     │   ├── conftest.py
-    │   ├── test_examples.py
+    │   ├── test_apps.py
+    │   ├── test_apps_prefab.py
+    │   ├── test_fastmcp_app.py
+    │   ├── test_json_schema_generation.py
     │   ├── test_mcp_config.py
+    │   ├── test_settings.py
+    │   ├── apps/
+    │   │   ├── __init__.py
+    │   │   ├── test_approval.py
+    │   │   ├── test_choice.py
+    │   │   ├── test_file_upload.py
+    │   │   └── test_form.py
     │   ├── cli/
     │   │   ├── __init__.py
+    │   │   ├── test_cimd_cli.py
     │   │   ├── test_cli.py
+    │   │   ├── test_client_commands.py
     │   │   ├── test_config.py
     │   │   ├── test_cursor.py
+    │   │   ├── test_discovery.py
+    │   │   ├── test_fastmcp_remote.py
+    │   │   ├── test_generate_cli.py
+    │   │   ├── test_goose.py
     │   │   ├── test_install.py
     │   │   ├── test_mcp_server_config_integration.py
     │   │   ├── test_mcp_server_config_schema.py
@@ -3855,28 +1159,70 @@ Estimated tokens: 1.2M
     │   │   ├── test_run_config.py
     │   │   ├── test_server_args.py
     │   │   ├── test_shared.py
+    │   │   ├── test_tasks.py
     │   │   └── test_with_argv.py
     │   ├── client/
     │   │   ├── __init__.py
-    │   │   ├── test_client.py
     │   │   ├── test_elicitation.py
+    │   │   ├── test_elicitation_enums.py
     │   │   ├── test_logs.py
     │   │   ├── test_notifications.py
+    │   │   ├── test_oauth_callback_race.py
     │   │   ├── test_oauth_callback_xss.py
-    │   │   ├── test_openapi_experimental.py
-    │   │   ├── test_openapi_legacy.py
+    │   │   ├── test_openapi.py
     │   │   ├── test_progress.py
     │   │   ├── test_roots.py
     │   │   ├── test_sampling.py
+    │   │   ├── test_sampling_result_types.py
+    │   │   ├── test_sampling_tool_loop.py
+    │   │   ├── test_slim_package_boundaries.py
     │   │   ├── test_sse.py
     │   │   ├── test_stdio.py
     │   │   ├── test_streamable_http.py
     │   │   ├── auth/
     │   │   │   ├── __init__.py
-    │   │   │   └── test_oauth_client.py
+    │   │   │   ├── test_oauth_cimd.py
+    │   │   │   ├── test_oauth_client.py
+    │   │   │   └── test_oauth_static_client.py
+    │   │   ├── client/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_auth.py
+    │   │   │   ├── test_client.py
+    │   │   │   ├── test_error_handling.py
+    │   │   │   ├── test_initialize.py
+    │   │   │   ├── test_session.py
+    │   │   │   ├── test_timeout.py
+    │   │   │   └── test_transport.py
+    │   │   ├── sampling/
+    │   │   │   ├── __init__.py
+    │   │   │   └── handlers/
+    │   │   │       ├── __init__.py
+    │   │   │       ├── test_anthropic_handler.py
+    │   │   │       ├── test_google_genai_handler.py
+    │   │   │       └── test_openai_handler.py
+    │   │   ├── tasks/
+    │   │   │   ├── conftest.py
+    │   │   │   ├── test_client_prompt_tasks.py
+    │   │   │   ├── test_client_resource_tasks.py
+    │   │   │   ├── test_client_task_notifications.py
+    │   │   │   ├── test_client_task_protocol.py
+    │   │   │   ├── test_client_tool_tasks.py
+    │   │   │   ├── test_task_context_validation.py
+    │   │   │   └── test_task_result_caching.py
+    │   │   ├── telemetry/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_client_list_tracing.py
+    │   │   │   └── test_client_tracing.py
     │   │   └── transports/
     │   │       ├── __init__.py
+    │   │       ├── test_memory_transport.py
+    │   │       ├── test_no_redirect.py
+    │   │       ├── test_transports.py
     │   │       └── test_uv_transport.py
+    │   ├── conformance/
+    │   │   ├── __init__.py
+    │   │   ├── expected-failures.yml
+    │   │   └── test_conformance.py
     │   ├── contrib/
     │   │   ├── __init__.py
     │   │   ├── test_bulk_tool_caller.py
@@ -3884,116 +1230,133 @@ Estimated tokens: 1.2M
     │   │   └── test_mcp_mixin.py
     │   ├── deprecated/
     │   │   ├── __init__.py
-    │   │   ├── test_bearer_auth_provider.py
-    │   │   ├── test_dependencies.py
+    │   │   ├── conftest.py
+    │   │   ├── test_add_tool_transformation.py
     │   │   ├── test_deprecated.py
-    │   │   ├── test_mount_import_arg_order.py
-    │   │   ├── test_mount_separators.py
-    │   │   ├── test_output_schema_false.py
-    │   │   ├── test_proxy_client.py
-    │   │   ├── test_resource_prefixes.py
-    │   │   ├── test_route_type_ignore.py
-    │   │   └── test_settings.py
+    │   │   ├── test_elicitation.py
+    │   │   ├── test_exclude_args.py
+    │   │   ├── test_function_component_imports.py
+    │   │   ├── test_import_server.py
+    │   │   ├── test_openapi_deprecations.py
+    │   │   ├── test_settings.py
+    │   │   ├── test_tool_injection_middleware.py
+    │   │   ├── test_tool_serializer.py
+    │   │   ├── openapi/
+    │   │   │   └── test_openapi.py
+    │   │   └── server/
+    │   │       ├── __init__.py
+    │   │       └── test_include_exclude_tags.py
+    │   ├── docs/
+    │   │   └── test_doc_examples.py
     │   ├── experimental/
     │   │   ├── README.md
     │   │   ├── __init__.py
-    │   │   ├── openapi_parser/
-    │   │   │   ├── README.md
-    │   │   │   ├── __init__.py
-    │   │   │   ├── conftest.py
-    │   │   │   ├── server/
-    │   │   │   │   ├── __init__.py
-    │   │   │   │   └── openapi/
-    │   │   │   │       ├── __init__.py
-    │   │   │   │       ├── test_comprehensive.py
-    │   │   │   │       ├── test_deepobject_style.py
-    │   │   │   │       ├── test_end_to_end_compatibility.py
-    │   │   │   │       ├── test_openapi_features.py
-    │   │   │   │       ├── test_openapi_performance.py
-    │   │   │   │       ├── test_parameter_collisions.py
-    │   │   │   │       ├── test_performance_comparison.py
-    │   │   │   │       └── test_server.py
-    │   │   │   └── utilities/
-    │   │   │       ├── __init__.py
-    │   │   │       └── openapi/
-    │   │   │           ├── __init__.py
-    │   │   │           ├── conftest.py
-    │   │   │           ├── test_allof_requestbody.py
-    │   │   │           ├── test_direct_array_schemas.py
-    │   │   │           ├── test_director.py
-    │   │   │           ├── test_legacy_compatibility.py
-    │   │   │           ├── test_models.py
-    │   │   │           ├── test_nullable_fields.py
-    │   │   │           ├── test_parser.py
-    │   │   │           ├── test_schemas.py
-    │   │   │           └── test_transitive_references.py
-    │   │   └── sampling/
-    │   │       └── test_openai_handler.py
+    │   │   └── transforms/
+    │   │       ├── test_code_mode.py
+    │   │       ├── test_code_mode_discovery.py
+    │   │       └── test_code_mode_serialization.py
+    │   ├── fs/
+    │   │   ├── test_discovery.py
+    │   │   └── test_provider.py
     │   ├── integration_tests/
     │   │   ├── __init__.py
     │   │   ├── conftest.py
     │   │   ├── test_github_mcp_remote.py
+    │   │   ├── test_timeout_fix.py
     │   │   └── auth/
     │   │       ├── __init__.py
-    │   │       └── test_github_provider_integration.py
+    │   │       ├── test_github_provider_integration.py
+    │   │       └── test_keycloak_provider_integration.py
     │   ├── prompts/
     │   │   ├── __init__.py
     │   │   ├── test_prompt.py
-    │   │   └── test_prompt_manager.py
+    │   │   └── test_standalone_decorator.py
     │   ├── resources/
     │   │   ├── __init__.py
     │   │   ├── test_file_resources.py
     │   │   ├── test_function_resources.py
-    │   │   ├── test_resource_manager.py
     │   │   ├── test_resource_template.py
     │   │   ├── test_resource_template_meta.py
-    │   │   └── test_resources.py
+    │   │   ├── test_resource_template_query_params.py
+    │   │   ├── test_resources.py
+    │   │   └── test_standalone_decorator.py
+    │   ├── scripts/
+    │   │   └── test_auto_close_needs_mre.py
     │   ├── server/
     │   │   ├── __init__.py
     │   │   ├── test_app_state.py
     │   │   ├── test_auth_integration.py
+    │   │   ├── test_auth_integration_errors.py
     │   │   ├── test_context.py
-    │   │   ├── test_experimental_openapi_feature_flag.py
+    │   │   ├── test_dependencies.py
+    │   │   ├── test_dependencies_advanced.py
+    │   │   ├── test_event_store.py
+    │   │   ├── test_fastapi_testclient_compat.py
     │   │   ├── test_file_server.py
     │   │   ├── test_icons.py
-    │   │   ├── test_import_server.py
     │   │   ├── test_input_validation.py
     │   │   ├── test_log_level.py
     │   │   ├── test_logging.py
-    │   │   ├── test_mount.py
-    │   │   ├── test_resource_prefix_formats.py
-    │   │   ├── test_run_server.py
+    │   │   ├── test_pagination.py
+    │   │   ├── test_providers.py
     │   │   ├── test_server.py
-    │   │   ├── test_server_interactions.py
+    │   │   ├── test_server_docket.py
     │   │   ├── test_server_lifespan.py
+    │   │   ├── test_server_safety.py
+    │   │   ├── test_session_visibility.py
     │   │   ├── test_streamable_http_no_redirect.py
     │   │   ├── test_tool_annotations.py
-    │   │   ├── test_tool_exclude_args.py
     │   │   ├── test_tool_transformation.py
     │   │   ├── auth/
     │   │   │   ├── __init__.py
     │   │   │   ├── test_auth_provider.py
+    │   │   │   ├── test_authorization.py
+    │   │   │   ├── test_cimd.py
+    │   │   │   ├── test_cimd_validators.py
+    │   │   │   ├── test_debug_verifier.py
     │   │   │   ├── test_enhanced_error_responses.py
     │   │   │   ├── test_jwt_issuer.py
     │   │   │   ├── test_jwt_provider.py
+    │   │   │   ├── test_jwt_provider_bearer.py
+    │   │   │   ├── test_multi_auth.py
     │   │   │   ├── test_oauth_consent_flow.py
+    │   │   │   ├── test_oauth_consent_page.py
     │   │   │   ├── test_oauth_mounting.py
-    │   │   │   ├── test_oauth_proxy.py
     │   │   │   ├── test_oauth_proxy_redirect_validation.py
     │   │   │   ├── test_oauth_proxy_storage.py
     │   │   │   ├── test_oidc_proxy.py
+    │   │   │   ├── test_oidc_proxy_token.py
     │   │   │   ├── test_redirect_validation.py
     │   │   │   ├── test_remote_auth_provider.py
+    │   │   │   ├── test_ssrf_protection.py
     │   │   │   ├── test_static_token_verifier.py
+    │   │   │   ├── oauth_proxy/
+    │   │   │   │   ├── __init__.py
+    │   │   │   │   ├── conftest.py
+    │   │   │   │   ├── test_authorization.py
+    │   │   │   │   ├── test_client_registration.py
+    │   │   │   │   ├── test_config.py
+    │   │   │   │   ├── test_e2e.py
+    │   │   │   │   ├── test_oauth_proxy.py
+    │   │   │   │   ├── test_tokens.py
+    │   │   │   │   └── test_ui.py
     │   │   │   └── providers/
     │   │   │       ├── __init__.py
     │   │   │       ├── test_auth0.py
     │   │   │       ├── test_aws.py
     │   │   │       ├── test_azure.py
+    │   │   │       ├── test_azure_scopes.py
+    │   │   │       ├── test_clerk.py
+    │   │   │       ├── test_debug.py
     │   │   │       ├── test_descope.py
+    │   │   │       ├── test_discord.py
     │   │   │       ├── test_github.py
     │   │   │       ├── test_google.py
+    │   │   │       ├── test_http_client.py
     │   │   │       ├── test_introspection.py
+    │   │   │       ├── test_keycloak.py
+    │   │   │       ├── test_oci.py
+    │   │   │       ├── test_propelauth.py
     │   │   │       ├── test_scalekit.py
     │   │   │       ├── test_supabase.py
     │   │   │       └── test_workos.py
@@ -4003,84 +1366,257 @@ Estimated tokens: 1.2M
     │   │   │   ├── test_custom_routes.py
     │   │   │   ├── test_http_auth_middleware.py
     │   │   │   ├── test_http_dependencies.py
-    │   │   │   └── test_http_middleware.py
+    │   │   │   ├── test_http_middleware.py
+    │   │   │   ├── test_stale_access_token.py
+    │   │   │   └── test_streamable_http_shutdown.py
     │   │   ├── middleware/
     │   │   │   ├── __init__.py
     │   │   │   ├── test_caching.py
+    │   │   │   ├── test_dereference.py
     │   │   │   ├── test_error_handling.py
     │   │   │   ├── test_initialization_middleware.py
     │   │   │   ├── test_logging.py
     │   │   │   ├── test_middleware.py
+    │   │   │   ├── test_middleware_nested.py
+    │   │   │   ├── test_ping.py
     │   │   │   ├── test_rate_limiting.py
+    │   │   │   ├── test_response_limiting.py
     │   │   │   ├── test_timing.py
     │   │   │   └── test_tool_injection.py
-    │   │   ├── openapi/
+    │   │   ├── mount/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_advanced.py
+    │   │   │   ├── test_filtering.py
+    │   │   │   ├── test_mount.py
+    │   │   │   ├── test_prompts.py
+    │   │   │   ├── test_proxy.py
+    │   │   │   └── test_resources.py
+    │   │   ├── providers/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_addressing.py
+    │   │   │   ├── test_base_provider.py
+    │   │   │   ├── test_fastmcp_provider.py
+    │   │   │   ├── test_local_provider.py
+    │   │   │   ├── test_local_provider_prompts.py
+    │   │   │   ├── test_local_provider_resources.py
+    │   │   │   ├── test_prefab_roundtrip.py
+    │   │   │   ├── test_prefab_synthesis.py
+    │   │   │   ├── test_skills_provider.py
+    │   │   │   ├── test_skills_vendor_providers.py
+    │   │   │   ├── test_transforming_provider.py
+    │   │   │   ├── local_provider_tools/
+    │   │   │   │   ├── __init__.py
+    │   │   │   │   ├── test_context.py
+    │   │   │   │   ├── test_decorator.py
+    │   │   │   │   ├── test_enabled.py
+    │   │   │   │   ├── test_local_provider_tools.py
+    │   │   │   │   ├── test_output_schema.py
+    │   │   │   │   ├── test_parameters.py
+    │   │   │   │   └── test_tags.py
+    │   │   │   ├── openapi/
+    │   │   │   │   ├── __init__.py
+    │   │   │   │   ├── test_comprehensive.py
+    │   │   │   │   ├── test_deepobject_style.py
+    │   │   │   │   ├── test_end_to_end_compatibility.py
+    │   │   │   │   ├── test_openapi_features.py
+    │   │   │   │   ├── test_openapi_performance.py
+    │   │   │   │   ├── test_parameter_collisions.py
+    │   │   │   │   ├── test_performance_comparison.py
+    │   │   │   │   └── test_server.py
+    │   │   │   └── proxy/
+    │   │   │       ├── __init__.py
+    │   │   │       ├── test_proxy_client.py
+    │   │   │       ├── test_proxy_server.py
+    │   │   │       └── test_stateful_proxy_client.py
+    │   │   ├── sampling/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_prepare_tools.py
+    │   │   │   └── test_sampling_tool.py
+    │   │   ├── tasks/
     │   │   │   ├── __init__.py
     │   │   │   ├── conftest.py
-    │   │   │   ├── test_advanced_behavior.py
-    │   │   │   ├── test_basic_functionality.py
-    │   │   │   ├── test_configuration.py
-    │   │   │   ├── test_deepobject_style.py
-    │   │   │   ├── test_description_propagation.py
-    │   │   │   ├── test_explode_integration.py
-    │   │   │   ├── test_openapi_compatibility.py
-    │   │   │   ├── test_openapi_path_parameters.py
-    │   │   │   ├── test_optional_parameters.py
-    │   │   │   ├── test_parameter_collisions.py
-    │   │   │   └── test_route_map_fn.py
-    │   │   └── proxy/
+    │   │   │   ├── test_concurrent_dependencies.py
+    │   │   │   ├── test_context_background_task.py
+    │   │   │   ├── test_custom_subclass_tasks.py
+    │   │   │   ├── test_notifications.py
+    │   │   │   ├── test_progress_dependency.py
+    │   │   │   ├── test_resource_task_meta_parameter.py
+    │   │   │   ├── test_server_tasks_parameter.py
+    │   │   │   ├── test_snapshot_restore.py
+    │   │   │   ├── test_sync_function_task_disabled.py
+    │   │   │   ├── test_task_capabilities.py
+    │   │   │   ├── test_task_config.py
+    │   │   │   ├── test_task_dependencies.py
+    │   │   │   ├── test_task_elicitation_relay.py
+    │   │   │   ├── test_task_keys.py
+    │   │   │   ├── test_task_meta_parameter.py
+    │   │   │   ├── test_task_metadata.py
+    │   │   │   ├── test_task_methods.py
+    │   │   │   ├── test_task_mount.py
+    │   │   │   ├── test_task_prompts.py
+    │   │   │   ├── test_task_protocol.py
+    │   │   │   ├── test_task_proxy.py
+    │   │   │   ├── test_task_resources.py
+    │   │   │   ├── test_task_return_types.py
+    │   │   │   ├── test_task_security.py
+    │   │   │   ├── test_task_status_notifications.py
+    │   │   │   ├── test_task_tools.py
+    │   │   │   └── test_task_ttl.py
+    │   │   ├── telemetry/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_delegate_method.py
+    │   │   │   ├── test_list_tracing.py
+    │   │   │   ├── test_provider_tracing.py
+    │   │   │   ├── test_sampling_tracing.py
+    │   │   │   └── test_server_tracing.py
+    │   │   ├── transforms/
+    │   │   │   ├── test_catalog.py
+    │   │   │   ├── test_prompts_as_tools.py
+    │   │   │   ├── test_resources_as_tools.py
+    │   │   │   ├── test_search.py
+    │   │   │   └── test_visibility.py
+    │   │   └── versioning/
     │   │       ├── __init__.py
-    │   │       ├── test_proxy_client.py
-    │   │       ├── test_proxy_server.py
-    │   │       └── test_stateful_proxy_client.py
+    │   │       ├── test_calls.py
+    │   │       ├── test_filtering.py
+    │   │       ├── test_mounting.py
+    │   │       ├── test_versioning.py
+    │   │       └── test_visibility_version_fallback.py
+    │   ├── telemetry/
+    │   │   ├── __init__.py
+    │   │   └── test_module.py
     │   ├── tools/
     │   │   ├── __init__.py
-    │   │   ├── test_tool.py
+    │   │   ├── test_standalone_decorator.py
     │   │   ├── test_tool_future_annotations.py
-    │   │   ├── test_tool_manager.py
-    │   │   └── test_tool_transform.py
+    │   │   ├── test_tool_run_in_thread.py
+    │   │   ├── test_tool_timeout.py
+    │   │   ├── tool/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── test_callable.py
+    │   │   │   ├── test_content.py
+    │   │   │   ├── test_output_schema.py
+    │   │   │   ├── test_results.py
+    │   │   │   ├── test_title.py
+    │   │   │   └── test_tool.py
+    │   │   └── tool_transform/
+    │   │       ├── __init__.py
+    │   │       ├── test_args.py
+    │   │       ├── test_metadata.py
+    │   │       ├── test_schemas.py
+    │   │       └── test_tool_transform.py
     │   └── utilities/
     │       ├── __init__.py
+    │       ├── test_async_utils.py
+    │       ├── test_auth.py
     │       ├── test_cli.py
     │       ├── test_components.py
+    │       ├── test_docstring_parsing.py
+    │       ├── test_http.py
     │       ├── test_inspect.py
+    │       ├── test_inspect_icons.py
     │       ├── test_json_schema.py
-    │       ├── test_json_schema_type.py
     │       ├── test_logging.py
+    │       ├── test_skills.py
     │       ├── test_tests.py
+    │       ├── test_timeout.py
+    │       ├── test_token_cache.py
     │       ├── test_typeadapter.py
     │       ├── test_types.py
+    │       ├── test_version_check.py
+    │       ├── json_schema_type/
+    │       │   ├── __init__.py
+    │       │   ├── cluster_failures.py
+    │       │   ├── conftest.py
+    │       │   ├── test_advanced.py
+    │       │   ├── test_constraints.py
+    │       │   ├── test_containers.py
+    │       │   ├── test_formats.py
+    │       │   ├── test_json_schema_type.py
+    │       │   ├── test_real_world_schemas.py
+    │       │   └── test_unions.py
     │       └── openapi/
     │           ├── __init__.py
     │           ├── conftest.py
+    │           ├── test_allof_requestbody.py
+    │           ├── test_circular_references.py
+    │           ├── test_direct_array_schemas.py
+    │           ├── test_director.py
+    │           ├── test_legacy_compatibility.py
+    │           ├── test_models.py
     │           ├── test_nullable_fields.py
-    │           ├── test_openapi.py
-    │           ├── test_openapi_advanced.py
-    │           ├── test_openapi_fastapi.py
-    │           └── test_openapi_output_schemas.py
+    │           ├── test_parser.py
+    │           ├── test_propertynames_ref_rewrite.py
+    │           ├── test_schemas.py
+    │           └── test_transitive_references.py
+    ├── v3-notes/
+    │   ├── get-methods-consolidation.md
+    │   ├── prompt-internal-types.md
+    │   ├── provider-architecture.md
+    │   ├── provider-test-pattern.md
+    │   ├── resource-internal-types.md
+    │   ├── task-meta-parameter.md
+    │   └── visibility.md
+    ├── .claude/
+    │   ├── settings.json
+    │   ├── hooks/
+    │   │   └── session-init.sh
+    │   └── skills/
+    │       ├── code-review/
+    │       │   └── SKILL.md
+    │       ├── python-tests/
+    │       │   └── SKILL.md
+    │       ├── review-issue/
+    │       │   └── SKILL.md
+    │       └── review-pr/
+    │           └── SKILL.md
     ├── .cursor/
-    │   ├── worktrees.json
     │   └── rules/
     │       └── core-mcp-objects.mdc
     └── .github/
         ├── dependabot.yml
         ├── pull_request_template.md
         ├── release.yml
+        ├── actions/
+        │   ├── run-claude/
+        │   │   └── action.yml
+        │   ├── run-pytest/
+        │   │   └── action.yml
+        │   └── setup-uv/
+        │       └── action.yml
         ├── copilot-instructions.md -> AGENTS.md
         ├── ISSUE_TEMPLATE/
         │   ├── bug.yml
         │   ├── config.yml
         │   └── enhancement.yml
+        ├── scripts/
+        │   ├── mention/
+        │   │   ├── gh-get-review-threads.sh
+        │   │   └── gh-resolve-review-thread.sh
+        │   └── pr-review/
+        │       ├── pr-comment.sh
+        │       ├── pr-diff.sh
+        │       ├── pr-existing-comments.sh
+        │       ├── pr-remove-comment.sh
+        │       └── pr-review.sh
         └── workflows/
             ├── auto-close-duplicates.yml
             ├── auto-close-needs-mre.yml
-            ├── martian-issue-triage.yml
+            ├── martian-test-failure.yml
+            ├── martian-triage-issue.yml
+            ├── marvin-comment-on-issue.yml
+            ├── marvin-comment-on-pr.yml
             ├── marvin-dedupe-issues.yml
             ├── marvin-label-triage.yml
-            ├── marvin.yml
-            ├── publish.yml
+            ├── minimize-resolved-reviews.yml
+            ├── publish-fastmcp-remote.yml
+            ├── publish-fastmcp-slim.yml
+            ├── publish-fastmcp.yml
+            ├── require-issue-link.yml
+            ├── run-schema-crash-test.yml
             ├── run-static.yml
             ├── run-tests.yml
+            ├── run-upgrade-checks.yml
             ├── update-config-schema.yml
             └── update-sdk-docs.yml
 
@@ -4095,44 +1631,31 @@ FILE: README.md
 <!-- omit in toc -->
 
 <picture>
-  <source width="550" media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/wordmark-watercolor-waves-dark.png">
-  <source width="550" media="(prefers-color-scheme: light)" srcset="docs/assets/brand/wordmark-watercolor-waves.png">
-  <img width="550" alt="FastMCP Logo" src="docs/assets/brand/wordmark-watercolor-waves.png">
+  <source width="550" media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/brand/f-watercolor-waves-4-dark.png">
+  <source width="550" media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/brand/f-watercolor-waves-4.png">
+  <img width="550" alt="FastMCP Logo" src="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/brand/f-watercolor-waves-2.png">
 </picture>
 
-# FastMCP v2 🚀
+# FastMCP 🚀
 
-<strong>The fast, Pythonic way to build MCP servers and clients.</strong>
+<strong>Move fast and make things.</strong>
 
-*Made with ☕️ by [Prefect](https://www.prefect.io/)*
+*Made with 💙 by [Prefect](https://www.prefect.io/)*
 
 [![Docs](https://img.shields.io/badge/docs-gofastmcp.com-blue)](https://gofastmcp.com)
 [![Discord](https://img.shields.io/badge/community-discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/uu8dJCgttd)
 [![PyPI - Version](https://img.shields.io/pypi/v/fastmcp.svg)](https://pypi.org/project/fastmcp)
-[![Tests](https://github.com/jlowin/fastmcp/actions/workflows/run-tests.yml/badge.svg)](https://github.com/jlowin/fastmcp/actions/workflows/run-tests.yml)
-[![License](https://img.shields.io/github/license/jlowin/fastmcp.svg)](https://github.com/jlowin/fastmcp/blob/main/LICENSE)
+[![Tests](https://github.com/PrefectHQ/fastmcp/actions/workflows/run-tests.yml/badge.svg)](https://github.com/PrefectHQ/fastmcp/actions/workflows/run-tests.yml)
+[![License](https://img.shields.io/github/license/PrefectHQ/fastmcp.svg)](https://github.com/PrefectHQ/fastmcp/blob/main/LICENSE)
 
-<a href="https://trendshift.io/repositories/13266" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13266" alt="jlowin%2Ffastmcp | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://trendshift.io/repositories/21461" target="_blank"><img src="https://trendshift.io/api/badge/repositories/21461" alt="prefecthq%2Ffastmcp | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 </div>
-
-> [!Note]
->
-> #### FastMCP 2.0: The Standard Framework
->
-> FastMCP pioneered Python MCP development, and FastMCP 1.0 was incorporated into the [official MCP SDK](https://github.com/modelcontextprotocol/python-sdk) in 2024.
->
-> **This is FastMCP 2.0** — the actively maintained, production-ready framework that extends far beyond basic protocol implementation. While the SDK provides core functionality, FastMCP 2.0 delivers everything needed for production: advanced MCP patterns (server composition, proxying, OpenAPI/FastAPI generation, tool transformation), enterprise auth (Google, GitHub, WorkOS, Azure, Auth0, and more), deployment tools, testing utilities, and comprehensive client libraries.
->
-> **For production MCP applications, install FastMCP:** `pip install fastmcp`
 
 ---
 
-**FastMCP is the standard framework for building MCP applications**, providing the fastest path from idea to production.
-
-The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) is a standardized way to provide context and tools to LLMs. FastMCP makes building production-ready MCP servers simple, with enterprise auth, deployment tools, and a complete ecosystem built in.
+The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) connects LLMs to tools and data. FastMCP gives you everything you need to go from prototype to production:
 
 ```python
-# server.py
 from fastmcp import FastMCP
 
 mcp = FastMCP("Demo 🚀")
@@ -4146,84 +1669,53 @@ if __name__ == "__main__":
     mcp.run()
 ```
 
-Run the server locally:
+## Why FastMCP
 
-```bash
-fastmcp run server.py
-```
+Building an effective MCP application is harder than it looks. FastMCP handles all of it. Declare a tool with a Python function, and the schema, validation, and documentation are generated automatically. Connect to a server with a URL, and transport negotiation, authentication, and protocol lifecycle are managed for you. You focus on your logic, and the MCP part just works: **with FastMCP, best practices are built in.**
 
-### 📚 Documentation
+**That's why FastMCP is the standard framework for working with MCP.** FastMCP 1.0 was incorporated into the official MCP Python SDK in 2024. Today, the actively maintained standalone project is downloaded a million times a day, and some version of FastMCP powers 70% of MCP servers across all languages.
 
-FastMCP's complete documentation is available at **[gofastmcp.com](https://gofastmcp.com)**, including detailed guides, API references, and advanced patterns. This readme provides only a high-level overview.
+FastMCP has three pillars:
 
-Documentation is also available in [llms.txt format](https://llmstxt.org/), which is a simple markdown standard that LLMs can consume easily.
+<table>
+<tr>
+<td align="center" valign="top" width="33%">
+<a href="https://gofastmcp.com/servers/server">
+<img src="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/images/servers-card.png" alt="Servers" />
+<br /><strong>Servers</strong>
+</a>
+<br />Expose tools, resources, and prompts to LLMs.
+</td>
+<td align="center" valign="top" width="33%">
+<a href="https://gofastmcp.com/apps/overview">
+<img src="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/images/apps-card.png" alt="Apps" />
+<br /><strong>Apps</strong>
+</a>
+<br />Give your tools interactive UIs rendered directly in the conversation.
+</td>
+<td align="center" valign="top" width="33%">
+<a href="https://gofastmcp.com/clients/client">
+<img src="https://raw.githubusercontent.com/PrefectHQ/fastmcp/main/docs/assets/images/clients-card.png" alt="Clients" />
+<br /><strong>Clients</strong>
+</a>
+<br />Connect to any MCP server — local or remote, programmatic or CLI.
+</td>
+</tr>
+</table>
 
-There are two ways to access the LLM-friendly documentation:
+**[Servers](https://gofastmcp.com/servers/server)** wrap your Python functions into MCP-compliant tools, resources, and prompts. **[Clients](https://gofastmcp.com/clients/client)** connect to any server with full protocol support. And **[Apps](https://gofastmcp.com/apps/overview)** give your tools interactive UIs rendered directly in the conversation.
 
-- [`llms.txt`](https://gofastmcp.com/llms.txt) is essentially a sitemap, listing all the pages in the documentation.
-- [`llms-full.txt`](https://gofastmcp.com/llms-full.txt) contains the entire documentation. Note this may exceed the context window of your LLM.
+Ready to build? Start with the [installation guide](https://gofastmcp.com/getting-started/installation) or jump straight to the [quickstart](https://gofastmcp.com/getting-started/quickstart).
 
-**Community:** Join our [Discord server](https://discord.gg/uu8dJCgttd) to connect with other FastMCP developers and share what you're building.
+## Run FastMCP in production with Horizon
 
----
+FastMCP is the standard way to build MCP servers. **[Prefect Horizon](https://www.prefect.io/horizon?utm_source=github&utm_medium=readme&utm_campaign=readme_horizon&utm_content=readme_body)** is the enterprise MCP gateway for running them safely.
 
-<!-- omit in toc -->
-## Table of Contents
+Built by the FastMCP team, Horizon packages the best practices we've learned shipping the world's most popular MCP framework.
 
-- [FastMCP v2 🚀](#fastmcp-v2-)
-  - [📚 Documentation](#-documentation)
-  - [What is MCP?](#what-is-mcp)
-  - [Why FastMCP?](#why-fastmcp)
-  - [Installation](#installation)
-  - [Core Concepts](#core-concepts)
-    - [The `FastMCP` Server](#the-fastmcp-server)
-    - [Tools](#tools)
-    - [Resources \& Templates](#resources--templates)
-    - [Prompts](#prompts)
-    - [Context](#context)
-    - [MCP Clients](#mcp-clients)
-  - [Authentication](#authentication)
-    - [Enterprise Authentication, Zero Configuration](#enterprise-authentication-zero-configuration)
-  - [Deployment](#deployment)
-    - [From Development to Production](#from-development-to-production)
-  - [Advanced Features](#advanced-features)
-    - [Proxy Servers](#proxy-servers)
-    - [Composing MCP Servers](#composing-mcp-servers)
-    - [OpenAPI \& FastAPI Generation](#openapi--fastapi-generation)
-  - [Running Your Server](#running-your-server)
-  - [Contributing](#contributing)
-    - [Prerequisites](#prerequisites)
-    - [Setup](#setup)
-    - [Unit Tests](#unit-tests)
-    - [Static Checks](#static-checks)
-    - [Pull Requests](#pull-requests)
+Deploy FastMCP servers from GitHub with branch previews and instant rollback. Create a private registry of every MCP your company uses. Secure access with SSO and tool-level RBAC. Get audit logs, observability, and governance across your MCP stack. Remix approved tools into purpose-built endpoints for teams and agents.
 
----
-
-## What is MCP?
-
-The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. It is often described as "the USB-C port for AI", providing a uniform way to connect LLMs to resources they can use. It may be easier to think of it as an API, but specifically designed for LLM interactions. MCP servers can:
-
-- Expose data through **Resources** (think of these sort of like GET endpoints; they are used to load information into the LLM's context)
-- Provide functionality through **Tools** (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
-- Define interaction patterns through **Prompts** (reusable templates for LLM interactions)
-- And more!
-
-FastMCP provides a high-level, Pythonic interface for building, managing, and interacting with these servers.
-
-## Why FastMCP?
-
-FastMCP handles all the complex protocol details so you can focus on building. In most cases, decorating a Python function is all you need — FastMCP handles the rest.
-
-🚀 **Fast:** High-level interface means less code and faster development
-
-🍀 **Simple:** Build MCP servers with minimal boilerplate
-
-🐍 **Pythonic:** Feels natural to Python developers
-
-🔍 **Complete:** Everything for production — enterprise auth (Google, GitHub, Azure, Auth0, WorkOS), deployment tools, testing frameworks, client libraries, and more
-
-FastMCP provides the shortest path from idea to production. Deploy locally, to the cloud with [FastMCP Cloud](https://fastmcp.cloud), or to your own infrastructure.
+Start with FastMCP. [Scale with Horizon →](https://www.prefect.io/horizon?utm_source=github&utm_medium=readme&utm_campaign=readme_horizon&utm_content=readme_cta)
 
 ## Installation
 
@@ -4233,472 +1725,148 @@ We recommend installing FastMCP with [uv](https://docs.astral.sh/uv/):
 uv pip install fastmcp
 ```
 
-For full installation instructions, including verification, upgrading from the official MCPSDK, and developer setup, see the [**Installation Guide**](https://gofastmcp.com/getting-started/installation).
+For full installation instructions, including verification and upgrading, see the [**Installation Guide**](https://gofastmcp.com/getting-started/installation).
 
-## Core Concepts
+**Upgrading?** We have guides for:
+- [Upgrading from FastMCP v2](https://gofastmcp.com/getting-started/upgrading/from-fastmcp-2)
+- [Upgrading from the MCP Python SDK](https://gofastmcp.com/getting-started/upgrading/from-mcp-sdk)
+- [Upgrading from the low-level SDK](https://gofastmcp.com/getting-started/upgrading/from-low-level-sdk)
 
-These are the building blocks for creating MCP servers and clients with FastMCP.
+> [!NOTE]
+> If `import fastmcp` fails right after a `pip` upgrade from FastMCP 3.2 or earlier, run `pip install --force-reinstall fastmcp`. See [Troubleshooting](https://gofastmcp.com/getting-started/installation#troubleshooting) for why this happens (`uv` is unaffected).
 
-### The `FastMCP` Server
+## 📚 Documentation
 
-The central object representing your MCP application. It holds your tools, resources, and prompts, manages connections, and can be configured with settings like authentication.
+FastMCP's complete documentation is available at **[gofastmcp.com](https://gofastmcp.com)**, including detailed guides, API references, and advanced patterns.
 
-```python
-from fastmcp import FastMCP
+Documentation is also available in [llms.txt format](https://llmstxt.org/), which is a simple markdown standard that LLMs can consume easily:
 
-# Create a server instance
-mcp = FastMCP(name="MyAssistantServer")
-```
+- [`llms.txt`](https://gofastmcp.com/llms.txt) is essentially a sitemap, listing all the pages in the documentation.
+- [`llms-full.txt`](https://gofastmcp.com/llms-full.txt) contains the entire documentation. Note this may exceed the context window of your LLM.
 
-Learn more in the [**FastMCP Server Documentation**](https://gofastmcp.com/servers/fastmcp).
-
-### Tools
-
-Tools allow LLMs to perform actions by executing your Python functions (sync or async). Ideal for computations, API calls, or side effects (like `POST`/`PUT`). FastMCP handles schema generation from type hints and docstrings. Tools can return various types, including text, JSON-serializable objects, and even images or audio aided by the FastMCP media helper classes.
-
-```python
-@mcp.tool
-def multiply(a: float, b: float) -> float:
-    """Multiplies two numbers."""
-    return a * b
-```
-
-Learn more in the [**Tools Documentation**](https://gofastmcp.com/servers/tools).
-
-### Resources & Templates
-
-Resources expose read-only data sources (like `GET` requests). Use `@mcp.resource("your://uri")`. Use `{placeholders}` in the URI to create dynamic templates that accept parameters, allowing clients to request specific data subsets.
-
-```python
-# Static resource
-@mcp.resource("config://version")
-def get_version(): 
-    return "2.0.1"
-
-# Dynamic resource template
-@mcp.resource("users://{user_id}/profile")
-def get_profile(user_id: int):
-    # Fetch profile for user_id...
-    return {"name": f"User {user_id}", "status": "active"}
-```
-
-Learn more in the [**Resources & Templates Documentation**](https://gofastmcp.com/servers/resources).
-
-### Prompts
-
-Prompts define reusable message templates to guide LLM interactions. Decorate functions with `@mcp.prompt`. Return strings or `Message` objects.
-
-```python
-@mcp.prompt
-def summarize_request(text: str) -> str:
-    """Generate a prompt asking for a summary."""
-    return f"Please summarize the following text:\n\n{text}"
-```
-
-Learn more in the [**Prompts Documentation**](https://gofastmcp.com/servers/prompts).
-
-### Context
-
-Access MCP session capabilities within your tools, resources, or prompts by adding a `ctx: Context` parameter. Context provides methods for:
-
-- **Logging:** Log messages to MCP clients with `ctx.info()`, `ctx.error()`, etc.
-- **LLM Sampling:** Use `ctx.sample()` to request completions from the client's LLM.
-- **Resource Access:** Use `ctx.read_resource()` to access resources on the server
-- **Progress Reporting:** Use `ctx.report_progress()` to report progress to the client.
-- and more...
-
-To access the context, add a parameter annotated as `Context` to any mcp-decorated function. FastMCP will automatically inject the correct context object when the function is called.
-
-```python
-from fastmcp import FastMCP, Context
-
-mcp = FastMCP("My MCP Server")
-
-@mcp.tool
-async def process_data(uri: str, ctx: Context):
-    # Log a message to the client
-    await ctx.info(f"Processing {uri}...")
-
-    # Read a resource from the server
-    data = await ctx.read_resource(uri)
-
-    # Ask client LLM to summarize the data
-    summary = await ctx.sample(f"Summarize: {data.content[:500]}")
-
-    # Return the summary
-    return summary.text
-```
-
-Learn more in the [**Context Documentation**](https://gofastmcp.com/servers/context).
-
-### MCP Clients
-
-Interact with *any* MCP server programmatically using the `fastmcp.Client`. It supports various transports (Stdio, SSE, In-Memory) and often auto-detects the correct one. The client can also handle advanced patterns like server-initiated **LLM sampling requests** if you provide an appropriate handler.
-
-Critically, the client allows for efficient **in-memory testing** of your servers by connecting directly to a `FastMCP` server instance via the `FastMCPTransport`, eliminating the need for process management or network calls during tests.
-
-```python
-from fastmcp import Client
-
-async def main():
-    # Connect via stdio to a local script
-    async with Client("my_server.py") as client:
-        tools = await client.list_tools()
-        print(f"Available tools: {tools}")
-        result = await client.call_tool("add", {"a": 5, "b": 3})
-        print(f"Result: {result.content[0].text}")
-
-    # Connect via SSE
-    async with Client("http://localhost:8000/sse") as client:
-        # ... use the client
-        pass
-```
-
-To use clients to test servers, use the following pattern:
-
-```python
-from fastmcp import FastMCP, Client
-
-mcp = FastMCP("My MCP Server")
-
-async def main():
-    # Connect via in-memory transport
-    async with Client(mcp) as client:
-        # ... use the client
-```
-
-FastMCP also supports connecting to multiple servers through a single unified client using the standard MCP configuration format:
-
-```python
-from fastmcp import Client
-
-# Standard MCP configuration with multiple servers
-config = {
-    "mcpServers": {
-        "weather": {"url": "https://weather-api.example.com/mcp"},
-        "assistant": {"command": "python", "args": ["./assistant_server.py"]}
-    }
-}
-
-# Create a client that connects to all servers
-client = Client(config)
-
-async def main():
-    async with client:
-        # Access tools and resources with server prefixes
-        forecast = await client.call_tool("weather_get_forecast", {"city": "London"})
-        answer = await client.call_tool("assistant_answer_question", {"query": "What is MCP?"})
-```
-
-Learn more in the [**Client Documentation**](https://gofastmcp.com/clients/client) and [**Transports Documentation**](https://gofastmcp.com/clients/transports).
-
-## Authentication
-
-### Enterprise Authentication, Zero Configuration
-
-FastMCP provides comprehensive authentication support that sets it apart from basic MCP implementations. Secure your servers and authenticate your clients with the same enterprise-grade providers used by major corporations.
-
-**Built-in OAuth Providers:**
-
-- **Google**
-- **GitHub**
-- **Microsoft Azure**
-- **Auth0**
-- **WorkOS**
-- **Descope**
-- **JWT/Custom**
-- **API Keys**
-
-Protecting a server takes just two lines:
-
-```python
-from fastmcp.server.auth.providers.google import GoogleProvider
-
-auth = GoogleProvider(client_id="...", client_secret="...", base_url="https://myserver.com")
-mcp = FastMCP("Protected Server", auth=auth)
-```
-
-Connecting to protected servers is even simpler:
-
-```python
-async with Client("https://protected-server.com/mcp", auth="oauth") as client:
-    # Automatic browser-based OAuth flow
-    result = await client.call_tool("protected_tool")
-```
-
-**Why FastMCP Auth Matters:**
-
-- **Production-Ready:** Persistent storage, token refresh, comprehensive error handling
-- **Zero-Config OAuth:** Just pass `auth="oauth"` for automatic setup
-- **Enterprise Integration:** WorkOS SSO, Azure Active Directory, Auth0 tenants
-- **Developer Experience:** Automatic browser launch, local callback server, environment variable support
-- **Advanced Architecture:** Full OIDC support, Dynamic Client Registration (DCR), and unique OAuth proxy pattern that enables DCR with any provider
-
-*Authentication this comprehensive is unique to FastMCP 2.0.*
-
-Learn more in the **Authentication Documentation** for [servers](https://gofastmcp.com/servers/auth) and [clients](https://gofastmcp.com/clients/auth).
-
-## Deployment
-
-### From Development to Production
-
-FastMCP supports every deployment scenario from local development to global scale:
-
-**Development:** Run locally with a single command
-
-```bash
-fastmcp run server.py
-```
-
-**Production:** Deploy to [**FastMCP Cloud**](https://fastmcp.cloud) — Remote MCP that just works
-
-- Instant HTTPS endpoints
-- Built-in authentication
-- Zero configuration
-- Free for personal servers
-
-**Self-Hosted:** Use HTTP or SSE transports for your own infrastructure
-
-```python
-mcp.run(transport="http", host="0.0.0.0", port=8000)
-```
-
-Learn more in the [**Deployment Documentation**](https://gofastmcp.com/deployment).
-
-## Advanced Features
-
-FastMCP introduces powerful ways to structure and compose your MCP applications.
-
-### Proxy Servers
-
-Create a FastMCP server that acts as an intermediary for another local or remote MCP server using `FastMCP.as_proxy()`. This is especially useful for bridging transports (e.g., remote SSE to local Stdio) or adding a layer of logic to a server you don't control.
-
-Learn more in the [**Proxying Documentation**](https://gofastmcp.com/patterns/proxy).
-
-### Composing MCP Servers
-
-Build modular applications by mounting multiple `FastMCP` instances onto a parent server using `mcp.mount()` (live link) or `mcp.import_server()` (static copy).
-
-Learn more in the [**Composition Documentation**](https://gofastmcp.com/patterns/composition).
-
-### OpenAPI & FastAPI Generation
-
-Automatically generate FastMCP servers from existing OpenAPI specifications (`FastMCP.from_openapi()`) or FastAPI applications (`FastMCP.from_fastapi()`), instantly bringing your web APIs to the MCP ecosystem.
-
-Learn more: [**OpenAPI Integration**](https://gofastmcp.com/integrations/openapi) | [**FastAPI Integration**](https://gofastmcp.com/integrations/fastapi).
-
-## Running Your Server
-
-The main way to run a FastMCP server is by calling the `run()` method on your server instance:
-
-```python
-# server.py
-from fastmcp import FastMCP
-
-mcp = FastMCP("Demo 🚀")
-
-@mcp.tool
-def hello(name: str) -> str:
-    return f"Hello, {name}!"
-
-if __name__ == "__main__":
-    mcp.run()  # Default: uses STDIO transport
-```
-
-FastMCP supports three transport protocols:
-
-**STDIO (Default)**: Best for local tools and command-line scripts.
-
-```python
-mcp.run(transport="stdio")  # Default, so transport argument is optional
-```
-
-**Streamable HTTP**: Recommended for web deployments.
-
-```python
-mcp.run(transport="http", host="127.0.0.1", port=8000, path="/mcp")
-```
-
-**SSE**: For compatibility with existing SSE clients.
-
-```python
-mcp.run(transport="sse", host="127.0.0.1", port=8000)
-```
-
-See the [**Running Server Documentation**](https://gofastmcp.com/deployment/running-server) for more details.
+**Community:** Join our [Discord server](https://discord.gg/uu8dJCgttd) to connect with other FastMCP developers and share what you're building.
 
 ## Contributing
 
-Contributions are the core of open source! We welcome improvements and features.
-
-### Prerequisites
-
-- Python 3.10+
-- [uv](https://docs.astral.sh/uv/) (Recommended for environment management)
-
-### Setup
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/jlowin/fastmcp.git 
-   cd fastmcp
-   ```
-
-2. Create and sync the environment:
-
-   ```bash
-   uv sync
-   ```
-
-   This installs all dependencies, including dev tools.
-
-3. Activate the virtual environment (e.g., `source .venv/bin/activate` or via your IDE).
-
-### Unit Tests
-
-FastMCP has a comprehensive unit test suite. All PRs must introduce or update tests as appropriate and pass the full suite.
-
-Run tests using pytest:
-
-```bash
-pytest
-```
-
-or if you want an overview of the code coverage
-
-```bash
-uv run pytest --cov=src --cov=examples --cov-report=html
-```
-
-### Static Checks
-
-FastMCP uses `pre-commit` for code formatting, linting, and type-checking. All PRs must pass these checks (they run automatically in CI).
-
-Install the hooks locally:
-
-```bash
-uv run pre-commit install
-```
-
-The hooks will now run automatically on `git commit`. You can also run them manually at any time:
-
-```bash
-pre-commit run --all-files
-# or via uv
-uv run pre-commit run --all-files
-```
-
-### Pull Requests
-
-1. Fork the repository on GitHub.
-2. Create a feature branch from `main`.
-3. Make your changes, including tests and documentation updates.
-4. Ensure tests and pre-commit hooks pass.
-5. Commit your changes and push to your fork.
-6. Open a pull request against the `main` branch of `jlowin/fastmcp`.
-
-Please open an issue or discussion for questions or suggestions before starting significant work!
+We welcome contributions! See the [Contributing Guide](https://gofastmcp.com/development/contributing) for setup instructions, testing requirements, and PR guidelines.
 
 
 
 ================================================
-FILE: AGENTS.md
+FILE: CLAUDE.md
 ================================================
 # FastMCP Development Guidelines
 
 > **Audience**: LLM-driven engineering agents and human developers
 
+> **Note**: `AGENTS.md` is a symlink to this file. Edit `CLAUDE.md` directly.
+
 FastMCP is a comprehensive Python framework (Python ≥3.10) for building Model Context Protocol (MCP) servers and clients. This is the actively maintained v2.0 providing a complete toolkit for the MCP ecosystem.
 
 ## Required Development Workflow
 
-**CRITICAL**: Always run these commands in sequence before committing:
+**CRITICAL**: Always run these commands in sequence before committing.
 
 ```bash
 uv sync                              # Install dependencies
-uv run pre-commit run --all-files    # Ruff + Prettier + ty
-uv run pytest                        # Run full test suite
+uv run pytest -n auto                # Run full test suite
 ```
 
-**All three must pass** - this is enforced by CI. Alternative: `just build && just typecheck && just test`
+In addition, you must pass static checks. This is generally done as a pre-commit hook with `prek` but you can run it manually with:
+
+```bash
+uv run prek run --all-files          # Ruff + Prettier + ty
+```
 
 **Tests must pass and lint/typing must be clean before committing.**
 
 ## Repository Structure
 
-| Path               | Purpose                                             |
-| ------------------ | --------------------------------------------------- |
-| `src/fastmcp/`     | Library source code (Python ≥ 3.10)                 |
-| `├─server/`        | Server implementation, `FastMCP`, auth, networking  |
-| `│  ├─auth/`       | Authentication providers (Google, GitHub, Azure, AWS, WorkOS, Auth0, JWT, and more) |
-| `│  └─middleware/` | Error handling, logging, rate limiting              |
-| `├─client/`        | High-level client SDK + transports                  |
-| `│  └─auth/`       | Client authentication (Bearer, OAuth)               |
-| `├─tools/`         | Tool implementations + `ToolManager`                |
-| `├─resources/`     | Resources, templates + `ResourceManager`            |
-| `├─prompts/`       | Prompt templates + `PromptManager`                  |
-| `├─cli/`           | FastMCP CLI commands (`run`, `dev`, `install`)      |
-| `├─contrib/`       | Community contributions (bulk caller, mixins)       |
-| `├─experimental/`  | Experimental features (new OpenAPI parser)          |
-| `└─utilities/`     | Shared utilities (logging, JSON schema, HTTP)       |
-| `tests/`           | Comprehensive pytest suite with markers             |
-| `docs/`            | Mintlify documentation (published to gofastmcp.com) |
-| `examples/`        | Runnable demo servers (echo, smart_home, atproto)   |
+| Path              | Purpose                                |
+| ----------------- | -------------------------------------- |
+| `fastmcp_slim/fastmcp/` | Library source code                    |
+| `├─server/`       | Server implementation                  |
+| `│ ├─auth/`       | Authentication providers               |
+| `│ └─middleware/` | Error handling, logging, rate limiting |
+| `├─client/`       | Client SDK                             |
+| `│ └─auth/`       | Client authentication                  |
+| `├─tools/`        | Tool definitions                       |
+| `├─resources/`    | Resources and resource templates       |
+| `├─prompts/`      | Prompt templates                       |
+| `├─cli/`          | CLI commands                           |
+| `└─utilities/`    | Shared utilities                       |
+| `tests/`          | Pytest suite                           |
+| `docs/`           | Mintlify docs (gofastmcp.com)          |
 
 ## Core MCP Objects
 
 When modifying MCP functionality, changes typically need to be applied across all object types:
 
-- **Tools** (`src/tools/` + `ToolManager`)
-- **Resources** (`src/resources/` + `ResourceManager`)
-- **Resource Templates** (`src/resources/` + `ResourceManager`)
-- **Prompts** (`src/prompts/` + `PromptManager`)
+- **Tools** (`src/tools/`)
+- **Resources** (`src/resources/`)
+- **Resource Templates** (`src/resources/`)
+- **Prompts** (`src/prompts/`)
 
-## Writing Style
+**Before writing cross-component logic (dedupe, grouping, lookups, identity checks), read `FastMCPComponent` in `fastmcp_slim/fastmcp/utilities/components.py`.** The base class defines the shared surface — `name`, `version`, `tags`, `meta`, and critically the `key` property which is the canonical MCP identity (encodes type, identifier, and version). Prefer `item.key` over ad-hoc `name or uri or uri_template` fallbacks; overrides in `Resource` and `ResourceTemplate` already handle URI-based identity, and `.key` includes the version suffix so variants of the same component don't falsely collide.
 
-- Be brief and to the point. Do not regurgitate information that can easily be gleaned from the code, except to guide the reader to where the code is located.
-- **NEVER** use "This isn't..." or "not just..." constructions. State what something IS directly. Avoid defensive writing patterns like:
-  - "This isn't X, it's Y" or "Not just X, but Y" → Just say "This is Y"
-  - "Not just about X" → State the actual purpose
-  - "We're not doing X, we're doing Y" → Just explain what you're doing
-  - Any variation of explaining what something isn't before what it is
+## Development Rules
 
-## Testing Best Practices
+**Read `CONTRIBUTING.md` before opening issues or PRs.** It describes when PRs are appropriate, what we expect from enhancement proposals, and what we'll close without review.
 
-### Testing Standards
+### Git & CI
 
-- Every test: atomic, self-contained, single functionality
-- Use parameterization for multiple examples of same functionality
-- Use separate tests for different functionality pieces
-- **ALWAYS** Put imports at the top of the file, not in the test body
-- **NEVER** add `@pytest.mark.asyncio` to tests - `asyncio_mode = "auto"` is set globally
-- **ALWAYS** run pytest after significant changes
+- Prek hooks are required (run automatically on commits)
+- Never amend commits to fix prek failures
+- Apply PR labels: bugs/breaking/enhancements/features
+- Improvements = enhancements (not features) unless specified
+- **NEVER** force-push on collaborative repos
+- **ALWAYS** run prek before PRs
+- **NEVER** create a release, comment on an issue, or open a PR unless specifically instructed to do so.
+- **NEVER** merge a PR marked as do-not-merge or draft. Check title, body, AND labels for `[DNM]`, `DNM`, `DO NOT MERGE`, `DON'T MERGE`, `DONT MERGE`, `do-not-merge`, `dont-merge`, `[DRAFT]`, or `DRAFT` (case-insensitive, any variation — some authors use `[DRAFT]` in the title even when `isDraft` is false). Authors use these as hard stops — respect them even if CI is green and review looks clean. When triaging a batch of PRs, filter these out up front AND re-check each one's labels immediately before merging, since labels can change mid-session.
+- **ALWAYS** read review-bot comments before approving a PR. CodeRabbit and chatgpt-codex-connector (Codex) leave substantive review comments on most PRs in this repo — these bots have read the diff and often flag real issues that aren't in the PR description. Use `gh pr view <num> --comments` and read the bot feedback as part of review. Unlike proposed solutions from issue reporters, review-bot feedback should be evaluated on its merits, not discounted.
+- **Be constructively skeptical of bot review comments on your own PRs.** CodeRabbit, Codex, and claude[bot] run a fresh review pass on every push, which means a PR with active churn can accumulate bot comments in a stream that never really ends — each fix surfaces a new edge case the next pass can flag. Most of the early feedback is real and worth acting on; diminishing returns set in fast. Evaluate each comment on its merits, the same way you would a human reviewer: is this a real bug users will hit, or a hypothetical that requires an adversarial setup? Does the fix introduce more complexity than the problem? Has the bot missed context that's obvious to a human reader (a `*,` keyword-only marker, a design decision documented elsewhere, something already resolved on a later commit)? When a comment is pedantic, a false positive, or flagging something already fixed, reply on the thread explaining the reasoning and move on — don't keep iterating just because more comments arrive. If you find yourself three rounds deep and the feedback is shifting toward "what if someone does X" hypotheticals, you're past the point where each fix is improving the PR. Stop, document the contract as-is, and ship.
 
-### Inline Snapshots
+### Outbound Comments and Shell Interpolation
 
-FastMCP uses `inline-snapshot` for testing complex data structures. On first run with empty `snapshot()`, pytest will auto-populate the expected value when running `pytest --inline-snapshot=create`. To update snapshots after intentional changes, run `pytest --inline-snapshot=fix`. This is particularly useful for testing JSON schemas and API responses.
+- Never pass GitHub, Linear, or Slack comment bodies inline through shell arguments when the body contains `$`, `${...}`, backticks, `$(...)`, environment-variable examples, secrets, or config interpolation examples.
+- Use a body file or structured API payload for outbound comments, then inspect the exact outgoing text before posting. Prefer `gh ... --body-file /path/to/comment.md` over `--body "..."`.
+- When explaining environment interpolation, use placeholders and fenced code blocks. Never include raw `.env` contents in outbound comments.
 
-### Always Use In-Memory Transport
+### Releases
 
-Pass FastMCP servers directly to clients for testing:
+Only cut releases when the maintainer explicitly asks. Tags follow `v<version>` (e.g., `v3.2.0`). Always pass `--generate-notes` so the auto-generated changelog appears at the bottom.
 
-```python
-mcp = FastMCP("TestServer")
+**The title pun is critical.** Titles follow `v<version>: <pun>` where the pun relates to the most important theme of the release. Propose multiple options and let the maintainer choose — never pick one yourself. Look at recent releases for tone (e.g., "Code to Joy" for the code mode release, "Three at Last" for 3.0).
 
-@mcp.tool
-def greet(name: str) -> str:
-    return f"Hello, {name}!"
+Write the maintainer-approved handwritten notes to a temporary file, then create the release. `--generate-notes` appends the auto-generated changelog after the handwritten content.
 
-# Direct connection - no network complexity
-async with Client(mcp) as client:
-    result = await client.call_tool("greet", {"name": "World"})
+```bash
+gh release create v3.2.0 --target main --title "v3.2.0: Theme Here" --generate-notes --notes-start-tag v3.1.1 --notes-file /tmp/release-notes.md
 ```
 
-Only use HTTP transport when explicitly testing network features:
+**Always pass `--notes-start-tag <last-stable-tag>`.** Without it, `--generate-notes` picks the most recent prior tag as the changelog start point — and if a prerelease exists (e.g. `v3.4.0b1`), it starts from *that*, silently truncating the PR list to only the commits since the beta. Pin it to the last stable release (e.g. `v3.3.1` when cutting `v3.4.0`). Verify after: the compare link at the bottom of the generated notes should read `v<last-stable>...v<new>`.
 
-```python
-# Network testing on
+Most releases target `main`, but maintenance or backport releases may target a different branch (e.g., `release/2.x`). Confirm the target with the maintainer if there's any ambiguity.
+
+The handwritten notes are prepended above the auto-generated changelog and are the part that matters. Do not include a title in the notes body — the release title (`v{version}: {pun}`) already serves as the heading. Work with the maintainer to draft the notes — propose a draft, get feedback, iterate. Do not publish without the maintainer's sign-off.
+
+**Before drafting, always read recent existing releases** (`gh release list` then `gh release view <tag>`) to absorb the voice, structure, and level of detail. Each release builds on the tone of previous ones — don't guess at the style from these instructions alone.
+
+**To preview what PRs will be in the release** before it's cut, call the GitHub generate-notes API. This returns the exact auto-generated changelog that `--generate-notes` would append, so you can see the full PR list — useful for picking a pun theme and making sure nothing's been missed:
+
+```bash
+gh api -X POST repos/PrefectHQ/fastmcp/releases/generate-notes \
+  -f tag_name=v3.2.3 \
+  -f target_commitish=main \
+  -f previous_tag_name=v3.2.2 \
+  --jq '.body'
+```
+
+**Point releases** (3.0, 3.1, 3.2) get narrative prose: open with the theme of the release, then walk through headline features conceptually — what they enable, why they matter, how they fit together. Write it the way a blog post reads, not a changelog. Multiple paragraphs, code examples where they clarify.
+
+**Patch releases** (3.1.1, 3.0.2) get 1-2 sentences explaining what broke and what the fix does. Keep it minimal — the auto-generated changelog has the details.
+
+**Merge the docs changelog PR *before* cutting the release, not after.** The post-publish `update-published-docs` job force-pushes the `published-docs` branch (which gofastmcp.com serves) to the *released commit* — so the changelog entry only reaches the live site if it's already in t
 
 [... Content truncated due to length ...]
 
@@ -4711,19 +1879,24 @@ Only use HTTP transport when explicitly testing network features:
 
 ## Summary
 Repository: modelcontextprotocol/modelcontextprotocol
-Files analyzed: 168
+Commit: 1304c8fe5f079358a0ff22b6afdb675dc96d75d1
+Files analyzed: 540
 
-Estimated tokens: 556.8k
+Estimated tokens: 1.4M
 
 ## File tree
 ```Directory structure:
 └── modelcontextprotocol-modelcontextprotocol/
     ├── README.md
+    ├── AGENTS.md
     ├── ANTITRUST.md
     ├── CODE_OF_CONDUCT.md
     ├── CONTRIBUTING.md
+    ├── eslint.config.mjs
+    ├── GOVERNANCE.md
     ├── LICENSE
     ├── MAINTAINERS.md
+    ├── migrate_seps.js
     ├── package.json
     ├── SECURITY.md
     ├── tsconfig.json
@@ -4732,6 +1905,8 @@ Estimated tokens: 556.8k
     ├── .npmrc
     ├── .nvmrc
     ├── .prettierignore
+    ├── .prettierrc.json
+    ├── .prototools
     ├── blog/
     │   ├── go.mod
     │   ├── go.sum
@@ -4744,37 +1919,109 @@ Estimated tokens: 556.8k
     │   │           └── custom.css
     │   ├── content/
     │   │   ├── _index.md
+    │   │   ├── archives.md
+    │   │   ├── search.md
     │   │   └── posts/
     │   │       ├── 2025-07-29-prompts-for-automation.md
     │   │       ├── 2025-07-31-governance-for-mcp.md
     │   │       ├── 2025-09-05-php-sdk.md
     │   │       ├── 2025-09-08-mcp-registry-preview.md
     │   │       ├── 2025-09-26-mcp-next-version-update.md
+    │   │       ├── 2025-11-03-using-server-instructions.md
+    │   │       ├── 2025-11-20-adopting-mcpb.md
+    │   │       ├── 2025-11-21-mcp-apps.md
+    │   │       ├── 2025-11-25-first-mcp-anniversary.md
+    │   │       ├── 2025-11-28-sep-process-update.md
+    │   │       ├── 2025-12-09-mcp-joins-agentic-ai-foundation.md
+    │   │       ├── 2025-12-19-mcp-transport-future.md
+    │   │       ├── 2026-01-22-core-maintainer-update.md
+    │   │       ├── 2026-01-26-mcp-apps.md
+    │   │       ├── 2026-03-09-roadmap-update.md
+    │   │       ├── 2026-03-11-understanding-mcp-extensions.md
+    │   │       ├── 2026-03-16-tool-annotations.md
+    │   │       ├── 2026-04-08-maintainer-update.md
+    │   │       ├── 2026-05-21-mcp-2026-07-28-rc.md
     │   │       ├── welcome-to-mcp-blog.md
     │   │       └── client_registration/
     │   │           └── index.md
     │   ├── layouts/
     │   │   ├── baseof.html
+    │   │   ├── index.html
+    │   │   ├── _default/
+    │   │   │   ├── archives.html
+    │   │   │   ├── list.html
+    │   │   │   ├── search.html
+    │   │   │   └── terms.html
     │   │   ├── _markup/
     │   │   │   └── render-codeblock-mermaid.html
-    │   │   └── partials/
-    │   │       └── google_analytics.html
+    │   │   ├── partials/
+    │   │   │   ├── extend_head.html
+    │   │   │   ├── footer.html
+    │   │   │   ├── google_analytics.html
+    │   │   │   ├── header.html
+    │   │   │   ├── post_meta.html
+    │   │   │   ├── post_nav_links.html
+    │   │   │   └── templates/
+    │   │   │       └── schema_json.html
+    │   │   └── shortcodes/
+    │   │       ├── button.html
+    │   │       └── youtube.html
     │   └── static/
-    │       └── CNAME
+    │       ├── CNAME
+    │       └── posts/
+    │           └── images/
+    │               ├── claude_code_instructions.JPG
+    │               ├── first-mcp-anniversary/
+    │               │   ├── david-mcp-may.webp
+    │               │   ├── kent-jarvis-mcp.webp
+    │               │   ├── maintainers-meetup.webp
+    │               │   ├── maintainers-write.webp
+    │               │   ├── mcp-night-github-mcp.webp
+    │               │   ├── mcp-night.webp
+    │               │   └── mcp.webp
+    │               └── maintainer-update-2026-04/
+    │                   └── clare.webp
+    ├── CLAUDE.md -> AGENTS.md
     ├── docs/
-    │   ├── clients.mdx
     │   ├── docs.json
     │   ├── examples.mdx
-    │   ├── faqs.mdx
+    │   ├── footer.js
+    │   ├── spec-version-warning.js
     │   ├── style.css
-    │   ├── about/
-    │   │   └── index.mdx
     │   ├── community/
     │   │   ├── antitrust.mdx
+    │   │   ├── charter-template.mdx
     │   │   ├── communication.mdx
+    │   │   ├── contributing.mdx
+    │   │   ├── contributor-ladder.mdx
+    │   │   ├── design-principles.mdx
+    │   │   ├── feature-lifecycle.mdx
     │   │   ├── governance.mdx
+    │   │   ├── sdk-tiers.mdx
     │   │   ├── sep-guidelines.mdx
-    │   │   └── working-interest-groups.mdx
+    │   │   ├── working-interest-groups.mdx
+    │   │   ├── auth/
+    │   │   │   └── charter.mdx
+    │   │   ├── file-uploads/
+    │   │   │   └── charter.mdx
+    │   │   ├── inspector-v2/
+    │   │   │   └── charter.mdx
+    │   │   ├── interceptors/
+    │   │   │   └── charter.mdx
+    │   │   ├── registry/
+    │   │   │   └── charter.mdx
+    │   │   ├── sdk/
+    │   │   │   └── charter.mdx
+    │   │   ├── seps/
+    │   │   │   └── 2243-http-standardization.mdx
+    │   │   ├── server-card/
+    │   │   │   └── charter.mdx
+    │   │   ├── skills-over-mcp/
+    │   │   │   └── charter.mdx
+    │   │   ├── tool-annotations/
+    │   │   │   └── charter.mdx
+    │   │   └── triggers-events/
+    │   │       └── charter.mdx
     │   ├── development/
     │   │   └── roadmap.mdx
     │   ├── docs/
@@ -4782,47 +2029,98 @@ Estimated tokens: 556.8k
     │   │   ├── develop/
     │   │   │   ├── build-client.mdx
     │   │   │   ├── build-server.mdx
+    │   │   │   ├── build-with-agent-skills.mdx
     │   │   │   ├── connect-local-servers.mdx
-    │   │   │   └── connect-remote-servers.mdx
+    │   │   │   ├── connect-remote-servers.mdx
+    │   │   │   └── clients/
+    │   │   │       └── client-best-practices.mdx
     │   │   ├── getting-started/
     │   │   │   └── intro.mdx
     │   │   ├── learn/
     │   │   │   ├── architecture.mdx
     │   │   │   ├── client-concepts.mdx
-    │   │   │   └── server-concepts.mdx
-    │   │   ├── reference/
-    │   │   │   ├── client.mdx
-    │   │   │   └── server.mdx
+    │   │   │   ├── server-concepts.mdx
+    │   │   │   └── versioning.mdx
     │   │   ├── tools/
+    │   │   │   ├── debugging.mdx
     │   │   │   └── inspector.mdx
     │   │   └── tutorials/
-    │   │       ├── use-local-mcp-server.mdx
     │   │       └── security/
-    │   │           └── authorization.mdx
+    │   │           ├── authorization.mdx
+    │   │           └── security_best_practices.mdx
+    │   ├── extensions/
+    │   │   ├── client-matrix.mdx
+    │   │   ├── overview.mdx
+    │   │   ├── apps/
+    │   │   │   ├── build.mdx
+    │   │   │   └── overview.mdx
+    │   │   ├── auth/
+    │   │   │   ├── enterprise-managed-authorization.mdx
+    │   │   │   ├── oauth-client-credentials.mdx
+    │   │   │   └── overview.mdx
+    │   │   └── tasks/
+    │   │       └── overview.mdx
     │   ├── images/
     │   │   └── java/
     │   │       └── class-diagrams.puml
-    │   ├── legacy/
-    │   │   ├── concepts/
-    │   │   │   ├── architecture.mdx
-    │   │   │   ├── elicitation.mdx
-    │   │   │   ├── prompts.mdx
-    │   │   │   ├── resources.mdx
-    │   │   │   ├── roots.mdx
-    │   │   │   ├── sampling.mdx
-    │   │   │   ├── tools.mdx
-    │   │   │   └── transports.mdx
-    │   │   └── tools/
-    │   │       └── debugging.mdx
-    │   ├── sdk/
-    │   │   └── java/
-    │   │       ├── mcp-client.mdx
-    │   │       ├── mcp-overview.mdx
-    │   │       └── mcp-server.mdx
+    │   ├── registry/
+    │   │   ├── about.mdx
+    │   │   ├── authentication.mdx
+    │   │   ├── faq.mdx
+    │   │   ├── github-actions.mdx
+    │   │   ├── moderation-policy.mdx
+    │   │   ├── package-types.mdx
+    │   │   ├── quickstart.mdx
+    │   │   ├── registry-aggregators.mdx
+    │   │   ├── remote-servers.mdx
+    │   │   ├── terms-of-service.mdx
+    │   │   └── versioning.mdx
+    │   ├── seps/
+    │   │   ├── 1024-mcp-client-security-requirements-for-local-server-.mdx
+    │   │   ├── 1034--support-default-values-for-all-primitive-types-in.mdx
+    │   │   ├── 1036-url-mode-elicitation-for-secure-out-of-band-intera.mdx
+    │   │   ├── 1046-support-oauth-client-credentials-flow-in-authoriza.mdx
+    │   │   ├── 1302-formalize-working-groups-and-interest-groups-in-mc.mdx
+    │   │   ├── 1303-input-validation-errors-as-tool-execution-errors.mdx
+    │   │   ├── 1319-decouple-request-payload-from-rpc-methods-definiti.mdx
+    │   │   ├── 1330-elicitation-enum-schema-improvements-and-standards.mdx
+    │   │   ├── 1577--sampling-with-tools.mdx
+    │   │   ├── 1613-establish-json-schema-2020-12-as-default-dialect-f.mdx
+    │   │   ├── 1686-tasks.mdx
+    │   │   ├── 1699-support-sse-polling-via-server-side-disconnect.mdx
+    │   │   ├── 1730-sdks-tiering-system.mdx
+    │   │   ├── 1850-pr-based-sep-workflow.mdx
+    │   │   ├── 1865-mcp-apps-interactive-user-interfaces-for-mcp.mdx
+    │   │   ├── 2085-governance-succession-and-amendment.mdx
+    │   │   ├── 2106-json-schema-2020-12.mdx
+    │   │   ├── 2133-extensions.mdx
+    │   │   ├── 2148-contributor-ladder.mdx
+    │   │   ├── 2149-working-group-charter-template.mdx
+    │   │   ├── 2164-resource-not-found-error.mdx
+    │   │   ├── 2207-oidc-refresh-token-guidance.mdx
+    │   │   ├── 2243-http-standardization.mdx
+    │   │   ├── 2260-Require-Server-requests-to-be-associated-with-Client-requests.mdx
+    │   │   ├── 2322-MRTR.mdx
+    │   │   ├── 2468-recommend-issuer-claim-for-auth.mdx
+    │   │   ├── 2484-conformance-tests-required-for-final-seps.mdx
+    │   │   ├── 2549-TTL-for-list-results.mdx
+    │   │   ├── 2567-sessionless-mcp.mdx
+    │   │   ├── 2575-stateless-mcp.mdx
+    │   │   ├── 2577-deprecate-roots-sampling-and-logging.mdx
+    │   │   ├── 2596-spec-feature-lifecycle-and-deprecation.mdx
+    │   │   ├── 2663-tasks-extension.mdx
+    │   │   ├── 414-request-meta.mdx
+    │   │   ├── 932-model-context-protocol-governance.mdx
+    │   │   ├── 973-expose-additional-metadata-for-implementations-res.mdx
+    │   │   ├── 985-align-oauth-20-protected-resource-metadata-with-rf.mdx
+    │   │   ├── 986-specify-format-for-tool-names.mdx
+    │   │   ├── 990-enable-enterprise-idp-policy-controls-during-mcp-o.mdx
+    │   │   ├── 991-enable-url-based-client-registration-using-oauth-c.mdx
+    │   │   ├── 994-shared-communication-practicesguidelines.mdx
+    │   │   └── index.mdx
     │   ├── snippets/
     │   │   └── snippet-intro.mdx
     │   ├── specification/
-    │   │   ├── versioning.mdx
     │   │   ├── 2024-11-05/
     │   │   │   ├── index.mdx
     │   │   │   ├── architecture/
@@ -4884,7 +2182,6 @@ Estimated tokens: 556.8k
     │   │   │   │   ├── authorization.mdx
     │   │   │   │   ├── index.mdx
     │   │   │   │   ├── lifecycle.mdx
-    │   │   │   │   ├── security_best_practices.mdx
     │   │   │   │   ├── transports.mdx
     │   │   │   │   └── utilities/
     │   │   │   │       ├── cancellation.mdx
@@ -4903,40 +2200,91 @@ Estimated tokens: 556.8k
     │   │   │           ├── completion.mdx
     │   │   │           ├── logging.mdx
     │   │   │           └── pagination.mdx
+    │   │   ├── 2025-11-25/
+    │   │   │   ├── changelog.mdx
+    │   │   │   ├── index.mdx
+    │   │   │   ├── schema.mdx
+    │   │   │   ├── architecture/
+    │   │   │   │   └── index.mdx
+    │   │   │   ├── basic/
+    │   │   │   │   ├── authorization.mdx
+    │   │   │   │   ├── index.mdx
+    │   │   │   │   ├── lifecycle.mdx
+    │   │   │   │   ├── transports.mdx
+    │   │   │   │   └── utilities/
+    │   │   │   │       ├── cancellation.mdx
+    │   │   │   │       ├── ping.mdx
+    │   │   │   │       ├── progress.mdx
+    │   │   │   │       └── tasks.mdx
+    │   │   │   ├── client/
+    │   │   │   │   ├── elicitation.mdx
+    │   │   │   │   ├── roots.mdx
+    │   │   │   │   └── sampling.mdx
+    │   │   │   └── server/
+    │   │   │       ├── index.mdx
+    │   │   │       ├── prompts.mdx
+    │   │   │       ├── resources.mdx
+    │   │   │       ├── tools.mdx
+    │   │   │       └── utilities/
+    │   │   │           ├── completion.mdx
+    │   │   │           ├── logging.mdx
+    │   │   │           └── pagination.mdx
     │   │   └── draft/
     │   │       ├── changelog.mdx
+    │   │       ├── deprecated.mdx
     │   │       ├── index.mdx
     │   │       ├── schema.mdx
     │   │       ├── architecture/
     │   │       │   └── index.mdx
     │   │       ├── basic/
-    │   │       │   ├── authorization.mdx
     │   │       │   ├── index.mdx
-    │   │       │   ├── lifecycle.mdx
-    │   │       │   ├── security_best_practices.mdx
-    │   │       │   ├── transports.mdx
-    │   │       │   └── utilities/
-    │   │       │       ├── cancellation.mdx
-    │   │       │       ├── ping.mdx
-    │   │       │       └── progress.mdx
+    │   │       │   ├── versioning.mdx
+    │   │       │   ├── authorization/
+    │   │       │   │   ├── authorization-server-discovery.mdx
+    │   │       │   │   ├── client-registration.mdx
+    │   │       │   │   ├── index.mdx
+    │   │       │   │   └── security-considerations.mdx
+    │   │       │   ├── patterns/
+    │   │       │   │   ├── cancellation.mdx
+    │   │       │   │   ├── index.mdx
+    │   │       │   │   ├── mrtr.mdx
+    │   │       │   │   ├── progress.mdx
+    │   │       │   │   └── subscriptions.mdx
+    │   │       │   └── transports/
+    │   │       │       ├── index.mdx
+    │   │       │       ├── stdio.mdx
+    │   │       │       └── streamable-http.mdx
     │   │       ├── client/
     │   │       │   ├── elicitation.mdx
     │   │       │   ├── roots.mdx
     │   │       │   └── sampling.mdx
     │   │       └── server/
+    │   │           ├── discover.mdx
     │   │           ├── index.mdx
     │   │           ├── prompts.mdx
     │   │           ├── resources.mdx
     │   │           ├── tools.mdx
     │   │           └── utilities/
+    │   │               ├── caching.mdx
     │   │               ├── completion.mdx
     │   │               ├── logging.mdx
     │   │               └── pagination.mdx
-    │   ├── tutorials/
-    │   │   ├── building-a-client-node.mdx
-    │   │   └── building-mcp-with-llms.mdx
+    │   ├── .mintlify/
+    │   │   └── skills/
+    │   │       ├── draft-sep -> draft-sep
+    │   │       └── search-mcp-github -> search-mcp-github
     │   └── .well-known/
     │       └── security.txt
+    ├── plugins/
+    │   └── mcp-spec/
+    │       ├── README.md
+    │       ├── skills/
+    │       │   ├── draft-sep/
+    │       │   │   └── SKILL.md
+    │       │   └── search-mcp-github/
+    │       │       └── SKILL.md
+    │       └── .claude-plugin/
+    │           └── plugin.json
     ├── schema/
     │   ├── 2024-11-05/
     │   │   ├── schema.json
@@ -4946,16 +2294,346 @@ Estimated tokens: 556.8k
     │   │   └── schema.ts
     │   ├── 2025-06-18/
     │   │   ├── schema.json
+    │   │   ├── schema.mdx
+    │   │   └── schema.ts
+    │   ├── 2025-11-25/
+    │   │   ├── schema.json
+    │   │   ├── schema.mdx
     │   │   └── schema.ts
     │   └── draft/
     │       ├── schema.json
-    │       └── schema.ts
+    │       ├── schema.mdx
+    │       ├── schema.ts
+    │       └── examples/
+    │           ├── AudioContent/
+    │           │   └── audio-wav-content.json
+    │           ├── BlobResourceContents/
+    │           │   └── image-file-contents.json
+    │           ├── BooleanSchema/
+    │           │   └── boolean-input-schema.json
+    │           ├── CallToolRequest/
+    │           │   └── call-tool-request.json
+    │           ├── CallToolRequestParams/
+    │           │   ├── get-weather-tool-call-params.json
+    │           │   └── tool-call-params-with-progress-token.json
+    │           ├── CallToolResult/
+    │           │   ├── invalid-tool-input-error.json
+    │           │   ├── result-with-array-structured-content.json
+    │           │   ├── result-with-structured-content.json
+    │           │   └── result-with-unstructured-text.json
+    │           ├── CallToolResultResponse/
+    │           │   └── call-tool-result-response.json
+    │           ├── CancelledNotification/
+    │           │   └── user-requested-cancellation.json
+    │           ├── CancelledNotificationParams/
+    │           │   └── user-requested-cancellation.json
+    │           ├── ClientCapabilities/
+    │           │   ├── elicitation-form-and-url-mode-support.json
+    │           │   ├── elicitation-form-only-implicit.json
+    │           │   ├── extensions-ui-mime-types.json
+    │           │   ├── roots-minimum-baseline-support.json
+    │           │   ├── sampling-context-inclusion-support-deprecated.json
+    │           │   ├── sampling-minimum-baseline-support.json
+    │           │   └── sampling-tool-use-support.json
+    │           ├── CompleteRequest/
+    │           │   └── completion-request.json
+    │           ├── CompleteRequestParams/
+    │           │   ├── prompt-argument-completion-with-context.json
+    │           │   └── prompt-argument-completion.json
+    │           ├── CompleteResult/
+    │           │   ├── multiple-completion-values-with-more-available.json
+    │           │   └── single-completion-value.json
+    │           ├── CompleteResultResponse/
+    │           │   └── completion-result-response.json
+    │           ├── CreateMessageRequest/
+    │           │   └── sampling-request.json
+    │           ├── CreateMessageRequestParams/
+    │           │   ├── basic-request.json
+    │           │   ├── follow-up-with-tool-results.json
+    │           │   └── request-with-tools.json
+    │           ├── CreateMessageResult/
+    │           │   ├── final-response.json
+    │           │   ├── text-response.json
+    │           │   └── tool-use-response.json
+    │           ├── DiscoverRequest/
+    │           │   └── server-discover-request.json
+    │           ├── DiscoverResult/
+    │           │   └── server-capabilities-discovery.json
+    │           ├── DiscoverResultResponse/
+    │           │   └── discover-result-response.json
+    │           ├── ElicitationCompleteNotification/
+    │           │   └── elicitation-complete.json
+    │           ├── ElicitRequest/
+    │           │   └── elicitation-request.json
+    │           ├── ElicitRequestFormParams/
+    │           │   ├── elicit-multiple-fields.json
+    │           │   └── elicit-single-field.json
+    │           ├── ElicitRequestURLParams/
+    │           │   └── elicit-sensitive-data.json
+    │           ├── ElicitResult/
+    │           │   ├── accept-url-mode-no-content.json
+    │           │   ├── input-multiple-fields.json
+    │           │   └── input-single-field.json
+    │           ├── EmbeddedResource/
+    │           │   └── embedded-file-resource-with-annotations.json
+    │           ├── GetPromptRequest/
+    │           │   └── get-prompt-request.json
+    │           ├── GetPromptRequestParams/
+    │           │   └── get-code-review-prompt.json
+    │           ├── GetPromptResult/
+    │           │   └── code-review-prompt.json
+    │           ├── GetPromptResultResponse/
+    │           │   └── get-prompt-result-response.json
+    │           ├── ImageContent/
+    │           │   └── image-png-content-with-annotations.json
+    │           ├── InputRequests/
+    │           │   └── elicitation-and-sampling-input-requests.json
+    │           ├── InputRequiredResult/
+    │           │   ├── input-required-result-with-elicitation-and-sampling-and-request-state.json
+    │           │   └── input-required-result-with-request-state-only.json
+    │           ├── InputResponses/
+    │           │   └── elicitation-and-sampling-input-responses.json
+    │           ├── InternalError/
+    │           │   └── unexpected-error.json
+    │           ├── InvalidParamsError/
+    │           │   ├── invalid-cursor.json
+    │           │   ├── invalid-tool-arguments.json
+    │           │   ├── unknown-prompt.json
+    │           │   └── unknown-tool.json
+    │           ├── ListPromptsRequest/
+    │           │   └── list-prompts-request.json
+    │           ├── ListPromptsResult/
+    │           │   └── prompts-list-with-cursor-and-ttl.json
+    │           ├── ListPromptsResultResponse/
+    │           │   └── list-prompts-result-response.json
+    │           ├── ListResourcesRequest/
+    │           │   └── list-resources-request.json
+    │           ├── ListResourcesResult/
+    │           │   └── resources-list-with-cursor-and-ttl.json
+    │           ├── ListResourcesResultResponse/
+    │           │   └── list-resources-result-response.json
+    │           ├── ListResourceTemplatesRequest/
+    │           │   └── list-resource-templates-request.json
+    │           ├── ListResourceTemplatesResult/
+    │           │   └── resource-templates-list-with-cursor-and-ttl.json
+    │           ├── ListResourceTemplatesResultResponse/
+    │           │   └── list-resource-templates-result-response.json
+    │           ├── ListRootsRequest/
+    │           │   └── list-roots-request.json
+    │           ├── ListRootsResult/
+    │           │   ├── multiple-root-directories.json
+    │           │   └── single-root-directory.json
+    │           ├── ListToolsRequest/
+    │           │   └── list-tools-request.json
+    │           ├── ListToolsResult/
+    │           │   └── tools-list-with-cursor-and-ttl.json
+    │           ├── ListToolsResultResponse/
+    │           │   └── list-tools-result-response.json
+    │           ├── LoggingMessageNotification/
+    │           │   └── log-database-connection-failed.json
+    │           ├── LoggingMessageNotificationParams/
+    │           │   └── log-database-connection-failed.json
+    │           ├── MethodNotFoundError/
+    │           │   └── prompts-not-supported.json
+    │           ├── MissingRequiredClientCapabilityError/
+    │           │   └── missing-elicitation-capability.json
+    │           ├── ModelPreferences/
+    │           │   └── with-hints-and-priorities.json
+    │           ├── NumberSchema/
+    │           │   └── number-input-schema.json
+    │           ├── PaginatedRequestParams/
+    │           │   └── list-with-cursor.json
+    │           ├── ParseError/
+    │           │   └── invalid-json.json
+    │           ├── ProgressNotification/
+    │           │   └── progress-message.json
+    │           ├── ProgressNotificationParams/
+    │           │   └── progress-message.json
+    │           ├── PromptListChangedNotification/
+    │           │   └── prompts-list-changed.json
+    │           ├── ReadResourceRequest/
+    │           │   └── read-resource-request.json
+    │           ├── ReadResourceResult/
+    │           │   └── file-resource-contents.json
+    │           ├── ReadResourceResultResponse/
+    │           │   ├── read-resource-result-response-with-ttl.json
+    │           │   └── read-resource-result-response.json
+    │           ├── Resource/
+    │           │   └── file-resource-with-annotations.json
+    │           ├── ResourceLink/
+    │           │   └── file-resource-link.json
+    │           ├── ResourceListChangedNotification/
+    │           │   └── resources-list-changed.json
+    │           ├── ResourceUpdatedNotification/
+    │           │   └── file-resource-updated-notification.json
+    │           ├── ResourceUpdatedNotificationParams/
+    │           │   └── file-resource-updated.json
+    │           ├── Root/
+    │           │   └── project-directory.json
+    │           ├── SamplingMessage/
+    │           │   ├── multiple-content-blocks.json
+    │           │   └── single-content-block.json
+    │           ├── ServerCapabilities/
+    │           │   ├── completions-minimum-baseline-support.json
+    │           │   ├── extensions-tasks.json
+    │           │   ├── logging-minimum-baseline-support.json
+    │           │   ├── prompts-list-changed-notifications.json
+    │           │   ├── prompts-minimum-baseline-support.json
+    │           │   ├── resources-all-notifications.json
+    │           │   ├── resources-list-changed-notifications-only.json
+    │           │   ├── resources-minimum-baseline-support.json
+    │           │   ├── resources-subscription-to-individual-resource-updates-only.json
+    │           │   ├── tools-list-changed-notifications.json
+    │           │   └── tools-minimum-baseline-support.json
+    │           ├── StringSchema/
+    │           │   └── email-input-schema.json
+    │           ├── SubscriptionsAcknowledgedNotification/
+    │           │   └── listen-acknowledged.json
+    │           ├── SubscriptionsListenRequest/
+    │           │   └── listen-for-list-changes.json
+    │           ├── TextContent/
+    │           │   └── text-content.json
+    │           ├── TextResourceContents/
+    │           │   └── text-file-contents.json
+    │           ├── TitledMultiSelectEnumSchema/
+    │           │   └── titled-color-multi-select-schema.json
+    │           ├── TitledSingleSelectEnumSchema/
+    │           │   └── titled-color-select-schema.json
+    │           ├── Tool/
+    │           │   ├── tool-with-array-output-schema.json
+    │           │   ├── tool-with-composition-input-schema.json
+    │           │   ├── with-default-2020-12-input-schema.json
+    │           │   ├── with-explicit-draft-07-input-schema.json
+    │           │   ├── with-no-parameters.json
+    │           │   └── with-output-schema-for-structured-content.json
+    │           ├── ToolListChangedNotification/
+    │           │   └── tools-list-changed.json
+    │           ├── ToolResultContent/
+    │           │   └── get-weather-tool-result.json
+    │           ├── ToolUseContent/
+    │           │   └── get-weather-tool-use.json
+    │           ├── UnsupportedProtocolVersionError/
+    │           │   └── unsupported-version.json
+    │           ├── UntitledMultiSelectEnumSchema/
+    │           │   └── color-multi-select-schema.json
+    │           └── UntitledSingleSelectEnumSchema/
+    │               └── color-select-schema.json
+    ├── scripts/
+    │   ├── check-mdx-comments.ts
+    │   ├── generate-schemas.ts
+    │   ├── pull-registry-docs.sh
+    │   ├── render-seps.ts
+    │   └── validate-examples.ts
+    ├── seps/
+    │   ├── README.md
+    │   ├── 1024-mcp-client-security-requirements-for-local-server-.md
+    │   ├── 1034--support-default-values-for-all-primitive-types-in.md
+    │   ├── 1036-url-mode-elicitation-for-secure-out-of-band-intera.md
+    │   ├── 1046-support-oauth-client-credentials-flow-in-authoriza.md
+    │   ├── 1302-formalize-working-groups-and-interest-groups-in-mc.md
+    │   ├── 1303-input-validation-errors-as-tool-execution-errors.md
+    │   ├── 1319-decouple-request-payload-from-rpc-methods-definiti.md
+    │   ├── 1330-elicitation-enum-schema-improvements-and-standards.md
+    │   ├── 1577--sampling-with-tools.md
+    │   ├── 1613-establish-json-schema-2020-12-as-default-dialect-f.md
+    │   ├── 1686-tasks.md
+    │   ├── 1699-support-sse-polling-via-server-side-disconnect.md
+    │   ├── 1730-sdks-tiering-system.md
+    │   ├── 1850-pr-based-sep-workflow.md
+    │   ├── 1865-mcp-apps-interactive-user-interfaces-for-mcp.md
+    │   ├── 2085-governance-succession-and-amendment.md
+    │   ├── 2106-json-schema-2020-12.md
+    │   ├── 2133-extensions.md
+    │   ├── 2148-contributor-ladder.md
+    │   ├── 2149-working-group-charter-template.md
+    │   ├── 2164-resource-not-found-error.md
+    │   ├── 2207-oidc-refresh-token-guidance.md
+    │   ├── 2243-http-standardization.md
+    │   ├── 2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+    │   ├── 2322-MRTR.md
+    │   ├── 2468-recommend-issuer-claim-for-auth.md
+    │   ├── 2484-conformance-tests-required-for-final-seps.md
+    │   ├── 2549-TTL-for-list-results.md
+    │   ├── 2567-sessionless-mcp.md
+    │   ├── 2575-stateless-mcp.md
+    │   ├── 2577-deprecate-roots-sampling-and-logging.md
+    │   ├── 2596-spec-feature-lifecycle-and-deprecation.md
+    │   ├── 2663-tasks-extension.md
+    │   ├── 414-request-meta.md
+    │   ├── 932-model-context-protocol-governance.md
+    │   ├── 973-expose-additional-metadata-for-implementations-res.md
+    │   ├── 985-align-oauth-20-protected-resource-metadata-with-rf.md
+    │   ├── 986-specify-format-for-tool-names.md
+    │   ├── 990-enable-enterprise-idp-policy-controls-during-mcp-o.md
+    │   ├── 991-enable-url-based-client-registration-using-oauth-c.md
+    │   ├── 994-shared-communication-practicesguidelines.md
+    │   ├── TEMPLATE.md
+    │   └── .keep
+    ├── tools/
+    │   └── sep-automation/
+    │       ├── package.json
+    │       ├── tsconfig.json
+    │       ├── vitest.config.ts
+    │       ├── src/
+    │       │   ├── config.ts
+    │       │   ├── index.ts
+    │       │   ├── processor.ts
+    │       │   ├── rules.ts
+    │       │   ├── types.ts
+    │       │   ├── actions/
+    │       │   │   ├── comment.ts
+    │       │   │   ├── ping.ts
+    │       │   │   └── transition.ts
+    │       │   ├── github/
+    │       │   │   ├── client.ts
+    │       │   │   └── types.ts
+    │       │   ├── hooks/
+    │       │   │   ├── discord.ts
+    │       │   │   ├── registry.ts
+    │       │   │   └── types.ts
+    │       │   ├── maintainers/
+    │       │   │   └── resolver.ts
+    │       │   ├── sep/
+    │       │   │   ├── analyzer.ts
+    │       │   │   ├── detector.ts
+    │       │   │   └── types.ts
+    │       │   └── utils/
+    │       │       ├── dates.ts
+    │       │       ├── errors.ts
+    │       │       └── index.ts
+    │       └── test/
+    │           ├── mocks.ts
+    │           └── unit/
+    │               ├── comment.test.ts
+    │               ├── config.test.ts
+    │               ├── hooks.test.ts
+    │               ├── ping.test.ts
+    │               ├── sep-types.test.ts
+    │               └── transition.test.ts
+    ├── .claude-plugin/
+    │   └── marketplace.json
     └── .github/
         ├── CODEOWNERS
+        ├── dependabot.yml
+        ├── labeler.yml
+        ├── ISSUE_TEMPLATE/
+        │   ├── bug_report.yml
+        │   ├── config.yml
+        │   └── work_tracking.yml
         └── workflows/
+            ├── blog-preview.yml
+            ├── cut-release.yml
             ├── deploy-blog.yml
+            ├── labeler.yml
             ├── main.yml
-            └── markdown-format.yml
+            ├── markdown-format.yml
+            ├── publish-release.yml
+            ├── render-seps.yml
+            ├── sep-lifecycle-manual.yml
+            ├── sep-lifecycle.yml
+            ├── sep-reminder.yml
+            ├── slash-commands.yml
+            └── stage-blog.yml
 
 ```
 
@@ -4965,7 +2643,7 @@ FILE: README.md
 ================================================
 # Model Context Protocol (MCP)
 
-_Just heard of MCP and not sure where to start? See [the documentation website instead](https://modelcontextprotocol.io)._
+_Just heard of MCP and not sure where to start? Check out our [documentation website](https://modelcontextprotocol.io)._
 
 This repo contains the:
 
@@ -4973,8 +2651,8 @@ This repo contains the:
 - MCP protocol schema
 - Official MCP documentation
 
-The schema is [defined in TypeScript](schema/2025-06-18/schema.ts) first, but
-[made available as JSON Schema](schema/2025-06-18/schema.json) as well, for wider
+The schema is [defined in TypeScript](schema/2025-11-25/schema.ts) first, but
+[made available as JSON Schema](schema/2025-11-25/schema.json) as well, for wider
 compatibility.
 
 The official MCP documentation is built using Mintlify and available at
@@ -4995,61 +2673,105 @@ This project is licensed under the [MIT License](LICENSE).
 
 
 ================================================
+FILE: AGENTS.md
+================================================
+# Model Context Protocol (MCP)
+
+This repository contains the MCP specification, documentation, and blog.
+
+## Documentation Structure
+
+- `docs/` - Mintlify site (`npm run serve:docs`)
+  - `docs/docs/` - guides and tutorials
+  - `docs/specification/` - MCP specification (more formal, versioned)
+- `blog/` - Hugo blog (`npm run serve:blog`)
+
+### Documentation Guidelines
+
+- When creating flowcharts, and graphs to visualize aspect of the protocol, use mermaid diagrams where
+  possible.
+- When writing tables, ensure column headers and columns are aligned with whitespace.
+- Before pushing or creating PR's ensure that `npm run prep` is free of warnings and errors.
+
+## Specification Versioning
+
+Specifications use **date-based versioning** (YYYY-MM-DD), not semantic versioning:
+
+- `schema/[YYYY-MM-DD]/` and `docs/specification/[YYYY-MM-DD]/` - released versions
+- `schema/draft/` and `docs/specification/draft/` - in-progress work
+
+## Schema Generation
+
+TypeScript files are the **source of truth** for the protocol schema:
+
+- Edit: `schema/[version]/schema.ts`
+- Generate JSON + docs: `npm run generate:schema`
+- This creates both `schema/[version]/schema.json` and the Schema Reference document in `docs/specification/[version]/schema.mdx`
+
+Always regenerate after editing schema files.
+
+## Schema Examples
+
+JSON examples live in `schema/[version]/examples/[TypeName]/`:
+
+- Directory name = schema type (e.g., `Tool/`, `Resource/`)
+- Files validate against their directory's type: `Tool/example-name.json` → Tool schema
+- Referenced in `schema.ts` via `@includeCode` JSDoc tags
+
+## Agent Skills
+
+When adding a new skill, also add a directory symlink at `docs/.mintlify/skills/<name>` pointing to `../../../plugins/<plugin-name>/skills/<name>` so Mintlify's `.well-known/agent-skills/` and MCP server auto-scan exposes it.
+
+## Useful Commands
+
+```bash
+# Dev servers
+npm run serve:docs       # Local Mintlify docs server
+npm run serve:blog       # Local Hugo blog server
+
+# Generation (run after editing source files)
+npm run generate         # Generate all (schema + SEPs)
+npm run generate:schema  # Generate JSON schemas + MDX from TypeScript
+npm run generate:seps    # Generate SEP documents
+
+# Formatting
+npm run format           # Format all (docs + schema)
+npm run format:docs      # Format markdown/MDX files
+npm run format:schema    # Format schema TypeScript files
+
+# Checks
+npm run check            # Run all checks
+npm run check:schema     # Check schema (TS, JSON, examples, MDX)
+npm run check:docs       # Check docs (format, comments, links)
+npm run check:seps       # Check SEP documents
+
+# Workflow
+npm run prep             # Full prep before committing (check, generate, format)
+```
+
+## Issue Creation
+
+Blank issues are disabled. `gh issue create` and the API bypass the template
+chooser, so when filing via CLI or API you **must** use one of the forms in
+`.github/ISSUE_TEMPLATE/` and fill in its required fields.
+
+Before filing, check `.github/ISSUE_TEMPLATE/config.yml` — some categories
+are redirected out of this repo entirely:
+
+- **SEPs** are pull requests adding a file to `seps/`, not issues
+- **SDK bugs** belong in the individual SDK repository
+- **Claude MCP behavior** belongs in `anthropics/claude-ai-mcp`
+
+## Commit Guidelines
+
+- Do not include model names or details (e.g., "Claude", "Opus") in commit messages
+
+
+
+================================================
 FILE: ANTITRUST.md
 ================================================
-**MCP Project Antitrust Policy**
-
-**Antitrust Policy**
-
-Effective: September 29, 2025
-
-**Introduction**
-
-The goal of the Model Context Protocol open source project (the “Project”) is to develop a universal standard for model-to-world interactions, including enabling LLMs and agents to seamlessly connect with and utilize external data sources and tools. The purpose of this Antitrust Policy (the “Policy”) is to avoid antitrust risks in carrying out this pro-competitive mission.
-
-Participants in and contributors to the Project (collectively, “participants”) will use their best reasonable efforts to comply in all respects with all applicable state and federal antitrust and trade regulation laws, and applicable antitrust/competition laws of other countries (collectively, the “Antitrust Laws”).
-
-The goal of Antitrust Laws is to encourage vigorous competition. Nothing in this Policy prohibits or limits the ability of participants to make, sell or use any product, or otherwise to compete in the marketplace. This Policy provides general guidance on compliance with Antitrust Law. Participants should contact their respective legal counsel to address specific questions.
-
-This Policy is conservative and is intended to promote compliance with the Antitrust Laws, not to create duties or obligations beyond what the Antitrust Laws actually require. In the event of any inconsistency between this Policy and the Antitrust Laws, the Antitrust Laws preempt and control.
-
-**Participation**
-
-Technical participation in the Project shall be open to all, subject only to compliance with the provisions of the Project’s charter and other governance documents.
-
-**Conduct of Meetings**
-
-At meetings among actual or potential competitors, there is a risk that participants in those meetings may improperly disclose or discuss information in violation of the Antitrust Laws or otherwise act in an anti-competitive manner. To avoid this risk, participants must adhere to the following policies when participating in Project-related or sponsored meetings, conference calls, or other forums (collectively, “Project Meetings”).
-
-Participants must not, in fact or appearance, discuss or exchange information regarding:
-
-- An individual company’s current or projected prices, price changes, price differentials, markups, discounts, allowances, terms and conditions of sale, including credit terms, etc., or data that bear on prices, including profits, margins or cost.
-- Industry-wide pricing policies, price levels, price changes, differentials, or the like.
-- Actual or projected changes in industry production, capacity or inventories.
-- Matters relating to bids or intentions to bid for particular products, procedures for responding to bid invitations or specific contractual arrangements.
-- Plans of individual companies concerning the design, characteristics, production, distribution, marketing or introduction dates of particular products, including proposed territories or customers.
-- Matters relating to actual or potential individual suppliers that might have the effect of excluding them from any market or of influencing the business conduct of firms toward such suppliers.
-- Matters relating to actual or potential customers that might have the effect of influencing the business conduct of firms toward such customers.
-- Individual company current or projected cost of procurement, development or manufacture of any product.
-- Individual company market shares for any product or for all products.
-- Confidential or otherwise sensitive business plans or strategy.
-
-In connection with all Project Meetings, participants must do the following:
-
-- Adhere to prepared agendas.
-- Insist that meeting minutes be prepared and distributed to all participants, and that meeting minutes accurately reflect the matters that transpired.
-- Consult with their respective counsel on all antitrust questions related to Project Meetings.
-- Protest against any discussions that appear to violate these policies or the Antitrust Laws, leave any meeting in which such discussions continue, and either insist that such protest be noted in the minutes.
-
-**Requirements/Standard Setting**
-
-The Project may establish standards, technical requirements and/or specifications for use (collectively, “requirements”). Participants shall not enter into agreements that prohibit or restrict any participant from establishing or adopting any other requirements. Participants shall not undertake any efforts, directly or indirectly, to prevent any firm from manufacturing, selling, or supplying any product not conforming to a requirement.
-
-The Project shall not promote standardization of commercial terms, such as terms for license and sale.
-
-**Contact Information**
-
-To contact the Project regarding matters addressed by this Antitrust Policy, please send an email to antitrust@modelcontextprotocol.io, and reference “Antitrust Policy” in the subject line.
+This project is part of LF Projects, LLC. See the [LF Projects Antitrust Policy](https://lfprojects.org/policies/antitrust-policy/).
 
 
 
@@ -5186,13 +2908,13 @@ FILE: CONTRIBUTING.md
 Thank you for your interest in contributing to the Model Context Protocol specification, schemas, or docs!
 This document outlines how to contribute to this project.
 
-Also see the [overall MCP communication guidelines in our docs](https://modelcontextprotocol.io/community/communication), which explains how and where discussions about changes happen.
+Also see the [overall MCP communication guidelines in our docs](https://modelcontextprotocol.io/community/communication), which explain how and where discussions about changes happen.
 
 ## General prerequisites
 
 The following software is required to work on the spec:
 
-- Node.js 20 or above
+- Node.js 24 or above
 - TypeScript
 - TypeScript JSON Schema (for generating JSON schema)
 - [Mintlify](https://mintlify.com/) (optional, for docs)
@@ -5236,6 +2958,19 @@ npm run check:schema:ts
 npm run generate:schema
 ```
 
+### Resolving merge conflicts in generated files
+
+If your branch conflicts with `main` in generated files (`schema/*/schema.json`, `docs/specification/*/schema.mdx`, `docs/seps/*.mdx`), do not resolve them by hand. Merge `main`, resolve any conflicts in the source files (e.g. `schema/draft/schema.ts`), then regenerate and commit:
+
+```bash
+git merge main
+npm run generate
+git add .
+git commit
+```
+
+These files are marked with `-merge` in `.gitattributes`, so git keeps your branch's copy and flags them as conflicted instead of inserting conflict markers.
+
 ## Documentation changes
 
 Documentation is written in MDX format and in the [`docs`](./docs) directory.
@@ -5253,6 +2988,10 @@ npm run check:docs
 npm run format
 ```
 
+> [!NOTE]
+> You can run all schema/documentation
+> changes at once with `npm run prep`.
+
 ## Blog changes
 
 The blog is built using [Hugo](https://gohugo.io/installation/) and located in the [`blog`](./blog) directory.
@@ -5263,7 +3002,7 @@ To preview blog changes locally:
 npm run serve:blog
 ```
 
-## Documentation Guidelines
+### Documentation Guidelines
 
 When contributing to the documentation:
 
@@ -5281,21 +3020,13 @@ When contributing to the documentation:
 
 ## Specification Proposal Guidelines
 
-### Principles of MCP
+Specification changes follow the [SEP process](https://modelcontextprotocol.io/community/sep-guidelines).
+Before drafting a proposal, review the [MCP design principles](https://modelcontextprotocol.io/community/design-principles)
+— proposals that align with these principles move faster through review.
 
-1. **Simple + Minimal**: It is much easier to add things to a specification than it is to
-   remove them. To maintain simplicity, we keep a high bar for adding new concepts and
-   primitives as each addition requires maintenance and compatibility consideration.
-2. **Concrete**: Specification changes need to be based on specific implementation
-   challenges and not on speculative ideas.
-
-### Stages of a specification proposal
-
-1. **Define**: Explore the problem space, validate that other MCP users face a similar
-   issue, and then clearly define the problem.
-2. **Prototype**: Build an example solution to the problem and demonstrate its practical
-   application.
-3. **Write**: Based on the prototype, write a specification proposal.
+The shortest summary: explore the problem space and validate that others share the problem,
+build a prototype that demonstrates a solution, then write the SEP based on what the
+prototype taught you.
 
 ## Submitting Changes
 
@@ -5304,10 +3035,61 @@ When contributing to the documentation:
 3. Follow the pull request template
 4. Wait for review
 
+## AI Contributions
+
+> [!IMPORTANT]
+>
+> If you are using **any kind of AI assistance** to contribute to Model Context Protocol,
+> it must be disclosed in the pull request or issue.
+
+We welcome and encourage the use of AI tools to help improve Model Context Protocol. Many valuable contributions
+have been enhanced with AI assistance for code generation, issue detection, and feature definition.
+
+That being said, if you are using any kind of AI assistance (e.g., agents such as Claude Code, ChatGPT)
+while contributing to Model Context Protocol, **this must be disclosed in the pull request or issue**,
+along with the extent to which AI assistance was used (e.g., documentation comments vs. code generation).
+
+If your PR responses or comments are being generated by an AI, disclose that as well.
+
+As an exception, trivial spacing or typo fixes don't need to be disclosed, so long as the changes are
+limited to small parts of the code or short phrases.
+
+An example disclosure:
+
+> This PR was written primarily by Claude Code.
+
+Or a more detailed disclosure:
+
+> I consulted ChatGPT to understand the codebase but the solution
+> was fully authored manually by myself.
+
+Failure to disclose this is first and foremost rude to the human operators on the other end of the pull request,
+but it also makes it difficult to determine how much scrutiny to apply to the contribution.
+
+In a perfect world, AI assistance would produce equal or higher quality work than any human. That isn't the world
+we live in today, and in most cases where human supervision or expertise is not in the loop, it's generating code
+or changes that cannot be reasonably maintained or evolved.
+
+### What we're looking for
+
+When submitting AI-assisted contributions, please ensure they include:
+
+- **Clear disclosure of AI use** - You are transparent about AI use and degree to which you're using it for the contribution
+- **Human understanding** - You personally understand what the changes do
+- **Clear rationale** - You can explain why the change is needed and how it fits within Model Context Protocol goals
+- **Concrete evidence** - Include test cases, scenarios, or examples that demonstrate the improvement
+- **Your own analysis** - Share your thoughts on the end-to-end experience
+
+### What we'll close
+
+We reserve the right to close submissions that appear to not follow the disclosure policy.
+
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT
-License.
+By contributing, you agree that your code or specification contributions will be
+licensed under the Apache License 2.0. Documentation contributions (excluding
+specifications) are licensed under CC-BY 4.0. See the [LICENSE](LICENSE) file for
+details.
 
 ## Security
 
@@ -5316,11 +3098,231 @@ Please review our [Security Policy](SECURITY.md) for reporting security issues.
 
 
 ================================================
+FILE: eslint.config.mjs
+================================================
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  eslintConfigPrettier,
+]);
+
+
+
+================================================
+FILE: GOVERNANCE.md
+================================================
+General Project Policies
+
+Model Context Protocol has been established as Model Context Protocol a Series of LF Projects, LLC. Policies applicable to Model Context Protocol and participants in Model Context Protocol, including guidelines on the usage of trademarks, are located at [https://www.lfprojects.org/policies/](https://www.lfprojects.org/policies/). Governance changes approved as per the provisions of this governance document must also be approved by LF Projects, LLC.
+
+Model Context Protocol participants acknowledge that the copyright in all new contributions will be retained by the copyright holder as independent works of authorship and that no contributor or copyright holder will be required to assign copyrights to the project.
+
+Except as described below, all code and specification contributions to the project must be made using the Apache License, Version 2.0 (available here: [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)) (the “Project License”).
+
+All outbound code and specifications will be made available under the Project License. The Core Maintainers may approve the use of an alternative open license or licenses for inbound or outbound contributions on an exception basis.
+
+All documentation (excluding specifications) will be made available under Creative Commons Attribution 4.0 International license, available at: https://creativecommons.org/licenses/by/4.0.
+
+
+
+================================================
 FILE: LICENSE
 ================================================
+The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 ("Apache-2.0"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0.
+
+Contributions for which relicensing consent has been obtained are licensed under Apache-2.0. Contributions made by authors who originally licensed their work under the MIT License and who have not yet granted explicit permission to relicense remain licensed under the MIT License.
+
+No rights beyond those granted by the applicable original license are conveyed for such contributions.
+
+---
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to the Licensor for inclusion in the Work by the copyright
+      owner or by an individual or Legal Entity authorized to submit on behalf
+      of the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+---
+
 MIT License
 
-Copyright (c) 2024–2025 Anthropic, PBC and contributors
+Copyright (c) 2024-2025 Model Context Protocol a Series of LF Projects, LLC.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -5340,6 +3342,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+---
+
+Creative Commons Attribution 4.0 International (CC-BY-4.0)
+
+Documentation in this project (excluding specifications) is licensed under
+CC-BY-4.0. See https://creativecommons.org/licenses/by/4.0/legalcode for
+the full license text.
+
 
 
 ================================================
@@ -5349,22 +3359,28 @@ FILE: MAINTAINERS.md
 
 This document lists current maintainers in the Model Context Protocol project.
 
-**Last updated:** October 15, 2025
+**Last updated:** May 1, 2026
 
 ## Lead Maintainers
 
 - [David Soria Parra](https://github.com/dsp-ant)
-- _[Justin Spahr-Summers](https://github.com/jspahrsummers) (currently inactive)_
+- [Den Delimarsky](https://github.com/localden)
 
 ## Core Maintainers
 
-- [Inna Harper](https://github.com/ihrpr)
-- [Basil Hosmer](https://github.com/bhosmer-ant)
-- [Paul Carleton](https://github.com/pcarleton)
-- [Nick Cooper](https://github.com/nicknotfun)
+- [Caitie McCaffrey](https://github.com/CaitieM20)
+- [Clare Liguori](https://github.com/clareliguori)
+- [Kurtis Van Gent](https://github.com/kurtisvg)
 - [Nick Aldridge](https://github.com/000-000-000-000-000)
-- Che Liu
-- [Den Delimarsky](https://github.com/localden)
+- [Nick Cooper](https://github.com/nickcoai)
+- [Paul Carleton](https://github.com/pcarleton)
+- [Peter Alexander](https://github.com/pja-ant)
+
+## Emeritus
+
+- [Justin Spahr-Summers](https://github.com/jspahrsummers) (Co-Inventor, Lead Maintainer Emeritus)
+- [Basil Hosmer](https://github.com/bhosmer-ant) (Core Maintainer Emeritus)
+- [Che Liu](https://github.com/pwwpche) (Core Maintainer Emeritus)
 
 ## SDK Maintainers
 
@@ -5373,708 +3389,62 @@ This document lists current maintainers in the Model Context Protocol project.
 - [Christian Tzolov](https://github.com/tzolov)
 - [Dariusz Jędrzejczyk](https://github.com/chemicL)
 - [Daniel Garnier-Moiroux](https://github.com/Kehrlann)
+- [Mark Pollack](https://github.com/markpollack)
 
 ### Ruby SDK
 
 - [Topher Bullock](https://github.com/topherbullock)
 - [Koichi Ito](https://github.com/koic)
 - [Ateş Göral](https://github.com/atesgoral)
+- [Jonathan Hefner](https://github.com/jonathanhefner)
 
 ### Swift SDK
 
 - [Matt Zmuda](https://github.com/mattt)
 - [Carl Peaslee](https://github.com/carlpeaslee)
+- [Maksym Mova](https://github.com/movetz)
+- [Stephen Tallent](https://github.com/stallent)
 
 ### Go SDK
 
-- [Rob Findley](https://github.com/findleyr)
+- [Maciej Kisiel](https://github.com/maciej-kisiel)
+- [Yaroslav Shevchuk](https://github.com/yarolegovich)
+- [Guglielmo Colombo](https://github.com/guglielmo-san)
 - [Jonathan Amsterdam](https://github.com/jba)
-- [Sam Thanawalla](https://github.com/samthanawalla)
 
 ### C# SDK
 
 - [Stephan Halter](https://github.com/halter73)
 - [Mike Kistler](https://github.com/mikekistler)
+- [Den Delimarsky](https://github.com/dend)
+- [Eirik Tsarpalis](https://github.com/eiriktsarpalis)
+- [Stephen Toub](https://github.com/stephentoub)
 
 ### Kotlin SDK
 
 - [Leonid Stashevsky](https://github.com/e5l)
 - [Sergey Ignatov](https://github.com/ignatov)
+- [Konstantin Pavlov](https://github.com/kpavlov)
+- [Pavel Gorgulov](https://github.com/devcrocod)
+- [Briliantov Vadim](https://github.com/Ololoshechkin)
+- [Sergei Dubov](https://github.com/sdubov)
+- [Maria Tigina](https://github.com/tiginamaria)
 
 ### Python SDK
 
 - [Inna Harper](https://github.com/ihrpr)
 - [Jerome Swannack](https://github.com/jerome3o)
-- [Samuel Colvin](https://github.com/samuelcolvin)
 - [Marcelo Trylesinski](https://github.com/Kludex)
+- [Max Isbey](https://github.com/maxisbey)
+- [Felix Weinberger](https://github.com/felixweinberger)
 
 ### TypeScript SDK
 
 - [Inna Harper](https://github.com/ihrpr)
 - [Felix Weinberger](https://github.com/felixweinberger)
 - [Olivier Chafik](https://github.com/ochafik)
-
-### Rust SDK
-
-- [Alex Hancock](https://github.com/alexhancock)
-
-### PHP SDK
-
-- [Kyrian Obikwelu](https://github.com/CodeWithKyrian)
-- [Christopher Hertel](https://github.com/chr-hertel)
-
-## Project Maintainers
-
-### use-mcp
-
-- [Glen Maddern](https://github.com/geelen)
-
-### Inspector
-
-- [Ola Hungerford](https://github.com/olaservo)
-- [Cliff Hall](https://github.com/cliffhall)
-
-### Registry
-
-- [Toby Padilla](https://github.com/toby)
-- [Tadas Antanavicius](https://github.com/tadasant)
-- [Adam Jones](https://github.com/domdomegg)
-- [Radoslav (Rado) Dimitrov](https://github.com/rdimitrov)
-
-### Reference Servers
-
-- [Ola Hungerford](https://github.com/olaservo)
-- [Cliff Hall](https://github.com/cliffhall)
-- [Tadas Antanavicius](https://github.com/tadasant)
-- [Shaun Smith](https://github.com/evalstate)
-- [Jonathan Hefner](https://github.com/jonathanhefner)
-
-## Community Moderators
-
-- [Ola Hungerford](https://github.com/olaservo)
-- [Cliff Hall](https://github.com/cliffhall)
-- [Shaun Smith](https://github.com/evalstate)
-- [Jonathan Hefner](https://github.com/jonathanhefner)
-- [Tadas Antanavicius](https://github.com/tadasant)
-
-## Working Group & Interest Group Maintainers
-
-[Working Groups and Interest Groups](https://modelcontextprotocol.io/community/working-interest-groups) are not required to have maintainers (they can be managed by informal facilitators), but maintainers may be appointed on an as-needed basis.
-
-### Security Interest Group
-
-- [Den Delimarsky](https://github.com/dend)
-- [Paul Carleton](https://github.com/pcarleton)
-- [Jenn Newton](https://github.com/jenn-newton)
-
-### Authorization Interest Group
-
-- [Aaron Parecki](https://github.com/aaronpk)
-- [Darin McAdams](https://github.com/D-McAdams)
-- [Paul Carleton](https://github.com/pcarleton)
-
-### Client Implementor Interest Group
-
-**Note:** These individuals serve as MCP protocol representatives for their respective clients. For client-specific issues, use the official support channels provided by each product.
-
-- [Alex Hancock](https://github.com/alexhancock) - Goose
-- [Ben Brandt](https://github.com/benbrandt) - Zed
-- [Connor Peet](https://github.com/connor4312) - VS Code
-- [Gabriel Peal](https://github.com/gpeal) - Codex
-- [Jun Han](https://github.com/formulahendry) - GitHub Copilot for JetBrains
-- [Tyler Leonhardt](https://github.com/TylerLeonhardt) - VS Code
-- [Michael Feldstein](https://github.com/msfeldstein) - Cursor
-
-### Financial Services Interest Group
-
-- [Sambhav Kothari](https://github.com/sambhav)
-
-### Transports Interest Group
-
-- [Kurtis Van Gent](https://github.com/kurtisvg)
-- [Jonathan Hefner](https://github.com/jonathanhefner)
-- [Shaun Smith](https://github.com/evalstate)
-- [Harvey Tuch](https://github.com/htuch)
-
-### Server Identity Working Group
-
-- [Nick Cooper](https://github.com/nicknotfun)
-
-### Agents Working Group
-
-- [Peter Alexander](https://github.com/pja-ant)
-- [Luca Chang](https://github.com/LucaButBoring)
-- [Inna Harper](https://github.com/ihrpr)
-
-## About This Document
-
-This document is updated by the MCP maintainers and reflects the current
-governance structure. For more information about MCP governance, see our
-[governance documentation](https://modelcontextprotocol.io/community/governance).
-
-
-
-================================================
-FILE: package.json
-================================================
-{
-  "name": "@modelcontextprotocol/specification",
-  "private": true,
-  "version": "0.1.0",
-  "description": "Model Context Protocol specification and protocol schema",
-  "license": "MIT",
-  "author": "Anthropic, PBC (https://anthropic.com)",
-  "homepage": "https://modelcontextprotocol.io",
-  "bugs": "https://github.com/modelcontextprotocol/specification/issues",
-  "engines": {
-    "node": ">=20"
-  },
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.{md,mdx}",
-        "options": {
-          "proseWrap": "preserve"
-        }
-      }
-    ]
-  },
-  "scripts": {
-    "check": "npm run check:schema && npm run check:docs",
-    "check:schema": "npm run check:schema:ts && npm run check:schema:json && npm run check:schema:md",
-    "check:schema:ts": "tsc",
-    "check:schema:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required --skipLibCheck \"$f\" \"*\" | cat | cmp \"${f%.ts}.json\" - || exit 1; done",
-    "check:schema:md": "for f in docs/specification/*/schema.mdx; do typedoc --entryPoints \"schema/$(basename -- $(dirname -- \"$f\"))/schema.ts\" | cmp \"$f\" - || exit 1; done",
-    "check:docs": "npm run check:docs:format && npm run check:docs:links",
-    "check:docs:format": "prettier --check \"**/*.{md,mdx}\"",
-    "check:docs:links": "cd docs && mintlify broken-links",
-    "generate:schema": "npm run generate:schema:json && npm run generate:schema:md",
-    "generate:schema:json": "for f in schema/*/schema.ts; do typescript-json-schema --defaultNumberType integer --required --skipLibCheck \"$f\" \"*\" -o \"${f%.ts}.json\"; done",
-    "generate:schema:md": "for f in docs/specification/*/schema.mdx; do typedoc --entryPoints \"schema/$(basename -- $(dirname -- \"$f\"))/schema.ts\" > \"$f\"; done",
-    "format": "prettier --write \"**/*.{md,mdx}\" --ignore \"docs/specification/*/schema.mdx\" ",
-    "serve:docs": "cd docs && mintlify dev",
-    "serve:blog": "cd blog && hugo serve"
-  },
-  "devDependencies": {
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "glob": "^11.0.0",
-    "mintlify": "^4.0",
-    "prettier": "^3.6.2",
-    "tsx": "^4.19.1",
-    "typedoc": "^0.28.7",
-    "typescript": "^5.6.2",
-    "typescript-json-schema": "^0.65.1"
-  },
-  "resolutions": {
-    "fast-json-patch": "^3.1.1"
-  }
-}
-
-
-
-================================================
-FILE: SECURITY.md
-================================================
-# Security Policy
-
-Thank you for helping us keep the SDKs and systems they interact with secure.
-
-## Reporting Security Issues
-
-This SDK is maintained by [Anthropic](https://www.anthropic.com/) as part of the Model
-Context Protocol project.
-
-The security of our systems and user data is Anthropic’s top priority. We appreciate the
-work of security researchers acting in good faith in identifying and reporting potential
-vulnerabilities.
-
-Our security program is managed on HackerOne and we ask that any validated vulnerability
-in this functionality be reported through their
-[submission form](https://hackerone.com/anthropic-vdp/reports/new?type=team&report_type=vulnerability).
-
-## Vulnerability Disclosure Program
-
-Our Vulnerability Program Guidelines are defined on our
-[HackerOne program page](https://hackerone.com/anthropic-vdp).
-
-
-
-================================================
-FILE: tsconfig.json
-================================================
-{
-  "compilerOptions": {
-    "noEmit": true,
-    "target": "es2016",
-    "rootDir": "schema",
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
-  }
-}
-
-
-
-================================================
-FILE: typedoc.config.mjs
-================================================
-// @ts-check
-
-/** @type {Partial<import("typedoc").TypeDocOptions>} */
-const config = {
-  out: "tmp",
-  excludeInternal: true,
-  excludeTags: [
-    "@format",
-    "@maximum",
-    "@minimum",
-  ],
-  disableSources: true,
-  logLevel: "Error",
-  plugin: ["./typedoc.plugin.mjs"],
-};
-
-export default config;
-
-
-
-================================================
-FILE: typedoc.plugin.mjs
-================================================
-// @ts-check
-import * as typedoc from "typedoc";
-
-/** @param {typedoc.Application} app */
-export function load(app) {
-  app.outputs.addOutput("schema-reference", async (outputDir, project) => {
-    app.renderer.router = new SchemaReferenceRouter(app);
-    app.renderer.theme = new typedoc.DefaultTheme(app.renderer);
-    app.renderer.trigger(typedoc.RendererEvent.BEGIN, new typedoc.RendererEvent(outputDir, project, []));
-
-    const pageEvents = buildPageEvents(project, app.renderer.router);
-    const rendered = renderPageEvents(pageEvents, /** @type {typedoc.DefaultTheme} */ (app.renderer.theme));
-
-    process.stdout.write(`---\n`);
-    process.stdout.write(`title: Schema Reference\n`);
-    process.stdout.write(`---\n\n`);
-    process.stdout.write(`<div id="schema-reference" />\n\n`);
-    process.stdout.write(rendered);
-
-    // Wait for all output to be written before allowing the process to exit.
-    await new Promise((resolve) => process.stdout.write("", () => resolve(undefined)));
-  })
-
-  app.outputs.setDefaultOutputName("schema-reference")
-}
-
-class SchemaReferenceRouter extends typedoc.StructureRouter {
-  /**
-   * @param {typedoc.RouterTarget} target
-   * @returns {string}
-   */
-  getFullUrl(target) {
-    return "#" + this.getAnchor(target);
-  }
-
-  /**
-   * @param {typedoc.RouterTarget} target
-   * @returns {string}
-   */
-  getAnchor(target) {
-    if (target instanceof typedoc.DeclarationReflection &&
-      target.kindOf(typedoc.ReflectionKind.Property) &&
-      !hasComment(target)
-    ) {
-      return "";
-    } else {
-      // Must use `toLowerCase()` because Mintlify generates lower case IDs for Markdown headings.
-      return super.getFullUrl(target).replace(".html", "").replaceAll(/[./#]/g, "-").toLowerCase();
-    }
-  }
-}
-
-/**
- * @param {typedoc.DeclarationReflection} member
- * @returns {boolean}
- */
-function hasComment(member) {
-  return member.hasComment() || (
-    member.type instanceof typedoc.ReflectionType &&
-    !!member.type.declaration.children?.some((child) => hasComment(child))
-  );
-}
-
-/**
- * @param {typedoc.ProjectReflection} project
- * @param {typedoc.Router} router
- * @returns {typedoc.PageEvent[]}
- */
-function buildPageEvents(project, router) {
-  const events = [];
-
-  for (const pageDefinition of router.buildPages(project)) {
-    const event = new typedoc.PageEvent(pageDefinition.model)
-    event.url = pageDefinition.url;
-    event.filename = pageDefinition.url;
-    event.pageKind = pageDefinition.kind;
-    event.project = project;
-    events.push(event)
-  }
-
-  return events;
-}
-
-/**
- * @param {typedoc.PageEvent[]} events
- * @param {typedoc.DefaultTheme} theme
- * @returns {string}
- */
-function renderPageEvents(events, theme) {
-  const declarationEvents = events.
-    filter(isDeclarationReflectionEvent).
-    sort((event1, event2) => event1.model.name.localeCompare(event2.model.name));
-
-  /** @type {Map<string, string[]>} */
-  const outputsByCategory = new Map();
-
-  for (const event of declarationEvents) {
-    const category = getReflectionCategory(event.model);
-    const rendered = renderReflection(event.model, theme.getRenderContext(event));
-
-    if (!outputsByCategory.has(category)) {
-      outputsByCategory.set(category, [renderCategory(category)]);
-    }
-    outputsByCategory.get(category)?.push(rendered);
-  }
-
-  return [...outputsByCategory.keys()].
-    sort().flatMap((category) => outputsByCategory.get(category)).join("\n");
-}
-
-/**
- * @param {typedoc.PageEvent} event
- * @returns {event is typedoc.PageEvent<typedoc.DeclarationReflection>}
- */
-function isDeclarationReflectionEvent(event) {
-  return event.model instanceof typedoc.DeclarationReflection;
-}
-
-/**
- * @param {typedoc.DeclarationReflection} reflection
- * @returns {string}
- */
-function getReflectionCategory(reflection) {
-  const categoryTag = reflection.comment?.getTag("@category");
-  return categoryTag ? categoryTag.content.map((part) => part.text).join(" ") : "";
-}
-
-/**
- * @param {string} category
- * @returns {string}
- */
-function renderCategory(category) {
-  let heading = category || "Common Types";
-  if (heading.match(/^[a-z]/)) heading = "`" + heading + "`";
-  return `## ${heading}\n`;
-}
-
-/**
- * @param {typedoc.DeclarationReflection} reflection
- * @param {typedoc.DefaultThemeRenderContext} context
- * @returns {string}
- */
-function renderReflection(reflection, context) {
-  const name = reflection.getFriendlyFullName();
-  const members = reflection.children?.filter(hasComment) ?? [];
-
-  const codeBlock = context.reflectionPreview(reflection);
-
-  let content = renderJsxElements(
-    codeBlock ?
-      [codeBlock, context.commentSummary(reflection)] :
-      context.memberDeclaration(reflection),
-    members.map(member => context.member(member)),
-  );
-
-  // Convert `<hN>` elements to `<div>`.
-  content = content.
-    replaceAll(/<h([1-6])/g, `<div data-typedoc-h="$1"`).
-    replaceAll(/<\/h[1-6]>/g, `</div>`);
-
-  // Reduce code block indent from 4 spaces to 2 spaces.
-  content = content.replaceAll("\u00A0\u00A0", "\u00A0");
-
-  // Accommodate Mintlify's broken Markdown parser.
-  content = content.
-    replaceAll("\u00A0", "&nbsp;"). // Encode valid UTF-8 character as HTML entity
-    replaceAll(/\n+</g, " <"). // Newlines around tags are not significant
-    replaceAll("[", "&#x5B;"). // `[` inside HTML tags != link
-    replaceAll("_", "&#x5F;"). // `_` inside HTML tags != emphasis
-    replaceAll("{", "&#x7B;"). // Plain *.md is not supported, so must escape JSX interpolation
-    replaceAll("$", "&#x24;"); // `$` does not demarcate LaTeX(?)
-
-
-  // Remove `@TJS-type` tags.  (Ideally, we would include this tag in
-  // `excludeTags`, but a TypeDoc bug rejects tag names with dashes.)
-  content = content.replaceAll(/<p>@TJS-type [^<]+<\/p>/g, "");
-
-  return `### \`${name}\`\n\n${content}\n`;
-}
-
-/**
- * @param {typedoc.JSX.Children[]} elements
- */
-function renderJsxElements(...elements) {
-  return typedoc.JSX.renderElement(typedoc.JSX.createElement(typedoc.JSX.Fragment, null, elements));
-}
-
-
-
-================================================
-FILE: .npmrc
-================================================
-registry = "https://registry.npmjs.org/"
-
-
-
-================================================
-FILE: .nvmrc
-================================================
-v20.16.0
-
-
-
-================================================
-FILE: .prettierignore
-================================================
-docs/specification/*/schema.md
-docs/specification/*/schema.mdx
-
-
-
-================================================
-FILE: blog/go.mod
-================================================
-module github.com/modelcontextprotocol/modelcontextprotocol
-
-go 1.24.4
-
-require github.com/adityatelange/hugo-PaperMod v0.0.0-20250913173842-ff85b9cd6579 // indirect
-
-
-
-================================================
-FILE: blog/go.sum
-================================================
-github.com/adityatelange/hugo-PaperMod v0.0.0-20250524045829-5a4651783fa9 h1:vSOmKCogP6L4SV2eO7A2zgO7sdml4Ta7tZSd6ccOTmQ=
-github.com/adityatelange/hugo-PaperMod v0.0.0-20250524045829-5a4651783fa9/go.mod h1:HCHxNMKYdGafUYjVV3ICiAqznZK2yH0iI53jqcDFDdQ=
-github.com/adityatelange/hugo-PaperMod v0.0.0-20250913173842-ff85b9cd6579 h1:U8K/kaIYeEGkvINZFlgcskPdN8tmRS5neQK27GdU39k=
-github.com/adityatelange/hugo-PaperMod v0.0.0-20250913173842-ff85b9cd6579/go.mod h1:HCHxNMKYdGafUYjVV3ICiAqznZK2yH0iI53jqcDFDdQ=
-
-
-
-================================================
-FILE: blog/hugo.toml
-================================================
-baseURL = 'https://blog.modelcontextprotocol.io/'
-languageCode = 'en-us'
-title = 'mcp blog'
-theme = 'github.com/adityatelange/hugo-PaperMod'
-[pagination]
-  pagerSize = 5
-
-[params]
-  author = "The MCP project"
-  description = "Updates from the Model Context Protocol project"
-
-  # PaperMod specific settings
-  # defaultTheme = "dark" # MCP uses a dark theme
-  disableThemeToggle = false
-  ShowShareButtons = false
-  ShowReadingTime = true
-  ShowPostNavLinks = true
-  ShowBreadCrumbs = true
-  ShowCodeCopyButtons = true
-  ShowWordCount = false
-  ShowRssButtonInSectionTermList = true
-  UseHugoToc = false
-  disableSpecial1stPost = true
-  disableScrollToTop = false
-  comments = false
-  hidemeta = false
-  hideSummary = false
-  showtoc = false
-  ShowFullTextinRSS = true
-
-  # Custom copyright
-  copyright = '© 2025 Model Context Protocol Project'
-
-  [params.assets]
-    favicon = "favicon.svg"
-
-  [[params.socialIcons]]
-    name = "github"
-    url = "https://github.com/modelcontextprotocol"
-
-# Menu configuration
-[[menu.main]]
-  identifier = "docs"
-  name = "Documentation"
-  url = "https://modelcontextprotocol.io/docs"
-  weight = 10
-
-[[menu.main]]
-  identifier = "github"
-  name = "GitHub"
-  url = "https://github.com/modelcontextprotocol"
-  weight = 20
-
-# Markup configuration for syntax highlighting
-[markup]
-  [markup.highlight]
-    guessSyntax = true
-    style = "monokai"
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
-
-[module]
-  [[module.imports]]
-    path = 'github.com/adityatelange/hugo-PaperMod'
-
-
-
-================================================
-FILE: blog/archetypes/default.md
-================================================
-+++
-date = '{{ .Date }}'
-draft = true
-title = '{{ replace .File.ContentBaseName "-" " " | title }}'
-+++
-
-
-
-================================================
-FILE: blog/assets/css/extended/custom.css
-================================================
-/* Override list page background to white in light mode */
-.list {
-    background: var(--theme);
-}
-
-/* Dark mode remains unchanged */
-.dark.list {
-    background: var(--theme);
-}
-
-/* Mermaid diagram styling for dark mode */
-.dark .mermaid {
-    filter: invert(0.85) hue-rotate(180deg);
-}
-
-/* Prevent awkward wrapping in post metadata. See https://github.com/adityatelange/hugo-PaperMod/issues/1789 */
-.post-meta {
-    display: block !important;
-}
-
-
-
-================================================
-FILE: blog/content/_index.md
-================================================
-+++
-title = 'blog'
-+++
-
-
-
-================================================
-FILE: blog/content/posts/2025-07-29-prompts-for-automation.md
-================================================
-+++
-date = '2025-08-04T18:00:00+01:00'
-publishDate = '2025-08-04T18:00:00+01:00'
-draft = false
-title = 'MCP Prompts: Building Workflow Automation'
-author = 'Inna Harper (Core Maintainer)'
-tags = ['automation', 'mcp', 'prompts', 'tutorial']
-+++
-
-[MCP (Model Context Protocol)](https://modelcontextprotocol.io/specification/2025-06-18) prompts enable workflow automation by combining AI capabilities with structured data access. This post demonstrates how to build automations using MCP's [prompts](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts) and [resource templates](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-templates) through a practical example.
-
-This guide demonstrates how MCP prompts can automate repetitive workflows. Whether you're interested in the MCP ecosystem or simply want to leverage AI for workflow automation, you'll learn how to build practical automations through a concrete meal planning example. No prior MCP experience needed—we'll cover the fundamentals before diving into implementation.
-
-## The Problem: Time-Consuming Repetitive Tasks
-
-Everyone has a collection of repetitive tasks that eat away at their productive hours. Common examples include applying code review feedback, generating weekly reports, updating documentation, or creating boilerplate code. These tasks aren't complex—they follow predictable patterns—but they're cumbersome and time-consuming. [MCP prompts](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts) were designed to help automate this kind of work.
-
-MCP prompts offer more than command shortcuts. They're a primitive for building workflow automation that combines the flexibility of scripting with the intelligence of modern AI systems. This post explores how to build automations using MCP's prompt system, resource templates, and modular servers. I'll demonstrate these concepts through a meal planning automation I built, but the patterns apply broadly to any structured, repetitive workflow.
-
-## Example: Automating Weekly Meal Planning
-
-I needed to solve a recurring problem: planning weekly meals by cuisine to manage ingredients efficiently. The manual process involved selecting a cuisine, choosing dishes, listing ingredients, shopping, and organizing recipes—repetitive steps that took significant time each week.
-
-So I decided to use MCP! By automating these steps, I could reduce the entire workflow to selecting a cuisine and receiving a complete meal plan with shopping list. (Any client that supports MCP prompts should work!)
-
-1. **Select a prompt**
-
-   <img
-   src="/posts/images/prompts-list.png"
-   alt="MCP prompts list showing available automation commands"
-   />
-
-2. **Select a cuisine from a dropdown**
-   <img
-     src="/posts/images/prompts-suggestions.png"
-     alt="Dropdown showing cuisine suggestions as user types"
-   />
-3. **Done!**
-   The system generates a meal plan, shopping list, and even prints the shopping list and recipes.
-
-<img
-    src="/posts/images/prompts-final-result.png"
-    alt="Final generated meal plan and shopping list output"
-  />
-
-Here we are focuses primarily on the Recipe Server with its prompts and resources. You can find the [printing server example here](https://github.com/ihrpr/mcp-server-tiny-print) (it works with a specific thermal printer model, but you could easily swap it for email, Notion, or any other output method). The beauty of separate servers is that you can mix and match different capabilities.
-
-## Core Components
-
-Let's dive into the three components that make this automation possible: [prompts](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts), [resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources), and [completions](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion). I'll show you how each works conceptually, then we'll implement them together.
-
-### 1. Resource Templates
-
-In MCP, [static resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-types) represent specific pieces of content with unique URIs—like `file://recipes/italian.md` or `file://recipes/mexican.md`. While straightforward, this approach doesn't scale well. If you have recipes for 20 cuisines, you'd need to define 20 separate resources, each with its own URI and metadata.
-
-[Resource templates](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-templates) solve this through URI patterns with parameters, transforming static resource definitions into dynamic content providers.
-
-For example, a template like `file://recipes/{cuisine}.md` might represent a set of resources like these:
-
-- `file://recipes/italian.md` returns Italian recipes
-- `file://recipes/mexican.md` returns Mexican recipes
-
-This pattern extends beyond simple filtering. You can create templates for:
-
-- Hierarchical data: `file://docs/{category}/{topic}`
-- Git repository content: `git://repo/{branch}/path/{file}`
-- Web resources: `https://api.example.com/users/{userId}/data`
-- Query parameters: `https://example.com/{collection}?type={filter}`
-
-For more details on URI schemes and resource templates, see the [MCP Resource specification](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#resource-templates).
-
-### 2. Completions
-
-Nobody remembers exact parameter values. Is it "italian" or "Italian" or "it"? [Completions](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion) bridge this gap by providing suggestions as users type, creating an interface that feels intuitive rather than restrictive.
-
-Different MCP clients present completions differently:
-
-- VS Code shows a filterable dropdown
-- Command-line tools might use fuzzy matching
-- Web interfaces could provide rich previews
-
-But the underlying data comes from your server, maintaining consistency across all client
+- [Konstantin Konstantinov](https://github.com/KKonstantinov)
+- 
 
 [... Content truncated due to length ...]
 
@@ -6084,205 +3454,373 @@ But the underlying data comes from your server, maintaining consistency across a
 ## YouTube Video Transcripts
 
 <details>
-<summary>Here is a detailed transcript of the video.</summary>
+<summary>[00:00]</summary>
 
-Here is a detailed transcript of the video.
+[00:00]
 
-### Introduction to MCP Servers and Agentic Coding
+(A top-down shot of a person using a laptop on a white desk is shown. A stylized digital corridor overlay appears with text reading "TOOLS FOR EVERYTHING" and "MCP servers: one of the three most important innovations for evolving your engineering from AI coding to Agentic Coding" displayed with a dial.)
 
-(Overhead shot of a person's hands over a laptop keyboard. The screen shows an abstract image of a person walking down a glowing corridor.)
+**Speaker**: As you know, MCP servers let you build tools for everything. MCP servers are one of the three most important innovations for evolving your engineering from AI coding to agentic coding. 
 
-**Speaker:** As you know, MCP servers let you build tools for everything. (Text overlays on the screen: "As you know,", "MCP servers", "TOOLS", "TOOLS FOR EVERYTHING") MCP servers are one of the three most important innovations for evolving your engineering from AI coding to agentic coding.
+(A web browser window displays a mockup of an "Introducing Claude 4" announcement on Anthropic's website, alongside a DeepSeek-R1.1 release page.)
 
-(An animated diagram appears on screen. A small yellow circle labeled "AI Coding" is enclosed by a larger green oval labeled "Agentic Coding".)
-
-With new models like Claude 4, and the brand new DeepSeek-R1.1, we have more intelligence to build than EVER before.
-
-(A browser window appears over the laptop, first showing an Anthropic blog post titled "Introducing Claude 3" (the speaker says "Claude 4"), then switching to the DeepSeek API documentation for "DeepSeek-R1 update".)
+**Speaker**: With new models like Claude 4 and the brand-new DeepSeek-R1.1, we have more intelligence to build than ever before. But the models are no longer the limiting factor for your engineering output. 
 
 [00:30]
-But the models are no longer the limiting factor for your engineering output. That forces us to ask, what's limiting us as engineers from creating more value faster than ever? (The abstract image returns with text overlays: "what's limiting", "us as engineers", "from creating", "more VALUE", "FASTER than ever", accompanied by a large question mark.) It's our abilities to create capabilities for our agentic coding tools like Claude Code.
 
-(The view switches to a terminal window titled "Claude Code". The AI logo for Claude Code is displayed.)
+(On-screen text overlaid on the digital graphic asks, "What's limiting us as engineers from creating more value FASTER than ever?")
 
-That brings us full circle back to MCP servers.
+**Speaker**: That forces us to ask: what's limiting us as engineers from creating more value faster than ever? It's our abilities to create capabilities for our agentic coding tools like Claude Code. 
 
-(The view returns to the abstract image, then a browser window shows the GitHub page for the "Model Context Protocol".)
+(A terminal window with the header "AI CLAUDE CODE" appears. The speaker then switches to a web browser showing the Model Context Protocol GitHub repository.)
 
-In this video, we're going to understand the most underutilized capability of MCP servers.
+**Speaker**: That brings us full circle back to MCP servers. In this video, we're going to understand the most underutilized capability of MCP servers. Most engineers stop at tools.
 
-(The browser window now shows the "Core MCP Concepts" documentation, listing: 1. Resources, 2. Tools, 3. Prompts.)
-
-Most engineers STOP at tools.
-
-*The speaker introduces Model Context Protocol (MCP) servers as a key innovation for advancing from simple AI coding to more complex "agentic coding," arguing that the new bottleneck isn't the AI models, but the developer's ability to create powerful tools.*
-
-### The Power of MCP Primitives: Prompts
+*In this section, the speaker introduces MCP servers as a fundamental paradigm shift for moving from AI-assisted coding to fully agentic developer workflows.*
 
 [01:00]
-(In the documentation view, the speaker highlights "Tools" with an orange box.)
 
-But once you understand this one SIMPLE idea, you'll be able to craft rich MCP servers that dramatically INCREASE your engineering VELOCITY as well as your teams. Resources, tools, and prompts. In the tier list in reverse order of capability, we have resources, tools, and prompts.
+(On the MCP documentation page, the speaker highlights the "Core MCP Concepts": Resources, Tools, and Prompts.)
 
-(The abstract image returns with an "MCP Primitive Tier List" title. The text "??? > ??? > ???" changes to "??? > ??? > Resources", then "??? > Tools > Resources", and finally "Prompts > Tools > Resources".)
+**Speaker**: But once you understand this one simple idea, you'll be able to craft rich MCP servers that dramatically increase your engineering velocity as well as your teams'. Resources, tools, and prompts. 
 
-Most engineers SKIP resources. They go ALL IN on tools and completely MISS OUT on the HIGHEST leverage primitive of MCP servers, PROMPTS. (The words on the tier list are highlighted in sequence.) Tool calling is just the beginning of your MCP server. Let me show you how to MAXIMIZE the value of your MCP servers.
+(An overlay chart shows the "MCP Primitive Tier List: Prompts > Tools > Resources".)
 
-(A title card appears over a view of clouds from an airplane window.)
-
-**On-screen text:** MCP MAXXING
-
-*The speaker presents a hierarchy of MCP server capabilities—Resources, Tools, and Prompts—and asserts that Prompts are the most powerful and underutilized primitive that can dramatically increase engineering velocity.*
-
-### Practical Demo: Using Tools for Data Analysis
+**Speaker**: In the tier list in reverse order of capability, we have resources, tools, and prompts. Most engineers skip resources; they go all-in on tools and completely miss out on the highest leverage primitive of MCP servers: prompts.
 
 [01:30]
-(The view returns to the "Claude Code" terminal.)
 
-If we type `/mcp`, you can see I have six MCP servers available. We're going to be operating in the quick-data MCP server. Quick-data gives your agent arbitrary data analysis capabilities on .json and .csv files. We all know how tools work, but let's run a few to understand the quick-data MCP server and showcase how limited tool calls really are. If we type `/model`, we're going to run the Sonnet 4 fast workhorse model for this.
+**Speaker**: Tool calling is just the beginning of your MCP server. Let me show you how to maximize the value of your MCP servers.
 
-So, right away we have a problem. I have no idea what I can do with this MCP server. I have to rely on some type of documentation.
+(A transitions screen displays cloud footage with the text "MCP MAXXING" in bold letters.)
 
-(An application launcher opens, and "Cursor" is selected.)
+**Speaker**: MCP Maxxing. 
 
-Let's open up Cursor and break open the README.
+(The speaker opens the Claude Code CLI. They type `/mcp` to show the connected servers, focusing on `quick-data`.)
 
-(The Cursor code editor opens, showing a README file for the "Generic Data Analytics MCP Server".)
+**Speaker**: If we type `/mcp`, you can see I have six MCP servers available. We're going to be operating in the `quick-data` MCP server. `quick-data` gives your agent arbitrary data analysis capabilities on `.json` and `.csv` files.
 
-If we scroll down here, I have a complete documented set of all the tools, resources, and prompts available for this MCP server.
+*The speaker sets up the "quick-data" MCP server in the terminal and argues that relying solely on tool calling misses out on the immense leverage of prompts.*
 
 [02:00]
-(The view scrolls through the README, showing sections for "Analytics Tools", "Data Loading & Management", "Core Analytics", and "Advanced Analytics".)
 
-Let's just start with a couple simple ones. I'll run this: `load_dataset`. And now we need to pass in a .json or a .csv file. I'll go back to Cursor. If I search for ecommerce orders, you can see we have this simple JSON list. I'll copy the reference to this file with Command+Shift+R. Then I'll hop back to Claude Code, paste this in, and have it load.
+(The speaker types `/model` inside Claude Code and selects "Sonnet 4" from the dropdown list.)
 
-(The speaker copies the relative path of `ecommerce_orders.json` and pastes it into the Claude Code terminal.)
+**Speaker**: We all know how tools work, but let's run a few to understand the `quick-data` MCP server and showcase how limited tool calls really are. If we type `/model`, we're going to run the Sonnet 4 fast workhorse model for this. So right away, we have a problem. I have no idea what I can do with this MCP server. I have to rely on some type of documentation. 
 
-All right, so as expected, we have this `load_dataset` MCP server tool. It has the file path and the dataset name `ecommerce_orders`. This looks great. We'll go ahead and accept this.
+(The Cursor IDE opens, displaying a `README.md` file titled "Generic Data Analytics MCP Server".)
 
-(A "Tool use" prompt appears, which the speaker accepts. A JSON response confirms the dataset is loaded, showing status, name, rows, and columns.)
+**Speaker**: Let's open up Cursor and break open the README. 
 
 [02:30]
-And you can see our JSON response. If we hit Control+R, you can see the entire thing. Columns, rows, dataset name. Looks great. So let's go ahead and get a dataset breakdown. So I'll paste. This also accepts the dataset name. So I'll go ahead, copy and paste this back in, and now we're just going to get some basic information about this dataset. We'll of course accept this tool call. And you can see we have the shape and key information about this dataset.
 
-So far, this looks great. Let's run a couple more tools and then we're going to up-level everything we're doing by looking at the most powerful capability you can add to your MCP server. Let's run `suggest_analysis`.
+(The speaker scrolls through the README, highlighting a list of "Analytics Tools (32 total)" categorized under Data Loading, Core Analytics, and Advanced Analytics.)
 
-(The speaker scrolls back to the README in Cursor and finds the `suggest_analysis` tool.)
+**Speaker**: If we scroll down here, I have a completely documented set of all the tools, resources, and prompts available for this MCP server. But let's just start with a couple simple ones. I'll run this: `load_dataset`. And now we need to pass in a `.json` or a `.csv` file. I'll go back to Cursor. If I search for `ecommerce_orders`, you can see we have this simple JSON list. 
 
-Paste. And then I'll just say `ecom...` This is going to be auto-completed for us based on the current context.
+(The speaker uses a keyboard shortcut to copy the relative path of `ecommerce_orders.json` in Cursor and pastes it back into the terminal.)
+
+**Speaker**: I'll copy the reference to this file with Command+Shift+R, then hop back to Claude Code, paste this in, and have it load.
 
 [03:00]
-There it is, `suggest_analysis`. Let's see what we get. So we have a couple of ideas given to us based on that tool call. `run command #1`. Fire this off. We're now going to get a segment breakdown by this `product_category` column. So check this out. We have product category segmentation. We can see that electronics are producing a lot of value inside of this `ecommerce_orders.json` file. So looking at this data from a business strategy perspective, we could, if we wanted to, cut down on sports and home & garden product categories and go all in on electronics based on this insight.
 
-Okay, so there's one more cool tool I want to share with you here. If we scroll down to the bottom, we can execute arbitrary code.
+(The Claude Code CLI prompts the user to confirm the execution of the `quick-data:load_dataset` tool. The user approves, returning a "status: loaded" confirmation.)
+
+**Speaker**: All right, so as expected, we have this `load_dataset` MCP server tool. It has the file path and the dataset name, `ecommerce_orders`. This looks great, we'll go ahead and accept this, and you can see our JSON response. If we hit Control+R, you can see the entire thing: columns, rows, dataset name. Looks great. So let's go ahead and get a dataset breakdown. 
+
+(The user executes the `get_dataset_info` tool in the terminal.)
+
+**Speaker**: So I'll paste... this also accepts the dataset name, so we'll go ahead, copy and paste this back in. And now we're just going to get some basic information about this dataset. We'll of course accept this tool call, and you can see we have the shape and key information about this dataset.
 
 [03:30]
-We can have Claude Code, running on Claude 4 Sonnet, execute arbitrary code for us. So, again, we can just come back in here, paste, we can say `ecom...`. And let's find out the... if we look at the dataset here, we have this `region` column, and we also have `order_value`. So let's find out the top order value by region. `find top 3 region by order_value`. Yep, let's go ahead and fire that off.
 
-(The AI generates a Python code block inside the tool call to perform the requested analysis.)
+**Speaker**: So so far, this looks great. Let's run a couple more tools, and then we're going to uplevel everything we're doing by looking at the most powerful capability you can add to your MCP server. Let's run `suggest_analysis`. 
 
-There we go. So you can see here we have custom code getting written based on our prompt. We'll hit yes. And there is our executed code response. You can see here our top three regions by order value: we have East Coast, West Coast, and of course Midwest in last place. Pretty accurate training data set, right?
+(The speaker types `suggest_analysis` followed by `ecom...` which auto-completes to `ecommerce_orders`.)
+
+**Speaker**: Paste, and then I'll just say `ecom...` This is going to be auto-completed for us based on the current context. There it is, `suggest_analysis`. Let's see what we get. So we have a couple of ideas given to us based on that tool call.
+
+*To demonstrate the standard tool-calling pattern, the speaker loads a JSON dataset of e-commerce orders and requests analytical suggestions.*
 
 [04:00]
-If we want to reuse that same MCP tool call, we can hit up and then I'll say, `then create a pie chart label by region with value and percent`. It's going to create a pie chart for us. Let's go ahead and run this.
 
-(A new browser tab opens, displaying a pie chart titled "Order Value Distribution by Region" with slices for east_coast, west_coast, midwest, and south.)
+(The terminal displays suggested analyses: "Segmentation (high priority)", "Distribution analysis", and "Outlier detection", with suggested shell commands.)
 
-And bam, check this out. You can see we have East Coast, we have West Coast, Midwest, and then the South. We have a great breakdown here. And this was all just quickly created and managed with our MCP server for quick data analytics against .json and .csv files.
+**Speaker**: Run command number one. Fire this off. We're now going to get a segment breakdown by this product category column. So check this out. We have product category segmentation. We can see that electronics are producing a lot of value inside of this `ecommerce_orders.json` file. 
 
-*The speaker demonstrates how to interact with an MCP server through a command-line interface, using tools to load a dataset, get information about it, receive analysis suggestions, segment the data, and even execute custom Python code to generate insights and visualizations.*
+(The terminal lists sales data segmented by category: Electronics has the highest total order value at $2,649.96.)
 
-### Unleashing Agentic Workflows with MCP Server Prompts
+**Speaker**: So looking at this data from a business strategy perspective, we could, if we wanted to, cut down on sports and home garden product categories and go all-in on electronics based on this insight. Okay, so there's one more cool tool I want to share with you here. If we scroll down to the bottom, we can execute arbitrary code.
 
 [04:30]
-So tools are great. We all know about their capabilities. We can build out tools for anything and tools for everything. (Text "TOOLS FOR EVERYTHING" appears on screen.) But tools ONLY scratch the SURFACE of what you can do with your MCP server. To unlock the full capabilities of what you can do, we need to build MCP server prompts.
 
-(A title card appears over a view of clouds at sunset.)
+(The Cursor README shows an "AI-Powered Assistance" tool named `execute_custom_analytics_code`.)
 
-**On-screen text:** MCP SERVER PROMPTS
+**Speaker**: We can have Claude Code, running on Claude 4 Sonnet, execute arbitrary code for us. So again, we can just come back in here, paste, we can say `ecom...` and let's find out... if we look at the dataset here, we have this `region` column, and we also have `order_value`. So let's find out the top order value by region. Find top 3 region order value. Yep, let's go ahead and fire that off. 
 
-So, in order to showcase the capabilities here, we're going to reset this Claude Code instance and really start from scratch. So let's open up Claude again. We'll run the same setup. So you can see here `/mcp`, `/model`, same deal, Sonnet 4.
+(The model automatically generates Python code to group the dataset by region and calculate total order values.)
+
+**Speaker**: There we go. So you can see here, we have custom code getting written based on our prompt.
 
 [05:00]
-So now instead of looking through the documentation... (The speaker opens the Cursor editor showing the code files and the README.) ...right, we had this README that thankfully detailed all of our tools, resources, and prompts. Right, there's the code-based structure. We'll take a look at that in a second. Instead of doing any of this, instead of, you know, relying on code-based architecture, code-based structure, we can just use MCP server prompts to guide the entire discovery and use of the quick-data MCP server. Let me show you exactly what I mean.
 
-To find all the prompts associated with this MCP server inside of Claude Code, we can type `/quick-data`. So this is the name of the MCP server. And here you can see a ton of auto-complete suggestions with prompts.
+(The speaker approves the tool run. The code executes and returns a table showing the East Coast with the highest total sales, followed by the West Coast and Midwest.)
+
+**Speaker**: We'll hit yes, and there is our executed code response, as you can see here. Our top three regions by order value: we have East Coast, West Coast, and of course, Midwest in last place. Pretty accurate training dataset, right? If we want to reuse that same MCP tool call, we can hit up, and then I'll say "then create a pie chart labeled by region value and percent." It's going to create a pie chart for us, let's go ahead and run this...
 
 [05:30]
-So these are prompts built out in the MCP server. Now, we're going to run something really cool, something very useful that I highly recommend you set up inside of all your MCP servers. We're going to list all available MCP server capabilities including prompts, tools, and resources. So this is a prompt that's going to give us a clear breakdown of what we can do with this tool. Okay.
 
-(The speaker runs the `list_mcp_assets_prompt`. The AI responds with a detailed summary of the server's capabilities, including "Key Components" like interactive prompts, tools, and resources, and a "Quick Start Flow".)
+(A local browser window opens at localhost, displaying an interactive Plotly pie chart illustrating the order value distribution across regions.)
 
-Check this out. So Claude Code, our agentic coding tool, has now consumed everything that we can do with this tool. It's now loaded fresh in the context window.
+**Speaker**: ...and bam, check this out. You can see we have East Coast, we have West Coast, Midwest, and then the South. We have a great breakdown here, and this was all just quickly created and managed with our MCP server for quick data analytics against JSON and CSV. 
+
+So tools are great, we all know about their capabilities, we can build out tools for anything, and tools for everything. But tools only scratch the surface of what you can do with your MCP server. To unlock the full capabilities of what you can do, we need to build MCP server prompts.
+
+*The speaker runs arbitrary Python code through the agent to analyze regional sales data and generate an interactive Plotly pie chart, highlighting that tools are powerful but limited on their own.*
 
 [06:00]
-And we have a quick start flow to get started. So now if we want to, we can just ask Claude Code what exactly these key components are. Okay, so I'm just going to say, `what prompts and tools do we have available? List as bullets`. All right, so check this out. So now we can just, you know, query our agent. Right here are the prompts, here are the tools. This is everything that we saw before. Let's go ahead and continue firing off these prompts to really understand what they can do for us. So if we type `/find`, you can see we have another prompt: `find_datasources_prompt`. This is going to discover available data files in the current directory and present them as load options. Now...
+
+(A cloud scene appears briefly with yellow text: "MCP SERVER PROMPTS" before returning to the terminal.)
+
+**Speaker**: So, in order to showcase the capabilities here, we're going to reset this Claude Code instance and really start from scratch. So let's open up Claude again. We'll run the same setup, so you can see here `/mcp`. `/model`, same deal, Sonnet 4. 
+
+(The Cursor project files directory is opened, showing folders for `specs`, `trees`, `data`, and `src/mcp_server`.)
+
+**Speaker**: So now, instead of looking through the documentation, right, we had this README that thankfully detailed all of our tools, resources, and prompts, right? There's the codebase structure, we'll take a look at that in a second. Instead of doing any of this, instead of relying on codebase architecture, codebase structure, we can just use MCP server prompts to guide the entire discovery and use of the `quick-data` MCP server. Let me show you exactly what I mean.
 
 [06:30]
-...see how much more helpful these prompts are than just having tools hidden somewhere? I'm going to hit tab. You can see here we have an argument, the directory path. I'll just hit dot for that and fire that off. So this is going to automatically discover all available .json and .csv files for our quick-data MCP server. So we added a prompt, also known as an agentic workflow, to do this work for us automatically. You can see we also have, take note of this, this is really important, "Ready to load with `load_dataset()` commands."
+
+(The speaker types `/quick-data` in the Claude Code terminal, displaying a list of available prompts built directly into the MCP server.)
+
+**Speaker**: To find all the prompts associated with this MCP server inside of Claude Code, we can type `/` and then `quick-data`. So this is the name of the MCP server, and here you can see a ton of auto-complete suggestions with prompts. So these are prompts built out in the MCP server. Now we're going to run something really cool, something very useful that I highly recommend you set up inside of all your MCP servers. We're going to list available MCP server capabilities, including prompts, tools, and resources. So this is a prompt that's going to give us a clear breakdown of what we can do with this tool.
 
 [07:00]
-So with the previous prompt and this prompt, you can see every prompt we're running, we're getting a suggestion or a forward direction or a next step for what we can do with this MCP server. So what I'm going to do here is just type `load ecom`. So I have a really tight, information-dense keyword prompt, literally just two words, with the current context that we have set up, thanks to our prompts, and thanks to Claude Code running on Claude 4 Sonnet, I can be nearly 100% sure that this is going to run the right tool with the right information. Okay?
+
+(The output of `/quick-data:list_mcp_assets_prompt` details the components of the server and maps out a step-by-step "Quick Start Flow".)
+
+**Speaker**: Okay, check this out. So Claude Code, our agentic coding tool, has now consumed everything that we can do with this tool. It's now loaded fresh in the context window, and we have a quick start flow to get started. So now if we want to, we can just ask Claude Code what exactly these key components are. Okay, so I'm just going to say, "what prompts and tools do we have available? List as bullets."
 
 [07:30]
-So I'll kick this off. And notice how I just, you know, ran through the big three of AI coding: Context, Model, Prompt. (A Venn diagram appears showing three overlapping ovals for CONTEXT, MODEL, and PROMPT.) These never go away. That's why they're a principle of AI coding. They're always there whether you realize it or not. The more you can look and think from your agent's perspective with the current available context, model, and prompt, the more you'll be able to hand off tons and tons of engineering work, which in the end results in your engineering velocity increase. So check this out. We have the file path here, using the full absolute path. Looks great. And then we have the dataset name. Okay?
+
+(Claude Code prints out a comprehensive bulleted list of the server's data exploration, workflow, and visualization capabilities directly in the CLI.)
+
+**Speaker**: Alright, so check this out. So now we can just, you know, query our agent. Right? Here are the prompts, here are the tools, this is everything that we saw before. Let's go ahead and continue firing off these prompts to really understand what they can do for us. Alright, so if we type `/` and then `find`, you can see we have another prompt: `find_datasources_prompt`. This is going to discover available data files inside the current directory and present them as load options. 
+
+Now, see how much more helpful these prompts are than just having tools hidden somewhere? I'm going to hit tab, you can see here we have an argument, the directory path. I'll just hit `.` for that, and fire that off. So this is going to automatically discover all available `.json` and `.csv` files for our `quick-data` MCP server.
 
 [08:00]
-With just typing slash, with just working through a few pre-existing prompts, we're moving a lot faster than if we were looking through, you know, the documentation, going back and forth and back and forth. And that is a really important thing to call out here, right? We haven't left the terminal. We haven't left Claude Code. We're focused, we're moving quickly, and we're operating inside of this MCP server with minimal information. Okay, so we have that dataset loaded. If we scroll back up, you'll remember here at the top that we were given a concrete workflow. You can see, uh, find dataset to discover data files, and then we can run `load_dataset`, and then explore data.
+
+(The system automatically detects `.mcp.json`, `ecommerce_orders.json`, `employee_survey.csv`, and `product_performance.csv` and presents ready-to-run copy/paste commands to load them.)
+
+**Speaker**: So we had a prompt, also known as an agentic workflow, do this work for us automatically. You can see we also have—take note of this, this is really important—"ready to load with `load_dataset` commands." So with the previous prompt and this prompt, you can see, every prompt we're running, we're getting a suggestion or a forward direction or a next step for what we can do with this MCP server. So what I'm going to do here is just type `load ecom`.
 
 [08:30]
-So let's go ahead and run that. I'm going to type `/first`. This is our first look MCP prompt. I'll hit tab, and you can see there the arguments are dataset name. I'll go ahead and just type `ecom...` and we should get auto-completion there. There it is. So this prompt, and we're going to take a look at the individual prompts in a second, is kicking off one or more tools. Okay? So we'll go ahead and fire that off.
 
-(The prompt triggers a tool call to `resource_datasets_sample`. The speaker accepts it.)
+(The model automatically structures and suggests running the `load_dataset` tool on the e-commerce orders path.)
 
-And based on that prompt, right, and based on the information returned by this tool, we're getting a nice breakdown of a sample of this dataset. Size, columns, sample data, looks great. You can see there we actually did get a sample. If we hit Control+R, it broke down, you know, pieces of our data.
+**Speaker**: So, I have a really tight, information-dense keyword prompt, literally just two words, with the current context that we have set up thanks to our prompts, and thanks to Claude Code running on Claude 4 Sonnet, I can be nearly 100% sure that this is going to run the right tool with the right information. Okay? And so I'll kick this off, and notice how I just, you know, ran through the big three of AI coding: context, model, prompt.
+
+*By using the built-in asset-listing and source-finding prompts, the user shows how prompts structure the user experience by dynamically feeding the agent the exact files, commands, and workflow context needed to interact with the environment.*
 
 [09:00]
-So that looks great. Thanks to the existing context window that all of these prompts have been giving our agent, we can just type something like this: `How can we further explore this data?` Okay, so check this out. From the existing context window, we have, you know, tons of ideas of how we can keep pushing this. And this is really useful for when you're operating outside of your MCP server. Obviously, if you're building your MCP server, you have access to the actual code, and you can just kind of, you know, have your agent run through this.
+
+(A Venn diagram illustrating the intersection of "CONTEXT", "MODEL", and "PROMPT" appears on screen.)
+
+**Speaker**: These never go away, that's why they're a principle of AI coding. They're always there whether you realize it or not. The more you can look and think from your agent's perspective with the current available context, model, and prompt, the more you'll be able to hand off tons and tons of engineering work, which in the end results in your engineering velocity increase. 
+
+So check this out, we have the file path here, using the full absolute path, looks great, and then we have the dataset name. Okay? With just typing slash, with just working through a few pre-existing prompts, we're moving a lot faster than if we were looking through, you know, the documentation going back and forth and back and forth.
 
 [09:30]
-But when we're operating in this, when we're handing off our MCP servers to our team, to our engineering team, and when we're exposing our MCP servers to the public, we want it easy to use, we want it to be quickly consumable, and we want these guided workflows, okay? Prompts are really important because they can return entire sets of information to your agent, and they can provide next steps. You can keep pushing yourself, you can keep pushing engineers on your team, and pushing the agent in the right direction for your domain-specific problem set. Okay? So let's go ahead, let's run another prompt. So we can do `/quick-data` to see all of our prompts.
+
+(Thumbnails of previous videos appear in a grid on the screen, illustrating different AI coding and prompt-engineering strategies.)
+
+**Speaker**: And that is a really important thing to call out here, right? We haven't left the terminal, we haven't left Claude Code. We're focused, we're moving quickly, and we're operating inside of this MCP server with minimal information. Okay, so we have that dataset loaded. If we scroll back up, you'll remember here at the top that we were given a concrete workflow. You can see `find_dataset` to discover data files, and then we can run `load_dataset`, and then explore data. So let's go ahead and run that, I'm going to type `/` and then `first`.
 
 [10:00]
-Let's go ahead and run the `correlation_investigation_prompt`. So this is going to find correlations inside of our dataset. We'll of course type `ecom...` And before we run this, let me show you exactly what these prompts look like inside of the MCP server. So I'll open up Cursor, and we're just going to search for that prompt. And notice how I just have a single method inside of this file. And since we're here, let's talk about code-based architecture. This is important. So I have the codebase embedded in its own directory here. And on top, you can see the three essential directories for agentic coding, and you can see our `trees` directory for multi-agent parallel AI coding.
+
+(The speaker executes the `dataset_first_look_prompt` prompt on `ecommerce_orders` in the CLI.)
+
+**Speaker**: This is our `first_look` MCP prompt, I'll hit tab, and you can see there the arguments are dataset name. I'll go ahead and just type `ecom...` and we should get auto-completion there. There you go. So this prompt—and we're going to take a look at the individual prompts in a second—is kicking off one or more tools. Okay? So we'll go ahead, fire that off, and based on that prompt, right, and based on the information returned by this tool, we're getting a nice breakdown of a sample of this dataset: size, columns, sample data, looks great.
 
 [10:30]
-(The speaker shows a file explorer view with folders: `claude`, `project`, `trees`, and `arch-modular-mcp`.)
 
-Check out the previous video to see how we parallelize Claude Code into multiple trees to get work done at the same time. But if we click into `arch-modular-mcp` and we take a look at the architecture here, you can see we have our data there, and then we have `src`, `mcp_server`, and we have the primitives of the MCP server, right? Tools, resources, and prompts. If we open up prompts, we can see our `correlation_investigation_prompt.py` here inside of a single function. These are all single-function Python files to keep everything nice and isolated and easily testable. So if we hop up to this file, we can see something really cool. We're passing in the dataset name, and then we're just running arbitrary code, which is effectively our agentic workflow.
+(The user expands the returned JSON sample to inspect the data columns.)
+
+**Speaker**: You can see there we actually did get a sample. If we hit Control+R, it broke down, you know, pieces of our data, so that looks great. Thanks to the existing context window that all of these prompts have been giving our agent, we can just type something like this: "how can we further explore this data?"
 
 [11:00]
-You can do anything you want here. The most important thing is to gather some type of prompt response and then return that back to your agent. Right, this is what's going to get passed right back into the agent. So you can see, we have lots of detail on the correlation investigation, a couple of branching of logic here, a loop, and you can see we're loading that schema out of our existing dataset. So let's go ahead, let's run this. This is going to run a really great analysis on our dataset. Okay? So we're going to close that. Let's run this. So this prompt is kicking off a tool call, and this is super important. Inside of your prompt, you can kick off one or more tool calls.
+
+(Claude Code lists the available analytical strategies in the current context, categorized by Direct Analysis Tools, Business Insights, Visualization, and Custom Analysis.)
+
+**Speaker**: Okay, so check this out. From the existing context window, we have, you know, tons of ideas of how we can keep pushing this. And this is really useful for when you're operating outside of your MCP server. Obviously, if you're building your MCP server, you have access to the actual code, and you can just kind of, you know, have your agent run through this. 
+
+But when we're operating in this, when we're handing off our MCP server to our team, to our engineering team, and when we're exposing our MCP servers to the public, we want it easy to use, we want it to be quickly consumable, and we want these guided workflows.
 
 [11:30]
-You can see here how the prompt allows you to compose sequences of tool calls very, very quickly using a custom slash command here. Okay? So quick commands to start, you can see that we're picking this up automatically. This is getting returned into the context window, and now Claude Code, running on Claude 4, wants to kick this off for us based on this prompt. Okay? So of course we'll hit yes. And you can see there we're getting some concrete feedback. We need at least two numerical columns for correlation analysis. Okay, so we're going to kick this off. This is going to re-expose information back into our agent.
+
+**Speaker**: Okay, prompts are really important because they can return entire sets of information to your agent, and they can provide next steps. You can keep pushing yourself, you can keep pushing engineers on your team, and pushing the agent in the right direction for your domain-specific problem set. Let's go ahead, let's run another prompt. So we can do `/` and then `quick-data` to see all of our prompts. Let's go ahead and run the `correlation_investigation_prompt`.
 
 [12:00]
-So, `ecommerce_orders` cannot run this. So our tools are giving us feedback, all guided by our prompt. So let's go ahead and load some more data, right? We can very quickly thanks to our slash command just run `/find`. And let's go ahead and find those other data sources that we have. I'll specify the directory here, dot, and this is going to re-load all of our data sources. So you can see here, we can load these two additional data sources. Let's go ahead and load these. So I'm just going to say, `load all`. So now we're going to get those two prompts. There's our `employee_survey` dataset. And here's our `product_performance` dataset. We'll hit yes, yes.
+
+(The speaker navigates to the Cursor project tree and opens the file `correlation_investigation_prompt.py`.)
+
+**Speaker**: So this is going to find correlations inside of our dataset. We'll of course type `ecom...` and before I run this, let me show you exactly what these prompts look like inside of the MCP server. So we'll open up Cursor, and we're just going to search for that prompt. Notice how I just have a single method inside of this file? And since we're here, let's talk about codebase architecture. This is important.
+
+*Prompts allow the engineer to create modular, self-guiding, and highly consumable interfaces that assist team members or public consumers without requiring them to read code or documentation.*
 
 [12:30]
-"Now you have multiple numerical columns across datasets for correlation analysis!" Okay, so I'll just say `run analysis on employee, product`. Okay. So there it is. There's that find correlation lookup. And you can see here it's queued up several calls, several tool calls that we can now kick off. So this is one way to activate this workflow. That's great. I'm going to hit escape here and I'm going to reuse the slash command that we were we were going for. So I'm going to type `/correlation_investigation_prompt`. Looks great. And then I'll pass in... let's use our `employee_survey`.
+
+(The Cursor file panel displays the modular codebase layout under `arch-modular-mcp/src/mcp_server`, showing isolated folders for `prompts`, `resources`, and `tools`.)
+
+**Speaker**: So, I have the codebase embedded in its own directory here. And on top, you can see the three essential directories for agentic coding. And you can see our trees directory for multi-agent parallel AI coding. Check out the previous video to see how we parallelize Claude Code into multiple trees to get work done at the same time. But if we click into `arch-modular-mcp` and we take a look at the architecture here, you can see we have our data there, then we have `src/mcp_server`, and we have the primitives of the MCP server: tools, resources, and prompts.
 
 [13:00]
-So I'll paste that in, and let's run the investigation prompt here. This should kick off a similar workflow. There it is. So this prompt is exposing the potential columns that we can correlate. So there's a strong positive correlation between satisfaction score and tenure year. That means employees with higher satisfaction scores tend to have longer tenure. And so this reveals, you know, not to get too specific into the weeds of this MCP server, but this is important because it's going to immediately reveal to us that satisfaction and retention are closely linked. Satisfied employees stay longer. Not a mind-blowing revelation, but this could be anything inside of your dataset. Okay, I'm just, I'm just putting together a small concise example that we can, you know, discuss to showcase the power of these MCP server prompts.
+
+(The speaker views the prompt files list, showing single-responsibility files for each custom prompt workflow.)
+
+**Speaker**: If we open up `prompts`, we can see our `correlation_investigation_prompt` inside of this single file. These are all single-function Python files to keep everything nice and isolated and easily testable. So, if we hop up to this file, we can see something really cool: we're passing in the dataset name, and then we're just running arbitrary code, which is effectively our agentic workflow. So you can do anything you want here, the most important thing is to gather some type of prompt response, and then return that back to your agent.
 
 [13:30]
-Okay? "Do you want to visualize this with option 2?" I'll say go ahead. And we'll just continue walking through... `create_chart`. So let's go ahead and fire that off. We now have an additional chart setup here. We can open this up. So we can copy this file path here. If we go into HTML preview mode, we can see this chart generated. If you average these out over the satisfaction score, you can see we have a pretty strong correlation here between tenure and satisfaction score.
+
+(The Python code returns a highly detailed F-string prompt containing analytical options and correlation formulas.)
+
+**Speaker**: Right, this is what's going to get passed right back into the agent. So you can see we have lots of detail on the correlation investigation, a couple of branches of logic here, a loop, and you can see we're loading that schema out of our existing dataset. So let's go ahead, let's run this, this is going to run a really great analysis on our dataset, okay? So we're going to close that. Let's run this.
 
 [14:00]
-So, very powerful stuff. So what does this all mean, right? Why are prompts inside of your MCP server so important? Right away, by using this MCP server, we were able to move a lot faster. If we close Claude here, reopen it, and we type `/assets`, we can get our agent back up and running with this MCP server very quickly. Okay? So prompts allow you to quickly set up your agent with everything they need to know to operate your MCP server.
+
+(Back in Claude Code, the user runs the `correlation_investigation_prompt` prompt on `ecommerce_orders`, triggering an immediate tool call to `find_correlations`.)
+
+**Speaker**: So this prompt is kicking off a tool call, and this is super important. Inside of your prompts, you can kick off one or more tool calls. You can see here how the prompt allows you to compose sequences of tool calls very, very quickly using a custom slash command here. Okay? So quick commands to start, you can see that we're picking this up automatically, this is getting returned into the context window, and now Claude Code running on Claude 4 wants to kick this off for us based on this prompt.
 
 [14:30]
-So this is just one simple way you can use MCP server prompts. Check this out. And we can look at this exact prompt. Right, this is the `list_mcp_assets` prompt. So check this out. Look how simple this is. This is quite literally just returning essential information about this MCP server in a custom way to our agent. This prompt primes both your memory and your agent's memory with everything it needs to know about your MCP server. Every MCP server I build out now has some type of prompt just like this. So now everything is exposed. We can quickly see and operate on things in a much faster way. We can always type `/quick-` and start understanding our datasets. Right?
+
+(The tool call to `find_correlations` outputs an error: "Need at least 2 numerical columns for correlation analysis". The model then checks the column data types to identify alternatives.)
+
+**Speaker**: Okay, so of course we'll hit yes. And you can see there we're getting some concrete feedback, okay? We need at least two numerical columns for correlation analysis. Okay? So we can go ahead, kick this off. This is going to re-expose information back into our agent. So `ecommerce_orders` cannot run this, okay? So our tools are giving us feedback, all guided by our prompt. Well, let's go ahead and load some more data, right? We can very quickly, thanks to our slash command, just run `/find`.
 
 [15:00]
-So, you know, we then ran our `find`, and we passed in dot, and this is going to re-load all of our data sources. So you can see here, with this prompt we can load these two additional data sources. Let's go ahead and load these. So I'm just going to say, `load all datasets`. Okay, so there's three prompts instead of one. Right, we can move a lot faster thanks to the prompt. Okay? So we're going to load bam, bam, bam. Now we have all three datasets loaded. Fantastic. And now we can run, you know, our `dataset_first_look` if we wanted to. We can continue down the line of data exploration or running whatever other tools or prompts our MCP server exposes to us.
+
+(The speaker runs the `/quick-data:find_datasources_prompt` prompt to scan for other compatible files.)
+
+**Speaker**: And let's go ahead and find those other data sources that we have. I'll specify the directory here, `.`, and this is going to reload all of our data sources. So you can see here, we can load these two additional datasets. Let's go ahead and load these. So I'm just going to say `load all`.
 
 [15:30]
-With prompts, you can build out high-quality MCP servers that do more than just call tools. Tool calling is just the beginning. Tools are the primitives of MCP servers, not the end state. You want to end up with prompts, right? Prompts represent end-to-end developer workflows that are truly agentic workflows, or as I like to call them, AI Developer Workflows, right? They're quite literally doing developer work that you would do, but it's powered, of course, by GenAI. You really want to be thinking about MCP servers as a way to solve a domain-specific problem in an automated fashion with repeat solutions embedded inside of the prompts.
+
+(The system automatically structures and queues loading commands for both `employee_survey.csv` and `product_performance.csv`.)
+
+**Speaker**: So now we're going to get those two prompts, there's our `employee_survey` dataset, and here is our `product_performance` dataset. We'll hit yes, yes. "Now you have multiple numerical columns across datasets for correlation analysis!" Okay, so I'll just say "run analysis on employee, product."
 
 [16:00]
-The prompt is what the tools scale into. This codebase is linked in the description to give you a concrete example of how you can use prompts inside your MCP servers. Come in here, play with it, `cd` into this folder name. I'll probably change this by the time you see it, and you'll be able to quickly boot up Claude Code with this `.mcp.json` file here. If you made it to the end, like, comment to let the YouTube algorithm know you want more hands-on engineering information like this. You know where to find me every Monday. Stay focused and keep building.
+
+(The CLI executes multiple consecutive analysis tools based on the combined loaded context.)
+
+**Speaker**: Okay, so there it is, there's that `find_correlations` lookup, and you can see here it's queued up several calls, several tool calls, that we can now kick off. So this is one way to, you know, activate this workflow. That's great. I'm going to hit Escape here, and I'm going to reuse the slash command that we were going for. So I'm going to type `/correlation` investigation prompt, looks great, and then I'll pass in, let's use our `employee_survey`.
+
+*The speaker details the modular codebase architecture where each prompt acts as an independent Python file that orchestrates multiple custom tool-calling sequences based on system constraints.*
+
+[16:30]
+
+(The speaker executes the correlation prompt on `employee_survey`, finding that it contains two numerical variables: `satisfaction_score` and `tenure_years`.)
+
+**Speaker**: So, I'll paste that in, and let's run the investigation prompt here. This should kick off a similar workflow. There it is. So, this prompt is exposing the potential columns that we can correlate. So, I'm going to go ahead, I want to kick off this first flow that was revealed by this prompt. Super simple, it's a slash command that's exposed by our MCP server prompts that we just pass in one variable to work with, okay?
+
+[17:00]
+
+(The speaker commands the agent to execute "run option 1", running the `find_correlations` tool on the target columns.)
+
+**Speaker**: So, go ahead and type "run option 1". Okay? So, this should pop up `find_correlations`. There it is, fire off our correlations, and let's see what we get here. So, check this out, strong correlation found: we have satisfaction score correlated with tenure years. All right, so if we open up this dataset...
+
+[17:30]
+
+(The speaker reviews `employee_survey.csv` inside Cursor, validating the raw variables against the calculated correlation coefficient of `0.864`.)
+
+**Speaker**: ...just to take a look at this, you can see several columns: tenure year, satisfaction score, simple CSV file, and this prompt, and the tools called by the prompt, found this strong correlation. Okay, so there's a strong positive correlation between satisfaction score and tenure year. That means employees with higher satisfaction scores tend to have longer tenure.
+
+[18:00]
+
+**Speaker**: And so, this reveals, you know, not to get too specific into the weeds of this MCP server, but this is important because it's going to immediately reveal to us that satisfaction and retention are closely linked, satisfied employees stay longer. Not a mind-blowing (laughter) revelation, but this could be anything inside of your dataset, okay? 
+
+I've just... I've just put together a small, concise example that we can discuss to showcase the power of these MCP server prompts. Okay. "Do you want to visualize this with option 2?" I'll say "go ahead."
+
+[18:30]
+
+(The system automatically calls the `create_chart` tool to plot satisfaction score against tenure years, generating a scatter plot HTML file.)
+
+**Speaker**: And we'll just continue walking through `create_chart`. Let's go ahead and fire that off. We now have an additional chart set up here, we can open this up. So, we can copy this file path here. If we go into HTML preview mode, we can see this chart generated. If you average this out over the satisfaction score, you can see we have a pretty strong correlation here between tenure and satisfaction score.
+
+[19:00]
+
+(The HTML preview reveals a clear upward trend on the scatter plot showing that higher satisfaction correlates directly with longer company tenure.)
+
+**Speaker**: So, very powerful stuff. So, what does this all mean, right? Why are prompts inside of your MCP server so important? Right away, by using this MCP server, we were able to move a lot faster. If we close Claude here, reopen it, and we type `/assets`...
+
+[19:30]
+
+(The terminal is cleared and restarted. Typing `/assets` triggers `/quick-data:list_mcp_assets_prompt`, rapidly priming the agent with the entire server's capabilities and datasets.)
+
+**Speaker**: ...we can get our agent back up and running with this MCP server very quickly, okay? So prompts let you quickly set up your agent with everything they need to know to operate your MCP server. So this is just one simple way you can use MCP server prompts. Check this out. We can look at this exact prompt, right? This is the `list_mcp_assets_prompt`. So check this out, look how simple this is. This is quite literally just returning...
+
+*Through the execution of correlation analysis and interactive visualization, the speaker highlights that prompts can effortlessly guide complex analytical steps on any dataset without requiring user context tracking.*
+
+[20:00]
+
+(The speaker shows the code behind `list_mcp_assets_prompt.py`, illustrating how a static string serves as a comprehensive capabilities ledger.)
+
+**Speaker**: ...essential information about this MCP server in a custom way to our agent. This prompt primes both your memory and your agent's memory with everything it needs to know about your MCP server. Every MCP server I build out now has some type of prompt just like this. So now everything is exposed, we can quickly see and operate on things in a much faster way. We can always type `/quick-` and start understanding our datasets, right? So we then ran our `find`...
+
+[20:30]
+
+(The speaker reviews the `find_datasources_prompt.py` codebase on Cursor.)
+
+**Speaker**: ...and we passed in `.`. Prompts allow us to prime our agent in powerful ways and run arbitrary Claude Code tools. So inside of the `find_datasources_prompt`—again, we can just search this—I've isolated everything into its own file. This is another great pattern I highly recommend you follow. We have our `find_datasources_prompt`, which is running arbitrary code. Principled AI coding members know this as an ADW, an AI developer workflow.
+
+[21:00]
+
+**Speaker**: That's all these prompts are. They're end-to-end chains of prompts and code coupled together that end up in a simple string return value. So after we scan all the directories, we do something really powerful: in multiple use cases and multiple scenarios, we offer the agent suggestions. This is really, really powerful. Our agent is ready for the next step, right? It wants these `load_dataset` commands. So this time around, you know, this is an agent, it's powerful, it's got the new Claude 4 model, we can just say "load all datasets."
+
+[21:30]
+
+(The speaker runs "load all datasets" in Claude Code, loading all discovered CSV files in seconds.)
+
+**Speaker**: Okay, so there's three prompts instead of one, right? We can move a lot faster thanks to the prompt. Okay? So we can load bam, bam, bam. Now we have all three datasets loaded. Fantastic, and now we can run, you know, our dataset first look if we wanted to. We can continue down that line that we were running before: `/dataset first look`. You know, this is just, you know, two or three of many prompts that we have here. There's really no limit to what you can do with your prompts inside of your MCP server.
+
+[22:00]
+
+(The speaker displays the MCP feature matrix. Under "Claude Code", "Prompts" and "Tools" are checked green, whereas "Resources" is crossed red.)
+
+**Speaker**: So we have prompts, resources, and tools. Claude Code does not support resources. If we open up the example clients and search Claude Code, you can see here that, you know, Claude Code does not have resource support, but it has the two that really matter: prompts and tools. You can also substitute your resources for just specific tool calls. I've done that inside this codebase, you can check that out if you're interested. But recentering on the key idea here: why do we create prompts? Because prompts allow us to create agentic workflows, they allow us to compose our tools.
+
+[22:30]
+
+(The code for `load_dataset_tool.py` is shown in Cursor as a singular, simple file-loading instruction.)
+
+**Speaker**: Tools are individual actions. Here's our `load_dataset` tool, and you can see it just does one thing, right? It takes one action: it loads the dataset into memory. Tools are individual actions, prompts are recipes for repeat solutions. This is the big difference. Your prompts have three massive advantages that your tools don't have. You can, with Claude Code, reference all of your prompts in a clean, detailed way very quickly, okay? So no more guessing.
+
+*While tools act as single-responsibility operational atoms, prompts serve as robust, multi-step orchestration recipes that sequence these atoms into powerful, repeatable developer workflows.*
+
+[23:00]
+
+**Speaker**: You can quickly get up and running with whatever MCP server you have. So second, your prompts can compose tools in your MCP server together. Okay, this is super, super powerful. You saw multiple times here our prompt was then kicking off individual tools that exist underneath the prompts, right? That's why we have this tier list order of capability: prompts greater than tools, greater than resources.
+
+[23:30]
+
+(The terminal displays the automated execution of file loading based on prompt guides.)
+
+**Speaker**: And lastly, a super, super underutilized element of prompts is that you can guide the experience. At the end, our agent is saying, "use dataset first look to explore any dataset." So our agent, through the prompt that was run here, triggered not just a sequence of tools, but also a guide and a direction for you, the engineer operating the tool, and more importantly every single day, it's giving our agent the next steps. Okay? So `load_dataset`, `load_dataset`, `load_dataset`, and then we can just, you know, very quickly, very calmly, say things like this: "load all datasets" and then continue down the line of data exploration running whatever other tools or prompts our MCP server exposes to us.
+
+[24:00]
+
+**Speaker**: With prompts, you can build out high-quality MCP servers that do more than just call tools. Tool calling is just the beginning. Tools are the primitives of MCP servers, not the end state. You want to end up with prompts, right? Prompts represent end-to-end developer workflows that are truly agentic workflows or, as I like to call them, AI developer workflows. Right? They are quite literally doing developer work that you would do, but it's powered, of course, by gen AI.
+
+[24:30]
+
+(The top-down shot of the laptop on the desk returns as the speaker concludes the video.)
+
+**Speaker**: You really want to be thinking about MCP servers as a way to solve a domain-specific problem in an automated fashion with repeat solutions embedded inside of the prompts. The prompt is what the tools scale into. 
+
+This codebase is linked in the description to give you a concrete example of how you can use prompts inside of your MCP servers. Come in here, play with it, CD into this folder name—I'll probably change this by the time you see it—and you'll be able to quickly boot up Claude Code with this `.mcp.json` file here. If you made it to the end, like, comment to let the YouTube algorithm know you want more hands-on engineering information like this. You know where to find me every Monday. Stay focused, and keep building.
+
+*The speaker concludes by urging developers to design MCP servers with prompts in mind, packaging workflows as complete solutions rather than scattered, standalone tools.*
 
 </details>
 
@@ -6290,2840 +3828,85 @@ The prompt is what the tools scale into. This codebase is linked in the descript
 ## Additional Sources Scraped
 
 <details>
-<summary>connect-claude-code-to-tools-via-mcp-claude-docs</summary>
+<summary>connect-claude-code-to-tools-via-mcp-claude-code-docs</summary>
 
-Claude Code can connect to hundreds of external tools and data sources through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), an open-source standard for AI-tool integrations. MCP servers give Claude Code access to your tools, databases, and APIs.
+{'type': 'text', 'text': 'Claude Code can connect to hundreds of external tools and data sources through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), an open source standard for AI-tool integrations. MCP servers give Claude Code access to your tools, databases, and APIs.Connect a server when you find yourself copying data into chat from another tool, like an issue tracker or a monitoring dashboard. Once connected, Claude can read and act on that system directly instead of working from what you paste.\n\n## What you can do with MCP\n\nWith MCP servers connected, you can ask Claude Code to:\n\n- **Implement features from issue trackers**: “Add the feature described in JIRA issue ENG-4521 and create a PR on GitHub.”\n- **Analyze monitoring data**: “Check Sentry and Statsig to check the usage of the feature described in ENG-4521.”\n- **Query databases**: “Find emails of 10 random users who used feature ENG-4521, based on our PostgreSQL database.”\n- **Integrate designs**: “Update our standard email template based on the new Figma designs that were posted in Slack”\n- **Automate workflows**: “Create Gmail drafts inviting these 10 users to a feedback session about the new feature.”\n- **React to external events**: An MCP server can also act as a [channel](https://code.claude.com/docs/en/channels) that pushes messages into your session, so Claude reacts to Telegram messages, Discord chats, or webhook events while you’re away.\n\n## Find and build MCP servers\n\nBrowse reviewed connectors in the [Anthropic Directory](https://claude.ai/directory). Directory connectors use the same MCP infrastructure as Claude Code, so you can add any remote server listed there with `claude mcp add`.\n\nVerify you trust each server before connecting it. Servers that fetch external content can expose you to [prompt injection risk](https://code.claude.com/docs/en/security#protect-against-prompt-injection).\n\nTo build your own server, see the [MCP server guide](https://modelcontextprotocol.io/docs/develop/build-server) for protocol fundamentals and the [Claude connector building docs](https://claude.com/docs/connectors/building) for authentication, testing, and Directory submission.You can also have Claude scaffold a server for you with the official [`mcp-server-dev` plugin](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/mcp-server-dev).\n\nInstall the plugin\n\nIn a Claude Code session, run:\n\n```\n/plugin install mcp-server-dev@claude-plugins-official\n```\n\nIf Claude Code reports that the marketplace is not found, run `/plugin marketplace add anthropics/claude-plugins-official` first, then retry the install. Once installed, run `/reload-plugins` to activate it in the current session.\n\nRun the build skill\n\n```\n/mcp-server-dev:build-mcp-server\n```\n\nClaude asks about your use case and scaffolds a remote HTTP or local stdio server.\n\n## Installing MCP servers\n\nMCP servers can be configured in several ways depending on your needs:\n\n### Option 1: Add a remote HTTP server\n\nHTTP servers are the recommended option for connecting to remote MCP servers. This is the most widely supported transport for cloud-based services.\n\n```\n# Basic syntax\nclaude mcp add --transport http <name> <url>\n\n# Real example: Connect to Notion\nclaude mcp add --transport http notion https://mcp.notion.com/mcp\n\n# Example with Bearer token\nclaude mcp add --transport http secure-api https://api.example.com/mcp \\\n  --header "Authorization: Bearer your-token"\n```\n\nWhen configuring MCP servers via JSON in `.mcp.json`, `~/.claude.json`, or `claude mcp add-json`, the `type` field accepts `streamable-http` as an alias for `http`. The MCP specification uses the name `streamable-http` for this transport, so configurations copied from server documentation work without modification.\n\n### Option 2: Add a remote SSE server\n\nThe SSE (Server-Sent Events) transport is deprecated. Use HTTP servers instead, where available.\n\n```\n# Basic syntax\nclaude mcp add --transport sse <name> <url>\n\n# Real example: Connect to Asana\nclaude mcp add --transport sse asana https://mcp.asana.com/sse\n\n# Example with authentication header\nclaude mcp add --transport sse private-api https://api.company.com/sse \\\n  --header "X-API-Key: your-key-here"\n```\n\n### Option 3: Add a local stdio server\n\nStdio servers run as local processes on your machine. They’re ideal for tools that need direct system access or custom scripts.Claude Code sets `CLAUDE_PROJECT_DIR` in the spawned server’s environment to the project root, so your server can resolve project-relative paths without depending on the working directory. This is the same directory hooks receive in their `CLAUDE_PROJECT_DIR` variable. Read it from inside your server process, for example `process.env.CLAUDE_PROJECT_DIR` in Node or `os.environ["CLAUDE_PROJECT_DIR"]` in Python. Your server can also call the MCP `roots/list` request, which returns the directory Claude Code was launched from.This variable is set in the server’s environment, not in Claude Code’s own environment, so referencing it via `${VAR}` expansion in a project- or user-scoped `.mcp.json``command` or `args` requires a default such as `${CLAUDE_PROJECT_DIR:-.}`. Plugin-provided MCP configurations substitute `${CLAUDE_PROJECT_DIR}` directly and don’t need the default.\n\n```\n# Basic syntax\nclaude mcp add [options] <name> -- <command> [args...]\n\n# Real example: Add Airtable server\nclaude mcp add --env AIRTABLE_API_KEY=YOUR_KEY --transport stdio airtable \\\n  -- npx -y airtable-mcp-server\n```\n\n**Important: Separate server arguments with `--`**For stdio servers, the `--` (double dash) separates Claude’s own options, such as `--transport`, `--env`, and `--scope`, from the command and arguments that run the server. Everything after `--` is passed to the server untouched.For example:\n\n- `claude mcp add --transport stdio myserver -- npx server` → runs `npx server`\n- `claude mcp add --env KEY=value --transport stdio myserver -- python server.py --port 8080` → runs `python server.py --port 8080` with `KEY=value` in environment\n\nWithout `--`, Claude Code would try to parse the server’s flags, like `--port` above, as its own options.`--env` accepts multiple `KEY=value` pairs. If the server name comes directly after `--env`, the CLI reads the name as another pair and rejects it, so place at least one other option between `--env` and the server name, as in the examples above.\n\n### Option 4: Add a remote WebSocket server\n\nWebSocket servers hold a persistent bidirectional connection, which suits remote MCP servers that push events to Claude unprompted. Use HTTP instead when your server only responds to requests, since HTTP supports OAuth and the `claude mcp add --transport` flag, while WebSocket supports neither.Configure WebSocket servers in `.mcp.json` or with `claude mcp add-json`:\n\n```\nclaude mcp add-json events-server \\\n  \'{"type":"ws","url":"wss://mcp.example.com/socket","headers":{"Authorization":"Bearer YOUR_TOKEN"}}\'\n```\n\nThe `type: "ws"` entry accepts the same `url`, `headers`, `headersHelper`, `timeout`, and `alwaysLoad` fields as `http`. Authentication is header-only, so pass a static token in `headers` or generate one at connect time with [`headersHelper`](https://code.claude.com/docs/en/mcp#use-dynamic-headers-for-custom-authentication). The `claude mcp add --transport` flag does not accept `ws`.\n\n### Managing your servers\n\nOnce configured, you can manage your MCP servers with these commands:\n\n```\n# List all configured servers\nclaude mcp list\n\n# Get details for a specific server\nclaude mcp get github\n\n# Remove a server\nclaude mcp remove github\n\n# (within Claude Code) Check server status\n/mcp\n```\n\nProject-scoped servers from `.mcp.json` that are awaiting your approval appear in `claude mcp list` as `⏸ Pending approval`. Run `claude` interactively to review and approve them. `claude mcp get <name>` shows pending servers as `⏸ Pending approval` and rejected servers as `✗ Rejected`.The `/mcp` panel shows the tool count next to each connected server and flags servers that advertise the tools capability but expose no tools.If your request needs tools from a server that is still connecting in the background, Claude waits for that server before continuing. With [tool search](https://code.claude.com/docs/en/mcp#scale-with-mcp-tool-search) enabled, which is the default, the wait happens inside the `ToolSearch` call. In configurations without tool search, such as Vertex AI, a custom `ANTHROPIC_BASE_URL`, or `ENABLE_TOOL_SEARCH=false`, Claude uses the `WaitForMcpServers` tool instead.The server name `workspace` is reserved for internal use. If your configuration defines a server with that name, Claude Code skips it at load time and shows a warning asking you to rename it.\n\n### Dynamic tool updates\n\nClaude Code supports MCP `list_changed` notifications, allowing MCP servers to dynamically update their available tools, prompts, and resources without requiring you to disconnect and reconnect. When an MCP server sends a `list_changed` notification, Claude Code automatically refreshes the available capabilities from that server.\n\n### Automatic reconnection\n\nIf an HTTP or SSE server disconnects mid-session, Claude Code automatically reconnects with exponential backoff: up to five attempts, starting at a one-second delay and doubling each time. The server appears as pending in `/mcp` while reconnection is in progress. After five failed attempts the server is marked as failed and you can retry manually from `/mcp`. Stdio servers are local processes and are not reconnected automatically.The same backoff applies when an HTTP or SSE server fails its initial connection at startup. As of v2.1.121, Claude Code retries the initial connection up to three times on transient errors such as a 5xx response, a connection refused, or a timeout, then marks the server as failed if it still cannot connect. Authentication and not-found errors are not retried because they require a configuration change to resolve.\n\n### Push messages with channels\n\nAn MCP server can also push messages directly into your session so Claude can react to external events like CI results, monitoring alerts, or chat messages. To enable this, your server declares the `claude/channel` capability and you opt it in with the `--channels` flag at startup. See [Channels](https://code.claude.com/docs/en/channels) to use an officially supported channel, or [Channels reference](https://code.claude.com/docs/en/channels-reference) to build your own.\n\nTips:\n\n- Use the `--scope` flag to specify where the configuration is stored:\n\n  - `local` (default): Available only to you in the current project (was called `project` in older versions)\n  - `project`: Shared with everyone in the project via `.mcp.json` file\n  - `user`: Available to you across all projects (was called `global` in older versions)\n- Set environment variables with `--env` flags (for example, `--env KEY=value`)\n- Configure MCP server startup timeout using the MCP\\_TIMEOUT environment variable (for example, `MCP_TIMEOUT=10000 claude` sets a 10-second timeout)\n- Set a per-server tool execution timeout by adding a `timeout` field in milliseconds to that server’s `.mcp.json` entry, for example `"timeout": 600000` for ten minutes. This overrides the `MCP_TOOL_TIMEOUT` environment variable for that server only\n- Claude Code will display a warning when MCP tool output exceeds 10,000 tokens. To increase this limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`)\n- Use `/mcp` to authenticate with remote servers that require OAuth 2.0 authentication\n\nThe per-server `timeout` is a hard wall-clock limit per tool call, and progress notifications from the server do not extend it. Values below 1000 are ignored and fall through to `MCP_TOOL_TIMEOUT`, or to its default of about 28 hours when that variable is unset. Before v2.1.162, values below 1000 were floored to one second instead. For HTTP and SSE servers, the per-request fetch first-byte budget has a 60-second minimum.\n\n### Plugin-provided MCP servers\n\n[Plugins](https://code.claude.com/docs/en/plugins) can bundle MCP servers, automatically providing tools and integrations when the plugin is enabled. Plugin MCP servers work identically to user-configured servers.**How plugin MCP servers work**:\n\n- Plugins define MCP servers in `.mcp.json` at the plugin root or inline in `plugin.json`\n- When a plugin is enabled, its MCP servers start automatically\n- Plugin MCP tools appear alongside manually configured MCP tools\n- Plugin servers are managed through plugin installation (not `/mcp` commands)\n\n**Example plugin MCP configuration**:In `.mcp.json` at plugin root:\n\n```\n{\n  "mcpServers": {\n    "database-tools": {\n      "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",\n      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],\n      "env": {\n        "DB_URL": "${DB_URL}"\n      }\n    }\n  }\n}\n```\n\nOr inline in `plugin.json`:\n\n```\n{\n  "name": "my-plugin",\n  "mcpServers": {\n    "plugin-api": {\n      "command": "${CLAUDE_PLUGIN_ROOT}/servers/api-server",\n      "args": ["--port", "8080"]\n    }\n  }\n}\n```\n\n**Plugin MCP features**:\n\n- **Automatic lifecycle**: At session startup, servers for enabled plugins connect automatically. If you enable or disable a plugin during a session, run `/reload-plugins` to connect or disconnect its MCP servers\n- **Environment variables**: use `${CLAUDE_PLUGIN_ROOT}` for bundled plugin files, `${CLAUDE_PLUGIN_DATA}` for [persistent state](https://code.claude.com/docs/en/plugins-reference#persistent-data-directory) that survives plugin updates, and `${CLAUDE_PROJECT_DIR}` for the stable project root\n- **User environment access**: Access to same environment variables as manually configured servers\n- **Multiple transport types**: Support stdio, SSE, HTTP, and WebSocket transports (transport support may vary by server)\n\n**Viewing plugin MCP servers**:\n\n```\n# Within Claude Code, see all MCP servers including plugin ones\n/mcp\n```\n\nPlugin servers appear in the list with indicators showing they come from plugins.**Benefits of plugin MCP servers**:\n\n- **Bundled distribution**: Tools and servers packaged together\n- **Automatic setup**: No manual MCP configuration needed\n- **Team consistency**: Everyone gets the same tools when plugin is installed\n\nSee the [plugin components reference](https://code.claude.com/docs/en/plugins-reference#mcp-servers) for details on bundling MCP servers with plugins.\n\n## MCP installation scopes\n\nMCP servers can be configured at three scopes. The scope you choose controls which projects the server loads in and whether the configuration is shared with your team. Administrators can also deploy servers at the enterprise level via [managed configuration](https://code.claude.com/docs/en/mcp#managed-mcp-configuration).\n\n| Scope | Loads in | Shared with team | Stored in |\n| --- | --- | --- | --- |\n| Local | Current project only | No | `~/.claude.json` |\n| Project | Current project only | Yes, via version control | `.mcp.json` in project root |\n| User | All your projects | No | `~/.claude.json` |\n\n### Local scope\n\nLocal scope is the default. A local-scoped server loads only in the project where you added it and stays private to you. Claude Code stores it in `~/.claude.json` under that project’s path, so the same server won’t appear in your other projects. Use local scope for personal development servers, experimental configurations, or servers with credentials you don’t want in version control.\n\nThe term “local scope” for MCP servers differs from general local settings. MCP local-scoped servers are stored in `~/.claude.json` (your home directory), while general local settings use `.claude/settings.local.json` (in the project directory). See [Settings](https://code.claude.com/docs/en/settings#settings-files) for details on settings file locations.\n\n```\n# Add a local-scoped server (default)\nclaude mcp add --transport http stripe https://mcp.stripe.com\n\n# Explicitly specify local scope\nclaude mcp add --transport http stripe --scope local https://mcp.stripe.com\n```\n\nThe command writes the server into the entry for your current project inside `~/.claude.json`. The example below shows the result when you run it from `/path/to/your/project`:\n\n```\n{\n  "projects": {\n    "/path/to/your/project": {\n      "mcpServers": {\n        "stripe": {\n          "type": "http",\n          "url": "https://mcp.stripe.com"\n        }\n      }\n    }\n  }\n}\n```\n\n### Project scope\n\nProject-scoped servers enable team collaboration by storing configurations in a `.mcp.json` file at your project’s root directory. This file is designed to be checked into version control, ensuring all team members have access to the same MCP tools and services. When you add a project-scoped server, Claude Code automatically creates or updates this file with the appropriate configuration structure.\n\n```\n# Add a project-scoped server\nclaude mcp add --transport http paypal --scope project https://mcp.paypal.com/mcp\n```\n\nThe resulting `.mcp.json` file follows a standardized format:\n\n```\n{\n  "mcpServers": {\n    "shared-server": {\n      "command": "/path/to/server",\n      "args": [],\n      "env": {}\n    }\n  }\n}\n```\n\nFor security reasons, Claude Code prompts for approval before using project-scoped servers from `.mcp.json` files. If you need to reset these approval choices, use the `claude mcp reset-project-choices` command.\n\n### User scope\n\nUser-scoped servers are stored in `~/.claude.json` and provide cross-project accessibility, making them available across all projects on your machine while remaining private to your user account. This scope works well for personal utility servers, development tools, or services you frequently use across different projects.\n\n```\n# Add a user server\nclaude mcp add --transport http hubspot --scope user https://mcp.hubspot.com/anthropic\n```\n\n### Scope hierarchy and precedence\n\nWhen the same server is defined in more than one place, Claude Code connects to it once, using the definition from the highest-precedence source. The entire server entry from that source is used; fields are not merged across scopes.\n\n1. Local scope\n2. Project scope\n3. User scope\n4. [Plugin-provided servers](https://code.claude.com/docs/en/plugins)\n5. [claude.ai connectors](https://code.claude.com/docs/en/mcp#use-mcp-servers-from-claude-ai)\n\nThe three scopes match duplicates by name. Plugins and connectors match by endpoint, so one that points at the same URL or command as a server above is treated as a duplicate.\n\n### Environment variable expansion in `.mcp.json`\n\nClaude Code supports environment variable expansion in `.mcp.json` files, allowing teams to share configurations while maintaining flexibility for machine-specific paths and sensitive values like API keys.**Supported syntax:**\n\n- `${VAR}` \\- Expands to the value of environment variable `VAR`\n- `${VAR:-default}` \\- Expands to `VAR` if set, otherwise uses `default`\n\n**Expansion locations:**\nEnvironment variables can be expanded in:\n\n- `command` \\- The server executable path\n- `args` \\- Command-line arguments\n- `env` \\- Environment variables passed to the server\n- `url` \\- For HTTP server types\n- `headers` \\- For HTTP server authentication\n\n**Example with variable expansion:**\n\n```\n{\n  "mcpServers": {\n    "api-server": {\n      "type": "http",\n      "url": "${API_BASE_URL:-https://api.example.com}/mcp",\n      "headers": {\n        "Authorization": "Bearer ${API_KEY}"\n      }\n    }\n  }\n}\n```\n\nIf a required environment variable is not set and has no default value, Claude Code will fail to parse the config.\n\n## Practical examples\n\n### Example: Monitor errors with Sentry\n\n```\nclaude mcp add --transport http sentry https://mcp.sentry.dev/mcp\n```\n\nAuthenticate with your Sentry account:\n\n```\n/mcp\n```\n\nThen debug production issues:\n\n```\nWhat are the most common errors in the last 24 hours?\n```\n\n```\nShow me the stack trace for error ID abc123\n```\n\n```\nWhich deployment introduced these new errors?\n```\n\n### Example: Connect to GitHub for code reviews\n\nGitHub’s remote MCP server authenticates with a GitHub personal access token passed as a header. To get one, open your [GitHub token settings](https://github.com/settings/personal-access-tokens), generate a new fine-grained token with access to the repositories you want Claude to work with, then add the server:\n\n```\nclaude mcp add --transport http github https://api.githubcopilot.com/mcp/ \\\n  --header "Authorization: Bearer YOUR_GITHUB_PAT"\n```\n\nThen work with GitHub:\n\n```\nReview PR #456 and suggest improvements\n```\n\n```\nCreate a new issue for the bug we just found\n```\n\n```\nShow me all open PRs assigned to me\n```\n\n### Example: Query your PostgreSQL database\n\n```\nclaude mcp add --transport stdio db -- npx -y @bytebase/dbhub \\\n  --dsn "postgresql://readonly:pass@prod.db.com:5432/analytics"\n```\n\nThen query your database naturally:\n\n```\nWhat\'s our total revenue this month?\n```\n\n```\nShow me the schema for the orders table\n```\n\n```\nFind customers who haven\'t made a purchase in 90 days\n```\n\n## Authenticate with remote MCP servers\n\nMany cloud-based MCP servers require authentication. Claude Code supports OAuth 2.0 for secure connections.Claude Code marks a remote server as needing authentication when the server responds with `401 Unauthorized` or `403 Forbidden`. Either status code flags the server in `/mcp` so you can complete the OAuth flow. A custom server that returns a `WWW-Authenticate` header pointing to its authorization server gets the same automatic discovery as any other remote server.If you configured `headers.Authorization` for the server and the server rejects that header, Claude Code reports the connection as failed instead of falling back to OAuth. Check that the token is valid for the MCP endpoint, or remove the header to use the OAuth flow.\n\nAdd the server that requires authentication\n\nFor example:\n\n```\nclaude mcp add --transport http sentry https://mcp.sentry.dev/mcp\n```\n\nUse the /mcp command within Claude Code\n\nIn Claude code, use the command:\n\n```\n/mcp\n```\n\nThen follow the steps in your browser to login.\n\nTips:\n\n- Authentication tokens are stored securely and refreshed automatically\n- Use “Clear authentication” in the `/mcp` menu to revoke access\n- If your browser doesn’t open automatically, copy the provided URL and open it manually\n- If the browser redirect fails with a connection error after authenticating, paste the full callback URL from your browser’s address bar into the URL prompt that appears in Claude Code\n- OAuth authentication works with HTTP servers\n\n### Use a fixed OAuth callback port\n\nSome MCP servers require a specific redirect URI registered in advance. By default, Claude Code picks a random available port for the OAuth callback. Use `--callback-port` to fix the port so it matches a pre-registered redirect URI of the form `http://localhost:PORT/callback`.You can use `--callback-port` on its own (with dynamic client registration) or together with `--client-id` (with pre-configured credentials).\n\n```\n# Fixed callback port with dynamic client registration\nclaude mcp add --transport http \\\n  --callback-port 8080 \\\n  my-server https://mcp.example.com/mcp\n```\n\n### Use pre-configured OAuth credentials\n\nSome MCP servers don’t support automatic OAuth setup via Dynamic Client Registration. If you see an error like “Incompatible auth server: does not support dynamic client registration,” the server requires pre-configured credentials. Claude Code also supports servers that use a Client ID Metadata Document (CIMD) instead of Dynamic Client Registration, and discovers these automatically. If automatic discovery fails, register an OAuth app through the server’s developer portal first, then provide the credentials when adding the server.\n\nRegister an OAuth app with the server\n\nCreate an app through the server’s developer portal and note your client ID and client secret.Many servers also require a redirect URI. If so, choose a port and register a redirect URI in the format `http://localhost:PORT/callback`. Use that same port with `--callback-port` in the next step.\n\nAdd the server with your credentials\n\nChoose one of the following methods. The port used for `--callback-port` can be any available port. It just needs to match the redirect URI you registered in the previous step.\n\nUse `--client-id` to pass your app’s client ID. The `--client-secret` flag prompts for the secret with masked input:\n\n```\nclaude mcp add --transport http \\\n  --client-id your-client-id --client-secret --callback-port 8080 \\\n  my-server https://mcp.example.com/mcp\n```\n\nInclude the `oauth` object in the JSON config and pass `--client-secret` as a separate flag:\n\n```\nclaude mcp add-json my-server \\\n  \'{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}\' \\\n  --client-secret\n```\n\nUse `--callback-port` without a client ID to fix the port while using dynamic client registration:\n\n```\nclaude mcp add-json my-server \\\n  \'{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"callbackPort":8080}}\'\n```\n\nSet the secret via environment variable to skip the interactive prompt:\n\n```\nMCP_CLIENT_SECRET=your-secret claude mcp add --transport http \\\n  --client-id your-client-id --client-secret --callback-port 8080 \\\n  my-server https://mcp.example.com/mcp\n```\n\nAuthenticate in Claude Code\n\nRun `/mcp` in Claude Code and follow the browser login flow.\n\nTips:\n\n- The client secret is stored securely in your system keychain (macOS) or a credentials file, not in your config\n- If the server uses a public OAuth client with no secret, use only `--client-id` without `--client-secret`\n- `--callback-port` can be used with or without `--client-id`\n- These flags only apply to HTTP and SSE transports. They have no effect on stdio servers\n- Use `claude mcp get <name>` to verify that OAuth credentials are configured for a server\n\n### Override OAuth metadata discovery\n\nPoint Claude Code at a specific OAuth authorization server metadata URL to bypass the default discovery chain. Set `authServerMetadataUrl` when the MCP server’s standard endpoints error, or when you want to route discovery through an internal proxy. By default, Claude Code first checks RFC 9728 Protected Resource Metadata at `/.well-known/oauth-protected-resource`, then falls back to RFC 8414 authorization server metadata at `/.well-known/oauth-authorization-server`.Set `authServerMetadataUrl` in the `oauth` object of your server’s config in `.mcp.json`:\n\n```\n{\n  "mcpServers": {\n    "my-server": {\n      "type": "http",\n      "url": "https://mcp.example.com/mcp",\n      "oauth": {\n        "authServerMetadataUrl": "https://auth.example.com/.well-known/openid-configuration"\n      }\n    }\n  }\n}\n```\n\nThe URL must use `https://`. `authServerMetadataUrl` requires Claude Code v2.1.64 or later. The metadata URL’s `scopes_supported` overrides the scopes the upstream server advertises.\n\n### Restrict OAuth scopes\n\nSet `oauth.scopes` to pin the scopes Claude Code requests during the authorization flow. This is the supported way to restrict an MCP server to a security-team-approved subset when the upstream authorization server advertises more scopes than you want to grant. The value is a single space-separated string, matching the `scope` parameter format in RFC 6749 §3.3.\n\n```\n{\n  "mcpServers": {\n    "slack": {\n      "type": "http",\n      "url": "https://mcp.slack.com/mcp",\n      "oauth": {\n        "scopes": "channels:read chat:write search:read"\n      }\n    }\n  }\n}\n```\n\n`oauth.scopes` takes precedence over both `authServerMetadataUrl` and the scopes the server discovers at `/.well-known`. Leave it unset to let the MCP server determine the requested scope set.If the authorization server advertises `offline_access` in `scopes_supported`, Claude Code appends it to the pinned scopes so the access token can be refreshed without a new browser sign-in.If the server later returns a 403 `insufficient_scope` for a tool call, Claude Code re-authenticates with the same pinned scopes. Widen `oauth.scopes` when a tool you need requires a scope outside the pin.\n\n### Use dynamic headers for custom authentication\n\nIf your MCP server uses an authentication scheme other than OAuth (such as Kerberos, short-lived tokens, or an internal SSO), use `headersHelper` to generate request headers at connection time. Claude Code runs the command and merges its output into the connection headers.\n\n```\n{\n  "mcpServers": {\n    "internal-api": {\n      "type": "http",\n      "url": "https://mcp.internal.example.com",\n      "headersHelper": "/opt/bin/get-mcp-auth-headers.sh"\n    }\n  }\n}\n```\n\nThe command can also be inline:\n\n```\n{\n  "mcpServers": {\n    "internal-api": {\n      "type": "http",\n      "url": "https://mcp.internal.example.com",\n      "headersHelper": "echo \'{\\"Authorization\\": \\"Bearer \'\\"$(get-token)\\"\'\\"}\'"\n    }\n  }\n}\n```\n\n**Requirements:**\n\n- The command must write a JSON object of string key-value pairs to stdout\n- The command runs in a shell with a 10-second timeout\n- Dynamic headers override any static `headers` with the same name\n\nThe helper runs fresh on each connection (at session start and on reconnect). There is no caching, so your script is responsible for any token reuse.Claude Code sets these environment variables when executing the helper:\n\n| Variable | Value |\n| --- | --- |\n| `CLAUDE_CODE_MCP_SERVER_NAME` | the name of the MCP server |\n| `CLAUDE_CODE_MCP_SERVER_URL` | the URL of the MCP server |\n\nUse these to write a single helper script that serves multiple MCP servers.\n\n`headersHelper` executes arbitrary shell commands. When defined at project or local scope, it only runs after you accept the workspace trust dialog.\n\n## Add MCP servers from JSON configuration\n\nIf you have a JSON configuration for an MCP server, you can add it directly:\n\nAdd an MCP server from JSON\n\n```\n# Basic syntax\nclaude mcp add-json <name> \'<json>\'\n\n# Example: Adding an HTTP server with JSON configuration\nclaude mcp add-json weather-api \'{"type":"http","url":"https://api.weather.com/mcp","headers":{"Authorization":"Bearer token"}}\'\n\n# Example: Adding a stdio server with JSON configuration\nclaude mcp add-json local-weather \'{"type":"stdio","command":"/path/to/weather-cli","args":["--api-key","abc123"],"env":{"CACHE_DIR":"/tmp"}}\'\n\n# Example: Adding an HTTP server with pre-configured OAuth credentials\nclaude mcp add-json my-server \'{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}\' --client-secret\n```\n\nVerify the server was added\n\n```\nclaude mcp get weather-api\n```\n\nTips:\n\n- Make sure the JSON is properly escaped in your shell\n- The JSON must conform to the MCP server configuration schema\n- You can use `--scope user` to add the server to your user configuration instead of the project-specific one\n\n## Import MCP servers from Claude Desktop\n\nIf you’ve already configured MCP servers in Claude Desktop, you can import them:\n\nImport servers from Claude Desktop\n\n```\n# Basic syntax\nclaude mcp add-from-claude-desktop\n```\n\nSelect which servers to import\n\nAfter running the command, you’ll see an interactive dialog that allows you to select which servers you want to import.\n\nVerify the servers were imported\n\n```\nclaude mcp list\n```\n\nTips:\n\n- This feature only works on macOS and Windows Subsystem for Linux (WSL)\n- It reads the Claude Desktop configuration file from its standard location on those platforms\n- Use the `--scope user` flag to add servers to your user configuration\n- Imported servers will have the same names as in Claude Desktop\n- If servers with the same names already exist, they will get a numerical suffix (for example, `server_1`)\n\n## Use MCP servers from Claude.ai\n\nIf you’ve logged into Claude Code with a [Claude.ai](https://claude.ai/) account, MCP servers you’ve added in Claude.ai are automatically available in Claude Code:\n\nConfigure MCP servers in Claude.ai\n\nAdd servers at [claude.ai/customize/connectors](https://claude.ai/customize/connectors). On Team and Enterprise plans, only admins can add servers.\n\nAuthenticate the MCP server\n\nComplete any required authentication steps in Claude.ai.\n\nView and manage servers in Claude Code\n\nIn Claude Code, use the command:\n\n```\n/mcp\n```\n\nClaude.ai servers appear in the list with indicators showing they come from Claude.ai.\n\nFrom v2.1.161, connectors you have never signed in to are collapsed behind a `Show unused connectors` row at the end of the claude.ai section, so an organization-provisioned list doesn’t fill the panel. Select the row to expand them. A connector you signed in to before stays visible even when it currently needs re-authentication.Claude.ai connectors are fetched only when your active [authentication method](https://code.claude.com/docs/en/authentication#authentication-precedence) is your Claude.ai subscription. They are not loaded when `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper`, or a third-party provider such as Bedrock or Vertex is active, even if you previously ran `/login`. If `/mcp` does not list a connector you added, run `/status` to confirm which authentication method is active, unset that environment variable or remove the `apiKeyHelper` setting, then run `/login` to select your Claude.ai account.A server you’ve added in Claude Code takes [precedence](https://code.claude.com/docs/en/mcp#scope-hierarchy-and-precedence) over a claude.ai connector that points at the same URL. When this happens, `/mcp` lists the connector as hidden and shows how to remove the duplicate if you’d rather use the connector.Some Anthropic-hosted connectors, such as Microsoft 365, Gmail, and Google Calendar, do not support local OAuth from Claude Code because the upstream identity provider only accepts the redirect URL that claude.ai registered. From v2.1.162, authenticating one of these hosts in `/mcp` shows a message directing you to connect it at Settings → Connectors on claude.ai instead. Once connected there, the connector appears in Claude Code automatically.To disable claude.ai MCP servers in Claude Code, set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `false`:\n\n```\nENABLE_CLAUDEAI_MCP_SERVERS=false claude\n```\n\n## Use Claude Code as an MCP server\n\nYou can use Claude Code itself as an MCP server that other applications can connect to:\n\n```\n# Start Claude as a stdio MCP server\nclaude mcp serve\n```\n\nYou can use this in Claude Desktop by adding this configuration to claude\\_desktop\\_config.json:\n\n```\n{\n  "mcpServers": {\n    "claude-code": {\n      "type": "stdio",\n      "command": "claude",\n      "args": ["mcp", "serve"],\n      "env": {}\n    }\n  }\n}\n```\n\n**Configuring the executable path**: The `command` field must reference the Claude Code executable. If the `claude` command is not in your system’s PATH, you’ll need to specify the full path to the executable.To find the full path:\n\n```\nwhich claude\n```\n\nThen use the full path in your configuration:\n\n```\n{\n  "mcpServers": {\n    "claude-code": {\n      "type": "stdio",\n      "command": "/full/path/to/claude",\n      "args": ["mcp", "serve"],\n      "env": {}\n    }\n  }\n}\n```\n\nWithout the correct executable path, you’ll encounter errors like `spawn claude ENOENT`.\n\nTips:\n\n- The server provides access to Claude’s tools like View, Edit, LS, etc.\n- In Claude Desktop, try asking Claude to read files in a directory, make edits, and more.\n- Note that this MCP server is only exposing Claude Code’s tools to your MCP client, so your own client is responsible for implementing user confirmation for individual tool calls.\n\n## MCP output limits and warnings\n\nWhen MCP tools produce large outputs, Claude Code helps manage the token usage to prevent overwhelming your conversation context:\n\n- **Output warning threshold**: Claude Code displays a warning when any MCP tool output exceeds 10,000 tokens\n- **Configurable limit**: you can adjust the maximum allowed MCP output tokens using the `MAX_MCP_OUTPUT_TOKENS` environment variable\n- **Default limit**: the default maximum is 25,000 tokens\n- **Scope**: the environment variable applies to tools that don’t declare their own limit. Tools that set [`anthropic/maxResultSizeChars`](https://code.claude.com/docs/en/mcp#raise-the-limit-for-a-specific-tool) use that value instead for text content, regardless of what `MAX_MCP_OUTPUT_TOKENS` is set to. Tools that return image data are still subject to `MAX_MCP_OUTPUT_TOKENS`\n\nTo increase the limit for tools that produce large outputs:\n\n```\nexport MAX_MCP_OUTPUT_TOKENS=50000\nclaude\n```\n\nThis is particularly useful when working with MCP servers that:\n\n- Query large datasets or databases\n- Generate detailed reports or documentation\n- Process extensive log files or debugging information\n\n### Raise the limit for a specific tool\n\nIf you’re building an MCP server, you can allow individual tools to return results larger than the default persist-to-disk threshold by setting `_meta["anthropic/maxResultSizeChars"]` in the tool’s `tools/list` response entry. Claude Code raises that tool’s threshold to the annotated value, up to a hard ceiling of 500,000 characters.This is useful for tools that return inherently large but necessary outputs, such as database schemas or full file trees. Without the annotation, results that exceed the default threshold are persisted to disk and replaced with a file reference in the conversation.\n\n```\n{\n  "name": "get_schema",\n  "description": "Returns the full database schema",\n  "_meta": {\n    "anthropic/maxResultSizeChars": 200000\n  }\n}\n```\n\nThe annotation applies independently of `MAX_MCP_OUTPUT_TOKENS` for text content, so users don’t need to raise the environment variable for tools that declare it. Tools that return image data are still subject to the token limit.\n\nIf you frequently encounter output warnings with specific MCP servers you don’t control, consider increasing the `MAX_MCP_OUTPUT_TOKENS` limit. You can also ask the server author to add the `anthropic/maxResultSizeChars` annotation or to paginate their responses. The annotation has no effect on tools that return image content; for those, raising `MAX_MCP_OUTPUT_TOKENS` is the only option.\n\n## Respond to MCP elicitation requests\n\nMCP servers can request structured input from you mid-task using elicitation. When a server needs information it can’t get on its own, Claude Code displays an interactive dialog and passes your response back to the server. No configuration is required on your side: elicitation dialogs appear automatically when a server requests them.Servers can request input in two ways:\n\n- **Form mode**: Claude Code shows a dialog with form fields defined by the server (for example, a username and password prompt). Fill in the fields and submit.\n- **URL mode**: Claude Code opens a browser URL for authentication or approval. Complete the flow in the browser, then confirm in the CLI.\n\nTo auto-respond to elicitation requests without showing a dialog, use the [`Elicitation` hook](https://code.claude.com/docs/en/hooks#elicitation).If you’re building an MCP server that uses elicitation, see the [MCP elicitation specification](https://modelcontextprotocol.io/docs/learn/client-concepts#elicitation) for protocol details and schema examples.\n\n## Use MCP resources\n\nMCP servers can expose resources that you can reference using @ mentions, similar to how you reference files.\n\n### Reference MCP resources\n\nList available resources\n\nType `@` in your prompt to see available resources from all connected MCP servers. Resources appear alongside files in the autocomplete menu.\n\nReference a specific resource\n\nUse the format `@server:protocol://resource/path` to reference a resource:\n\n```\nCan you analyze @github:issue://123 and suggest a fix?\n```\n\n```\nPlease review the API documentation at @docs:file://api/authentication\n```\n\nMultiple resource references\n\nYou can reference multiple resources in a single prompt:\n\n```\nCompare @postgres:schema://users with @docs:file://database/user-model\n```\n\nTips:\n\n- Resources are automatically fetched and included as attachments when referenced\n- Resource paths are fuzzy-searchable in the @ mention autocomplete\n- Claude Code automatically provides tools to list and read MCP resources when servers support them\n- Resources can contain any type of content that the MCP server provides (text, JSON, structured data, etc.)\n\n## Scale with MCP Tool Search\n\nTool search keeps MCP context usage low by deferring tool definitions until Claude needs them. Only tool names and server instructions load at session start, so adding more MCP servers has minimal impact on your context window. Claude Code does not impose a fixed per-server tool cap; the practical limit is your context window budget.\n\n### How it works\n\nTool search is enabled by default. MCP tools are deferred rather than loaded into context upfront, and Claude uses a search tool to discover relevant ones when a task needs them. Only the tools Claude actually uses enter context. From your perspective, MCP tools work exactly as before.If you prefer threshold-based loading, set `ENABLE_TOOL_SEARCH=auto` to load schemas upfront when they fit within 10% of the context window and defer only the overflow. See [Configure tool search](https://code.claude.com/docs/en/mcp#configure-tool-search) for all options.\n\n### For MCP server authors\n\nIf you’re building an MCP server, the server instructions field becomes more useful with Tool Search enabled. Server instructions help Claude understand when to search for your tools, similar to how [skills](https://code.claude.com/docs/en/skills) work.Add clear, descriptive server instructions that explain:\n\n- What category of tasks your tools handle\n- When Claude should search for your tools\n- Key capabilities your server provides\n\nClaude Code truncates tool descriptions and server instructions at 2KB each. Keep them concise to avoid truncation, and put critical details near the start.\n\n### Configure tool search\n\nTool search is enabled by default: MCP tools are deferred and discovered on demand. Claude Code disables it by default on Vertex AI. It is also disabled when `ANTHROPIC_BASE_URL` points to a non-first-party host, since most proxies do not forward `tool_reference` blocks. Set `ENABLE_TOOL_SEARCH` explicitly to override either fallback.Tool search requires a model that supports `tool_reference` blocks. Haiku models do not support it. On Vertex AI, tool search is supported for Claude Sonnet 4.5 and later and Claude Opus 4.5 and later.Control tool search behavior with the `ENABLE_TOOL_SEARCH` environment variable:\n\n| Value | Behavior |\n| --- | --- |\n| (unset) | All MCP tools deferred and loaded on demand. Falls back to loading upfront on Vertex AI or when `ANTHROPIC_BASE_URL` is a non-first-party host |\n| `true` | All MCP tools deferred. Claude Code sends the beta header even on Vertex AI and through proxies. Requests fail on Vertex AI models earlier than Sonnet 4.5 or Opus 4.5, or on proxies that do not support `tool_reference` blocks |\n| `auto` | Threshold mode: tools load upfront if they fit within 10% of the context window, deferred otherwise |\n| `auto:N` | Threshold mode with a custom percentage, where `N` is 0-100. For example, `auto:5` for 5% |\n| `false` | All MCP tools loaded upfront, no deferral |\n\n```\n# Use a custom 5% threshold\nENABLE_TOOL_SEARCH=auto:5 claude\n\n# Disable tool search entirely\nENABLE_TOOL_SEARCH=false claude\n```\n\nOr set the value in your [settings.json `env` field](https://code.claude.com/docs/en/settings#available-settings).You can also disable the `ToolSearch` tool specifically:\n\n```\n{\n  "permissions": {\n    "deny": ["ToolSearch"]\n  }\n}\n```\n\n### Exempt a server from deferral\n\nIf a server’s tools should always be visible to Claude without a search step, set `alwaysLoad` to `true` in that server’s configuration. Every tool from that server then loads into context at session start regardless of the `ENABLE_TOOL_SEARCH` setting. Use this for a small number of tools that Claude needs on every turn, since each upfront tool consumes context that would otherwise be available for your conversation.The following `.mcp.json` entry exempts one HTTP server while leaving other servers deferred:\n\n```\n{\n  "mcpServers": {\n    "core-tools": {\n      "type": "http",\n      "url": "https://mcp.example.com/mcp",\n      "alwaysLoad": true\n    }\n  }\n}\n```\n\nThe `alwaysLoad` field is available on all server types and requires Claude Code v2.1.121 or later. An MCP server can also mark individual tools as always-loaded by including `"anthropic/alwaysLoad": true` in the tool’s `_meta` object, which has the same effect for that tool only.Setting `alwaysLoad: true` also blocks startup until the server connects, capped at the standard 5-second connect timeout. This applies even though MCP startup is otherwise [non-blocking by default](https://code.claude.com/docs/en/env-vars), since the tools must be present when the first prompt is built. Other servers continue to connect in the background.\n\n## Use MCP prompts as commands\n\nMCP servers can expose prompts that become available as commands in Claude Code.\n\n### Execute MCP prompts\n\nDiscover available prompts\n\nType `/` to see all available commands, including those from MCP servers. MCP prompts appear with the format `/mcp__servername__promptname`.\n\nExecute a prompt without arguments\n\n```\n/mcp__github__list_prs\n```\n\nExecute a prompt with arguments\n\nMany prompts accept arguments. Pass them space-separated after the command:\n\n```\n/mcp__github__pr_review 456\n```\n\n```\n/mcp__jira__create_issue "Bug in login flow" high\n```\n\nTips:\n\n- MCP prompts are dynamically discovered from connected servers\n- Arguments are parsed based on the prompt’s defined parameters\n- Prompt results are injected directly into the conversation\n- Server and prompt names are normalized (spaces become underscores)\n\n## Managed MCP configuration\n\nFor organizations that need centralized control over which MCP servers users can connect to, see [Managed MCP configuration](https://code.claude.com/docs/en/managed-mcp). It covers deploying a fixed server set with `managed-mcp.json`, restricting servers with `allowedMcpServers` and `deniedMcpServers`, and what users see when a server is blocked.', 'extras': {'signature': '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'}}
 
-## [​](https://docs.claude.com/en/docs/claude-code/mcp#what-you-can-do-with-mcp)What you can do with MCP
+</details>
 
-With MCP servers connected, you can ask Claude Code to:
+<details>
+<summary>cursor-docs-agent-rules-mcp-skills-cli</summary>
 
-- **Implement features from issue trackers**: “Add the feature described in JIRA issue ENG-4521 and create a PR on GitHub.”
-- **Analyze monitoring data**: “Check Sentry and Statsig to check the usage of the feature described in ENG-4521.”
-- **Query databases**: “Find emails of 10 random users who used feature ENG-4521, based on our Postgres database.”
-- **Integrate designs**: “Update our standard email template based on the new Figma designs that were posted in Slack”
-- **Automate workflows**: “Create Gmail drafts inviting these 10 users to a feedback session about the new feature.”
+{'type': 'text', 'text': 'Empty string or no content matches the provided lesson guidelines.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>mcp-inspector-model-context-protocol</summary>
 
-The [MCP Inspector](https://github.com/modelcontextprotocol/inspector) is an interactive developer tool for testing and debugging MCP servers. While the [Debugging Guide](https://modelcontextprotocol.io/legacy/tools/debugging) covers the Inspector as part of the overall debugging toolkit, this document provides a detailed exploration of the Inspector’s features and capabilities.
-
-## [​](https://modelcontextprotocol.io/docs/tools/inspector\#getting-started)  Getting started
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#installation-and-basic-usage)  Installation and basic usage
-
-The Inspector runs directly through `npx` without requiring installation:
-
-```
-npx @modelcontextprotocol/inspector <command>
-
-```
-
-```
-npx @modelcontextprotocol/inspector <command> <arg1> <arg2>
-
-```
-
-#### [​](https://modelcontextprotocol.io/docs/tools/inspector\#inspecting-servers-from-npm-or-pypi)  Inspecting servers from npm or PyPI
-
-A common way to start server packages from [npm](https://npmjs.com/) or [PyPI](https://pypi.org/).
-
-- npm package
-
-- PyPI package
-
-```
-npx -y @modelcontextprotocol/inspector npx <package-name> <args>
-# For example
-npx -y @modelcontextprotocol/inspector npx @modelcontextprotocol/server-filesystem /Users/username/Desktop
-
-```
-
-#### [​](https://modelcontextprotocol.io/docs/tools/inspector\#inspecting-locally-developed-servers)  Inspecting locally developed servers
-
-To inspect servers locally developed or downloaded as a repository, the most common
-way is:
-
-- TypeScript
-
-- Python
-
-```
-npx @modelcontextprotocol/inspector node path/to/server/index.js args...
-
-```
-
-Please carefully read any attached README for the most accurate instructions.
-
-## [​](https://modelcontextprotocol.io/docs/tools/inspector\#feature-overview)  Feature overviewhttps://mintcdn.com/mcp/4ZXF1PrDkEaJvXpn/images/mcp-inspector.png?fit=max&auto=format&n=4ZXF1PrDkEaJvXpn&q=85&s=83b12e2a457c96ef4ad17c7357236290
-
-The MCP Inspector interface
-
-The Inspector provides several features for interacting with your MCP server:
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#server-connection-pane)  Server connection pane
-
-- Allows selecting the [transport](https://modelcontextprotocol.io/legacy/concepts/transports) for connecting to the server
-- For local servers, supports customizing the command-line arguments and environment
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#resources-tab)  Resources tab
-
-- Lists all available resources
-- Shows resource metadata (MIME types, descriptions)
-- Allows resource content inspection
-- Supports subscription testing
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#prompts-tab)  Prompts tab
-
-- Displays available prompt templates
-- Shows prompt arguments and descriptions
-- Enables prompt testing with custom arguments
-- Previews generated messages
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#tools-tab)  Tools tab
-
-- Lists available tools
-- Shows tool schemas and descriptions
-- Enables tool testing with custom inputs
-- Displays tool execution results
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#notifications-pane)  Notifications pane
-
-- Presents all logs recorded from the server
-- Shows notifications received from the server
-
-## [​](https://modelcontextprotocol.io/docs/tools/inspector\#best-practices)  Best practices
-
-### [​](https://modelcontextprotocol.io/docs/tools/inspector\#development-workflow)  Development workflow
-
-1. Start Development   - Launch Inspector with your server
-   - Verify basic connectivity
-   - Check capability negotiation
-2. Iterative testing   - Make server changes
-   - Rebuild the server
-   - Reconnect the Inspector
-   - Test affected features
-   - Monitor messages
-3. Test edge cases   - Invalid inputs
-   - Missing prompt arguments
-   - Concurrent operations
-   - Verify error handling and error responses
-
-## [​](https://modelcontextprotocol.io/docs/tools/inspector\#next-steps)  Next steps
-
-[**Inspector Repository** \\
-\\
-Check out the MCP Inspector source code](https://github.com/modelcontextprotocol/inspector) [**Debugging Guide** \\
-\\
-Learn about broader debugging strategies](https://modelcontextprotocol.io/legacy/tools/debugging)
-
-</details>
-
-<details>
-<summary>model-context-protocol-mcp-claude-docs</summary>
-
-MCP is an open protocol that standardizes how applications provide context to LLMs.Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect your devices to various peripherals and accessories, MCP provides a standardized way to connect AI models to different data sources and tools.
-
-## [​](https://docs.claude.com/en/docs/mcp\#build-your-own-mcp-products)  Build your own MCP products
-
-[**MCP Documentation** \\
-\\
-Learn more about the protocol, how to build servers and clients, and discover those made by others.](https://modelcontextprotocol.io/)
-
-## [​](https://docs.claude.com/en/docs/mcp\#mcp-in-anthropic-products)  MCP in Anthropic products
-
-[**MCP in the Messages API** \\
-\\
-Use the MCP connector in the Messages API to connect to MCP servers.](https://docs.claude.com/en/docs/agents-and-tools/mcp-connector) [**MCP in Claude Code** \\
-\\
-Add your MCP servers to Claude Code, or use Claude Code as a server.](https://docs.claude.com/en/docs/claude-code/mcp) [**MCP in Claude.ai** \\
-\\
-Enable MCP connectors for your team in Claude.ai.](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp) [**MCP in Claude Desktop** \\
-\\
-Add MCP servers to Claude Desktop.](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop)
-
-</details>
-
-<details>
-<summary>model-context-protocol-mcp-cursor-docs</summary>
-
-# Model Context Protocol (MCP)
-
-## What is MCP?
-
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) enables Cursor to connect to external tools and data sources.
-
-### Why use MCP?
-
-MCP connects Cursor to external systems and data. Instead of explaining your project structure repeatedly, integrate directly with your tools.
-
-Write MCP servers in any language that can print to `stdout` or serve an HTTP endpoint - Python, JavaScript, Go, etc.
-
-### How it works
-
-MCP servers expose capabilities through the protocol, connecting Cursor to external tools or data sources.
-
-Cursor supports three transport methods:
-
-| Transport | Execution environment | Deployment | Users | Input | Auth |
-| --- | --- | --- | --- | --- | --- |
-| **`stdio`** | Local | Cursor manages | Single user | Shell command | Manual |
-| **`SSE`** | Local/Remote | Deploy as server | Multiple users | URL to an SSE endpoint | OAuth |
-| **`Streamable HTTP`** | Local/Remote | Deploy as server | Multiple users | URL to an HTTP endpoint | OAuth |
-
-### Protocol support
-
-Cursor supports these MCP protocol capabilities:
-
-| Feature | Support | Description |
-| --- | --- | --- |
-| **Tools** | Supported | Functions for the AI model to execute |
-| **Prompts** | Supported | Templated messages and workflows for users |
-| **Resources** | Supported | Structured data sources that can be read and referenced |
-| **Roots** | Supported | Server-initiated inquiries into URI or filesystem boundaries |
-| **Elicitation** | Supported | Server-initiated requests for additional information from users |
-
-## Installing MCP servers
-
-### Using `mcp.json`
-
-Configure custom MCP servers with a JSON file:
-
-CLI Server - Node.js
-```
-{
-  "mcpServers": {
-    "server-name": {
-      "command": "npx",
-      "args": ["-y", "mcp-server"],
-      "env": {
-        "API_KEY": "value"
-      }
-    }
-  }
-}
-```
-
-CLI Server - Python
-```
-{
-  "mcpServers": {
-    "server-name": {
-      "command": "python",
-      "args": ["mcp-server.py"],
-      "env": {
-        "API_KEY": "value"
-      }
-    }
-  }
-}
-```
-
-Remote Server
-```
-// MCP server using HTTP or SSE - runs on a server
-{
-  "mcpServers": {
-    "server-name": {
-      "url": "http://localhost:3000/mcp",
-      "headers": {
-        "API_KEY": "value"
-      }
-    }
-  }
-}
-```
-
-### STDIO server configuration
-
-For STDIO servers (local command-line servers), configure these fields in your `mcp.json`:
-
-| Field | Required | Description | Examples |
-| --- | --- | --- | --- |
-| **type** | Yes | Server connection type | `"stdio"` |
-| **command** | Yes | Command to start the server executable. Must be available on your system path or contain its full path. | `"npx"`, `"node"`, `"python"`, `"docker"` |
-| **args** | No | Array of arguments passed to the command | `["server.py", "--port", "3000"]` |
-| **env** | No | Environment variables for the server | `{"API_KEY": "${env:api-key}"}` |
-| **envFile** | No | Path to an environment file to load more variables | `".env"`, `"${workspaceFolder}/.env"` |
-
-### Authentication
-
-MCP servers use environment variables for authentication. Pass API keys and tokens through the config.
-
-Cursor supports OAuth for servers that require it.
-
-## Security considerations
-
-When installing MCP servers, consider these security practices:
-
-- **Verify the source**: Only install MCP servers from trusted developers and repositories
-- **Review permissions**: Check what data and APIs the server will access
-- **Limit API keys**: Use restricted API keys with minimal required permissions
-- **Audit code**: For critical integrations, review the server's source code
-
-Remember that MCP servers can access external services and execute code on your behalf. Always understand what a server does before installation.
+{'type': 'text', 'text': 'The MCP Inspector is an interactive developer tool for testing and debugging MCP servers.\n\n## Getting started\n\n### Installation and basic usage\n\nThe Inspector runs directly through `npx` without requiring installation:\n\n```\nnpx @modelcontextprotocol/inspector <command>\n```\n\n```\nnpx @modelcontextprotocol/inspector <command> <arg1> <arg2>\n```\n\n#### Inspecting servers from npm or PyPI\n\nA common way to start server packages from npm or PyPI.\n\n- npm package\n- PyPI package\n\n```\nnpx -y @modelcontextprotocol/inspector npx <package-name> <args>\n# For example\nnpx -y @modelcontextprotocol/inspector npx @modelcontextprotocol/server-filesystem /Users/username/Desktop\n```\n\n```\nnpx @modelcontextprotocol/inspector uvx <package-name> <args>\n# For example\nnpx @modelcontextprotocol/inspector uvx mcp-server-git --repository ~/code/mcp/servers.git\n```\n\n#### Inspecting locally developed servers\n\nTo inspect servers locally developed or downloaded as a repository, the most common way is:\n\n- TypeScript\n- Python\n\n```\nnpx @modelcontextprotocol/inspector node path/to/server/index.js args...\n```\n\n```\nnpx @modelcontextprotocol/inspector \\\n  uv \\\n  --directory path/to/server \\\n  run \\\n  package-name \\\n  args...\n```\n\nPlease carefully read any attached README for the most accurate instructions.\n\n## Feature overview\n\nThe Inspector provides several features for interacting with your MCP server:\n\n### Server connection pane\n\n- Allows selecting the transport for connecting to the server\n- For local servers, supports customizing the command-line arguments and environment\n\n### Resources tab\n\n- Lists all available resources\n- Shows resource metadata (MIME types, descriptions)\n- Allows resource content inspection\n- Supports subscription testing\n\n### Prompts tab\n\n- Displays available prompt templates\n- Shows prompt arguments and descriptions\n- Enables prompt testing with custom arguments\n- Previews generated messages\n\n### Tools tab\n\n- Lists available tools\n- Shows tool schemas and descriptions\n- Enables tool testing with custom inputs\n- Displays tool execution results\n\n### Notifications pane\n\n- Presents all logs recorded from the server\n- Shows notifications received from the server\n\n## Best practices\n\n### Development workflow\n\n1. Start Development   - Launch Inspector with your server\n   - Verify basic connectivity\n   - Check capability negotiation\n2. Iterative testing   - Make server changes\n   - Rebuild the server\n   - Reconnect the Inspector\n   - Test affected features\n   - Monitor messages\n3. Test edge cases   - Invalid inputs\n   - Missing prompt arguments\n   - Concurrent operations\n   - Verify error handling and error responses', 'extras': {'signature': 'EvwpCvkpAQw51seF6ntR1/uWD/6iITqowJWB+TUbaMP5Yf2Ot7OmGZ53RGwgxmPqrksGmLCFPFg7tEItd0dI/jjSdZN2mMVJjf4Fn0NbDWKyqFU4Sgzm+xvhIQtIq6oXRNxSU8xAEYzGqI2pZ08gkXQqOVjqXlBC3EyuIsbQ+hHXwQLpXyUmSZWN3J+0jZzdisxuzBCkXER2eZRaogW1z+viV8XvVxnzkPadJr693TP+BmIgMHrRWv9IeHWrmv5TevI4Mh9BSpohSDyqFJcHJzN0qb8GXzqixFN1PebSHvN7BTokUyQcTsEoRhRjtBZXI2ijQtkmyEg1tvvLuCxSIAR1+uUd42ja635Cw+RSA/zvjJ+9r3gGbv4GVpsB5W+61wl13JEAs5t8gV3koOJsRwq5mN5fxO8vLyNKcz77mJe6eR7Rrn3Dra55XZZX/HFCrLRmS0X8rvPljTSqrw/1GuR1dKb2K5xqV2AD2L53rTt/zkS+AZLieiiSPmROc3en6qA88gkVSao5EprZX2Z3iBsJBWvr3/YM1EIEuIj3qshj5ER7+Bg6ii8SIITu1evvua1+bINB7hfFHpzQytIbMSIz3MMA5cMBcsEko08vD5N1dO7r5e3Hft4tL/8FbTugmFXTIFHhFyFCxW+AKxALhDN/OYHW1ejt2xp4r/84rMz/tMoZCROV+HiPjXxmnwLkraTZqJtjVUdbjeY3ZgV1rmaVkj59pbtjjnyLLK4oYmebvGyr8MGkSta1KxuXM1gGgFP6i3q7BjY15vZwtiy9thQ7Tep9DRvPuX0h/lr2c2UjjwvQrAhEgJD7wc98fbhUMnCCtPX00ZnDx6PQIvOvaRtHiCDf8wxG1qbAt8ZFnqbAQjR6HtKusKLPNKllX2C5efNY9z97ngcJ6kfCL0JZq+TDe7MfDl9EE+vpJRHTL1q2ntjCTjHLN501b4QT8/37GOw1FtpsvDFdF/80F/LD3R6OViV+w2SJG7Rn95g9GqKv2CT8d2P7gHSQIaRGVKtmNazw01LUR5th9XmpueFGfUs9oTB6zI28mUCftF/Li9wA4UzdeQkuKe97uCd+hpi1oaJrQPg9tfvTsTLUO/bW6oq0TVKC7DBfITaP/1iMGHW4bHT0l762Lgl3xnlI2R17KzYzt3L2qZGNgfgtg9ZtAQnV0/STOog+JcMg14+VWx4Kr32SIFOXXlLmMzlrFEbBCxczSxV9vXnlRTSYD6lYNl/Cc5nkNrHCrGOAe8xKTLrWxZdZ1b/p5sItNKE9ZUz/wzHTvt1B6qcWX/OVPbAuJ8/4v0RCY6uEEhVqPcEUdqSuzGVwF3C/e75gq16eqO5Wj9pL4l/S+XYfhGRasQr+d3gx6pTxV/hwvjRdY8BYO7pUSdT/zufUzmRzyOS/Ixs3z6XoQE8Npm+wF1Z46YhUWBQnc1CxyfcXYqDMuCLV+B6ZQoK4kq1ngUUWZ8thQM/G4Lz8B+4AMM0AwWcUz7NdsScVVXZNm80koDB4MzghE7D1cEV6irGNsYMd1IFHHOgH3aRvhnz9tJ5fBs0Ubn4EY8ZDEA5kZf7cZU0o6wSItkPjASSIR3caDqEcANZPMr/30ofCmw2thyqoD+tyzj6bJBMuDgmeRQRmjWoR3YacBi6tDWeS4Fmtwy6SSXT0LLBueLdw2jyhg+IVnshssoQpasullYYCaJwar7omFgLFJSug7nc8l9k4rouc4wuoLZJZCPhk2TE97w/JL8EaJMjsHwi93W3Yr99qqhMdge7o+fKvM7jaI8uv1ntz2qiftA+c8rJee6R4HtyuZxsBp1ChckhQAdEaEG9tZ0Z/+REbN13oJvceCkEuFlf2uA7eYK2D5YWDFXjDITze6EFFawSa1ETyAw8ZDZ7ig9F4F4Jq1OK76+xk1IC3r1thSdxuVKzck3C/MBdMJT1GveoqibmG4OUbfr9EgSW8GD+ovOiacDmwr2qrVrPIZ/qFI8XTCiU6286v5fQXd6YM3K512jXPaqwB3yU8oEdBuxUYENXMjlOeN0T+MTjm2ULXa3KZyJ3Ix/VtWD/c8peNRF9/MnBEhZPjXmSrqSMgftTmuDeGt5ZqJPtXz9OZlqK2Ly+omuSCMoDdBMn9P/OArDKqo9R6SP02L4iybYLBZtuudEAYsfgeQokjtr3AtWcVoab2BSEgvTT+mAfJI8pq5KHqTyO1iliKFnFndx66tYBdaM/i7Jcj39VJnqZ6vyEBDBEr1DifgS34jUAhVKLGhWRJIPxfcQCNRxAD/ZYK9qvKqD0GwjGs4xp4dIJbPgVnQNpYV6uXkrq+7tnsj76AGXEvjHeQDzeaUhblft6i8dJxeDbSe7J+mtA2k285cgXRus5WZuS6gt/XIpEa7kz2yQ07aXAoClNfrQ7yyWzBPHgT0ISAyVu5pUa7DuAY2IjVqtgcA4qxCzO9VYJ/sz8MdYAUhNS8Ck7pLI3AjjlCctHLWVJpwwTr7ujJe1A7tu5U6OZLYdeUTFyefe7bJb2U47lCjsZFqONIW6qVDE7Ubi+SZtwSgxgVYul5LJ1tbHScpyydfsP421kwNz7HPjhgb9YNBKb3/Nc4LZMedvkdCv8yiIXmS9BmPEVVWLCGezqLPsWHIq4KmLHsLZRnaP7Hpy3ioPC7kZBy9htHkagZlhwQHaf1iEWVWgHhPCDPFp5BV8rxsWpLysRbzPdaecKcYcQS4yYLaM/t6OZXOEXwnEaSfaHTbki77cSjz7wW1ccemYNaJ/ewLC7HzL5NGFxL678oOEk+qJg/L899cZ6rpY9vG9MXKWfAOX/yfU6u+Olsdd5FTVOw/b3BO1NYkrgW777zlkdJmhwv+IImXvAJSqedj9DaiwvumMHt5mGtqNR7TT1AYmZw2zrxS+JVc/miHiLTl9ACxX7Kqe7mFujcQ1xe1UzXOKtZommPvY4jKVjyDJAc3iCAMr6N2CTdShNh1v+oa0BJ5KqdQA5hmfF3fqrXosiGLTkVce5W9N2z1o1H5jtNYjj56XabUjY4EIXqYvSYV+Z+nkim/QRE9kYxONvhZL2xhh0GX1MlAQY/rT+nn/Kydb5Z0kv/gkxM0V3VPoBrMuTZEjC94HnsQGK7071c/ItqU5k/zKNz9IgI8C7reCp7xwSZW8U8rkVQyfSuhM2nGUvG4A8mPDK69KO3M9LT0dkdEjY5ugbH4JQd1e1ChuE2wABB5sHPktWadcoD1B2XTNqylYyAq41GMSNLFbpM5Sc/T3oPNu7ZKPtdcmyu4XLJUXszWjJFR7Qa1YaVm9pId6M3XDTO0wrseTbSSp3Yjl/RiOKR3YID0rDNnhr+IgNRgs/Yi5IXw2YRFqULi9mQELgmbGcYZjAIGkvCxaEvuQYrkiVHjrpnSAbi5Lo8VhBvHFVTH8nHBgRPUB/BQOM6vYB3nfV/WS+O4RLhj5p5A/DpFkbGHYPruTWAANT5osO6AMorIYAj+MJ64D+G4RW+VWR9KMYgd8kZEg57jE6zXlkMYLb1UEo7zV5SvGbmVuSPggDj+kUBoQETNs45nQXMWD1e/U7yOI+2J1gDm98paZKbW8mnAiQf2mlJhSeJ55GgpeuQ4KoazWfe+nSNftNmJNHr9vH/lB9guoMNYLyllfOOFxnXizZmK/meORKwSPBSbKS4hRWt8mkvO61hhzN1g2GNjZj3gj+oF8qhHO2hKihoBE7MpwVwsOye6sR65ebwKz9NOCYA5okKfdKtPx1lZErWzzgGD5/2VREu0FhE5iJe/tB5OBfbMxzLsHzxmdxugOO/brk5/ma1CIDuyNYSqCgtsnFhgnej5F6q5iDsDY8XQBSZ7dSrulcDFlc40+KlUfN1dxv6Mk4cZ6nCnhIXOh6umZLTuBkNQ1PzovYsopoicG9d/jrw8UJ0q0x2OgVHhx3KuQq0tqq54gLKnDZ/VXYIsLhAEps4u71X+uvIai+6QPhVEf4tUsWnlG8M7VueY0EoM806L1Nlq4o/bkhIW+LGwt4oFJBoT4oZFOH2gfpJ8PlcMPf2GqCBNiCnfaT9eMx+OurNgxL53dFVP6fyiobZH/D/8HqlMfA9uPADe32EHlm7BDVM0KpAO5rqdWtiD3W0z298q40mQevvsHibEC0qnbO0MjeOnYYnm5pwkc54RkD+drZCk1vWdlTgQsDGoZCIN/AvBQ6fRwdE4uh66Dfg+HNVmQpcJdUNzoUpqE2v19l7J7EBzuk3tnhC1WymsYYzzIbaH6els6+XIgYrSBEABOQz5HRWfb2e7qGA3phKaiAWjUbPeNzI82nxacKrVE5wG+TlaSud+NVAZf7ZCZTnRHb1kF8vTTsSQON9zbgH5jwLwOtq6zIJEY0BdVG8TcSZbhJUNFVq/gdyGsW7MnwoEq0jnWadb527pjzJBdOjhFRxU6RV2WjpGGBnvqJOfM9atR/kl2tlcORRTn9QgMmXaU1MUAwO8vL24a1hXOXs6vxJtlv1aTz1AGKEaXyt0hbdJK7ChxC84PGronkoLroVN8w990TO20DLI+jprKpWN3GaN9gfqXqConY0dpzPgF5V96maUybUMdnxRWVZzagQtbnjHPeCSCydYQkBz3x/9Wo9Mq5xOdLAUyZNG6eJlaC56rNw08fS6BZlXfDRwIznUTvsuW+kikmm7RtZo5upJLCpw9Ivv99RoXCmPyMqAVNaq7eUuDgMmj/0djNFLAl6WLy5p42W/OiNoE7nPtwaPxnoRGGQcphPWZIBOpLzhP9SycAN4bPszOaw53Vt4eAL78PnCiY4vjfyHp0bMhbRtOx3XuNUfVOZ6X3xkGJm0sjIOPEiRGllYXjfynvisqKyX4Dv2FGP0FXtHUqDIklsNZUBeLkl9BmJOzSwtAcie2wcm/w8zOh8dfCM+7ZhF8M520qvThKFULhMPsjbPVT2OGXl2DSFY6663MBtOXaFPP+g9pH0u71vScX71R4BpHjWolsRK7Wk94u/eOmOD5+v2JKbJH+VGoTj83nNZp8y2UnSs6AExZwD9bVrSwqJ7xArRLnVRFV7Sw2QY7lnNlY8C3TjOWzwH954f3ye7syunLD+6crCFp44yba3gaqUvzc/yNN12sKFRh+Kt3RUbtk+qRT17d3oZRFQGV6PwkBZ50Y6Am/fWDVyEU0ejK4QO1DDt4cfxSZA6H6VH+JHJYpW+5SPhTGcAKvt+6tzj9+MkPAwtU+dknh0zkzFj4GeAl7VHJgNgTbBlb62z8l3R3ercbWcB+LSmSlaaEliEsRqlB6NeDGubIiFR7vZVNeZbmJKPitf3+aOjBnneC5s+4uMkOACRFKvDIHXgZHP4hUIBaXIYynSGYbdlDCwzYu0Wf96BCD0pdlpdYNXB6LrN0H/SY0/j76VxnAQOkVvdVIrhY/73obrONYpy6dzMBmkv+MeHJ2aYDCLkievWsYrIFJtNDkFw3hzZZ55ONCHsvm8306G+hNGJXg5hpr/dslsN5xfYOUzcQXNIEDDwvILPk6D3zs4cIjxl3npd9xyKhXEDc2DFUwQF64LeeBhoPf2FCts/R+kYWeJbbRP1gYv842HVITBx4ojf3kbs0ENa7SvbbsRwBIsuF/FXaG83H3nqoHXr9/u7Z2IxJL1NLAjA+lAFoBx5lEqqvoiivGxTo8a2YGjb6DgQFuIL8KD4YC9TK2o8uBVTe77gwX4u/2QvnfJiDIBWg8IQJIVLvGy8qKREZpUWzJH8oRFIf80c6hNwhQDKjtahqS/E0FQXqHfgz755oeFLLGhagslLKKy9PoCzErNam8NJNd+a//tDY+KhzvSMLOD8X22y6zEyAoKA1cxLJvmDoj0Jf1269Apmk1HYTQPAMya+KqdKsCVOAoOOoh9dOvCXcYa2yu7M+SOnYNWpcp5zJ4cvjsJWGiftoXIL7giSX83koWzBzGFPAdsepM1P5JsNNpaUjWtsJL6pXKek1HmiwRm7vqHwGTQJsQOQnlUpTD07TKs46iimk7cbu5Cn9UjN0wVSU7Vr0me3kAt7Uk6bYnH4FVoop+WacR0HYUwXuREqJ5LxuNG5spq+t8m0NWJkH87ns0Y7oaOqMuGT6n76yfxtEgoG09v+sOMpL0NH0a/wyV7fykjoKTCxwoC2t2mhRYf9FcVwJgu/BKB0OpfexGLIC2fx+UqVqfQ5Pnu+thz1Wv3D0r46suQ+3RvGA7qz9XUgHr7KiCnPAdOuodmt4QouYRp9wjCACwpWtP9d4nBJdcJAvtQo82qey/L/NR10Dr5ZX5NBYTuC7oGv3rVyhaSEbRtoxqmCyqe34LXy9WM5BixmCWzVgG+1AmN9CPJBUtZVcWTGnS3FqRMYM1eodgE1dyx84TAAOHuhF5GkUwD8FAmxFfylLX3wi+lLot150Cs96tTDk6hyQhkyTL9todxae2BpxMwluXmshSEVdMrN2rQHATwIXk7+o9RABxOomRwTpEN8Q5iZZTSplMOpYE5z0fldry9Yu97wOYOuM6Ah17ZnXGtRsxiIQ4gdMPO9Dd24THOesRwlcTOM+SJZwAsqHXGYMQz71gyrCa7JO89enYLOtQseCWKo2qnqv8LA0psDYQzm+h/OeyhYxEpgrDERw7P4t8Hee/9h3/kbJtAb72K2HQnKl0GDi6hjLuMXofxCR4RaZOA0xZy5Vi0RqZQEj7E+HCR0+5DUEeleNNYRGlCALKqoE7Qa+uGGmDqhE5XMngIdJu0Sfhp+geRK3fCTBqObzqkNm5+W7ceoFPQ+zwWUv8H0Zg6qaH2cMYWNr0EAu+yWurhEc9eELFI/uyO4Tsnj5ADwtF1mI9OqKvazCwNo6eJY8LNIEdIFVJudMV9MPWHBjROjadQytQeb2JBMFTQANOJWrccAmoAKAkYrJXSpTRNjqOA10mpgloJNx5lDkHdczsrcZXqRkJ5qBmmhyy9m1Je8aIc6sdkL1wKi+FWqqwCHt7usJiZ9Qv/CTQWs1oLeeQXNM6bzw6gPZ8x/rDc9J3Xi+uqfUD5TiTb7iHA+GlKclckGfUdgYVjSPyVYcQpqWawzWdHnYfmUaFf7J65cUU60rkbCuu2/0b9fQANNzdiaGaRbuyi7m0sQM0tAXrXWNlCFs3NG4Baf0sJqBfYcZ/O4AM6DAkRHjdJVH54UtvurfER3dCU18J9LqjqVcDF8V+1xaP4i5ELGhCbBgafmH196vFcgKw='}}
 
 </details>
 
 <details>
 <summary>prompts-model-context-protocol</summary>
 
-**Protocol Revision**: 2025-06-18
-
-The Model Context Protocol (MCP) provides a standardized way for servers to expose prompt
-templates to clients. Prompts allow servers to provide structured messages and
-instructions for interacting with language models. Clients can discover available
-prompts, retrieve their contents, and provide arguments to customize them.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#user-interaction-model)  User Interaction Model
-
-Prompts are designed to be **user-controlled**, meaning they are exposed from servers to
-clients with the intention of the user being able to explicitly select them for use.Typically, prompts would be triggered through user-initiated commands in the user
-interface, which allows users to naturally discover and invoke available prompts.For example, as slash commands:https://mintcdn.com/mcp/4ZXF1PrDkEaJvXpn/specification/2025-06-18/server/slash-command.png?fit=max&auto=format&n=4ZXF1PrDkEaJvXpn&q=85&s=7f003e36d881dd6f3e5b8cbdd85e5ca5However, implementors are free to expose prompts through any interface pattern that suits
-their needs—the protocol itself does not mandate any specific user interaction
-model.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#capabilities)  Capabilities
-
-Servers that support prompts **MUST** declare the `prompts` capability during
-[initialization](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle#initialization):
-
-```
-{
-  "capabilities": {
-    "prompts": {
-      "listChanged": true
-    }
-  }
-}
-
-```
-
-`listChanged` indicates whether the server will emit notifications when the list of
-available prompts changes.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#protocol-messages)  Protocol Messages
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#listing-prompts)  Listing Prompts
-
-To retrieve available prompts, clients send a `prompts/list` request. This operation
-supports [pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "prompts/list",
-  "params": {
-    "cursor": "optional-cursor-value"
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "prompts": [\
-      {\
-        "name": "code_review",\
-        "title": "Request Code Review",\
-        "description": "Asks the LLM to analyze code quality and suggest improvements",\
-        "arguments": [\
-          {\
-            "name": "code",\
-            "description": "The code to review",\
-            "required": true\
-          }\
-        ]\
-      }\
-    ],
-    "nextCursor": "next-page-cursor"
-  }
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#getting-a-prompt)  Getting a Prompt
-
-To retrieve a specific prompt, clients send a `prompts/get` request. Arguments may be
-auto-completed through [the completion API](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion).**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "prompts/get",
-  "params": {
-    "name": "code_review",
-    "arguments": {
-      "code": "def hello():\n    print('world')"
-    }
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "description": "Code review prompt",
-    "messages": [\
-      {\
-        "role": "user",\
-        "content": {\
-          "type": "text",\
-          "text": "Please review this Python code:\ndef hello():\n    print('world')"\
-        }\
-      }\
-    ]
-  }
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#list-changed-notification)  List Changed Notification
-
-When the list of available prompts changes, servers that declared the `listChanged`
-capability **SHOULD** send a notification:
-
-```
-{
-  "jsonrpc": "2.0",
-  "method": "notifications/prompts/list_changed"
-}
-
-```
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#message-flow)  Message Flow
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#data-types)  Data Types
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#prompt)  Prompt
-
-A prompt definition includes:
-
-- `name`: Unique identifier for the prompt
-- `title`: Optional human-readable name of the prompt for display purposes.
-- `description`: Optional human-readable description
-- `arguments`: Optional list of arguments for customization
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#promptmessage)  PromptMessage
-
-Messages in a prompt can contain:
-
-- `role`: Either “user” or “assistant” to indicate the speaker
-- `content`: One of the following content types:
-
-All content types in prompt messages support optional
-[annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) for
-metadata about audience, priority, and modification times.
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#text-content)  Text Content
-
-Text content represents plain text messages:
-
-```
-{
-  "type": "text",
-  "text": "The text content of the message"
-}
-
-```
-
-This is the most common content type used for natural language interactions.
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#image-content)  Image Content
-
-Image content allows including visual information in messages:
-
-```
-{
-  "type": "image",
-  "data": "base64-encoded-image-data",
-  "mimeType": "image/png"
-}
-
-```
-
-The image data **MUST** be base64-encoded and include a valid MIME type. This enables
-multi-modal interactions where visual context is important.
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#audio-content)  Audio Content
-
-Audio content allows including audio information in messages:
-
-```
-{
-  "type": "audio",
-  "data": "base64-encoded-audio-data",
-  "mimeType": "audio/wav"
-}
-
-```
-
-The audio data MUST be base64-encoded and include a valid MIME type. This enables
-multi-modal interactions where audio context is important.
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#embedded-resources)  Embedded Resources
-
-Embedded resources allow referencing server-side resources directly in messages:
-
-```
-{
-  "type": "resource",
-  "resource": {
-    "uri": "resource://example",
-    "name": "example",
-    "title": "My Example Resource",
-    "mimeType": "text/plain",
-    "text": "Resource content"
-  }
-}
-
-```
-
-Resources can contain either text or binary (blob) data and **MUST** include:
-
-- A valid resource URI
-- The appropriate MIME type
-- Either text content or base64-encoded blob data
-
-Embedded resources enable prompts to seamlessly incorporate server-managed content like
-documentation, code samples, or other reference materials directly into the conversation
-flow.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#error-handling)  Error Handling
-
-Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
-
-- Invalid prompt name: `-32602` (Invalid params)
-- Missing required arguments: `-32602` (Invalid params)
-- Internal errors: `-32603` (Internal error)
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#implementation-considerations)  Implementation Considerations
-
-1. Servers **SHOULD** validate prompt arguments before processing
-2. Clients **SHOULD** handle pagination for large prompt lists
-3. Both parties **SHOULD** respect capability negotiation
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/prompts\#security)  Security
-
-Implementations **MUST** carefully validate all prompt inputs and outputs to prevent
-injection attacks or unauthorized access to resources.
+{'type': 'text', 'text': 'The Model Context Protocol (MCP) provides a standardized way for servers to expose prompt\ntemplates to clients. Prompts allow servers to provide structured messages and\ninstructions for interacting with language models. Clients can discover available\nprompts, retrieve their contents, and provide arguments to customize them.\n\n## User Interaction Model\n\nPrompts are designed to be **user-controlled**, meaning they are exposed from servers to\nclients with the intention of the user being able to explicitly select them for use.Typically, prompts would be triggered through user-initiated commands in the user\ninterface, which allows users to naturally discover and invoke available prompts.For example, as slash commands:https://mintcdn.com/mcp/4ZXF1PrDkEaJvXpn/specification/2025-06-18/server/slash-command.png?fit=max&auto=format&n=4ZXF1PrDkEaJvXpn&q=85&s=7f003e36d881dd6f3e5b8cbdd85e5ca5However, implementors are free to expose prompts through any interface pattern that suits\ntheir needs—the protocol itself does not mandate any specific user interaction\nmodel.\n\n## Capabilities\n\nServers that support prompts **MUST** declare the `prompts` capability during\n[initialization](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle#initialization):\n\n```\n{\n  "capabilities": {\n    "prompts": {\n      "listChanged": true\n    }\n  }\n}\n```\n\n`listChanged` indicates whether the server will emit notifications when the list of\navailable prompts changes.\n\n## Protocol Messages\n\n### Listing Prompts\n\nTo retrieve available prompts, clients send a `prompts/list` request. This operation\nsupports [pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "method": "prompts/list",\n  "params": {\n    "cursor": "optional-cursor-value"\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "result": {\n    "prompts": [\n      {\n        "name": "code_review",\n        "title": "Request Code Review",\n        "description": "Asks the LLM to analyze code quality and suggest improvements",\n        "arguments": [\n          {\n            "name": "code",\n            "description": "The code to review",\n            "required": true\n          }\n        ]\n      }\n    ],\n    "nextCursor": "next-page-cursor"\n  }\n}\n```\n\n### Getting a Prompt\n\nTo retrieve a specific prompt, clients send a `prompts/get` request. Arguments may be\nauto-completed through [the completion API](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion).**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "method": "prompts/get",\n  "params": {\n    "name": "code_review",\n    "arguments": {\n      "code": "def hello():\\n    print(\'world\')"\n    }\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "result": {\n    "description": "Code review prompt",\n    "messages": [\n      {\n        "role": "user",\n        "content": {\n          "type": "text",\n          "text": "Please review this Python code:\\ndef hello():\\n    print(\'world\')"\n        }\n      }\n    ]\n  }\n}\n```\n\n### List Changed Notification\n\nWhen the list of available prompts changes, servers that declared the `listChanged`\ncapability **SHOULD** send a notification:\n\n```\n{\n  "jsonrpc": "2.0",\n  "method": "notifications/prompts/list_changed"\n}\n```\n\n## Data Types\n\n### Prompt\n\nA prompt definition includes:\n\n- `name`: Unique identifier for the prompt\n- `title`: Optional human-readable name of the prompt for display purposes.\n- `description`: Optional human-readable description\n- `arguments`: Optional list of arguments for customization\n\n### PromptMessage\n\nMessages in a prompt can contain:\n\n- `role`: Either “user” or “assistant” to indicate the speaker\n- `content`: One of the following content types:\n\nAll content types in prompt messages support optional\n[annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) for\nmetadata about audience, priority, and modification times.\n\n#### Text Content\n\nText content represents plain text messages:\n\n```\n{\n  "type": "text",\n  "text": "The text content of the message"\n}\n```\n\nThis is the most common content type used for natural language interactions.\n\n#### Image Content\n\nImage content allows including visual information in messages:\n\n```\n{\n  "type": "image",\n  "data": "base64-encoded-image-data",\n  "mimeType": "image/png"\n}\n```\n\nThe image data **MUST** be base64-encoded and include a valid MIME type. This enables\nmulti-modal interactions where visual context is important.\n\n#### Audio Content\n\nAudio content allows including audio information in messages:\n\n```\n{\n  "type": "audio",\n  "data": "base64-encoded-audio-data",\n  "mimeType": "audio/wav"\n}\n```\n\nThe audio data MUST be base64-encoded and include a valid MIME type. This enables\nmulti-modal interactions where audio context is important.\n\n#### Embedded Resources\n\nEmbedded resources allow referencing server-side resources directly in messages:\n\n```\n{\n  "type": "resource",\n  "resource": {\n    "uri": "resource://example",\n    "mimeType": "text/plain",\n    "text": "Resource content"\n  }\n}\n```\n\nResources can contain either text or binary (blob) data and **MUST** include:\n\n- A valid resource URI\n- The appropriate MIME type\n- Either text content or base64-encoded blob data\n\nEmbedded resources enable prompts to seamlessly incorporate server-managed content like\ndocumentation, code samples, or other reference materials directly into the conversation\nflow.\n\n## Error Handling\n\nServers **SHOULD** return standard JSON-RPC errors for common failure cases:\n\n- Invalid prompt name: `-32602` (Invalid params)\n- Missing required arguments: `-32602` (Invalid params)\n- Internal errors: `-32603` (Internal error)\n\n## Implementation Considerations\n\n1. Servers **SHOULD** validate prompt arguments before processing\n2. Clients **SHOULD** handle pagination for large prompt lists\n3. Both parties **SHOULD** respect capability negotiation\n\n## Security\n\nImplementations **MUST** carefully validate all prompt inputs and outputs to prevent\ninjection attacks or unauthorized access to resources.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>resources-model-context-protocol</summary>
 
-**Protocol Revision**: 2025-06-18
-
-The Model Context Protocol (MCP) provides a standardized way for servers to expose
-resources to clients. Resources allow servers to share data that provides context to
-language models, such as files, database schemas, or application-specific information.
-Each resource is uniquely identified by a
-[URI](https://datatracker.ietf.org/doc/html/rfc3986).
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#user-interaction-model)  User Interaction Model
-
-Resources in MCP are designed to be **application-driven**, with host applications
-determining how to incorporate context based on their needs.For example, applications could:
-
-- Expose resources through UI elements for explicit selection, in a tree or list view
-- Allow the user to search through and filter available resources
-- Implement automatic context inclusion, based on heuristics or the AI model’s selectionhttps://mintcdn.com/mcp/4ZXF1PrDkEaJvXpn/specification/2025-06-18/server/resource-picker.png?fit=max&auto=format&n=4ZXF1PrDkEaJvXpn&q=85&s=133fa885ef6e9c2e20049da5c33f4386However, implementations are free to expose resources through any interface pattern that
-suits their needs—the protocol itself does not mandate any specific user
-interaction model.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#capabilities)  Capabilities
-
-Servers that support resources **MUST** declare the `resources` capability:
-
-```
-{
-  "capabilities": {
-    "resources": {
-      "subscribe": true,
-      "listChanged": true
-    }
-  }
-}
-
-```
-
-The capability supports two optional features:
-
-- `subscribe`: whether the client can subscribe to be notified of changes to individual
-resources.
-- `listChanged`: whether the server will emit notifications when the list of available
-resources changes.
-
-Both `subscribe` and `listChanged` are optional—servers can support neither,
-either, or both:
-
-```
-{
-  "capabilities": {
-    "resources": {} // Neither feature supported
-  }
-}
-
-```
-
-```
-{
-  "capabilities": {
-    "resources": {
-      "subscribe": true // Only subscriptions supported
-    }
-  }
-}
-
-```
-
-```
-{
-  "capabilities": {
-    "resources": {
-      "listChanged": true // Only list change notifications supported
-    }
-  }
-}
-
-```
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#protocol-messages)  Protocol Messages
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#listing-resources)  Listing Resources
-
-To discover available resources, clients send a `resources/list` request. This operation
-supports [pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "resources/list",
-  "params": {
-    "cursor": "optional-cursor-value"
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "resources": [\
-      {\
-        "uri": "file:///project/src/main.rs",\
-        "name": "main.rs",\
-        "title": "Rust Software Application Main File",\
-        "description": "Primary application entry point",\
-        "mimeType": "text/x-rust"\
-      }\
-    ],
-    "nextCursor": "next-page-cursor"
-  }
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#reading-resources)  Reading Resources
-
-To retrieve resource contents, clients send a `resources/read` request:**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "resources/read",
-  "params": {
-    "uri": "file:///project/src/main.rs"
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "contents": [\
-      {\
-        "uri": "file:///project/src/main.rs",\
-        "name": "main.rs",\
-        "title": "Rust Software Application Main File",\
-        "mimeType": "text/x-rust",\
-        "text": "fn main() {\n    println!(\"Hello world!\");\n}"\
-      }\
-    ]
-  }
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#resource-templates)  Resource Templates
-
-Resource templates allow servers to expose parameterized resources using
-[URI templates](https://datatracker.ietf.org/doc/html/rfc6570). Arguments may be
-auto-completed through [the completion API](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion).**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 3,
-  "method": "resources/templates/list"
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 3,
-  "result": {
-    "resourceTemplates": [\
-      {\
-        "uriTemplate": "file:///{path}",\
-        "name": "Project Files",\
-        "title": "📁 Project Files",\
-        "description": "Access files in the project directory",\
-        "mimeType": "application/octet-stream"\
-      }\
-    ]
-  }
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#list-changed-notification)  List Changed Notification
-
-When the list of available resources changes, servers that declared the `listChanged`
-capability **SHOULD** send a notification:
-
-```
-{
-  "jsonrpc": "2.0",
-  "method": "notifications/resources/list_changed"
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#subscriptions)  Subscriptions
-
-The protocol supports optional subscriptions to resource changes. Clients can subscribe
-to specific resources and receive notifications when they change:**Subscribe Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 4,
-  "method": "resources/subscribe",
-  "params": {
-    "uri": "file:///project/src/main.rs"
-  }
-}
-
-```
-
-**Update Notification:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "method": "notifications/resources/updated",
-  "params": {
-    "uri": "file:///project/src/main.rs",
-    "title": "Rust Software Application Main File"
-  }
-}
-
-```
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#message-flow)  Message Flow
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#data-types)  Data Types
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#resource)  Resource
-
-A resource definition includes:
-
-- `uri`: Unique identifier for the resource
-- `name`: The name of the resource.
-- `title`: Optional human-readable name of the resource for display purposes.
-- `description`: Optional description
-- `mimeType`: Optional MIME type
-- `size`: Optional size in bytes
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#resource-contents)  Resource Contents
-
-Resources can contain either text or binary data:
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#text-content)  Text Content
-
-```
-{
-  "uri": "file:///example.txt",
-  "name": "example.txt",
-  "title": "Example Text File",
-  "mimeType": "text/plain",
-  "text": "Resource content"
-}
-
-```
-
-#### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#binary-content)  Binary Content
-
-```
-{
-  "uri": "file:///example.png",
-  "name": "example.png",
-  "title": "Example Image",
-  "mimeType": "image/png",
-  "blob": "base64-encoded-data"
-}
-
-```
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#annotations)  Annotations
-
-Resources, resource templates and content blocks support optional annotations that provide hints to clients about how to use or display the resource:
-
-- **`audience`**: An array indicating the intended audience(s) for this resource. Valid values are `"user"` and `"assistant"`. For example, `["user", "assistant"]` indicates content useful for both.
-- **`priority`**: A number from 0.0 to 1.0 indicating the importance of this resource. A value of 1 means “most important” (effectively required), while 0 means “least important” (entirely optional).
-- **`lastModified`**: An ISO 8601 formatted timestamp indicating when the resource was last modified (e.g., `"2025-01-12T15:00:58Z"`).
-
-Example resource with annotations:
-
-```
-{
-  "uri": "file:///project/README.md",
-  "name": "README.md",
-  "title": "Project Documentation",
-  "mimeType": "text/markdown",
-  "annotations": {
-    "audience": ["user"],
-    "priority": 0.8,
-    "lastModified": "2025-01-12T15:00:58Z"
-  }
-}
-
-```
-
-Clients can use these annotations to:
-
-- Filter resources based on their intended audience
-- Prioritize which resources to include in context
-- Display modification times or sort by recency
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#common-uri-schemes)  Common URI Schemes
-
-The protocol defines several standard URI schemes. This list not
-exhaustive—implementations are always free to use additional, custom URI schemes.
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#https%3A%2F%2F)  https://
-
-Used to represent a resource available on the web.Servers **SHOULD** use this scheme only when the client is able to fetch and load the
-resource directly from the web on its own—that is, it doesn’t need to read the resource
-via the MCP server.For other use cases, servers **SHOULD** prefer to use another URI scheme, or define a
-custom one, even if the server will itself be downloading resource contents over the
-internet.
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#file%3A%2F%2F)  file://
-
-Used to identify resources that behave like a filesystem. However, the resources do not
-need to map to an actual physical filesystem.MCP servers **MAY** identify file:// resources with an
-[XDG MIME type](https://specifications.freedesktop.org/shared-mime-info-spec/0.14/ar01s02.html#id-1.3.14),
-like `inode/directory`, to represent non-regular files (such as directories) that don’t
-otherwise have a standard MIME type.
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#git%3A%2F%2F)  git://
-
-Git version control integration.
-
-### [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#custom-uri-schemes)  Custom URI Schemes
-
-Custom URI schemes **MUST** be in accordance with [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986),
-taking the above guidance in to account.
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#error-handling)  Error Handling
-
-Servers **SHOULD** return standard JSON-RPC errors for common failure cases:
-
-- Resource not found: `-32002`
-- Internal errors: `-32603`
-
-Example error:
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "error": {
-    "code": -32002,
-    "message": "Resource not found",
-    "data": {
-      "uri": "file:///nonexistent.txt"
-    }
-  }
-}
-
-```
-
-## [​](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\#security-considerations)  Security Considerations
-
-1. Servers **MUST** validate all resource URIs
-2. Access controls **SHOULD** be implemented for sensitive resources
-3. Binary data **MUST** be properly encoded
-4. Resource permissions **SHOULD** be checked before operations
-
-</details>
-
-<details>
-<summary>scaling-your-ai-enterprise-architecture-with-mcp-systems</summary>
-
-# Why MCP Breaks Old Enterprise AI Architectures
-
-MCP is everywhere these days.
-
-Scroll through any developer feed, and you’ll see tutorials on how to spin up an MCP server, plug it into your IDE, or connect it to Claude Desktop. It’s cool, it’s shiny, and it feels like the future.
-
-But most tutorials stop at the basics. They show you how to connect one thing to another, but skip over why it’s worth your attention. The real beauty of MCP isn’t in the connection—it’s in **how it changes the way you design automations at scale**.
-
-This piece isn’t another _“how to build a server”_ guide. It’s about why you might want MCP at the base of your systems. By the end, you’ll know what MCP _really_ brings to the table, and whether it’s worth starting with it on day one.
-
-Most LLM projects start with a prompt or a hack. Ours starts with a use case and the solution architecture—and continues with a deep dive on how to implement it.
-
-🔍 **The use case?** An assistant that reviews your pull requests before your teammates even get the chance. Fast, automated, and context-aware.
-
-_Think of it as the code reviewer who never ghosts your PR, never nitpicks semicolons, and actually reads the diff._
-
-In these series, we’re building **a production-ready PR reviewer assistant**—an LLM-powered system that listens for GitHub pull requests, analyzes them, and posts review summaries directly to Slack. It’s a real use case, with real integrations and real constraints.
-
-[https://substackcdn.com/image/fetch/$s_!wGcX!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbb178a33-45df-45d5-99ae-2b8b6c5e2d46_1452x1348.png](https://substackcdn.com/image/fetch/$s_!wGcX!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbb178a33-45df-45d5-99ae-2b8b6c5e2d46_1452x1348.png) Figure 1: Architecting an Enterprise PR Reviewer with MCP
-
-But what really matters is _how_ we’re building it—with **the Model Context Protocol (MCP)**, a standard that makes LLM systems modular, testable, and built to scale.
-
-> 🧑‍💻 **This is a hands-on walkthrough, not just theory.** In this lesson, we break down the design decisions—and in the next, we dive into the code. _(If you're eager, you can [jump straight to the GitHub repo](https://github.com/your-org/your-pr-reviewer-assistant) and follow along as you read.)_
-
-In this lesson, you’ll learn:
-
-- What MCP is and the problem it solves in real-world AI systems
-
-- How its core architecture of clients, hosts, and servers fits together
-
-- How to build a PR reviewer assistant and put MCP into action
-
-- When MCP is the right choice compared to traditional LLM setups
-
-## 1\. What is MCP really? (and why should you care?)
-
-AI systems start simple, but they get messy fast. Add a few tools, connect some APIs, and suddenly you're dealing with brittle integrations and custom glue code everywhere.
-
-Every framework, SDK, or service seems to define its own tool format, its own way of handling inputs and outputs, its own undocumented conventions. One expects OpenAPI-style schemas, another wants function signatures embedded in JSON, a third relies on hardcoded Python decorators with custom parsing logic.
-
-Even calling two different tools that “do the same thing” can require completely different invocation logic.
-
-The result? **Nothing fits together.**
-
-You end up writing adapters on top of wrappers on top of hacks. Tools can’t be reused. Workflows become tightly coupled to specific implementations. Testing becomes a nightmare. Scaling or swapping components feels like performing surgery on spaghetti.
-
-This fragmentation isn't just annoying—it’s the core bottleneck for building maintainable, extensible LLM systems.
-
-That’s **the problem** the **Model Context Protocol (MCP)** is designed to solve.
-
-MCP is a **protocol** , a formal standard for building modular, message-driven LLM systems. It’s not just a library or framework. It’s a way to architect AI software that doesn’t collapse under its own weight.
-
-It defines how clients, hosts, and servers communicate, with clear roles and structured messages, so your workflows stay composable, testable, and scalable by default.
-
-**Think of it like HTTP:**
-
-- The protocol defines how things should talk
-
-- The implementation is just how you choose to use it
-
-- Multiple systems can interact without writing custom integration code for each one
-
-**MCP doesn’t bring any new features**.
-
-What it brings is **structure**. It simply formalizes what we were already doing with tool-using agents in a form that scales like real software. It captures the patterns that emerged naturally as LLM systems matured and gives us a shared standard for building them.
-
-So instead of reinventing that architecture for every project, MCP gives you a consistent, interoperable way to do it right, from day one.
-
-If you want your AI workflows to scale, evolve, and stay sane, **you need to think in protocols — not just prompts.**
-
-[https://substackcdn.com/image/fetch/$s_!srDy!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F143a290b-afed-4ca8-9f70-c0b7fa8f1e5f_1396x1274.png](https://substackcdn.com/image/fetch/$s_!srDy!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F143a290b-afed-4ca8-9f70-c0b7fa8f1e5f_1396x1274.png) Figure 2: Tool integration before and after MCP
-
-## 2\. Traditional agent setups vs MCP-based architecture
-
-Early agent builds are quick wins: wire in a few tools, get results, move on. But over time, those shortcuts turn into tangled code that’s hard to maintain or extend.
-
-Think of it as inline, **monolithic agents versus MCP**, which enforces a **clean separation of concerns**. That difference in approach becomes clear when you look at how tools are integrated and managed.
-
-**The old way:**
-
-- Tools are hardcoded into the agent loop (e.g., a `summarize_diff()` call sitting inside the logic)
-
-- No clear abstraction, so changes mean editing core code _( **hint**: yep, the Open/Closed Principle we all nodded to in class!)_
-
-- Scaling is painful, and reusing tools across different frameworks is nearly impossible
-
-**The MCP way:**
-
-- Tools, resources and prompts sit on separate servers, decoupled from core logic
-
-- A standard interface keeps agents open for extension but closed for modification, letting you plug in multiple servers
-
-- The same interface makes tools reusable across frameworks, simplifying scaling and experimentation
-
-This separation of concerns keeps your workflows clean, tools reusable, and systems easier to evolve as your needs change.
-
-## 3\. How MCP Works
-
-So how does MCP actually pull this off?
-
-It starts with a simple idea: **every piece of the system has a clear job.**
-
-At its core, MCP uses a role-based architecture. Every component in an MCP-powered app plays one of three roles:
-
-- **Host** – the “agent brain.” It gathers context, decides which tools to use, and coordinates the workflow. Examples include a Python app, an IDE, or Claude Desktop.
-
-- **Client** – initiates tasks and talks directly to servers, keeping 1:1 connection with each MCP Server.
-
-- **Server** – exposes tools, resources, and prompts for the AI Applications to use.
-
-Think of it like this: **clients ask, hosts decide, servers deliver.**
-
-Now let’s zoom in on one of the most common things an MCP server does — tool calling — and see how these pieces interact together.
-
-[https://substackcdn.com/image/fetch/$s_!sXci!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc0a0f37e-1e0c-4c77-a21e-0ae6fcefe560_1222x1058.png](https://substackcdn.com/image/fetch/$s_!sXci!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc0a0f37e-1e0c-4c77-a21e-0ae6fcefe560_1222x1058.png) Figure 3: How tool calling works with MCP
-
-First, the MCP Client asks the MCP Server what tools are available.
-
-Once the list comes back, the LLM Gateway (your agent logic) selects the right tool and fills in the arguments — for example, asking to run `summarize_diff`. The client then sends that request to the server.
-
-The MCP Server executes the requested tool and sends the result back. The client passes it to the LLM, which uses it to continue the workflow and generate the final response.
-
-Because MCP defines a common protocol, **every server speaks the same “language”.**
-
-Your host and client don’t need to know how each server works internally. They simply send a request and get back a response in a standard format.
-
-This means you can swap one server for another — maybe replace your PDF processor or change your GitHub integration — without touching the rest of your system.
-
-You can also add new servers without rewriting your core logic, letting your system grow over time instead of getting stuck with one-off integrations.
-
-To understand how this plays out in practice, let’s take a look at the full MCP architecture involving multiple servers:
-
-[https://substackcdn.com/image/fetch/$s_!8lRP!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbf35c8d7-a897-423c-9333-9e18fde72c1c_1098x1002.png](https://substackcdn.com/image/fetch/$s_!8lRP!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fbf35c8d7-a897-423c-9333-9e18fde72c1c_1098x1002.png) Figure 4: The MCP Architecture
-
-This diagram shows the MCP architecture in practice, where a single Host is hooked to multiple Servers across the system.
-
-When you’re working with multiple servers, the overall flow stays familiar — but with one important change: the Host now needs to route each request to the server that owns the right tool for the job.
-
-The Host still drives the process. It uses an LLM to reason about the task, then passes the request through its connected MCP Client to the appropriate server. Since each server exposes different tools, selecting the right one matters.
-
-As we covered earlier, servers handle real functionality. They offer tools like `summarize_diff`, `get_jira_issue`, or `extract_keywords`, which the Host can call through standard MCP messages.
-
-But tool execution is just part of the story. Let’s explore what else servers can provide.
-
-#### What can servers provide?
-
-Most articles oversimplify MCP servers as “just tools.”
-
-That’s not true. **Servers are much more than tool endpoints.**
-
-They can expose three types of things:
-
-- **Tools** – functions to call, like `send_slack_message`, `summarize_diff`, or `fetch_weather`
-
-- **Resources** – data to retrieve, such as files from a local file system or an internal database
-
-- **Prompts** – pre-defined templates or system messages that the client can fill and use for LLM calls
-
-These servers act like modular building blocks, each focused on a single purpose but all speaking the same MCP “language.”
-
-#### What protocol do they use?
-
-MCP keeps things simple under the hood: **it’s all built on JSON‑RPC**.
-
-This is a lightweight protocol commonly used in microservices for server-to-server communication, where everything is encoded as JSON and exchanged over a simple request-response format.
-
-Check out a basic example of a JSON-RPC call to a tool named `summarize_code`:
-
-```
-{
-  "jsonrpc": "2.0",
-  "method": "summarize_code",
-  "params": {
-    "file_path": "src/utils/helpers.py"
-  },
-  "id": 1
-}
-```
-
-This standard defines how clients and servers exchange messages, but it doesn’t lock you into a single transport. You can choose the one that best fits your environment:
-
-- **stdio (great for development)**
-
-  - The client spawns the server as a subprocess and communicates over `stdin/stdout`
-
-  - Fast and synchronous
-
-  - Perfect for running servers as Python modules or quick local testing
-- **Streamed HTTP (production‑ready)**
-
-  - Allows servers to respond with standard HTTP responses or streaming data on demand
-
-  - Supports optional session IDs for state management and recovery
-
-  - Flexible enough for anything from serverless functions to full-scale AI applications
-
-  - Replaces the older HTTP + SSE approach with better reliability and session recovery
-
-> 🔗 **Learn more about the protocol in the [MCP transport specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports)**
-
-#### How can we secure them?
-
-Now that we know they provide the actual data … how do we secure them?
-
-When you expose an MCP server to the outside world, you’re effectively opening a door into your system.
-
-If someone gets unauthorized access, they could:
-
-- Trigger tools they shouldn’t have access to (think deploying code or deleting files)
-
-- Pull sensitive data from resources
-
-- Abuse prompts for unintended automation
-
-This isn’t theoretical — any open endpoint can be a target, and MCP servers are no different.
-
-**The go‑to: OAuth 2.0**
-
-The most common way to secure these servers is **OAuth 2.0**. Instead of handing out one static token that works for everyone (and everything), OAuth issues **scoped, time‑limited tokens** tied to specific users or systems.
-
-That means:
-
-- Each user or client authenticates and gets a unique token.
-
-- Tokens can expire or be revoked, limiting long‑term risk.
-
-- Access can be scoped so one user might only read data while another can run administrative tools.
-
-This is why OAuth 2.0 is the standard for production MCP deployments — it’s battle‑tested, flexible, and integrates with many identity providers.
-
-> 🔐 **Want to go deeper?** Check out [this guide on securing MCP servers with OAuth 2.0](https://www.infracloud.io/blogs/securing-mcp-servers/) for real-world tips and best practices.
-
-To visualize how this works, here’s what a typical **OAuth 2.0 flow** looks like between an MCP Host and a remote MCP Server:
-
-[https://substackcdn.com/image/fetch/$s_!Zgjo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdd1bd4b0-8b99-4566-8f62-7332c1ca3087_1424x1240.png](https://substackcdn.com/image/fetch/$s_!Zgjo!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdd1bd4b0-8b99-4566-8f62-7332c1ca3087_1424x1240.png) Figure 5: Using OAuth 2.0 with MCP
-
-Let’s briefly go through each step in the diagram:
-
-1. The **MCP Host** authenticates with the **Authorization Server** using its `client_id` and `client_secret`.
-
-2. It receives a **scoped access token**—not a catch-all credential, but one limited to only what this host is allowed to do (e.g., call specific tools, not all tools).
-
-3. The MCP Host sends a request to the **Remote MCP Server**, including the token in the `Authorization` header.
-
-4. The MCP Server validates the token.
-
-5. If valid and authorized, the server executes the requested tool and returns the result.
-
-This setup ensures fine-grained access control and keeps your system secure.
-
-## 4\. Designing The PR Reviewer Assistant with MCP
-
-Now let’s break down a real use case to make the mental model stick.
-
-Imagine you want an AI teammate that reviews pull requests the moment they’re opened — and delivers feedback to your team without you lifting a finger. No waiting on busy reviewers, no half-finished feedback, and no hunting through Asana tickets for missing context.
-
-We’ve all been there — the reviewer staring at a thousand-line diff wondering where to start, while the reviewee refreshes the page like it’s a flight status update.
-
-So, how would you actually design something like this?
-
-The diagram below shows one way to wire it up using MCP:
-
-[https://substackcdn.com/image/fetch/$s_!c4Up!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffe135b8d-c18b-4bd2-963f-5c940b294e95_1440x1380.png](https://substackcdn.com/image/fetch/$s_!c4Up!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffe135b8d-c18b-4bd2-963f-5c940b294e95_1440x1380.png) Figure 6: Data flow for the PR Reviewer Agent
-
-In our use case, the **MCP Host** is a FastAPI app powered by a Gemini LLM, wired into your GitHub repo through a webhook. It’s the component that reacts the instant a PR appears and decides exactly what should happen next.
-
-The host runs a single **MCP Client** connected to the **MCP Global Server**, which keeps every MCP server in one place. It organizes tools, prompts and resources, tags them, and makes it easy to find exactly what you need without going through scattered configs.
-
-For this setup, four MCP servers handle the heavy lifting — each with a specific job:
-
-- **GitHub MCP Server** – The primary source for PR context. It pulls metadata, file changes, and code diffs so the review has the full picture of what’s being proposed.
-
-- **Asana MCP Server** – Provides the task-level context behind the PR. It surfaces linked tasks and requirements so you can tell whether the changes actually deliver what was promised.
-
-- **Agent Scope MCP Server** – The starting point for the review logic. This is where the host retrieves the initial PR review prompt from, ensuring the LLM knows exactly how to frame and approach the evaluation.
-
-- **Slack MCP Server** – Handles the final step of delivery. It posts the completed review into the right Slack channel, ensuring the feedback is instantly visible where the team already communicates.
-
-**Now that we understand each component, let’s walk through the flow:**
-
-1. A developer opens a pull request in GitHub.
-
-2. GitHub fires a PR `opened` event to our FastAPI host with all the PR metadata.
-
-3. The host asks the Agent Scope MCP Server (via the Global Server) for the right PR review prompt.
-
-4. The host sends the PR data and prompt to Gemini, asking which tools to run.
-
-5. Gemini returns a plan — e.g., fetch PR content, grab linked tasks.
-
-6. The host calls the Global MCP Server to invoke the required tools and gather the needed data.
-
-7. Each MCP server talks to its external API, executes the job, and sends the results back.
-
-8. The host sends those results to Gemini to create the final review.
-
-9. The review goes to the Slack MCP Server, which posts it directly to the team.
-
-> _**Note**_: _In some cases, Gemini may request additional tool calls in a subsequent pass, meaning steps **5–9** can loop until all required data is gathered and the review is complete._
-
-And just like that, your PR is reviewed, contextualized, and shared — before you’ve even switched tabs.
-
-## 5\. Why This Scales (and Why You’ll Thank Yourself Later)
-
-MCP isn’t just clean architecture — it’s a future-proof way to build AI systems that won’t collapse under their own complexity.
-
-This scales because every component follows the same protocol. Adding a new capability doesn’t mean rewriting everything else — it’s simply a matter of plugging in another piece.
-
-Instead of a single, heavy system that grows harder to maintain, you’re building small, independent units that fit together naturally.
-
-Now picture this.
-
-[https://substackcdn.com/image/fetch/$s_!zFEo!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fedccc09a-ac2b-42b9-a023-7d73c8d6c7cb_1420x1320.png](https://substackcdn.com/image/fetch/$s_!zFEo!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fedccc09a-ac2b-42b9-a023-7d73c8d6c7cb_1420x1320.png) Figure 7: Enterprise DevEx system designed with MCP
-
-Say your enterprise wants three developer-experience automations: a PR reviewer, an incident response bot, and a research summarizer. In most setups, each would need its own integrations with GitHub, Slack, Jira, and other services.
-
-With MCP, they all connect to the same set of shared servers. If one service gets a lot of traffic — like Slack — you can simply spin up another server of the same type to handle the load. And the same GitHub or Jira server can be reused across all AI applications, no matter how many you add.
-
-All of this means you get some very real perks.
-
-**Reusability.** You can swap Claude for OpenAI or Gemini without touching the rest of your workflow. The same Slack server you built for one project? You can reuse it across ten others. Need to support multiple products? Just plug in a different map server for each one — no glue code, no duplication.
-
-**Reliability.** Because everything runs through a standard interface, every step is traceable. You can see which server ran what tool, with what inputs and outputs. And since servers are stateless and mockable, writing tests becomes straightforward. No more faking end-to-end flows just to check if a tool works.
-
-**Scalability.** And when you’re ready to scale — really scale — you’re not locked into one machine or repo. Servers can live on separate machines, in different teams, even across org boundaries. It’s distributed by design.
-
-**Cost efficiency.** Shared servers mean you’re not rebuilding the same integrations repeatedly. You save on engineering time, reduce infrastructure costs, and can move workloads to cheaper environments without disruption.
-
-> **MCP brings a microservices mindset to AI development**.
-
-It turns your LLM workflows into composable infrastructure — not just clever wrappers around chat models.
-
-## Conclusion
-
-So we’ve gone from “MCP is a buzzword” to “I know how to architect my next AI system with MCP.”
-
-Theory time is over — now it’s time to make it real.
+{'type': 'text', 'text': 'The Model Context Protocol (MCP) provides a standardized way for servers to expose\nresources to clients. Resources allow servers to share data that provides context to\nlanguage models, such as files, database schemas, or application-specific information.\nEach resource is uniquely identified by a\n[URI](https://datatracker.ietf.org/doc/html/rfc3986).\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#user-interaction-model)  User Interaction Model\n\nResources in MCP are designed to be **application-driven**, with host applications\ndetermining how to incorporate context based on their needs.For example, applications could:\n\n- Expose resources through UI elements for explicit selection, in a tree or list view\n- Allow the user to search through and filter available resources\n- Implement automatic context inclusion, based on heuristics or the AI model’s selection\n\nhttps://mintcdn.com/mcp/4ZXF1PrDkEaJvXpn/specification/2025-06-18/server/resource-picker.png?fit=max&auto=format&n=4ZXF1PrDkEaJvXpn&q=85&s=133fa885ef6e9c2e20049da5c33f4386However, implementations are free to expose resources through any interface pattern that\nsuits their needs—the protocol itself does not mandate any specific user\ninteraction model.\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#capabilities)  Capabilities\n\nServers that support resources **MUST** declare the `resources` capability:\n\n```\n{\n  "capabilities": {\n    "resources": {\n      "subscribe": true,\n      "listChanged": true\n    }\n  }\n}\n```\n\nThe capability supports two optional features:\n\n- `subscribe`: whether the client can subscribe to be notified of changes to individual\nresources.\n- `listChanged`: whether the server will emit notifications when the list of available\nresources changes.\n\nBoth `subscribe` and `listChanged` are optional—servers can support neither,\neither, or both:\n\n```\n{\n  "capabilities": {\n    "resources": {} // Neither feature supported\n  }\n}\n```\n\n```\n{\n  "capabilities": {\n    "resources": {\n      "subscribe": true // Only subscriptions supported\n    }\n  }\n}\n```\n\n```\n{\n  "capabilities": {\n    "resources": {\n      "listChanged": true // Only list change notifications supported\n    }\n  }\n}\n```\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#protocol-messages)  Protocol Messages\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#listing-resources)  Listing Resources\n\nTo discover available resources, clients send a `resources/list` request. This operation\nsupports [pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "method": "resources/list",\n  "params": {\n    "cursor": "optional-cursor-value"\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "result": {\n    "resources": [\n      {\n        "uri": "file:///project/src/main.rs",\n        "name": "main.rs",\n        "title": "Rust Software Application Main File",\n        "description": "Primary application entry point",\n        "mimeType": "text/x-rust"\n      }\n    ],\n    "nextCursor": "next-page-cursor"\n  }\n}\n```\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#reading-resources)  Reading Resources\n\nTo retrieve resource contents, clients send a `resources/read` request:**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "method": "resources/read",\n  "params": {\n    "uri": "file:///project/src/main.rs"\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "result": {\n    "contents": [\n      {\n        "uri": "file:///project/src/main.rs",\n        "mimeType": "text/x-rust",\n        "text": "fn main() {\\n    println!(\\"Hello world!\\");\\n}"\n      }\n    ]\n  }\n}\n```\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#resource-templates)  Resource Templates\n\nResource templates allow servers to expose parameterized resources using\n[URI templates](https://datatracker.ietf.org/doc/html/rfc6570). Arguments may be\nauto-completed through [the completion API](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/completion).\nThis operation supports [pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 3,\n  "method": "resources/templates/list",\n  "params": {\n    "cursor": "optional-cursor-value"\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 3,\n  "result": {\n    "resourceTemplates": [\n      {\n        "uriTemplate": "file:///{path}",\n        "name": "Project Files",\n        "title": "📁 Project Files",\n        "description": "Access files in the project directory",\n        "mimeType": "application/octet-stream"\n      }\n    ],\n    "nextCursor": "next-page-cursor"\n  }\n}\n```\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#list-changed-notification)  List Changed Notification\n\nWhen the list of available resources changes, servers that declared the `listChanged`\ncapability **SHOULD** send a notification:\n\n```\n{\n  "jsonrpc": "2.0",\n  "method": "notifications/resources/list_changed"\n}\n```\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#subscriptions)  Subscriptions\n\nThe protocol supports optional subscriptions to resource changes. Clients can subscribe\nto specific resources and receive notifications when they change:**Subscribe Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 4,\n  "method": "resources/subscribe",\n  "params": {\n    "uri": "file:///project/src/main.rs"\n  }\n}\n```\n\n**Update Notification:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "method": "notifications/resources/updated",\n  "params": {\n    "uri": "file:///project/src/main.rs"\n  }\n}\n```\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#message-flow)  Message Flow\n\nServerClientServerClientResource DiscoveryResource Template DiscoveryResource AccessSubscriptionsUpdatesresources/listList of resourcesresources/templates/listList of resource templatesresources/readResource contentsresources/subscribeSubscription confirmednotifications/resources/updatedresources/readUpdated contents\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#data-types)  Data Types\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#resource)  Resource\n\nA resource definition includes:\n\n- `uri`: Unique identifier for the resource\n- `name`: The name of the resource.\n- `title`: Optional human-readable name of the resource for display purposes.\n- `description`: Optional description\n- `mimeType`: Optional MIME type\n- `size`: Optional size in bytes\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#resource-contents)  Resource Contents\n\nResources can contain either text or binary data:\n\n#### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#text-content)  Text Content\n\n```\n{\n  "uri": "file:///example.txt",\n  "mimeType": "text/plain",\n  "text": "Resource content"\n}\n```\n\n#### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#binary-content)  Binary Content\n\n```\n{\n  "uri": "file:///example.png",\n  "mimeType": "image/png",\n  "blob": "base64-encoded-data"\n}\n```\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#annotations)  Annotations\n\nResources, resource templates and content blocks support optional annotations that provide hints to clients about how to use or display the resource:\n\n- **`audience`**: An array indicating the intended audience(s) for this resource. Valid values are `"user"` and `"assistant"`. For example, `["user", "assistant"]` indicates content useful for both.\n- **`priority`**: A number from 0.0 to 1.0 indicating the importance of this resource. A value of 1 means “most important” (effectively required), while 0 means “least important” (entirely optional).\n- **`lastModified`**: An ISO 8601 formatted timestamp indicating when the resource was last modified (e.g., `"2025-01-12T15:00:58Z"`).\n\nExample resource with annotations:\n\n```\n{\n  "uri": "file:///project/README.md",\n  "name": "README.md",\n  "title": "Project Documentation",\n  "mimeType": "text/markdown",\n  "annotations": {\n    "audience": ["user"],\n    "priority": 0.8,\n    "lastModified": "2025-01-12T15:00:58Z"\n  }\n}\n```\n\nClients can use these annotations to:\n\n- Filter resources based on their intended audience\n- Prioritize which resources to include in context\n- Display modification times or sort by recency\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#common-uri-schemes)  Common URI Schemes\n\nThe protocol defines several standard URI schemes. This list not\nexhaustive—implementations are always free to use additional, custom URI schemes.\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#https//)  https://\n\nUsed to represent a resource available on the web.Servers **SHOULD** use this scheme only when the client is able to fetch and load the\nresource directly from the web on its own—that is, it doesn’t need to read the resource\nvia the MCP server.For other use cases, servers **SHOULD** prefer to use another URI scheme, or define a\ncustom one, even if the server will itself be downloading resource contents over the\ninternet.\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#file//)  file://\n\nUsed to identify resources that behave like a filesystem. However, the resources do not\nneed to map to an actual physical filesystem.MCP servers **MAY** identify file:// resources with an\n[XDG MIME type](https://specifications.freedesktop.org/shared-mime-info-spec/0.14/ar01s02.html#id-1.3.14),\nlike `inode/directory`, to represent non-regular files (such as directories) that don’t\notherwise have a standard MIME type.\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#git//)  git://\n\nGit version control integration.\n\n### [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#custom-uri-schemes)  Custom URI Schemes\n\nCustom URI schemes **MUST** be in accordance with [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986),\ntaking the above guidance in to account.\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#error-handling)  Error Handling\n\nServers **SHOULD** return standard JSON-RPC errors for common failure cases:\n\n- Resource not found: `-32002`\n- Internal errors: `-32603`\n\nExample error:\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 5,\n  "error": {\n    "code": -32002,\n    "message": "Resource not found",\n    "data": {\n      "uri": "file:///nonexistent.txt"\n    }\n  }\n}\n```\n\n## [\u200b](https://modelcontextprotocol.io/specification/2025-06-18/server/resources\\#security-considerations)  Security Considerations\n\n1. Servers **MUST** validate all resource URIs\n2. Access controls **SHOULD** be implemented for sensitive resources\n3. Binary data **MUST** be properly encoded\n4. Resource permissions **SHOULD** be checked before operations', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>stop-vibe-testing-your-mcp-server</summary>
 
-In Part 2A of this course (Lessons 12-14), we laid out the system design for our research agent, Nova. We decided to split the research and writing tasks into two separate agents, keeping Nova’s orchestration thin and pushing the heavy lifting into a set of portable, reusable tools. To achieve this, we chose the Model Context Protocol (MCP) as our interoperability layer and FastMCP as our Python implementation.
-
-This lesson marks the beginning of Part 2B, where we shift from design to hands-on implementation. We will turn our architectural diagrams into a running system. By the end of this lesson, you will run a complete MCP server and client, discover the capabilities they expose, and execute your first tool calls—all using the actual code from the `research_agent_part_2` project.
-
-### MCP in Short: Primitives, Transports, and Why It Matters
-
-Before we dive into the code, let’s have a quick recap of MCP’s core concepts. MCP is an open protocol designed to connect LLM applications to external tools, data, and services over a standardized JSON-RPC interface. It’s built on three main primitives:
-
-*   **Tools**: These are actions that can have side effects, like writing a file, calling an API, or running a computation.
-*   **Resources**: These provide read-only access to data, such as files, system information, or database records.
-*   **Prompts**: These are reusable, server-hosted instruction blocks that can define entire workflows or recipes, ensuring any client can initiate the same process consistently.
-
-Clients interact with an MCP server by first discovering its capabilities (e.g., `list_tools`, `list_resources`, `list_prompts`) and then calling them as needed.
-
-Communication between the client and server happens over a **transport**. For our project, we will focus on the two transports that FastMCP supports out of the box and that our agent uses:
-
-1.  **In-Memory**: The client and server run in the same process. This is extremely fast, has no network overhead, and is perfect for development, testing, and running in environments like Jupyter notebooks.
-2.  **stdio**: The client spawns the server as a separate subprocess and communicates with it over standard input/output streams (`stdin`/`stdout`). This model mirrors how external applications, like IDEs (e.g., Cursor), integrate with MCP servers, providing a more production-like setup.
-
-Using MCP gives our research agent loose coupling (tools can evolve independently of the agent), token efficiency (the agent’s LLM only needs to decide *what* to do, not how to do it), and portability (our tools are instantly available to any MCP-compliant client). For a deeper dive into these architectural decisions, you can refer back to Lessons 12-14.
-
-### Quickstart in the Notebook (In-Memory)
-
-Let's get our hands dirty. The quickest way to see our system in action is to run the client directly inside our course notebook. This setup uses the **in-memory** transport, where the MCP server is instantiated and run within the same Python kernel as the client.
-
-Assuming you've set up your environment and configured your Gemini API key as described in the course administration guide, you can start the client. When it launches, you'll see a startup banner listing the available capabilities:
-
-```
-INFO:     MCP Server version 0.1.0
-INFO:     - 11 tools available.
-INFO:     - 2 resources available.
-INFO:     - 1 prompt available.
-INFO:     - Type '/quit' to exit.
-INFO:     - Type '/tools', '/resources', or '/prompts' to list available capabilities.
-INFO:     - Type '/model-thinking-switch' to toggle model thinking.
-INFO:     - Type '/prompt/<prompt_name>' to load a prompt.
-INFO:     - Type '/resource/<resource_uri>' to view a resource.
-```
-
-This banner is the result of the client performing **capability discovery**—it queries the server for all the tools, resources, and prompts it exposes.
-
-Now, you can interact with the agent. Try typing the following commands one by one:
-
-1.  `Hello! Who are you?`
-    *   The agent will introduce itself as a research assistant.
-2.  `/tools`
-    *   This command lists all 11 tools registered on the server, along with their descriptions and parameters.
-3.  `/resources`
-    *   This lists the available resources. You should see `system://memory`.
-4.  `/resource/system://memory`
-    *   This command reads the `system://memory` resource and displays current memory usage statistics for the server process.
-5.  `/quit`
-    *   This will shut down the client.
-
-You've just run a live MCP client, discovered its capabilities, and interacted with both the agent's LLM and a server-side resource.
-
-### How the MCP Server is Organized
-
-Now that you've seen the system run, let's look at how the server is structured. The server's code lives in the `src/mcp_server/` directory.
-
-*   **`server.py`**: This is the main entry point. It creates a `FastMCP` app instance and registers the routers that expose our capabilities.
-*   **`routers/`**: This directory contains `tools.py`, `resources.py`, and `prompts.py`. Each file is responsible for importing the actual implementations and registering them with the FastMCP app using decorators.
-*   **`tools/`, `resources/`, `prompts/`**: These directories contain the business logic for each capability. For example, `tools/file_tools.py` contains the Python functions that perform file operations.
-*   **`config/settings.py`**: This file uses `pydantic-settings` to manage configuration like the server's name, version, API keys, and model choices.
-
-Let's examine how one of each primitive type is registered.
-
-#### Tool Registration
-
-In `src/mcp_server/routers/tools.py`, we register the `extract_guidelines_urls` tool, which is implemented in `src/mcp_server/tools/guidelines_tools.py`. The registration looks like this:
-
-```python
-from ..tools.guidelines_tools import extract_guidelines_urls_tool
-# ... other imports
-
-@mcp.tool(
-    name="extract_guidelines_urls",
-    description="Extracts URLs from research guidelines files.",
-    # ... other parameters
-)
-async def extract_guidelines_urls(
-    research_directory: str,
-    # ... other parameters
-) -> dict:
-    """Extracts URLs from research guidelines files."""
-    return await extract_guidelines_urls_tool(
-        research_directory=research_directory,
-        # ... other parameters
-    )
-```
-
-The `@mcp.tool()` decorator exposes the function to any connected client. This specific tool reads guideline files from a specified directory and writes the extracted URLs to a new file at `.nova/guidelines_filenames.json`. This is a classic **Tool**—it performs an action with a side effect (writing a file).
-
-#### Resource Registration
-
-In `src/mcp_server/routers/resources.py`, we register the `system://memory` resource:
-
-```python
-from ..resources.system_resources import get_memory_resource
-# ... other imports
-
-@mcp.resource("system://memory")
-async def system_memory() -> dict:
-    """Returns memory usage statistics."""
-    return await get_memory_resource()
-```
-
-The `@mcp.resource()` decorator makes the function's return value available at the specified URI. Unlike a tool, a resource is read-only and should not have side effects.
-
-#### Prompt Registration
-
-Finally, in `src/mcp_server/routers/prompts.py`, we register our main workflow prompt:
-
-```python
-from ..prompts.research_instructions_prompt import research_instructions_prompt
-# ... other imports
-
-@mcp.prompt("full_research_instructions_prompt")
-def full_research_instructions_prompt() -> str:
-    """The main prompt that drives the research agent's workflow."""
-    return research_instructions_prompt
-```
-
-The `@mcp.prompt()` decorator exposes a string—in this case, the detailed, multi-step instructions for conducting research. By hosting the prompt on the server, we ensure that any MCP client, whether it's our command-line tool or a third-party application, can initiate the exact same research workflow simply by loading this prompt.
-
-### The MCP Client: Transports, Discovery, and the Agent Loop
-
-The client code, located in `src/client/`, is responsible for connecting to the server, parsing user input, and orchestrating the agent's logic.
-
-#### Transports and Run Modes
-
-The client in `client.py` supports two run modes, controlled by the `--transport` command-line argument:
-
-1.  `--transport in-memory` (default): The client imports the `create_mcp_server` function from the server code and passes the server instance directly to the `fastmcp.Client`. This is what the notebook uses.
-2.  `--transport stdio`: The client launches the server as a separate process (`uv run -m src.server --transport stdio`) and communicates with it over standard I/O. This is how you'll run it from the terminal for a more realistic setup.
-
-#### Capability Discovery and Command Parsing
-
-Upon startup, the client calls `get_capabilities_from_mcp_client()`, which uses the `client.list_tools()`, `client.list_resources()`, and `client.list_prompts()` methods to query the server. The results are then printed in the startup banner we saw earlier.
-
-The `parse_user_input()` function then routes user input. If the input starts with a `/`, it's treated as a command (like `/tools` or `/quit`). If not, it's passed to the agent loop to be processed by the LLM.
-
-#### The Agent Loop
-
-The core of the client is the `handle_agent_loop()` function. This is where the ReAct-style reasoning occurs:
-
-1.  It builds a configuration for the LLM, dynamically including the list of available MCP tools as function declarations.
-2.  It sends the current conversation history to the LLM.
-3.  If the LLM's response includes a request to call a function (a tool), the client verifies that it's a valid MCP tool.
-4.  It executes the tool by calling `client.call_tool(name, args)` and appends the result to the conversation history. The loop then continues, sending the updated history back to the LLM.
-5.  If the LLM responds without a function call, the client treats it as the final answer, prints it to the user, and the loop terminates for that turn.
-
-This loop cleanly separates the LLM's role (deciding *what* to do) from the tools' role (doing the work).
-
-### Try It in the Terminal: Two Run Modes
-
-Now, let's run the full client-server application from your terminal.
-
-First, run it using the **in-memory** transport. This is the default, so you don't need to specify the transport.
-
-```bash
-uv run -m src.client
-```
-
-You should see the same startup banner as in the notebook.
-
-Next, run it using the **stdio** transport. This will launch a separate server process in the background.
-
-```bash
-uv run -m src.client --transport stdio
-```
-
-The behavior from your perspective will be identical, but you are now communicating between two separate processes, just as an external IDE would.
-
-In either mode, try out the following commands:
-
-*   `/tools`: See the full list of 11 tools available for research tasks.
-*   `/resources`: See the two available resources.
-*   `/prompts`: See the one available workflow prompt.
-*   `/model-thinking-switch`: This toggles the agent's "thinking" traces on and off. As we discussed in Lesson 14, this is a practical application of managing reasoning budgets. Try asking a question with it on and off to see the difference.
-
-### Conclusion
-
-In this lesson, you successfully ran a complete MCP-based agent system. You stood up an MCP server that exposes tools, resources, and prompts, and you used an MCP client to connect to it using both in-memory and stdio transports. You learned how to discover capabilities, execute a resource call, and inspect the structure of both the server and client code.
-
-This foundation is crucial for the upcoming lessons, where we will put this system to work.
-
-*   In **Lesson 17**, we will load and use the `full_research_instructions_prompt` to kick off the full research workflow, implementing the tools for ingesting guidelines and processing URLs.
-*   In **Lesson 18 and 19**, we will continue implementing the remaining tools, including those for web scraping, data curation, and handling human-in-the-loop decision points, culminating in the final `research.md` artifact.
-*   Later, in **Part 3**, we will return to this system to add observability with Opik and discuss security hardening for production environments.
+{'type': 'text', 'text': 'If you’re working with the Model Context Protocol (MCP), you’re on the front lines of AI innovation. But amidst the excitement of creating intelligent agents and sophisticated AI workflows, I need to ask: **how are you actually testing these critical MCP components?**\n\nToo often, the answer looks something like this: fire up an agent framework, type a few prompts into a chat window, and if the LLM _seems_ to produce a reasonable output, call it a day. This, my friends, is **vibe-testing.**\n\nTo be fair, this isn’t entirely surprising. The MCP ecosystem is young, and the developer tooling is still catching up to the rapid pace of protocol adoption. However, while vibe-testing might seem pragmatic given the tooling landscape, it’s a fast track to unreliable systems, wasted tokens, and downright painful debugging sessions.\n\nMCP servers are the APIs that connect LLMs to the real world. And like any critical API, they demand rigorous, deterministic testing to ensure they are reliable, predictable, and robust—especially when the primary consumer is a non-deterministic LLM.\n\n> A QA engineer walks into a bar. Orders a beer. Orders 0 beers. Orders 99999999999 beers. Orders a lizard. Orders -1 beers. Orders a ueicbksjdhd.\n>\n> First real customer walks in and asks where the bathroom is. The bar bursts into flames, killing everyone.\n>\n> — Brenan Keller (@brenankeller) [November 30, 2018](https://twitter.com/brenankeller/status/1068615953989087232?ref_src=twsrc%5Etfw)\n\nThis joke hits alarmingly close to home in the MCP world. Traditionally, QA engineers intentionally probe boundaries. With MCP, _your LLM client is a chaos agent._ LLMs can generate unexpected or malformed inputs, explore edge cases you never envisioned, or chain calls in ways that defy simple logic. If your MCP server isn’t hardened against this onslaught of creative inputs, it’s not a question of _if_ things will go sideways, but _when_ your proverbial bar bursts into flames, potentially on the most mundane of “customer” requests.\n\nThe core issue with relying on LLM-based “vibe-testing” is that it’s:\n\n- **Stochastic:** What works once might not work again. You cannot build reliable systems on a foundation of “maybe.”\n- **Slow & Expensive:** Each “test” involves LLM interactions, racking up latency and API costs. A proper test suite should be efficient.\n- **Opaque:** When something breaks, pinpointing the cause—is it your server, the LLM’s interpretation, the agent framework, or the prompt?—becomes a frustrating detective game.\n- **Superficial:** Natural language interactions rarely achieve the comprehensive coverage needed to find subtle bugs or validate all edge cases.\n\nIt’s imperative that your server’s logic is either impeccably clear or that its error messages are so precise they can effectively guide an LLM back on track. Neither of these is achievable without rigorous, focused testing. While iterating on your instructions to help LLMs “do the right thing” is valuable, robust server-side logic and error handling are non-negotiable.\n\n### Testing is Trust (and Good Engineering)\n\nI was incredibly fortunate to start Prefect alongside Chris White, who instilled in me a deep appreciation for the true value of testing. Proper testing serves a deeper purpose than merely affirming your code runs; it’s a fundamental practice for **documenting behavior**, **preventing regressions**, and building **deep trust** in your codebase.\n\nChris’s philosophy, which we can bring to bear here, emphasizes that:\n\n- Unit tests should be _atomic_, targeting the smallest possible unit of behavior.\n- _Tests and design go hand-in-hand:_ if something is hard to test, its design might be flawed. Test-driven development can be particularly effective when defining new user-facing contracts.\n- Tests must _clearly document_ the behavior and expectations that are important to your application. A failing test’s _title alone_ should strongly indicate what’s broken.\n- Tests should verify _expected, assertable behavior_, rather than being tightly coupled to specific implementation details. This allows for refactoring with confidence.\n- Critically, tests should _not unnecessarily block future paths_ or refactors. They guard core contracts, not incidental details, fostering an environment built for change.\n\nThis philosophy is about creating a safety net that allows for rapid iteration and confident development. When your MCP server is the component bridging the deterministic world of your code with the probabilistic world of LLMs, this trust and safety net become absolutely paramount.\n\n### In-Memory Testing with FastMCP\n\nFastMCP 2.0 was designed to make rigorous testing easy, not an afterthought. The key to this is FastMCP’s support for **in-memory testing.**\n\nWith FastMCP, you can instantiate a `fastmcp.Client` and connect it _directly_ to your `FastMCP` server instance by providing the server as the client’s transport target:\n\n```\nfrom fastmcp import FastMCP, Client\n\nmcp = FastMCP(name="My MCP Server")\n\n@mcp.tool()\n\ndef add(a: int, b: int) -> int:\n\n    return a + b\n\ntest_client = Client(mcp) # Connects the client directly to the server instance\n```\n\nThis direct, in-memory connection is a game-changer for testing MCP servers because:\n\n- 💨 **There’s no network overhead:** Communication is as fast as a direct Python call.\n- 🧘 **No subprocess management is needed:** You don’t have to start and stop external server processes for your tests.\n- 🎯 **You’re testing your actual server logic:** No mocks or simplified protocol implementations are needed; this uses the real STDIO transport internally for maximum fidelity.\n\nOnce you have this `test_client`, you can use its methods to interact with your server just like an LLM, but with the benefit of repeatable determinism and low latency. For example, within an `async with test_client:` block, you can:\n\n- Ping the server: `is_alive = await test_client.ping()`\n- List available tools: `tools = await test_client.list_tools()`\n- Call a specific tool: `response = await test_client.call_tool("add", {"a": 1, "b": 2})`\n- Read a resource: `content = await test_client.read_resource("resource://your/data")`\n\n…and more, including advanced MCP features like logging, progress reporting, and LLM client sampling. Please review FastMCP’s client docs for more details.\n\nThis direct, in-memory connection is a game-changer for testing MCP servers because it means your tests are not just validating isolated functions; they’re confirming your server’s behavior through the actual MCP interaction layer, albeit without network latency.\n\nThe result? Your tests become:\n\n- ⚡ **Blazingly Fast:** Run them as part of your normal `pytest` suite in milliseconds.\n- 🧪 **Deterministic:** Get consistent, repeatable results every single time.\n- 🎯 **Focused:** Isolate and test your server’s tool, resource, and prompt logic precisely.\n- 🐍 **Pythonic:** Write your tests using the testing tools and patterns you already know and love.\n\nYou’ll find yourself writing _more_ tests, not fewer, because testing your MCP functionality becomes as quick and easy as testing any other Python function. Since everything runs in-process, you can use mocks, fixtures, and other familiar testing tools without hesitation.\n\nHere’s how you can structure your tests using `pytest`:\n\n```\nimport pytest\n\nfrom fastmcp import FastMCP, Client\n\nfrom mcp.types import TextContent # For type checking results\n\n# A reusable fixture for our MCP server\n\n@pytest.fixture\n\ndef mcp_server():\n\n    mcp = FastMCP(name="CalculationServer")\n\n    @mcp.tool()\n\n    def add(a: int, b: int) -> int:\n\n        return a + b\n\n    return mcp\n\n# A straightforward test of our tool\n\nasync def test_add_tool(mcp_server: FastMCP):\n\n    async with Client(mcp_server) as client: # Client uses the mcp_server instance\n\n        result = await client.call_tool("add", {"a": 1, "b": 2})\n\n        assert isinstance(result[0], TextContent)\n\n        assert result[0].text == "3"\n```\n\n**Nerd note:** we did not put the client in a fixture, like this:\n\n```\n# Don\'t do this!\n\n@pytest.fixture\n\nasync def client(mcp_server: FastMCP):\n\n    async with Client(mcp_server) as client:\n\n        yield client\n```\n\nThat’s because `pytest`’s async fixtures and tests can run in **different event loops**. This can lead to runtime errors related to task cancellation when the `Client`’s `async with` block (which manages an `anyio` task group from the underlying MCP SDK) spans across these different loops. Instantiating the client directly within the test function ensures it operates within the test’s event loop.\n\nThis robust approach allows you to comprehensively test:\n\n- Correct tool logic for a wide range of valid inputs (your “lizard” cases!).\n- Graceful error handling for invalid inputs or internal server exceptions.\n- Accurate content delivery for your static resources and dynamic resource templates.\n- Correct rendering of prompts with various parameter combinations.\n- Complex interactions involving the `Context` object, such as logging, progress reporting, and inter-resource data access.\n\nInstead of merely hoping your LLM client interprets things correctly, you are _asserting_ that your server behaves exactly as designed under a multitude of conditions.\n\n### Beyond FastMCP: Testing Any MCP Server\n\nThe `fastmcp.Client` isn’t limited to in-memory testing of FastMCP servers you built yourself. It’s a versatile tool for interacting with _any_ MCP-compliant server. This means you can write expansive tests for any MCP behavior you want to ensure is reliable and consistent, regardless of the server’s implementation.\n\nIn addition to supplying the client with an explicit transport configuration (like `StdioTransport` or `StreamableHttpTransport`), you can often rely on its ability to automatically infer the appropriate transport based on the URL or command string you provide. In the following example, all client objects expose the exact same interface for testing, regardless of how they are instantiated:\n\n```\nfrom fastmcp import Client\n\n# A remote server\n\nasync def test_remote_mcp_server():\n\n    async with Client("http://some.api.service/mcp_endpoint") as client:\n\n        await client.call_tool("some_tool", {"key": "value"})\n\n# A local Node.js server script\n\nasync def test_local_js_server():\n\n    async with Client(\'path/to/local/server.js\') as client:\n\n        await client.read_resource("resource://path/to/resource")\n\n# Two remote servers configured via an MCP config into a FastMCP proxy server\n\nasync def test_mcp_config_server():\n\n    mcp_config = {\n\n        \'mcpServers\': {\n\n            "github": {\n\n                "command": "npx",\n\n                "args": ["-y", "@modelcontextprotocol/server-github"],\n\n                "env": {"GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"}\n\n            },\n\n            \'paypal\': {\'url\': \'https://mcp.paypal.com/sse\'}\n\n        }\n\n    }\n\n    # The client will infer to create a FastMCPProxy for this config\n\n    async with Client(mcp_config) as client:\n\n        await client.call_tool("github_get_user_repos", {"username": "jlowin"})\n```\n\nYour MCP servers form a critical layer in your AI stack. They are the deterministic bedrock upon which the more unpredictable LLM interactions are built. If this foundation is unreliable, your entire AI application becomes fragile.\n\nFastMCP’s testing capabilities, especially its in-memory testing, are designed to help you build this foundation with confidence and rigor. Stop relying on “looks good to me” vibe-checks through a chat window. Start writing focused, repeatable tests that prove your server does exactly what it’s supposed to do.\n\nYour AI, your users, and your sanity will thank you for it.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>tools-model-context-protocol</summary>
 
-**Protocol Revision**: 2025-06-18
-
-The Model Context Protocol (MCP) allows servers to expose tools that can be invoked by
-language models. Tools enable models to interact with external systems, such as querying
-databases, calling APIs, or performing computations. Each tool is uniquely identified by
-a name and includes metadata describing its schema.
-
-## User Interaction Model
-
-Tools in MCP are designed to be **model-controlled**, meaning that the language model can
-discover and invoke tools automatically based on its contextual understanding and the
-user’s prompts.However, implementations are free to expose tools through any interface pattern that
-suits their needs—the protocol itself does not mandate any specific user
-interaction model.
-
-For trust & safety and security, there **SHOULD** always
-be a human in the loop with the ability to deny tool invocations.Applications **SHOULD**:
-
-- Provide UI that makes clear which tools are being exposed to the AI model
-- Insert clear visual indicators when tools are invoked
-- Present confirmation prompts to the user for operations, to ensure a human is in the
-loop
-
-## Capabilities
-
-Servers that support tools **MUST** declare the `tools` capability:
-
-```
-{
-  "capabilities": {
-    "tools": {
-      "listChanged": true
-    }
-  }
-}
-
-```
-
-`listChanged` indicates whether the server will emit notifications when the list of
-available tools changes.
-
-## Protocol Messages
-
-### Listing Tools
-
-To discover available tools, clients send a `tools/list` request. This operation supports
-[pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "tools/list",
-  "params": {
-    "cursor": "optional-cursor-value"
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "tools": [\
-      {\
-        "name": "get_weather",\
-        "title": "Weather Information Provider",\
-        "description": "Get current weather information for a location",\
-        "inputSchema": {\
-          "type": "object",\
-          "properties": {\
-            "location": {\
-              "type": "string",\
-              "description": "City name or zip code"\
-            }\
-          },\
-          "required": ["location"]\
-        }\
-      }\
-    ],
-    "nextCursor": "next-page-cursor"
-  }
-}
-
-```
-
-### Calling Tools
-
-To invoke a tool, clients send a `tools/call` request:**Request:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/call",
-  "params": {
-    "name": "get_weather",
-    "arguments": {
-      "location": "New York"
-    }
-  }
-}
-
-```
-
-**Response:**
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "content": [\
-      {\
-        "type": "text",\
-        "text": "Current weather in New York:\nTemperature: 72°F\nConditions: Partly cloudy"\
-      }\
-    ],
-    "isError": false
-  }
-}
-
-```
-
-### List Changed Notification
-
-When the list of available tools changes, servers that declared the `listChanged`
-capability **SHOULD** send a notification:
-
-```
-{
-  "jsonrpc": "2.0",
-  "method": "notifications/tools/list_changed"
-}
-
-```
-
-## Message Flow
-
-## Data Types
-
-### Tool
-
-A tool definition includes:
-
-- `name`: Unique identifier for the tool
-- `title`: Optional human-readable name of the tool for display purposes.
-- `description`: Human-readable description of functionality
-- `inputSchema`: JSON Schema defining expected parameters
-- `outputSchema`: Optional JSON Schema defining expected output structure
-- `annotations`: optional properties describing tool behavior
-
-For trust & safety and security, clients **MUST** consider
-tool annotations to be untrusted unless they come from trusted servers.
-
-### Tool Result
-
-Tool results may contain [**structured**](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#structured-content) or **unstructured** content.**Unstructured** content is returned in the `content` field of a result, and can contain multiple content items of different types:
-
-All content types (text, image, audio, resource links, and embedded resources)
-support optional
-[annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) that
-provide metadata about audience, priority, and modification times. This is the
-same annotation format used by resources and prompts.
-
-#### Text Content
-
-```
-{
-  "type": "text",
-  "text": "Tool result text"
-}
-
-```
-
-#### Image Content
-
-```
-{
-  "type": "image",
-  "data": "base64-encoded-data",
-  "mimeType": "image/png"
-  "annotations": {
-    "audience": ["user"],
-    "priority": 0.9
-  }
-
-}
-
-```
-
-This example demonstrates the use of an optional Annotation.
-
-#### Audio Content
-
-```
-{
-  "type": "audio",
-  "data": "base64-encoded-audio-data",
-  "mimeType": "audio/wav"
-}
-
-```
-
-#### Resource Links
-
-A tool **MAY** return links to [Resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources), to provide additional context
-or data. In this case, the tool will return a URI that can be subscribed to or fetched by the client:
-
-```
-{
-  "type": "resource_link",
-  "uri": "file:///project/src/main.rs",
-  "name": "main.rs",
-  "description": "Primary application entry point",
-  "mimeType": "text/x-rust",
-  "annotations": {
-    "audience": ["assistant"],
-    "priority": 0.9
-  }
-}
-
-```
-
-Resource links support the same [Resource annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) as regular resources to help clients understand how to use them.
-
-Resource links returned by tools are not guaranteed to appear in the results
-of a `resources/list` request.
-
-#### Embedded Resources
-
-[Resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources) **MAY** be embedded to provide additional context
-or data using a suitable [URI scheme](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:
-
-```
-{
-  "type": "resource",
-  "resource": {
-    "uri": "file:///project/src/main.rs",
-    "title": "Project Rust Main File",
-    "mimeType": "text/x-rust",
-    "text": "fn main() {\n    println!(\"Hello world!\");\n}",
-    "annotations": {
-      "audience": ["user", "assistant"],
-      "priority": 0.7,
-      "lastModified": "2025-05-03T14:30:00Z"
-    }
-  }
-}
-
-```
-
-Embedded resources support the same [Resource annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) as regular resources to help clients understand how to use them.
-
-#### Structured Content
-
-**Structured** content is returned as a JSON object in the `structuredContent` field of a result.For backwards compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a TextContent block.
-
-#### Output Schema
-
-Tools may also provide an output schema for validation of structured results.
-If an output schema is provided:
-
-- Servers **MUST** provide structured results that conform to this schema.
-- Clients **SHOULD** validate structured results against this schema.
-
-Example tool with output schema:
-
-```
-{
-  "name": "get_weather_data",
-  "title": "Weather Data Retriever",
-  "description": "Get current weather data for a location",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "location": {
-        "type": "string",
-        "description": "City name or zip code"
-      }
-    },
-    "required": ["location"]
-  },
-  "outputSchema": {
-    "type": "object",
-    "properties": {
-      "temperature": {
-        "type": "number",
-        "description": "Temperature in celsius"
-      },
-      "conditions": {
-        "type": "string",
-        "description": "Weather conditions description"
-      },
-      "humidity": {
-        "type": "number",
-        "description": "Humidity percentage"
-      }
-    },
-    "required": ["temperature", "conditions", "humidity"]
-  }
-}
-
-```
-
-Example valid response for this tool:
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "result": {
-    "content": [\
-      {\
-        "type": "text",\
-        "text": "{\"temperature\": 22.5, \"conditions\": \"Partly cloudy\", \"humidity\": 65}"\
-      }\
-    ],
-    "structuredContent": {
-      "temperature": 22.5,
-      "conditions": "Partly cloudy",
-      "humidity": 65
-    }
-  }
-}
-
-```
-
-Providing an output schema helps clients and LLMs understand and properly handle structured tool outputs by:
-
-- Enabling strict schema validation of responses
-- Providing type information for better integration with programming languages
-- Guiding clients and LLMs to properly parse and utilize the returned data
-- Supporting better documentation and developer experience
-
-## Error Handling
-
-Tools use two error reporting mechanisms:
-
-1. **Protocol Errors**: Standard JSON-RPC errors for issues like: - Unknown tools
-   - Invalid arguments
-   - Server errors
-2. **Tool Execution Errors**: Reported in tool results with `isError: true`: - API failures
-   - Invalid input data
-   - Business logic errors
-
-Example protocol error:
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 3,
-  "error": {
-    "code": -32602,
-    "message": "Unknown tool: invalid_tool_name"
-  }
-}
-
-```
-
-Example tool execution error:
-
-```
-{
-  "jsonrpc": "2.0",
-  "id": 4,
-  "result": {
-    "content": [\
-      {\
-        "type": "text",\
-        "text": "Failed to fetch weather data: API rate limit exceeded"\
-      }\
-    ],
-    "isError": true
-  }
-}
-
-```
-
-## Security Considerations
-
-1. Servers **MUST**: - Validate all tool inputs
-   - Implement proper access controls
-   - Rate limit tool invocations
-   - Sanitize tool outputs
-2. Clients **SHOULD**: - Prompt for user confirmation on sensitive operations
-   - Show tool inputs to the user before calling the server, to avoid malicious or
-     accidental data exfiltration
-   - Validate tool results before passing to LLM
-   - Implement timeouts for tool calls
-   - Log tool usage for audit purposes
+{'type': 'text', 'text': 'The Model Context Protocol (MCP) allows servers to expose tools that can be invoked by\nlanguage models. Tools enable models to interact with external systems, such as querying\ndatabases, calling APIs, or performing computations. Each tool is uniquely identified by\na name and includes metadata describing its schema.\n\n## User Interaction Model\n\nTools in MCP are designed to be **model-controlled**, meaning that the language model can\ndiscover and invoke tools automatically based on its contextual understanding and the\nuser’s prompts.However, implementations are free to expose tools through any interface pattern that\nsuits their needs—the protocol itself does not mandate any specific user\ninteraction model.\n\nFor trust & safety and security, there **SHOULD** always\nbe a human in the loop with the ability to deny tool invocations.Applications **SHOULD**:\n\n- Provide UI that makes clear which tools are being exposed to the AI model\n- Insert clear visual indicators when tools are invoked\n- Present confirmation prompts to the user for operations, to ensure a human is in the\nloop\n\n## Capabilities\n\nServers that support tools **MUST** declare the `tools` capability:\n\n```\n{\n  "capabilities": {\n    "tools": {\n      "listChanged": true\n    }\n  }\n}\n```\n\n`listChanged` indicates whether the server will emit notifications when the list of\navailable tools changes.\n\n## Protocol Messages\n\n### Listing Tools\n\nTo discover available tools, clients send a `tools/list` request. This operation supports\n[pagination](https://modelcontextprotocol.io/specification/2025-06-18/server/utilities/pagination).**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "method": "tools/list",\n  "params": {\n    "cursor": "optional-cursor-value"\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 1,\n  "result": {\n    "tools": [\n      {\n        "name": "get_weather",\n        "title": "Weather Information Provider",\n        "description": "Get current weather information for a location",\n        "inputSchema": {\n          "type": "object",\n          "properties": {\n            "location": {\n              "type": "string",\n              "description": "City name or zip code"\n            }\n          },\n          "required": ["location"]\n        }\n      }\n    ],\n    "nextCursor": "next-page-cursor"\n  }\n}\n```\n\n### Calling Tools\n\nTo invoke a tool, clients send a `tools/call` request:**Request:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "method": "tools/call",\n  "params": {\n    "name": "get_weather",\n    "arguments": {\n      "location": "New York"\n    }\n  }\n}\n```\n\n**Response:**\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 2,\n  "result": {\n    "content": [\n      {\n        "type": "text",\n        "text": "Current weather in New York:\\nTemperature: 72°F\\nConditions: Partly cloudy"\n      }\n    ],\n    "isError": false\n  }\n}\n```\n\n### List Changed Notification\n\nWhen the list of available tools changes, servers that declared the `listChanged`\ncapability **SHOULD** send a notification:\n\n```\n{\n  "jsonrpc": "2.0",\n  "method": "notifications/tools/list_changed"\n}\n```\n\n## Message Flow\n\nServerClientLLMServerClientLLMDiscoveryTool SelectionInvocationUpdatestools/listList of toolsSelect tool to usetools/callTool resultProcess resulttools/list_changedtools/listUpdated tools\n\n## Data Types\n\n### Tool\n\nA tool definition includes:\n\n- `name`: Unique identifier for the tool\n- `title`: Optional human-readable name of the tool for display purposes.\n- `description`: Human-readable description of functionality\n- `inputSchema`: JSON Schema defining expected parameters\n- `outputSchema`: Optional JSON Schema defining expected output structure\n- `annotations`: optional properties describing tool behavior\n\nFor trust & safety and security, clients **MUST** consider\ntool annotations to be untrusted unless they come from trusted servers.\n\n### Tool Result\n\nTool results may contain [**structured**](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#structured-content) or **unstructured** content.**Unstructured** content is returned in the `content` field of a result, and can contain multiple content items of different types:\n\nAll content types (text, image, audio, resource links, and embedded resources)\nsupport optional\n[annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) that\nprovide metadata about audience, priority, and modification times. This is the\nsame annotation format used by resources and prompts.\n\n#### Text Content\n\n```\n{\n  "type": "text",\n  "text": "Tool result text"\n}\n```\n\n#### Image Content\n\n```\n{\n  "type": "image",\n  "data": "base64-encoded-data",\n  "mimeType": "image/png"\n  "annotations": {\n    "audience": ["user"],\n    "priority": 0.9\n  }\n\n}\n```\n\nThis example demonstrates the use of an optional Annotation.\n\n#### Audio Content\n\n```\n{\n  "type": "audio",\n  "data": "base64-encoded-audio-data",\n  "mimeType": "audio/wav"\n}\n```\n\n#### Resource Links\n\nA tool **MAY** return links to [Resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources), to provide additional context\nor data. In this case, the tool will return a URI that can be subscribed to or fetched by the client:\n\n```\n{\n  "type": "resource_link",\n  "uri": "file:///project/src/main.rs",\n  "name": "main.rs",\n  "description": "Primary application entry point",\n  "mimeType": "text/x-rust",\n  "annotations": {\n    "audience": ["assistant"],\n    "priority": 0.9\n  }\n}\n```\n\nResource links support the same [Resource annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) as regular resources to help clients understand how to use them.\n\nResource links returned by tools are not guaranteed to appear in the results\nof a `resources/list` request.\n\n#### Embedded Resources\n\n[Resources](https://modelcontextprotocol.io/specification/2025-06-18/server/resources) **MAY** be embedded to provide additional context\nor data using a suitable [URI scheme](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#common-uri-schemes). Servers that use embedded resources **SHOULD** implement the `resources` capability:\n\n```\n{\n  "type": "resource",\n  "resource": {\n    "uri": "file:///project/src/main.rs",\n    "mimeType": "text/x-rust",\n    "text": "fn main() {\\n    println!(\\"Hello world!\\");\\n}",\n    "annotations": {\n      "audience": ["user", "assistant"],\n      "priority": 0.7,\n      "lastModified": "2025-05-03T14:30:00Z"\n    }\n  }\n}\n```\n\nEmbedded resources support the same [Resource annotations](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#annotations) as regular resources to help clients understand how to use them.\n\n#### Structured Content\n\n**Structured** content is returned as a JSON object in the `structuredContent` field of a result.For backwards compatibility, a tool that returns structured content SHOULD also return the serialized JSON in a TextContent block.\n\n#### Output Schema\n\nTools may also provide an output schema for validation of structured results.\nIf an output schema is provided:\n\n- Servers **MUST** provide structured results that conform to this schema.\n- Clients **SHOULD** validate structured results against this schema.\n\nExample tool with output schema:\n\n```\n{\n  "name": "get_weather_data",\n  "title": "Weather Data Retriever",\n  "description": "Get current weather data for a location",\n  "inputSchema": {\n    "type": "object",\n    "properties": {\n      "location": {\n        "type": "string",\n        "description": "City name or zip code"\n      }\n    },\n    "required": ["location"]\n  },\n  "outputSchema": {\n    "type": "object",\n    "properties": {\n      "temperature": {\n        "type": "number",\n        "description": "Temperature in celsius"\n      },\n      "conditions": {\n        "type": "string",\n        "description": "Weather conditions description"\n      },\n      "humidity": {\n        "type": "number",\n        "description": "Humidity percentage"\n      }\n    },\n    "required": ["temperature", "conditions", "humidity"]\n  }\n}\n```\n\nExample valid response for this tool:\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 5,\n  "result": {\n    "content": [\n      {\n        "type": "text",\n        "text": "{\\"temperature\\": 22.5, \\"conditions\\": \\"Partly cloudy\\", \\"humidity\\": 65}"\n      }\n    ],\n    "structuredContent": {\n      "temperature": 22.5,\n      "conditions": "Partly cloudy",\n      "humidity": 65\n    }\n  }\n}\n```\n\nProviding an output schema helps clients and LLMs understand and properly handle structured tool outputs by:\n\n- Enabling strict schema validation of responses\n- Providing type information for better integration with programming languages\n- Guiding clients and LLMs to properly parse and utilize the returned data\n- Supporting better documentation and developer experience\n\n## Error Handling\n\nTools use two error reporting mechanisms:\n\n1. **Protocol Errors**: Standard JSON-RPC errors for issues like:   - Unknown tools\n   - Invalid arguments\n   - Server errors\n2. **Tool Execution Errors**: Reported in tool results with `isError: true`:   - API failures\n   - Invalid input data\n   - Business logic errors\n\nExample protocol error:\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 3,\n  "error": {\n    "code": -32602,\n    "message": "Unknown tool: invalid_tool_name"\n  }\n}\n```\n\nExample tool execution error:\n\n```\n{\n  "jsonrpc": "2.0",\n  "id": 4,\n  "result": {\n    "content": [\n      {\n        "type": "text",\n        "text": "Failed to fetch weather data: API rate limit exceeded"\n      }\n    ],\n    "isError": true\n  }\n}\n```\n\n## Security Considerations\n\n1. Servers **MUST**:   - Validate all tool inputs\n   - Implement proper access controls\n   - Rate limit tool invocations\n   - Sanitize tool outputs\n2. Clients **SHOULD**:   - Prompt for user confirmation on sensitive operations\n   - Show tool inputs to the user before calling the server, to avoid malicious or\n     accidental data exfiltration\n   - Validate tool results before passing to LLM\n   - Implement timeouts for tool calls\n   - Log tool usage for audit purposes', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>transports-model-context-protocol</summary>
 
-**Protocol Revision**: 2025-06-18
-
-MCP uses JSON-RPC to encode messages. JSON-RPC messages **MUST** be UTF-8 encoded.The protocol currently defines two standard transport mechanisms for client-server
-communication:
-
-1. [stdio](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#stdio), communication over standard in and standard out
-2. [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#streamable-http)
-
-Clients **SHOULD** support stdio whenever possible.It is also possible for clients and servers to implement
-[custom transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#custom-transports) in a pluggable fashion.
-
-## stdio
-
-In the **stdio** transport:
-
-- The client launches the MCP server as a subprocess.
-- The server reads JSON-RPC messages from its standard input ( `stdin`) and sends messages
-to its standard output ( `stdout`).
-- Messages are individual JSON-RPC requests, notifications, or responses.
-- Messages are delimited by newlines, and **MUST NOT** contain embedded newlines.
-- The server **MAY** write UTF-8 strings to its standard error ( `stderr`) for logging
-purposes. Clients **MAY** capture, forward, or ignore this logging.
-- The server **MUST NOT** write anything to its `stdout` that is not a valid MCP message.
-- The client **MUST NOT** write anything to the server’s `stdin` that is not a valid MCP
-message.
-
-## Streamable HTTP
-
-This replaces the [HTTP+SSE\\
-transport](https://modelcontextprotocol.io/specification/2024-11-05/basic/transports#http-with-sse) from
-protocol version 2024-11-05. See the [backwards compatibility](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#backwards-compatibility)
-guide below.
-
-In the **Streamable HTTP** transport, the server operates as an independent process that
-can handle multiple client connections. This transport uses HTTP POST and GET requests.
-Server can optionally make use of
-[Server-Sent Events](https://en.wikipedia.org/wiki/Server-sent_events) (SSE) to stream
-multiple server messages. This permits basic MCP servers, as well as more feature-rich
-servers supporting streaming and server-to-client notifications and requests.The server **MUST** provide a single HTTP endpoint path (hereafter referred to as the
-**MCP endpoint**) that supports both POST and GET methods. For example, this could be a
-URL like `https://example.com/mcp`.
-
-#### Security Warning
-
-When implementing Streamable HTTP transport:
-
-1. Servers **MUST** validate the `Origin` header on all incoming connections to prevent DNS rebinding attacks
-2. When running locally, servers **SHOULD** bind only to localhost (127.0.0.1) rather than all network interfaces (0.0.0.0)
-3. Servers **SHOULD** implement proper authentication for all connections
-
-Without these protections, attackers could use DNS rebinding to interact with local MCP servers from remote websites.
-
-### Sending Messages to the Server
-
-Every JSON-RPC message sent from the client **MUST** be a new HTTP POST request to the
-MCP endpoint.
-
-1. The client **MUST** use HTTP POST to send JSON-RPC messages to the MCP endpoint.
-2. The client **MUST** include an `Accept` header, listing both `application/json` and
-`text/event-stream` as supported content types.
-3. The body of the POST request **MUST** be a single JSON-RPC _request_, _notification_, or _response_.
-4. If the input is a JSON-RPC _response_ or _notification_:
-
-   - If the server accepts the input, the server **MUST** return HTTP status code 202
-     Accepted with no body.
-   - If the server cannot accept the input, it **MUST** return an HTTP error status code
-     (e.g., 400 Bad Request). The HTTP response body **MAY** comprise a JSON-RPC _error_
-     _response_ that has no `id`.
-5. If the input is a JSON-RPC _request_, the server **MUST** either
-return `Content-Type: text/event-stream`, to initiate an SSE stream, or
-`Content-Type: application/json`, to return one JSON object. The client **MUST**
-support both these cases.
-6. If the server initiates an SSE stream:
-   - The SSE stream **SHOULD** eventually include JSON-RPC _response_ for the
-     JSON-RPC _request_ sent in the POST body.
-   - The server **MAY** send JSON-RPC _requests_ and _notifications_ before sending the
-     JSON-RPC _response_. These messages **SHOULD** relate to the originating client
-     _request_.
-   - The server **SHOULD NOT** close the SSE stream before sending the JSON-RPC _response_
-     for the received JSON-RPC _request_, unless the [session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management)
-     expires.
-   - After the JSON-RPC _response_ has been sent, the server **SHOULD** close the SSE
-     stream.
-   - Disconnection **MAY** occur at any time (e.g., due to network conditions).
-     Therefore:
-
-     - Disconnection **SHOULD NOT** be interpreted as the client cancelling its request.
-     - To cancel, the client **SHOULD** explicitly send an MCP `CancelledNotification`.
-     - To avoid message loss due to disconnection, the server **MAY** make the stream
-       [resumable](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#resumability-and-redelivery).
-
-### Listening for Messages from the Server
-
-1. The client **MAY** issue an HTTP GET to the MCP endpoint. This can be used to open an
-SSE stream, allowing the server to communicate to the client, without the client first
-sending data via HTTP POST.
-2. The client **MUST** include an `Accept` header, listing `text/event-stream` as a
-supported content type.
-3. The server **MUST** either return `Content-Type: text/event-stream` in response to
-this HTTP GET, or else return HTTP 405 Method Not Allowed, indicating that the server
-does not offer an SSE stream at this endpoint.
-4. If the server initiates an SSE stream:
-   - The server **MAY** send JSON-RPC _requests_ and _notifications_ on the stream.
-   - These messages **SHOULD** be unrelated to any concurrently-running JSON-RPC
-     _request_ from the client.
-   - The server **MUST NOT** send a JSON-RPC _response_ on the stream **unless** [resuming](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#resumability-and-redelivery) a stream associated with a previous client
-     request.
-   - The server **MAY** close the SSE stream at any time.
-   - The client **MAY** close the SSE stream at any time.
-
-### Multiple Connections
-
-1. The client **MAY** remain connected to multiple SSE streams simultaneously.
-2. The server **MUST** send each of its JSON-RPC messages on only one of the connected
-streams; that is, it **MUST NOT** broadcast the same message across multiple streams.
-
-   - The risk of message loss **MAY** be mitigated by making the stream
-     [resumable](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#resumability-and-redelivery).
-
-### Resumability and Redelivery
-
-To support resuming broken connections, and redelivering messages that might otherwise be
-lost:
-
-1. Servers **MAY** attach an `id` field to their SSE events, as described in the
-[SSE standard](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation).
-
-   - If present, the ID **MUST** be globally unique across all streams within that
-     [session](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management)—or all streams with that specific client, if session
-     management is not in use.
-2. If the client wishes to resume after a broken connection, it **SHOULD** issue an HTTP
-GET to the MCP endpoint, and include the
-[`Last-Event-ID`](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header)
-header to indicate the last event ID it received.
-
-   - The server **MAY** use this header to replay messages that would have been sent
-     after the last event ID, _on the stream that was disconnected_, and to resume the
-     stream from that point.
-   - The server **MUST NOT** replay messages that would have been delivered on a
-     different stream.
-
-In other words, these event IDs should be assigned by servers on a _per-stream_ basis, to
-act as a cursor within that particular stream.
-
-### Session Management
-
-An MCP “session” consists of logically related interactions between a client and a
-server, beginning with the [initialization phase](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle). To support
-servers which want to establish stateful sessions:
-
-1. A server using the Streamable HTTP transport **MAY** assign a session ID at
-initialization time, by including it in an `Mcp-Session-Id` header on the HTTP
-response containing the `InitializeResult`.
-
-   - The session ID **SHOULD** be globally unique and cryptographically secure (e.g., a
-     securely generated UUID, a JWT, or a cryptographic hash).
-   - The session ID **MUST** only contain visible ASCII characters (ranging from 0x21 to
-     0x7E).
-2. If an `Mcp-Session-Id` is returned by the server during initialization, clients using
-the Streamable HTTP transport **MUST** include it in the `Mcp-Session-Id` header on
-all of their subsequent HTTP requests.
-
-   - Servers that require a session ID **SHOULD** respond to requests without an
-     `Mcp-Session-Id` header (other than initialization) with HTTP 400 Bad Request.
-3. The server **MAY** terminate the session at any time, after which it **MUST** respond
-to requests containing that session ID with HTTP 404 Not Found.
-4. When a client receives HTTP 404 in response to a request containing an
-`Mcp-Session-Id`, it **MUST** start a new session by sending a new `InitializeRequest`
-without a session ID attached.
-5. Clients that no longer need a particular session (e.g., because the user is leaving
-the client application) **SHOULD** send an HTTP DELETE to the MCP endpoint with the
-`Mcp-Session-Id` header, to explicitly terminate the session.
-
-   - The server **MAY** respond to this request with HTTP 405 Method Not Allowed,
-     indicating that the server does not allow clients to terminate sessions.
-
-### Protocol Version Header
-
-If using HTTP, the client **MUST** include the `MCP-Protocol-Version: <protocol-version>` HTTP header on all subsequent requests to the MCP
-server, allowing the MCP server to respond based on the MCP protocol version.For example: `MCP-Protocol-Version: 2025-06-18`The protocol version sent by the client **SHOULD** be the one [negotiated during\\
-initialization](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle#version-negotiation).For backwards compatibility, if the server does _not_ receive an `MCP-Protocol-Version`
-header, and has no other way to identify the version - for example, by relying on the
-protocol version negotiated during initialization - the server **SHOULD** assume protocol
-version `2025-03-26`.If the server receives a request with an invalid or unsupported
-`MCP-Protocol-Version`, it **MUST** respond with `400 Bad Request`.
-
-### Backwards Compatibility
-
-Clients and servers can maintain backwards compatibility with the deprecated [HTTP+SSE\\
-transport](https://modelcontextprotocol.io/specification/2024-11-05/basic/transports#http-with-sse) (from
-protocol version 2024-11-05) as follows:**Servers** wanting to support older clients should:
-
-- Continue to host both the SSE and POST endpoints of the old transport, alongside the
-new “MCP endpoint” defined for the Streamable HTTP transport.
-  - It is also possible to combine the old POST endpoint and the new MCP endpoint, but
-    this may introduce unneeded complexity.
-
-**Clients** wanting to support older servers should:
-
-1. Accept an MCP server URL from the user, which may point to either a server using the
-old transport or the new transport.
-2. Attempt to POST an `InitializeRequest` to the server URL, with an `Accept` header as
-defined above:
-
-   - If it succeeds, the client can assume this is a server supporting the new Streamable
-     HTTP transport.
-   - If it fails with an HTTP 4xx status code (e.g., 405 Method Not Allowed or 404 Not
-     Found):
-     - Issue a GET request to the server URL, expecting that this will open an SSE stream
-       and return an `endpoint` event as the first event.
-     - When the `endpoint` event arrives, the client can assume this is a server running
-       the old HTTP+SSE transport, and should use that transport for all subsequent
-       communication.
-
-## Custom Transports
-
-Clients and servers **MAY** implement additional custom transport mechanisms to suit
-their specific needs. The protocol is transport-agnostic and can be implemented over any
-communication channel that supports bidirectional message exchange.Implementers who choose to support custom transports **MUST** ensure they preserve the
-JSON-RPC message format and lifecycle requirements defined by MCP. Custom transports
-**SHOULD** document their specific connection establishment and message exchange patterns
-to aid interoperability.
+{'type': 'text', 'text': 'MCP uses JSON-RPC to encode messages. JSON-RPC messages **MUST** be UTF-8 encoded.The protocol currently defines two standard transport mechanisms for client-server\ncommunication:\n\n1. [stdio](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#stdio), communication over standard in and standard out\n2. [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#streamable-http)\n\nClients **SHOULD** support stdio whenever possible.It is also possible for clients and servers to implement\n[custom transports](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#custom-transports) in a pluggable fashion.\n\n## stdio\n\nIn the **stdio** transport:\n\n- The client launches the MCP server as a subprocess.\n- The server reads JSON-RPC messages from its standard input (`stdin`) and sends messages\nto its standard output (`stdout`).\n- Messages are individual JSON-RPC requests, notifications, or responses.\n- Messages are delimited by newlines, and **MUST NOT** contain embedded newlines.\n- The server **MAY** write UTF-8 strings to its standard error (`stderr`) for logging\npurposes. Clients **MAY** capture, forward, or ignore this logging.\n- The server **MUST NOT** write anything to its `stdout` that is not a valid MCP message.\n- The client **MUST NOT** write anything to the server’s `stdin` that is not a valid MCP\nmessage.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
-<summary>welcome-to-fastmcp-2-0-fastmcp</summary>
+<summary>vesa-alexandru-substack</summary>
 
-**FastMCP is the standard framework for building MCP applications.** The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) provides a standardized way to connect LLMs to tools and data, and FastMCP makes it production-ready with clean, Pythonic code:
+{'type': 'text', 'text': 'empty', 'extras': {'signature': 'EtsGCtgGAQw51scbCEDjoPexy3mvb3gAfTgNEps/OWQ7FvMoczvsaTn2lKZwZtyFq7YGLsh0Pk3ZNTMXn6RUrkwAqxFU16m93VqxyHI+ZqihzR2B6KpaIvsaIYlr3g3D+sQnEH0Dm7N4njK8kpKPKHj/T1TZPIZh0M7pQO4pDkT0PYtcqV5VGubfioGx9hNabURXnDDdbdQBBonbQcmufx54L0PRHbEr3DeWvc/5sLPyA1Iqgih6X1tPwvW70saxbz52rNZc0v1cxC8LLyau+bUqVckYMUlBt3eS7D91NPcV3AHXfmZvW5QO6c2fXrSR85eAwk7pXL5qBkc3gCyYhMcIU2vIG6MUVdEaTWg7gI0TJAgJLsWCHOvP8qM5Tn2VO1TUVpMGJPHGD6SZ/h//Z/cxWY4kb+JBn8EEfEG4Otu3uc3eDjhmuGMPGn2+OSbRZG/VtuhBsJTZjj1QX2FLWxI+lm5BViwprZczdxRJHWCN7yRnmc4d+BAStkg9OAqutiXg5a5UaAz2SAyQGICG0HKyk2guFTJ7aaZZGsKEehNvMkRFCcI6Cjn8jVazRnw05/Ny9Dk+Dog6NIK8advKb/uFXCyfNVxaxf8CJSFn6ahqkNaoJEBJVSwesahpPBt/MIUic3ik5PqvZlnBEAhKdUVPIDsAzQ2kiRG6m2eTP7x4KClDFodhWMcmT9Dz4/0GhmRd7R/b67AjAriSSamuyC7PmrKhmSVc8mEFZo3HzZ8Tzcu3D2kNbgbCG8gDtBTRArMDn0b5QQeDFXNYoSUy0A/NT8N4TpiQFa69yzLmowm7+eIzMEo4TGObQ9L287jTx2PyAsEXWO76gQhcurJRnOBQxDi/cGXihqkrQsNOZL8vC61ZLTTHK7KkQ8a/d417AylbbIVc4h2rwBOkgL26YIFOXnvYiBGmkWF1v2HVxG/ighpbeZrQk5CFEDuA81o9ecpWOWn/U51j+YKHlQ49TKiUjNOPp05YvTlJRGdZUeUuEqF+x6TSSBfLDTYttVl2YSCCaK6xymtwHYZgx2CPQK0ITPE4snWs8TY3+0NgzxtNHKb4HO1ymYznRj1M5Y9AF14c7FJu7t2mORpfEHrZbygWurQPsrN/W8Ia2ynSR+6JguBvsI8Yl24fhRQ8vQ=='}}
 
-```
-from fastmcp import FastMCP
+</details>
 
-mcp = FastMCP("Demo 🚀")
+<details>
+<summary>welcome-to-fastmcp-fastmcp</summary>
 
-@mcp.tool
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
+{'type': 'text', 'text': '**FastMCP is the standard framework for building MCP applications.** The Model Context Protocol (MCP) connects LLMs to tools and data. FastMCP gives you everything you need to go from prototype to production — build servers that expose capabilities, connect clients to any MCP service, and give your tools interactive UIs:\n\n```python\nfrom fastmcp import FastMCP\n\nmcp = FastMCP("Demo 🚀")\n\n@mcp.tool\ndef add(a: int, b: int) -> int:\n    """Add two numbers"""\n    return a + b\n\nif __name__ == "__main__":\n    mcp.run()\n```\n\nThe Model Context Protocol (MCP) lets you give agents access to your tools and data. FastMCP handles all of it. Declare a tool with a Python function, and the schema, validation, and documentation are generated automatically. Connect to a server with a URL, and transport negotiation, authentication, and protocol lifecycle are managed for you. You focus on your logic, and the MCP part just works: with FastMCP, best practices are built in.\n\nFastMCP has three pillars:\n\n*   **Servers** wrap your Python functions into MCP-compliant tools, resources, and prompts.\n*   **Clients** connect to any server with full protocol support.\n*   **Apps** give your tools interactive UIs rendered directly in the conversation.\n\nYou can use FastMCP to connect programmatically as a client:\n\n```python\nimport asyncio\nfrom fastmcp import Client\n\nasync def main():\n    async with Client("https://gofastmcp.com/mcp") as client:\n        result = await client.call_tool(\n            name="search_fast_mcp",\n            arguments={"query": "deploy a FastMCP server"}\n        )\n    print(result)\n\nasyncio.run(main())\n```', 'extras': {'signature': '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'}}
 
-if __name__ == "__main__":
-    mcp.run()
-```
+</details>
 
-## What is MCP?
+<details>
+<summary>what-is-the-model-context-protocol-mcp-model-context-protoco-1</summary>
 
-The Model Context Protocol lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. It is often described as “the USB-C port for AI”, providing a uniform way to connect LLMs to resources they can use. It may be easier to think of it as an API, but specifically designed for LLM interactions. MCP servers can:
-
-- Expose data through `Resources` (think of these sort of like GET endpoints; they are used to load information into the LLM’s context)
-- Provide functionality through `Tools` (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
-- Define interaction patterns through `Prompts` (reusable templates for LLM interactions)
-- And more!
-
-FastMCP provides a high-level, Pythonic interface for building, managing, and interacting with these servers.
-
-## Why FastMCP?
-
-FastMCP handles all the complex protocol details so you can focus on building. In most cases, decorating a Python function is all you need — FastMCP handles the rest.
-
-🚀 **Fast**: High-level interface means less code and faster development
-🍀 **Simple**: Build MCP servers with minimal boilerplate
-🐍 **Pythonic**: Feels natural to Python developers
-🔍 **Complete**: Everything for production — enterprise auth (Google, GitHub, Azure, Auth0, WorkOS), deployment tools, testing frameworks, client libraries, and more
-
-FastMCP provides the shortest path from idea to production.
+{'type': 'text', 'text': 'MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems.Using MCP, AI applications like Claude or ChatGPT can connect to data sources (e.g. local files, databases), tools (e.g. search engines, calculators) and workflows (e.g. specialized prompts)—enabling them to access key information and perform tasks.Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect electronic devices, MCP provides a standardized way to connect AI applications to external systems.\n\nhttps://mintcdn.com/mcp/bEUxYpZqie0DsluH/images/mcp-simple-diagram.png?fit=max&auto=format&n=bEUxYpZqie0DsluH&q=85&s=35268aa0ad50b8c385913810e7604550\n\n## What can MCP enable?\n\n- Agents can access your Google Calendar and Notion, acting as a more personalized AI assistant.\n- Claude Code can generate an entire web app using a Figma design.\n- Enterprise chatbots can connect to multiple databases across an organization, empowering users to analyze data using chat.\n- AI models can create 3D designs on Blender and print them out using a 3D printer.\n\n## Why does MCP matter?\n\nDepending on where you sit in the ecosystem, MCP can have a range of benefits.\n\n- **Developers**: MCP reduces development time and complexity when building, or integrating with, an AI application or agent.\n- **AI applications or agents**: MCP provides access to an ecosystem of data sources, tools and apps which will enhance capabilities and improve the end-user experience.\n- **End-users**: MCP results in more capable AI applications or agents which can access your data and take actions on your behalf when necessary.\n\n## Broad ecosystem support\n\nMCP is an open protocol supported across a wide range of clients and servers. AI assistants like [Claude](https://claude.com/docs/connectors/building) and [ChatGPT](https://developers.openai.com/api/docs/mcp/), development tools like [Visual Studio Code](https://code.visualstudio.com/docs/copilot/chat/mcp-servers), [Cursor](https://cursor.com/docs/context/mcp), [MCPJam](https://docs.mcpjam.com/getting-started), and many others all support MCP — making it easy to build once and integrate everywhere.', 'extras': {'signature': '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'}}
 
 </details>
 
 <details>
 <summary>what-is-the-model-context-protocol-mcp-model-context-protoco</summary>
 
-MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems.Using MCP, AI applications like Claude or ChatGPT can connect to data sources (e.g. local files, databases), tools (e.g. search engines, calculators) and workflows (e.g. specialized prompts)—enabling them to access key information and perform tasks.Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect electronic devices, MCP provides a standardized way to connect AI applications to external systems.https://mintcdn.com/mcp/bEUxYpZqie0DsluH/images/mcp-simple-diagram.png?fit=max&auto=format&n=bEUxYpZqie0DsluH&q=85&s=35268aa0ad50b8c385913810e7604550
-
-## [​](https://modelcontextprotocol.io/docs/getting-started/intro\#what-can-mcp-enable%3F)  What can MCP enable?
-
-- Agents can access your Google Calendar and Notion, acting as a more personalized AI assistant.
-- Claude Code can generate an entire web app using a Figma design.
-- Enterprise chatbots can connect to multiple databases across an organization, empowering users to analyze data using chat.
-- AI models can create 3D designs on Blender and print them out using a 3D printer.
-
-## [​](https://modelcontextprotocol.io/docs/getting-started/intro\#why-does-mcp-matter%3F)  Why does MCP matter?
-
-Depending on where you sit in the ecosystem, MCP can have a range of benefits.
-
-- **Developers**: MCP reduces development time and complexity when building, or integrating with, an AI application or agent.
-- **AI applications or agents**: MCP provides access to an ecosystem of data sources, tools and apps which will enhance capabilities and improve the end-user experience.
-- **End-users**: MCP results in more capable AI applications or agents which can access your data and take actions on your behalf when necessary.
-
-</details>
-
-
-## Local Files
-
-<details>
-<summary>_Users_omar_Documents_ai_repos_course-ai-agents_lessons_16_fastmcp_notebook</summary>
-
-# Lesson 16: FastMCP — MCP Server and Client Quickstart
-
-In this lesson, you will run a Model Context Protocol (MCP) server and MCP client using the FastMCP library, then explore how our research agent exposes MCP tools, MCP resources, and MCP prompts. We’ll start with a quick demo that runs the MCP client with an in-memory MCP server directly from this notebook, so you can get to try its capabilities immediately. Then, we’ll examine the MCP server and MCP client code structure.
-
-Learning Objectives:
-- Learn how to create an MCP server using `fastmcp`
-- Learn how to create an MCP client using `fastmcp`
-- Learn how to use the `fastmcp` library to expose MCP tools, MCP resources, and MCP prompts
-- Learn how to use the `fastmcp` library to interact with an MCP server
-
-## 1. Setup
-
-First, we define some standard Magic Python commands to autoreload Python packages whenever they change:
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
-
-### Set Up Python Environment
-
-To set up your Python virtual environment using `uv` and load it into the Notebook, follow the step-by-step instructions from the `Course Admin` lesson from the beginning of the course.
-
-**TL/DR:** Be sure the correct kernel pointing to your `uv` virtual environment is selected.
-
-### Configure Gemini API
-
-To configure the Gemini API, follow the step-by-step instructions from the `Course Admin` lesson.
-
-But here is a quick check on what you need to run this Notebook:
-
-1.  Get your key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-2.  From the root of your project, run: `cp .env.example .env` 
-3.  Within the `.env` file, fill in the `GOOGLE_API_KEY` variable:
-
-Now, the code below will load the key from the `.env` file:
-
-```python
-from utils import env
-
-env.load(required_env_vars=["GOOGLE_API_KEY"])
-```
-
-
-### Import Key Packages
-
-```python
-import nest_asyncio
-
-nest_asyncio.apply()  # Allow nested async usage in notebooks
-```
-
-
-## 2. Try the agent (MCP client quickstart)
-
-The research agent is made of an MCP server and an MCP client.
-
-The MCP server is a `fastmcp` server that registers MCP tools, MCP resources, and MCP prompt via router modules. The MCP client is a `fastmcp` client that connects to the MCP server and allows you to interact with it, along with interacting with the LLM agent.
-
-This quickstart runs the MCP client of the research agent inside the notebook kernel. It connects to the MCP server running in‑memory (same process), which is the only transport supported for running everything in the same notebook. So, we'll always run the MCP server in-memory in the notebooks.
-
-Run the next code cell to start the MCP client. You will see some texts and can type commands directly in the input box that appears. The input box will be in different locations depending on where you are running the notebook from.
-
-Once the client is running, you can type commands when prompted, such as:
-
-- `/tools`: list all available MCP tools with names and descriptions.
-- `/resources`: list all available MCP resources with their URIs.
-- `/prompts`: list all available MCP prompts by name and description.
-- `/prompt/full_research_instructions_prompt`: fetch the research workflow prompt and inject it into the conversation.
-- `/resource/system://memory`: read and print the server memory stats (an example of running an MCP resource).
-- `/model-thinking-switch`: toggle model “thinking” traces on/off. By default it is true, which means that you'll see the agent's thoughts in the conversation before each answer or tool call.
-- Any other text: treated as a normal user message for the agent, which may use the MCP server tools for answering.
-- `/quit`: terminate the client.
-
-At first, try with the following commands and see what happens:
-- `Hello! Who are you?`
-- `/tools`
-- `/resource/system://memory`
-- `/quit`
-
-```python
-# Run the MCP client in-kernel
-import sys
-
-from research_agent_part_2.mcp_client.src.client import main as client_main
-
-
-async def run_client():
-    _argv_backup = sys.argv[:]
-    sys.argv = ["client"]
-    try:
-        await client_main()
-    finally:
-        sys.argv = _argv_backup
-
-
-# Start client with in-memory server
-await run_client()
-```
-
-
-Whenever you want, you can run the previous cell again to try the client.
-
-Now, let's see how the MCP server works.
-
-## 3. MCP Server Overview
-
-The purpose of this section is to show how the MCP server is created with `fastmcp` and how it wires MCP tools, MCP resources, and MCP prompts.
-
-The MCP server is a `fastmcp` server that registers MCP tools (actions with side effects like scraping webpages, transcribing videos, etc.), MCP resources (read-only endpoints for information like system status or memory), and MCP prompts (reusable instruction blocks, such as our agent workflow) via router modules.
-
-The MCP server follows a FastAPI‑like layout for clarity and scalability. It is structured as follows:
-
-- `server.py`: Entry point exposing `create_mcp_server()` and a `__main__` runner.
-- `routers/`: Functions that attach endpoints to the FastMCP instance.
-  - `tools.py`: registers all MCP tools.
-  - `resources.py`: registers all MCP resources.
-  - `prompts.py`: registers all MCP prompts.
-- `tools/`: MCP tools implementations.
-- `resources/`: MCP resources implementations.
-- `prompts/`: MCP prompts implementations (e.g. full workflow instructions for the agent).
-- `app/`: Functions implementing business logic.
-- `utils/`: Utility functions.
-- `config/`: Pydantic settings (`settings.py`) for server name/version, logging, model choices, and API keys.
-
-This separation keeps orchestration thin at the server boundary while allowing each capability (tool/resource/prompt) to evolve independently.
-
-Let's see now how the MCP server is created.
-
-Source:
-_mcp_server/src/server.py_
-
-```python
-from fastmcp import FastMCP
-
-from .config.settings import settings
-from .routers.prompts import register_mcp_prompts
-from .routers.resources import register_mcp_resources
-from .routers.tools import register_mcp_tools
-
-
-def create_mcp_server() -> FastMCP:
-    """
-    Create and configure the MCP server instance.
-
-    This function can be imported to get a configured MCP server
-    for use with in-memory transport in clients.
-
-    Returns:
-        FastMCP: Configured MCP server instance
-    """
-    # Create the FastMCP server instance
-    mcp = FastMCP(
-        name=settings.server_name,
-        version=settings.version,
-    )
-
-    # Register all MCP endpoints
-    register_mcp_tools(mcp)
-    register_mcp_resources(mcp)
-    register_mcp_prompts(mcp)
-
-    return mcp
-```
-
-Notice how the `FastMCP` instance is created and how the `mcp` object is passed to the `register_mcp_tools`, `register_mcp_resources`, and `register_mcp_prompts` functions. It is pretty similar to how you would create a FastAPI app and attach endpoints to it!
-
-### 3.1 Registering MCP Tools
-
-Let's see now in particular how to register an MCP tool with `fastmcp`. This specific tool reads the article guidelines and extracts relevant references. Its implementation is in the `tools/extract_guidelines_urls_tool.py` file, along with other business logic functions in the `app/` folder. You can read the full file `mcp_server/src/routers/tools.py` to see all the 11 available MCP tools.
-
-Source: _mcp_server/src/routers/tools.py_
-
-```python
-@mcp.tool()
-async def extract_guidelines_urls(research_directory: str) -> Dict[str, Any]:
-    """
-    Extract URLs and local file references from article guidelines.
-
-    Reads the ARTICLE_GUIDELINE_FILE file in the research directory and extracts:
-    - GitHub URLs
-    - Other HTTP/HTTPS URLs
-    - Local file references (files mentioned in quotes with extensions)
-
-    Results are saved to GUIDELINES_FILENAMES_FILE in the research directory.
-    """
-    result = extract_guidelines_urls_tool(research_directory)
-    return result
-```
-
-This tool is the first step in the workflow. It reads the article guideline and writes a structured file containing URLs and local references. Notice how it requires a `research_directory` input, which is the path to the research directory containing a `article_guideline.md` file.
-
-
-Let's test it with a sample article guideline. In the research agent folder, there's a `data/sample_research_folder` folder with an `article_guideline.md` file. Let's use it as input for the `extract_guidelines_urls` tool.
-
-Here is how it is structured:
-
-```md
-## Global Context of the Lesson
-
-...
-
-## Lesson Outline
-
-## Section 1: Introduction
-
-...
-
-## Section 2: Understanding why agents need tools
-
-...
-
-## Section N: Conclusion
-
-...
-
-## Article code
-
-Links to code that will be used to support the article. Always prioritize this code over every other piece of code found in the sources: 
-
-- [Notebook 1](https://github.com/path/to/notebook.ipynb)
-
-## Sources
-
-- [Function calling with the Gemini API](https://ai.google.dev/gemini-api/docs/function-calling)
-- [Function calling with OpenAI's API](https://platform.openai.com/docs/guides/function-calling)
-- [Tool Calling Agent From Scratch](https://www.youtube.com/watch?v=ApoDzZP8_ck)
-- [Efficient Tool Use with Chain-of-Abstraction Reasoning](https://arxiv.org/pdf/2401.17464v3)
-- [Building AI Agents from scratch - Part 1: Tool use](https://www.newsletter.swirlai.com/p/building-ai-agents-from-scratch-part)
-- [What is Tool Calling? Connecting LLMs to Your Data](https://www.youtube.com/watch?v=h8gMhXYAv1k)
-- [ReAct vs Plan-and-Execute: A Practical Comparison of LLM Agent Patterns](https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9)
-- [Agentic Design Patterns Part 3, Tool Use](https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-3-tool-use/)
-```
-
-Normally, an `article_guideline.md` file would contain detailed information about the article to write, including the outline, the sections, the sources, and the code, as the research agent needs this information to look for the best content to include in the article. In this sample file, we have a simplified version of an article guideline.
-
-Now, run the next code cell to run the research agent MCP client again, and give it the following command. Make sure to replace the folder path with your actual absolute folder path, otherwise the tool will not find the file.
-- Command to give to the client: `Run the "extract_guidelines_urls" tool with the "data/sample_research_folder" directory as research folder and stop after the tool has finished running.`.
-
-In case you provide the wrong path, notice how the tool will return an error and how the agent will ask you to provide a valid path and how to proceed.
-
-*Important*: the agent will manage every message starting with the `/` as a command, so, if you want to provide the folder path in a message, you need to write something like this: `Here is the folder path: /absolute/path/to/the/folder`.
-
-```python
-# Run the MCP client in-kernel
-import sys
-
-from research_agent_part_2.mcp_client.src.client import main as client_main
-
-
-async def run_client():
-    _argv_backup = sys.argv[:]
-    sys.argv = ["client"]
-    try:
-        await client_main()
-    finally:
-        sys.argv = _argv_backup
-
-
-# Start client with in-memory server
-await run_client()
-```
-
-
-Notice the agent's thoughts. If everything ran correctly, you'll see the text "Tool execution successful". If so, notice that there is a new folder named `.nova` in the research directory, with a file `guidelines_filenames.json` inside. This file contains the URLs and local references extracted from the article guideline.
-
-Its content should be like this:
-
-```json
-{
-  "github_urls": [
-    "https://github.com/path/to/notebook.ipynb"
-  ],
-  "youtube_videos_urls": [
-    "https://www.youtube.com/watch?v=ApoDzZP8_ck",
-    "https://www.youtube.com/watch?v=h8gMhXYAv1k"
-  ],
-  "other_urls": [
-    "https://ai.google.dev/gemini-api/docs/function-calling",
-    "https://platform.openai.com/docs/guides/function-calling",
-    "https://arxiv.org/pdf/2401.17464v3",
-    "https://www.newsletter.swirlai.com/p/building-ai-agents-from-scratch-part",
-    "https://dev.to/jamesli/react-vs-plan-and-execute-a-practical-comparison-of-llm-agent-patterns-4gh9",
-    "https://www.deeplearning.ai/the-batch/agentic-design-patterns-part-3-tool-use/"
-  ],
-  "local_file_paths": []
-}
-```
-
-So, the tool has extracted those URLs from the `article_guideline.md` file and categorized them into the groups you see above.
-
-We can run the above tool also programmatically as follows. The output shows the result of running it from the local setup of the author of this notebook. To run it, update the path of the `research_folder` variable with your absolute path to the `sample_research_folder` folder.
-
-```python
-from research_agent_part_2.mcp_server.src.tools import extract_guidelines_urls_tool
-
-research_folder = "/your/absolute/path/to/sample_research_folder"
-extract_guidelines_urls_tool(research_folder=research_folder)
-```
-
-
-We'll comment the output of this tool in the next lesson. In the next lessons, we'll run each tool one by one like in the above code cell, so you can see the output of each tool and understand how the research agent works.
-
-### 3.2 Registering MCP Resources
-
-Let's see now how to register an MCP resource endpoint using `fastmcp`.
-
-Source:
-_lessons/research_agent_part_2/mcp_server/src/routers/resources.py_
-
-```python
-@mcp.resource("system://memory")
-async def memory_usage() -> Dict[str, Any]:
-    """Monitor memory usage of the server."""
-    return await get_memory_usage_resource()
-```
-
-It's very similar to how tools are registered, except that the `@mcp.resource()` decorator is used instead of the `@mcp.tool()` decorator.
-
-Let's now run the `get_memory_usage_resource` function to see the memory usage of the server.
-
-```python
-from research_agent_part_2.mcp_server.src.resources import get_memory_usage_resource
-
-await get_memory_usage_resource()
-```
-
-
-This output is the same output that an MCP client would get if it uses this MCP resource.
-
-*Important*: in the research agent MCP client, we have only implemented the use of tools by the agent LLM, but we could have implemented the use of resources as well. Most MCP clients do not support resources yet, but their support is increasing.
-
-### 3.3 Registering MCP Prompts
-
-This section shows how MCP prompts are implemented with `fastmcp`. This specific prompt defines the agentic workflow for the research agent.
-
-Source:
-_mcp_server/src/routers/prompts.py_
-
-```python
-@mcp.prompt()
-async def full_research_instructions_prompt() -> str:
-    """Complete Nova research agent workflow instructions."""
-    return await _get_research_instructions()
-```
-
-The prompt content encodes the full workflow orchestration the agent should follow when started via a prompt.
-
-In practice, MCP prompts are triggered by users from an MCP client, not by the agent LLM. When a user triggers an MCP prompt, the MCP client would retrieve that prompt and load it to instruct the LLM on how to run the available tools in sequence (and sometimes in parallel) according to the workflow described in it.
-
-For reference, here is the full prompt content of the only MCP prompt implemented in the research agent, which is the `full_research_instructions_prompt` prompt.
-
-```python
-from research_agent_part_2.mcp_server.src.prompts import full_research_instructions_prompt
-
-prompt = await full_research_instructions_prompt()
-print(prompt)
-```
-
-
-This is the instruction block that defines the agentic workflow for the research agent. In the next lessons, we'll go through each step defined in the workflow, learn how it is implemented, and run it in isolation.
-
-Let's now see how the MCP client works.
-
-## 4. MCP Client Overview
-
-Here is the MCP client's layout. It is structured as follows:
-
-- `client.py`: CLI entry point. Parses `--transport`, creates the client (in‑memory or stdio), fetches capabilities, prints the startup banner, and runs the interactive loop.
-- `settings.py`: Centralized Pydantic settings for API keys, model selection, logging, transport, and server paths.
-- `utils/`: Helper modules used by `client.py`.
-
-The MCP client can run with two transports:
-
-- **in-memory**: The client imports the server factory (the `create_mcp_server` function from the `client.py` file) and instantiates the server inside the same Python process. This is fast, simple to debug, and is what we use in this notebook.
-- **stdio**: The client launches the server as a separate process and communicates using the MCP stdio transport. This mirrors how external MCP clients (e.g., editors) connect to servers and provides process isolation.
-
-Let's see how the code of the `client.py` file works.
-
-Source: _mcp_client/src/client.py_
-
-```python
-if args.transport == "in-memory":
-    ...
-    from mcp_server.src.server import create_mcp_server
-    mcp_server = create_mcp_server()
-    mcp_client = Client(mcp_server)
-
-elif args.transport == "stdio":
-    config = {
-        "mcpServers": {
-            "research-agent": {
-                "transport": "stdio",
-                "command": "uv",
-                "args": [
-                    "--directory", str(settings.server_main_path),
-                    "run", "-m", "src.server",
-                    "--transport", "stdio",
-                ],
-            }
-        }
-    }
-    mcp_client = Client(config)
-
-# At startup
-tools, resources, prompts = await get_capabilities_from_mcp_client(mcp_client)
-print_startup_info(tools, resources, prompts)
-
-async with mcp_client:
-    while True:
-        # Get user input
-        user_input = input("👤 You: ").strip()
-        ...
-
-        # Parse input
-        parsed_input = parse_user_input(user_input)
-        ...
-
-        # Dispatch handling
-        await handle_user_message(parsed_input=parsed_input, ...)
-        ...
-```
-
-It does the following:
-1) Parse the `--transport` flag.
-2) If in-memory, build a `Client` with the FastMCP server object. If stdio, pass a config that tells FastMCP how to exec the server via `uv`.
-3) Query the MCP server for its capabilities (tools/resources/prompts) and print them.
-4) Enter the interactive loop: read input, parse it, and dispatch handling.
-
-The code above is run when the MCP client is started. If you remember from previous cells, when the MCP client is started, it prints the following information:
-
-```
-🛠️ Available tools: 11
-📚 Available resources: 2
-💬 Available prompts: 1
-
-Available Commands: /tools, /resources, /prompts, /prompt/<name>, /resource/<uri>, /model-thinking-switch, /quit
-```
-
-But, how does the MCP client know how many tools, resources, and prompts are available? Let's see how the `get_capabilities_from_mcp_client` function works.
-
-Source:
-_mcp_client/src/utils/mcp_startup_utils.py_
-
-```python
-async def get_capabilities_from_mcp_client(client: Client) -> tuple[List, List, List]:
-    """Get available capabilities."""
-    async with client:
-        tools = await client.list_tools()
-        resources = await client.list_resources()
-        prompts = await client.list_prompts()
-
-    return tools, resources, prompts
-```
-
-As you can see, the MCP client object has a `list_tools`, `list_resources`, and `list_prompts` method that returns the list of tools, resources, and prompts respectively. These lists contain information about their names, descriptions, parameters, and so on.
-
-We are now ready to learn how the MCP client parses the user input and how it handles the user messages.
-
-### 4.1 Parsing Input and Commands
-
-The client supports a small command language. Input can be either a command (starting with `/`) or a freeform user message.
-
-Possible commands are:
-- `/tools`, `/resources`, `/prompts`
-- `/prompt/<name>` (e.g., `/prompt/full_research_instructions_prompt`)
-- `/resource/<uri>` (e.g., `/resource/system://status`)
-- `/model-thinking-switch`
-- `/quit`
-
-The `parse_user_input` function simply classifies the input (no side effects) and it returns a `ProcessedInput` with metadata. Here are some examples:
-
-```python
-from research_agent_part_2.mcp_client.src.utils.parse_message_utils import parse_user_input
-
-processed_input = parse_user_input("/tools")
-print(processed_input.input_type)
-
-processed_input = parse_user_input("/resources")
-print(processed_input.input_type)
-
-processed_input = parse_user_input("/prompt/full_research_instructions_prompt")
-print(processed_input.input_type, processed_input.prompt_name)
-
-processed_input = parse_user_input("Hello, how are you?")
-print(processed_input.input_type)
-```
-
-
-These processed inputs are then used to dispatch the correct handling.
-
-The `handle_user_message` function orchestrates the conversation, calling the appropriate helper for the parsed command, or appending a normal message and running the agent loop.
-
-Here are some examples. Let's first create the MCP server and client, and get the server capabilities (available tools, resources, and prompts).
-
-```python
-from fastmcp import Client
-from research_agent_part_2.mcp_client.src.utils.handle_message_utils import handle_user_message
-from research_agent_part_2.mcp_client.src.utils.mcp_startup_utils import get_capabilities_from_mcp_client
-from research_agent_part_2.mcp_server.src.server import create_mcp_server
-
-# Create the MCP server and client
-mcp_server = create_mcp_server()
-mcp_client = Client(mcp_server)
-
-# Get the MCP server capabilities
-tools, resources, prompts = await get_capabilities_from_mcp_client(mcp_client)
-```
-
-
-Now, let's parse the user input and handle the user message with the `handle_user_message` function. Here is an example with commands (i.e. messages starting with `/`):
-
-```python
-# Parse the user input
-processed_input = parse_user_input("/resources")
-conversation_history = []
-response = await handle_user_message(
-    processed_input, tools, resources, prompts, conversation_history, mcp_client, thinking_enabled=True
-)
-```
-
-
-The `handle_user_message` function is basically a router that calls the appropriate helper for the parsed message. It is defined in the `handle_message_utils.py` file, you can read it to learn more about it.
-
-As previously explained, the `tools` object contains the list of tools registered in the MCP server, retrieved by the `list_tools` method. If the input is of type `COMMAND_INFO_TOOLS`, the `handle_command` function is called.
-
-Source:
-_mcp_client/src/utils/command_utils.py_
-
-```python
-def handle_command(processed_input: ProcessedInput, tools: List, resources: List, prompts: List):
-    """Handle informational commands.
-
-    This function only handles informational commands (COMMAND_INFO_* types).
-    """
-    if processed_input.input_type == InputType.COMMAND_INFO_TOOLS:
-        print_header("🛠️  Available Tools")
-        for i, tool in enumerate(tools, 1):
-            print_item(tool.name, tool.description, i, Color.BRIGHT_WHITE, Color.YELLOW)
-    ...
-```
-
-This function retrieves, from each tool, the name and description, and prints them in a pretty format.
-
-All the tools are managed in a similar way.
-
-If the input message is of type `NORMAL_MESSAGE`, the `handle_agent_loop` function is called instead, which manages the agent loop for tool execution. Let's see how it works.
-
-Source:
-_mcp_client/src/utils/handle_agent_loop_utils.py_
-
-```python
-async def handle_agent_loop(
-    conversation_history: List[types.Content],
-    tools: List,
-    client: Client,
-    thinking_enabled: bool,
-):
-    """Handle the agent loop for tool execution."""
-    # Initialize LLM client
-    llm_config = build_llm_config_with_tools(tools, thinking_enabled)
-    llm_client = LLMClient(settings.model_id, llm_config)
-
-    while True:
-        print()
-        # Call LLM with current conversation history
-        response = await llm_client.generate_content(conversation_history)
-
-        # Extract and display thoughts as separate message (only if enabled)
-        if thinking_enabled:
-            thoughts = extract_thought_summary(response)
-            ...
-
-        # Check for function calls
-        function_call_info = extract_first_function_call(response)
-        if function_call_info:
-            name, args = function_call_info
-
-            # Check if this is a tool call
-            is_tool = any(tool.name == name for tool in tools)
-
-            if is_tool:
-                ...
-
-                # Execute the tool via MCP server
-                tool_result = await execute_tool(name, args, client)
-                # Add tool result to conversation history
-                tool_response = f"Tool '{name}' executed successfully. Result: {tool_result}"
-                conversation_history.append(types.Content(role="user", parts=[types.Part(text=tool_response)]))
-                ...
-        else:
-            # Extract final text response - this ends the ReAct loop
-            final_text = extract_final_answer(response)
-            conversation_history.append(response.candidates[0].content)
-            ...
-            break  # Exit the agent loop
-```
-
-This function is the main loop that manages the agent loop for tool execution. It initializes the LLM client, builds the LLM configuration with the tools, and then enters the agent loop.
-
-The loop is structured as follows:
-
-1) Call the LLM with the current conversation history.
-2) Extract and display thoughts as separate message (only if enabled).
-3) Check for function calls.
-4) If there is a function call, check if it is a tool call.
-5) If it is a tool call, execute the tool via MCP server.
-6) Add the tool result to the conversation history.
-
-The `LLMClient` class is simply a wrapper class that allows to generate content (or a function call) with an LLM, independently from the specific LLM provider. Right now it only implements Google Gemini as model, but it can be easily extended to other models. It is defined in the `llm_utils.py` file.
-
-The `build_llm_config_with_tools` function builds the LLM configuration with the tools, it only works with Gemini for now. It is defined in the `llm_utils.py` file as well. Here's its code.
-
-```python
-def build_llm_config_with_tools(mcp_tools: List, thinking_enabled: bool = True) -> types.GenerateContentConfig:
-    """Build Gemini config with all MCP tools converted to Gemini format."""
-    gemini_tools = []
-
-    for tool in mcp_tools:
-        gemini_tool = types.Tool(
-            function_declarations=[
-                types.FunctionDeclaration(
-                    name=tool.name,
-                    description=tool.description,
-                    parameters=tool.inputSchema,
-                )
-            ]
-        )
-        gemini_tools.append(gemini_tool)
-
-    # Create thinking config dynamically based on current state
-    thinking_config = types.ThinkingConfig(
-        include_thoughts=thinking_enabled,
-        thinking_budget=settings.thinking_budget,
-    )
-
-    return types.GenerateContentConfig(
-        tools=gemini_tools,
-        thinking_config=thinking_config,
-        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
-    )
-```
-
-The code above basically instructions the LLM to leverage thinking (if enabled) with the specificed thinking budget (i.e. the maximum number of tokens the LLM can use to think) and to use the available tools from the MCP server.
-
-The other functions from the `handle_agent_loop` function, like `extract_thought_summary` and `extract_final_answer`, are used to extract the thoughts and the final answer from the LLM response. It's boilerplate code that works for Gemini and can be copypasted for other projects.
-
-The `execute_tool` function is used to execute the tool via MCP server. It is defined in the `handle_agent_loop_utils.py` file. Here's its code.
-
-```python
-async def execute_tool(name: str, args: dict, client: Client):
-    """Execute a tool and return the result."""
-    ...
-    tool_result = await client.call_tool(name, args)
-    return tool_result
-```
-
-It uses the `call_tool` method of the `Client` object to execute the tool.
-
-We can now test the MCP client with a user message that involves tool execution and see how the agent behaves.
-
-```python
-# Parse the user input
-path_to_research_folder = (
-    "/Users/fabio/Desktop/course-ai-agents/lessons/research_agent_part_2/data/sample_research_folder"
-)
-message = (
-    f"Call the 'extract_guidelines_urls' tool with the '{path_to_research_folder}' directory as research folder, and stop after the tool has finished running."
-    "Don't run any other tool after the 'extract_guidelines_urls' tool has finished running."
-    "If the tool fails, explain to me the error message."
-)
-processed_input = parse_user_input(message)
-conversation_history = []
-async with mcp_client:
-    response = await handle_user_message(
-        processed_input, tools, resources, prompts, conversation_history, mcp_client, thinking_enabled=True
-    )
-```
-
-
-We are good to go!
-
-In the next lesson, we'll learn more about how the MCP prompt is used by the MCP client to orchestrate the agentic workflow.
-Then, we'll go through each step of the research agent workflow, and we'll see how to run each tool in isolation.
+{'type': 'text', 'text': 'MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems. Using MCP, AI applications like Claude or ChatGPT can connect to data sources (e.g. local files, databases), tools (e.g. search engines, calculators) and workflows (e.g. specialized prompts)—enabling them to access key information and perform tasks. Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect electronic devices, MCP provides a standardized way to connect AI applications to external systems.\n\nhttps://mintcdn.com/mcp/bEUxYpZqie0DsluH/images/mcp-simple-diagram.png?fit=max&auto=format&n=bEUxYpZqie0DsluH&q=85&s=35268aa0ad50b8c385913810e7604550\n\n## What can MCP enable?\n\n- Agents can access your Google Calendar and Notion, acting as a more personalized AI assistant.\n- Claude Code can generate an entire web app using a Figma design.\n- Enterprise chatbots can connect to multiple databases across an organization, empowering users to analyze data using chat.\n- AI models can create 3D designs on Blender and print them out using a 3D printer.\n\n## Why does MCP matter?\n\nDepending on where you sit in the ecosystem, MCP can have a range of benefits.\n\n- **Developers**: MCP reduces development time and complexity when building, or integrating with, an AI application or agent.\n- **AI applications or agents**: MCP provides access to an ecosystem of data sources, tools and apps which will enhance capabilities and improve the end-user experience.\n- **End-users**: MCP results in more capable AI applications or agents which can access your data and take actions on your behalf when necessary.\n\n## Broad ecosystem support\n\nMCP is an open protocol supported across a wide range of clients and servers. AI assistants like [Claude](https://claude.com/docs/connectors/building) and [ChatGPT](https://developers.openai.com/api/docs/mcp/), development tools like [Visual Studio Code](https://code.visualstudio.com/docs/copilot/chat/mcp-servers), [Cursor](https://cursor.com/docs/context/mcp), [MCPJam](https://docs.mcpjam.com/getting-started), and many others all support MCP — making it easy to build once and integrate everywhere.', 'extras': {'signature': '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'}}
 
 </details>
