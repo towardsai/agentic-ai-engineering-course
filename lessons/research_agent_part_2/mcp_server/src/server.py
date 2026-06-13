@@ -1,5 +1,6 @@
 """Main MCP server implementation with research tools."""
 
+import os
 from argparse import ArgumentParser
 
 from fastmcp import FastMCP
@@ -13,6 +14,11 @@ from .utils.opik_utils import configure_opik
 
 # Configure logging
 configure_logging()
+
+# Git must never prompt for credentials: the server runs without an interactive
+# terminal, so a prompt (e.g. from gitingest's clone hitting a 401) blocks the
+# tool call forever. With this set, git fails fast and the error is reported.
+os.environ.setdefault("GIT_TERMINAL_PROMPT", "0")
 
 # ============================================================================
 # MAIN EXECUTION AND EXPORT FUNCTIONS

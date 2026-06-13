@@ -76,11 +76,14 @@ async def process_github_urls_tool(research_directory: str) -> Dict[str, Any]:
 
     logger.debug(f"Processing {len(github_urls)} GitHub URLs...")
 
+    github_token = settings.github_token.get_secret_value().strip() if settings.github_token else None
+    github_token = github_token or None
+
     # Process GitHub URLs sequentially
     success_count = 0
     for url in github_urls:
         try:
-            result = await process_github_url(url, dest_folder, settings.github_token.get_secret_value())
+            result = await process_github_url(url, dest_folder, github_token)
             if result:
                 success_count += 1
         except Exception as e:
