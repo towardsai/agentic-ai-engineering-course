@@ -1,6 +1,8 @@
 """GitHub-specific utilities."""
 
+import asyncio
 import logging
+import os
 import re
 from pathlib import Path
 from urllib.parse import urlparse
@@ -9,14 +11,26 @@ from gitingest import ingest_async
 
 logger = logging.getLogger(__name__)
 
+INGEST_TIMEOUT_SECONDS = 300
+
+# GitIngest shells out to git. MCP tool calls do not have an interactive stdin,
+# so credential prompts would otherwise block the whole parallel ingestion step.
+os.environ["GIT_TERMINAL_PROMPT"] = "0"
+os.environ["GCM_INTERACTIVE"] = "never"
+
 
 async def process_github_url(url: str, dest_folder: Path, token: str | None) -> bool:
     """Fetch a GitHub repository (or file) with gitingest and write a Markdown report."""
     ingestion_succeeded = False
     try:
-        summary, tree, content = await ingest_async(url, exclude_patterns="*.lock", token=token)
+        summary, tree, content = await asyncio.wait_for(
+            ingest_async(url, exclude_patterns="*.lock", token=token), timeout=INGEST_TIMEOUT_SECONDS
+        )
         ingestion_succeeded = True
         md = f"# Repository analysis for {url}\n\n## Summary\n{summary}\n\n## File tree\n```{tree}\n```\n\n## Extracted content\n{content}"
+    except TimeoutError:
+        md = f"# Error processing {url}\n\nGitHub ingestion timed out after {INGEST_TIMEOUT_SECONDS} seconds."
+        logger.error("GitHub ingestion timed out after %s seconds for %s", INGEST_TIMEOUT_SECONDS, url)
     except Exception as e:
         md = f"# Error processing {url}\n\n{e}"
         logger.error(f"Error processing repository {url}: {e}", exc_info=True)

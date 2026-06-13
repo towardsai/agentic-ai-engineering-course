@@ -12,7 +12,8 @@
                 "stdio"
             ],
             "env": {
-                "ENV_FILE_PATH": "lessons/research_agent_part_2/mcp_server/.env"
+                "ENV_FILE_PATH": "lessons/research_agent_part_2/mcp_server/.env",
+                "GIT_TERMINAL_PROMPT": "0"
             }
         },
         "brown": {
