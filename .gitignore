@@ -191,6 +191,10 @@ outputs/
 # Nova
 .nova
 .research
+nova_samples/
+nova_workspace/
+nova_samples.zip
+!data/nova_samples.zip
 
 # Lessons
 notebook_colab_version/
