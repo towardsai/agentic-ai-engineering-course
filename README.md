@@ -1,4 +1,4 @@
-# AI Agents Course from Towards AI and Decoding AI
+# Agent Engineering Course from Towards AI and Decoding AI
 
 This repository contains all the code exercises and project materials for the **AI Agents** course, created by **Towards AI** and **Decoding AI**. This course is designed for developers who want to move beyond basic LLM tutorials and build production-grade AI agents and workflows. It provides a hands-on, project-based approach to learning agent architecture patterns, modern frameworks like LangGraph, and essential production skills like LLMOps, evaluation, and deployment.
 
