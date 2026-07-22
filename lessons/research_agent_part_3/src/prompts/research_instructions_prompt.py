@@ -129,23 +129,25 @@ Your job is to execute the workflow below.
 3. Repeat the following research loop for 3 rounds:
 
     3.1. Run the "generate_next_queries" tool with the article guideline ID to analyze the article guidelines,
-    the already-scraped content from the database, and existing Perplexity results. The tool identifies knowledge
+    the already-scraped content from the database, and existing web research results. The tool identifies knowledge
     gaps and proposes new web-search questions with justifications. The generated queries are returned directly.
 
-    3.2. Run the "run_perplexity_research" tool with the article guideline ID and the new queries. This tool
-    executes the queries with Perplexity and appends the results to the perplexity_results field in the database.
+    3.2. Run the "run_web_research" tool with the article guideline ID and the new queries. It uses Tavily by default
+    and appends normalized results to the legacy perplexity_results field in the database. If the user explicitly
+    requests Perplexity, pass provider="perplexity" instead. The original "run_perplexity_research" tool remains
+    available for compatibility.
 
-4. Filter Perplexity results by quality:
+4. Filter web research results by quality:
 
     4.1 Run the "select_research_sources_to_keep" tool with the article guideline ID. The tool reads the article
-    guidelines and Perplexity results from the database, automatically evaluates each source for trustworthiness,
+    guidelines and web research results from the database, automatically evaluates each source for trustworthiness,
     authority and relevance, then saves the comma-separated IDs of accepted sources and a filtered markdown file
     containing only the selected sources to the database.
 
 5. Identify which of the accepted sources deserve a *full* scrape:
 
     5.1 Run the "select_research_sources_to_scrape" tool with the article guideline ID. It analyzes the filtered
-    Perplexity results from the database together with the article guidelines and material already scraped from
+    web research results from the database together with the article guidelines and material already scraped from
     guideline URLs, then chooses up to 5 diverse, authoritative sources whose full content will add most value.
     The chosen URLs are saved to the database.
 
@@ -156,7 +158,7 @@ Your job is to execute the workflow below.
 6. Write final research file:
 
     6.1 Run the "create_research_file" tool with the article guideline ID. The tool combines all research data from
-    the database including filtered Perplexity results, scraped guideline sources, GitHub ingests, YouTube transcripts,
+    the database including filtered web research results, scraped guideline sources, GitHub ingests, YouTube transcripts,
     and scraped research sources into a comprehensive research markdown organized into sections with collapsible blocks
     for easy navigation. The final research is saved to the database, and the tool returns a download URL.
     After the tool completes, inform the user to open the download URL in their browser to download the research.md file.
@@ -179,7 +181,7 @@ After running the complete workflow, all research data is stored in the database
 
 - Extracted URLs, local files, scraped web content from guidelines
 - GitHub ingests, YouTube transcripts  
-- Perplexity research results, selected source IDs, filtered results
+- Web research results, selected source IDs, and filtered results (stored in legacy `perplexity_*` fields)
 - URLs to scrape and scraped research content
 - Final research markdown
 

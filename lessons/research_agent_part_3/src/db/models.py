@@ -87,14 +87,14 @@ class Article(Base):
     perplexity_results: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
-        comment="Raw Perplexity research results (markdown format)",
+        comment="Raw web research results (markdown format; legacy field name)",
     )
 
     # Replaces: .nova/perplexity_results_selected.md
     perplexity_results_selected: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
-        comment="Filtered Perplexity results containing only selected high-quality sources (markdown format)",
+        comment="Filtered web research results containing only selected high-quality sources (legacy field name)",
     )
 
     # Replaces: .nova/perplexity_sources_selected.md

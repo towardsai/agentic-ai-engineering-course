@@ -2,7 +2,7 @@
 
 This folder contains a full research agent implemented as two projects:
 
-- **`mcp_server/`**: Nova Research MCP server exposing research tools (scraping, Perplexity, Firecrawl, etc.)
+- **`mcp_server/`**: Nova Research MCP server exposing research tools (Tavily/Perplexity search, Firecrawl scraping, etc.)
 - **`mcp_client/`**: Interactive MCP client you run in the terminal to control the agent
 
 This README shows how to:
@@ -95,7 +95,9 @@ At minimum, you should set:
 GOOGLE_API_KEY=your-google-api-key-here     # used by Gemini models
 
 # Web research & scraping
-PPLX_API_KEY=your-perplexity-api-key-here   # required for Perplexity research
+WEB_SEARCH_PROVIDER=tavily                  # default; set to perplexity to switch providers
+TAVILY_API_KEY=your-tavily-api-key-here     # required for the default Tavily search
+PPLX_API_KEY=your-perplexity-api-key-here   # optional; required only for Perplexity
 FIRECRAWL_API_KEY=your-firecrawl-api-key-here  # required for web scraping
 
 # Optional: GitHub analysis
@@ -109,12 +111,20 @@ OPIK_API_KEY=your-opik-api-key-here
 
 - **`GOOGLE_API_KEY` (Gemini)**: Create a key in Google AI Studio (`https://aistudio.google.com/app/apikey`).  
   Google offers a free tier suitable for experimentation and this course.
-- **`PPLX_API_KEY` (Perplexity)**: Create a key from the Perplexity settings page (`https://www.perplexity.ai/settings/api`).  
-  Perplexity currently offers a paid plan with generous usage; see their docs for any trial limits.
+- **`TAVILY_API_KEY` (Tavily)**: Create a key from the Tavily dashboard (`https://app.tavily.com/`). Tavily is the
+  default web-search provider used by the course.
+- **`PPLX_API_KEY` (Perplexity, optional)**: Create a key from the Perplexity settings page
+  (`https://www.perplexity.ai/settings/api`) only if you set `WEB_SEARCH_PROVIDER=perplexity` or explicitly select
+  Perplexity in a tool call.
 - **`FIRECRAWL_API_KEY`**: Create a key at `https://firecrawl.dev/`.  
   Firecrawl has a free tier that allows you to scrape **around 500 pages**.
 - **`GITHUB_TOKEN`**: Create a fine‑grained personal access token from your GitHub settings, with read‑only access to the repositories you want to analyze.
 - **`OPIK_API_KEY`**: Create a free account at `https://www.comet.com/site/products/opik/` and find the API KEY based on this [doc](https://www.comet.com/docs/opik/faq#where-can-i-find-my-opik-api-key-)
+
+Tavily is selected by default. To use Perplexity for every web-search call, set
+`WEB_SEARCH_PROVIDER=perplexity`. You can also override the configured provider for one call by passing
+`provider="tavily"` or `provider="perplexity"` to `run_web_research`. The optional Tavily settings
+`TAVILY_SEARCH_DEPTH`, `TAVILY_MAX_RESULTS`, and `TAVILY_CHUNKS_PER_SOURCE` default to `advanced`, `5`, and `3`.
 
 You can either:
 
@@ -123,6 +133,8 @@ You can either:
 
 ```bash
 export GOOGLE_API_KEY=...
+export WEB_SEARCH_PROVIDER=tavily
+export TAVILY_API_KEY=...
 export PPLX_API_KEY=...
 export FIRECRAWL_API_KEY=...
 export OPENAI_API_KEY=...
@@ -202,7 +214,7 @@ At the `👤 You:` prompt in the MCP client, type:
 /prompt/full_research_instructions_prompt
 ```
 
-This loads the built‑in instructions that describe the full multi‑step workflow (URL extraction, scraping, Perplexity research loop, source selection, final research file creation, etc.).
+This loads the built‑in instructions that describe the full multi‑step workflow (URL extraction, scraping, Tavily-by-default research loop, source selection, final research file creation, etc.).
 
 ### 6.2. Tell the agent which research folder to use
 
@@ -225,7 +237,7 @@ The agent will then:
 
 1. Read `article_guideline.md` in that folder
 2. Extract and process any guideline URLs (web, GitHub, YouTube)
-3. Run multiple rounds of Perplexity‑powered research
+3. Run multiple rounds of Tavily-powered research (or Perplexity when configured)
 4. Filter and select the best sources
 5. Scrape selected sources in depth
 6. Compile everything into a final `research.md` file
@@ -239,7 +251,7 @@ lessons/research_agent_part_2/data/research_function_calling/research.md
 ```
 
 Open `research.md` in your editor to review the collected research.  
-It is organized into collapsible sections (Perplexity results, scraped guideline sources, additional research sources, etc.) and is designed to be the input to the writing agents used later in the course.
+It is organized into collapsible sections (web research results, scraped guideline sources, additional research sources, etc.) and is designed to be the input to the writing agents used later in the course.
 
 ---
 
@@ -248,8 +260,8 @@ It is organized into collapsible sections (Perplexity results, scraped guideline
 - **Missing tools or prompts shown in the client**
   - Ensure you started the client from `lessons/research_agent_part_2/mcp_client` with `uv run python -m src.client`.
 - **“API key missing” or HTTP 401/403 errors**
-  - Recheck your `.env` files and/or exported environment variables for `GOOGLE_API_KEY`, `PPLX_API_KEY`, and `FIRECRAWL_API_KEY`.
-- **Perplexity or Firecrawl rate limits**
+  - Recheck your `.env` files and/or exported environment variables for `GOOGLE_API_KEY`, `TAVILY_API_KEY`, and `FIRECRAWL_API_KEY`. If using Perplexity, also check `PPLX_API_KEY`.
+- **Tavily, Perplexity, or Firecrawl rate limits**
   - If the workflow times out or fails during web research or scraping, try again later or reduce usage while testing.
 - **Switching between in‑memory and stdio**
   - If debugging code inside `mcp_server`, in‑memory mode is often simpler.
@@ -368,6 +380,7 @@ You can also leverage the `.env` file directly:
   - `transcribe_youtube_videos_tool`
 - **AI‑powered analysis**
   - `run_perplexity_research_tool`
+  - `run_web_research_tool`
   - `generate_next_queries_tool`
 - **Content curation**
   - `select_research_sources_to_scrape_tool`

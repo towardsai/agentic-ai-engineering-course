@@ -40,6 +40,8 @@ from .source_selection_handler import (
     select_sources,
     select_top_sources,
 )
+from .tavily_handler import parse_tavily_response, run_tavily_search
+from .web_search_handler import resolve_web_search_provider, run_web_search
 from .youtube_handler import (
     get_video_id,
     process_youtube_url,
@@ -69,6 +71,11 @@ __all__ = [
     "extract_perplexity_chunks",
     "group_perplexity_by_query",
     "PROMPT_WEB_SEARCH",
+    # Provider-neutral web search
+    "run_web_search",
+    "resolve_web_search_provider",
+    "run_tavily_search",
+    "parse_tavily_response",
     # Scraping utilities
     "slugify",
     "build_filename",

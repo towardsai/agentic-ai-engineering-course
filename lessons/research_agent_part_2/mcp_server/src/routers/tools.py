@@ -12,6 +12,7 @@ from ..tools import (
     process_github_urls_tool,
     process_local_files_tool,
     run_perplexity_research_tool,
+    run_web_research_tool,
     scrape_and_clean_other_urls_tool,
     scrape_research_urls_tool,
     select_research_sources_to_keep_tool,
@@ -196,7 +197,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Generate candidate web-search queries for the next research round.
 
-        Analyzes the article guidelines, already-scraped content, and existing Perplexity
+        Analyzes the article guidelines, already-scraped content, and existing web research
         results to identify knowledge gaps and propose new web-search questions.
         Each query includes a rationale explaining why it's important for the article.
         Results are saved to next_queries.md in the research directory.
@@ -221,35 +222,55 @@ def register_mcp_tools(mcp: FastMCP) -> None:
 
     @mcp.tool()
     @opik.track(type="tool")
-    async def run_perplexity_research(research_directory: str, queries: list[str]) -> Dict[str, Any]:
+    async def run_web_research(
+        research_directory: str,
+        queries: list[str],
+        provider: str | None = None,
+    ) -> Dict[str, Any]:
         """
-        Run selected web-search queries with Perplexity and store the results.
+        Run selected web-search queries and store the results.
 
-        Executes the provided queries using Perplexity's Sonar-Pro model and appends
-        the results to perplexity_results.md in the research directory. Each query
-        result includes the answer and source citations.
+        Uses Tavily by default. Set provider to "perplexity", or configure
+        WEB_SEARCH_PROVIDER=perplexity, to use Perplexity Sonar Pro instead. Results
+        are appended to the legacy perplexity_results.md file so existing research
+        folders and downstream tools remain compatible.
 
         Args:
             research_directory: Path to the research directory where results will be saved
             queries: List of web-search queries to execute
+            provider: Optional provider override ("tavily" or "perplexity")
 
         Returns:
             Dict[str, Any]: Dictionary containing:
-                - status: Operation status ("success")
-                - queries_executed: List of queries that were successfully executed
-                - queries_failed: List of queries that failed to execute
-                - total_queries: Total number of queries processed
-                - successful_queries_count: Number of queries successfully executed
-                - failed_queries_count: Number of queries that failed to execute
-                - total_sources: Total number of sources collected across all queries
+                - status: "success", "partial_success", or "error"
+                - provider: Provider used for this research round
+                - queries_processed: Number of queries attempted
+                - queries_succeeded: Queries completed successfully
+                - queries_failed: Failed queries and error messages
+                - sources_added: Number of source sections collected
                 - output_path: Path to the updated perplexity_results.md file
                 - message: Human-readable success message with processing results
         """
 
         opik_context.update_thread_id()
 
-        result = await run_perplexity_research_tool(research_directory, queries)
+        result = await run_web_research_tool(research_directory, queries, provider)
         return result
+
+    @mcp.tool()
+    @opik.track(type="tool")
+    async def run_perplexity_research(research_directory: str, queries: list[str]) -> Dict[str, Any]:
+        """Run selected web-search queries explicitly with Perplexity Sonar Pro.
+
+        This compatibility tool preserves the original MCP API. New workflows should
+        call run_web_research, which uses Tavily by default.
+
+        Args:
+            research_directory: Path to the research directory where results will be saved
+            queries: List of web-search queries to execute
+        """
+        opik_context.update_thread_id()
+        return await run_perplexity_research_tool(research_directory, queries)
 
     # ============================================================================
     # SOURCE SELECTION AND CURATION TOOLS
@@ -259,7 +280,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
     @opik.track(type="tool")
     async def select_research_sources_to_keep(research_directory: str) -> Dict[str, Any]:
         """
-        Automatically select high-quality sources from Perplexity results.
+        Automatically select high-quality sources from web research results.
 
         Uses an LLM to evaluate each source in perplexity_results.md for trustworthiness,
         authority, and relevance based on the article guidelines. Writes the comma-separated
@@ -290,7 +311,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Select up to max_sources priority research sources to scrape in full.
 
-        Analyzes the filtered Perplexity results together with the article guidelines and
+        Analyzes the filtered web research results together with the article guidelines and
         the material already scraped from guideline URLs, then chooses up to max_sources diverse,
         authoritative sources whose full content will add most value. The chosen URLs are
         written (one per line) to urls_to_scrape_from_research.md.
@@ -355,7 +376,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Generate the final comprehensive research.md file.
 
-        Combines all research data including filtered Perplexity results, scraped guideline
+        Combines all research data including filtered web research results, scraped guideline
         sources, and full research sources into a comprehensive research.md file. The file
         is organized into sections with collapsible blocks for easy navigation.
 

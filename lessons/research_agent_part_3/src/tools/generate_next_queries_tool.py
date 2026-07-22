@@ -35,7 +35,7 @@ async def generate_next_queries_tool(article_guideline_id: str, n_queries: int =
     Generate candidate web-search queries for the next research round.
 
     Analyzes the article guidelines, already-scraped content from the database,
-    and existing Perplexity results to identify knowledge gaps and propose new
+    and existing web research results to identify knowledge gaps and propose new
     web-search questions. Each query includes a rationale.
 
     Args:

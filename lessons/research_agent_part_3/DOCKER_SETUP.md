@@ -31,10 +31,11 @@ cp .env.example .env
 
 Edit `.env` and add your required API keys:
 - `GOOGLE_API_KEY` - Required for Gemini models
-- `PPLX_API_KEY` - Required for Perplexity research
+- `TAVILY_API_KEY` - Required for default Tavily web research
 - `FIRECRAWL_API_KEY` - Required for web scraping
 
 Optional keys:
+- `PPLX_API_KEY` - Required only when using the optional Perplexity provider
 - `GITHUB_TOKEN` - For GitHub repository analysis
 - `OPENAI_API_KEY` - For GPT models
 - `OPIK_API_KEY` - For monitoring
@@ -181,6 +182,8 @@ docker compose up -d postgres
 # Set environment variables
 export DATABASE_URL="postgresql+asyncpg://nova:nova_dev_password@localhost:5432/nova_research"
 export GOOGLE_API_KEY="your-key"
+export WEB_SEARCH_PROVIDER="tavily"
+export TAVILY_API_KEY="your-key"
 export PPLX_API_KEY="your-key"
 export FIRECRAWL_API_KEY="your-key"
 
@@ -204,7 +207,9 @@ All configuration is done via environment variables in `.env`:
 | `POSTGRES_DB` | No (default: nova_research) | Database name |
 | `DATABASE_URL` | No (auto-generated) | Full database connection URL |
 | `GOOGLE_API_KEY` | Yes | Google Gemini API key |
-| `PPLX_API_KEY` | Yes | Perplexity API key |
+| `WEB_SEARCH_PROVIDER` | No (default: tavily) | Web-search provider: `tavily` or `perplexity` |
+| `TAVILY_API_KEY` | Yes (default provider) | Tavily API key |
+| `PPLX_API_KEY` | Only for Perplexity | Perplexity API key |
 | `FIRECRAWL_API_KEY` | Yes | Firecrawl API key |
 | `GITHUB_TOKEN` | No | GitHub personal access token |
 | `OPENAI_API_KEY` | No | OpenAI API key |
@@ -229,8 +234,8 @@ The initial migration creates the `articles` table:
 | `guideline_text` | TEXT | Full article guideline content |
 | `status` | ENUM | Workflow status |
 | `extracted_urls` | JSON | Extracted URLs from guidelines |
-| `perplexity_results` | TEXT | Raw Perplexity research results |
-| `perplexity_results_selected` | TEXT | Filtered Perplexity results |
+| `perplexity_results` | TEXT | Raw web research results (legacy column name) |
+| `perplexity_results_selected` | TEXT | Filtered web research results (legacy column name) |
 | `perplexity_sources_selected` | TEXT | Comma-separated selected source IDs |
 | `urls_to_scrape_from_research` | TEXT | URLs selected for full scraping |
 | `created_at` | TIMESTAMP | Creation timestamp |
@@ -322,4 +327,3 @@ For production deployment:
 4. Run containers as non-root user (already configured)
 5. Use environment-specific `.env` files
 6. Never commit `.env` files to version control
-

@@ -43,9 +43,9 @@ This guide walks you through deploying the Nova MCP Server to Google Cloud Run w
 - GitHub repository with the Nova codebase
 - The following API keys ready:
   - `GOOGLE_API_KEY` (Gemini)
-  - `PPLX_API_KEY` (Perplexity)
+  - `TAVILY_API_KEY` (default Tavily web search)
   - `FIRECRAWL_API_KEY` (Firecrawl)
-  - Optional: `GITHUB_TOKEN`, `OPENAI_API_KEY`, `OPIK_API_KEY`
+  - Optional: `PPLX_API_KEY` (Perplexity alternative), `GITHUB_TOKEN`, `OPENAI_API_KEY`, `OPIK_API_KEY`
 
 ## Step 1: Set Up GCP Project
 
@@ -606,4 +606,3 @@ src/nova/mcp_server/
 ├── docker-compose.yml              # Local development orchestration
 └── ...
 ```
-

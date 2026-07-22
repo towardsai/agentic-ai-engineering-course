@@ -15,7 +15,7 @@ async def select_research_sources_to_scrape_tool(article_guideline_id: str, max_
     """
     Select up to max_sources priority research sources to scrape in full.
 
-    Analyzes the filtered Perplexity results from the database together with
+    Analyzes the filtered web research results from the database together with
     the article guidelines and material already scraped, then chooses diverse,
     authoritative sources. The chosen URLs are saved to the database.
 
@@ -51,7 +51,7 @@ async def select_research_sources_to_scrape_tool(article_guideline_id: str, max_
         md_results_selected = article.perplexity_results_selected
 
         if not md_results_selected:
-            msg = f"No selected Perplexity results found for article '{article_guideline_id}'. Run source selection first."
+            msg = f"No selected web research results found for article '{article_guideline_id}'. Run source selection first."
             logger.error(msg)
             raise ValueError(msg)
 

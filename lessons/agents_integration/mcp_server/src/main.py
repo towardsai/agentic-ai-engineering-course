@@ -164,14 +164,16 @@ If the user doesn't provide a research directory, you should ask for it before e
 3. Repeat the following research loop for 3 rounds:
 
     3.1. Run the "generate_next_queries" tool to analyze the ARTICLE_GUIDELINE_FILE, the already-scraped guideline
-    URLs, and the existing PERPLEXITY_RESULTS_FILE. The tool identifies knowledge gaps, proposes new web-search
+    URLs, and the existing PERPLEXITY_RESULTS_FILE. This legacy filename stores results from either supported web
+    search provider. The tool identifies knowledge gaps, proposes new web-search
     questions, and writes them - together with a short justification for each - to the NEXT_QUERIES_FILE within
     NOVA_FOLDER.
 
-    3.2. Run the "run_perplexity_research" tool with the new queries. This tool executes the queries with
-    Perplexity and appends the results to the PERPLEXITY_RESULTS_FILE within NOVA_FOLDER.
+    3.2. Run the "run_web_research" tool with the new queries. It uses Tavily by default and appends results to
+    PERPLEXITY_RESULTS_FILE within NOVA_FOLDER. If the user explicitly requests Perplexity, pass
+    provider="perplexity" instead. The original "run_perplexity_research" tool remains available for compatibility.
 
-4. Filter Perplexity results by quality:
+4. Filter web research results by quality:
 
     4.1 Run the "select_research_sources_to_keep" tool. The tool reads the ARTICLE_GUIDELINE_FILE and the
     PERPLEXITY_RESULTS_FILE, automatically evaluates each source for trustworthiness, authority and relevance,
@@ -192,7 +194,7 @@ If the user doesn't provide a research directory, you should ask for it before e
 
 6. Write final research file:
 
-    6.1 Run the "create_research_file" tool. The tool combines all research data including filtered Perplexity results
+    6.1 Run the "create_research_file" tool. The tool combines all research data including filtered web research results
     from PERPLEXITY_RESULTS_SELECTED_FILE, scraped guideline sources from URLS_FROM_GUIDELINES_FOLDER,
     URLS_FROM_GUIDELINES_CODE_FOLDER, and URLS_FROM_GUIDELINES_YOUTUBE_FOLDER, and full research sources from
     URLS_FROM_RESEARCH_FOLDER into a comprehensive RESEARCH_MD_FILE organized into sections with collapsible blocks
@@ -228,9 +230,9 @@ research_directory/
 │   ├── URLS_FROM_GUIDELINES_YOUTUBE_FOLDER/       # YouTube video transcripts
 │   │   └── [youtube_transcripts...]
 │   ├── NEXT_QUERIES_FILE                           # Generated web-search queries with justifications
-│   ├── PERPLEXITY_RESULTS_FILE                     # Complete results from all Perplexity research rounds
+│   ├── PERPLEXITY_RESULTS_FILE                     # Complete web research results (legacy filename)
 │   ├── PERPLEXITY_SOURCES_SELECTED_FILE            # Comma-separated IDs of quality sources selected
-│   ├── PERPLEXITY_RESULTS_SELECTED_FILE            # Filtered Perplexity results (only selected sources)
+│   ├── PERPLEXITY_RESULTS_SELECTED_FILE            # Filtered web research results (legacy filename)
 │   ├── URLS_TO_SCRAPE_FROM_RESEARCH_FILE          # URLs selected for full content scraping
 │   └── URLS_FROM_RESEARCH_FOLDER/                 # Fully scraped content from selected research URLs
 │       └── [full_research_sources...]

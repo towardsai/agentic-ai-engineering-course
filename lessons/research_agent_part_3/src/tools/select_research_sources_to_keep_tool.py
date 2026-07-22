@@ -43,7 +43,7 @@ def extract_selected_blocks_content(selected_ids: list[int], md_results: str) ->
 
 async def select_research_sources_to_keep_tool(article_guideline_id: str) -> Dict[str, Any]:
     """
-    Automatically select high-quality sources from Perplexity results.
+    Automatically select high-quality sources from web research results.
 
     Uses LLM to evaluate each source in the database for trustworthiness,
     authority, and relevance based on the article guidelines. Saves the
@@ -80,7 +80,7 @@ async def select_research_sources_to_keep_tool(article_guideline_id: str) -> Dic
         md_results = article.perplexity_results
 
         if not md_results:
-            msg = f"No Perplexity results found for article '{article_guideline_id}'. Run the research round first."
+            msg = f"No web research results found for article '{article_guideline_id}'. Run the research round first."
             logger.error(msg)
             raise ValueError(msg)
 

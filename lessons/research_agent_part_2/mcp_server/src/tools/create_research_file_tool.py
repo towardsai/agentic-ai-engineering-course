@@ -30,7 +30,7 @@ def create_research_file_tool(research_directory: str) -> Dict[str, Any]:
     """
     Generate comprehensive research.md file from all research data.
 
-    Combines all research data including filtered Perplexity results, scraped guideline
+    Combines all research data including filtered web research results, scraped guideline
     sources, and full research sources into a comprehensive research.md file. The file
     is organized into sections with collapsible blocks for easy navigation.
 

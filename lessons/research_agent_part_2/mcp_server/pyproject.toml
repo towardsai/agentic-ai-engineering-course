@@ -23,4 +23,5 @@ dependencies = [
     "mcp>=1.11.0",
     "nbformat>=5.10.4",
     "psutil>=7.0.0",
+    "tavily-python>=0.7.12",
 ]
