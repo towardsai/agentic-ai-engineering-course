@@ -5,6 +5,9 @@ from typing import Any, Dict
 import opik
 from fastmcp import FastMCP
 
+from ..prompts.research_instructions_prompt import (
+    full_research_instructions_prompt as _get_research_instructions,
+)
 from ..tools import (
     create_research_file_tool,
     extract_guidelines_urls_tool,
@@ -378,3 +381,25 @@ def register_mcp_tools(mcp: FastMCP) -> None:
 
         result = create_research_file_tool(research_directory)
         return result
+
+    # ============================================================================
+    # WORKFLOW INSTRUCTIONS TOOLS
+    # ============================================================================
+
+    @mcp.tool()
+    @opik.track(type="tool")
+    async def get_research_instructions() -> str:
+        """
+        Return the full research workflow instructions.
+
+        Exposes the same workflow text as the full_research_instructions_prompt
+        MCP prompt through an agent-callable tool, so skills and agents can
+        fetch the research recipe programmatically.
+
+        Returns:
+            str: The complete, step-by-step research workflow instructions.
+        """
+
+        opik_context.update_thread_id()
+
+        return await _get_research_instructions()

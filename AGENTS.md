@@ -72,4 +72,8 @@ Part 3 — Evaluation, Observability, Optimizations, Deployment
     32_authentication_docker        (L32)   ← research_agent_part_3 (deployable research agent)
     33_database_and_files           (L33)   ← research_agent_part_3
     34_continuous_deployment        (L34)   ← research_agent_part_3
+│
+Extending Agent Capabilities (between Part 3 and the Part 4 capstone; drafts in drafts/, not yet published)
+    35_mcp_vs_skills_vs_cli         (L35)   (article only; no notebook — compares MCP, Agent Skills, and CLI as capability channels)
+    36_creating_skills              (L36)   ← hands-on skill authoring; adds project skills under .claude/skills/ and a get_research_instructions tool to Nova's server
 ```
