@@ -25,3 +25,8 @@ dependencies = [
     "psutil>=7.0.0",
     "tavily-python>=0.7.12",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
