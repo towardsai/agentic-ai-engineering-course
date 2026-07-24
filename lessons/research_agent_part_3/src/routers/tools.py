@@ -11,6 +11,7 @@ from ..tools import (
     generate_next_queries_tool,
     process_github_urls_tool,
     run_perplexity_research_tool,
+    run_web_research_tool,
     scrape_and_clean_other_urls_tool,
     scrape_research_urls_tool,
     select_research_sources_to_keep_tool,
@@ -162,7 +163,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         Generate candidate web-search queries for the next research round.
 
         Analyzes the article guidelines, already-scraped content from the database,
-        and existing Perplexity results to identify knowledge gaps and propose new
+        and existing web research results to identify knowledge gaps and propose new
         web-search questions. Each query includes a rationale.
 
         Args:
@@ -185,29 +186,50 @@ def register_mcp_tools(mcp: FastMCP) -> None:
     @mcp.tool()
     @opik.track(type="tool")
     @rate_limited
-    async def run_perplexity_research(article_guideline_id: str, queries: list[str]) -> Dict[str, Any]:
+    async def run_web_research(
+        article_guideline_id: str,
+        queries: list[str],
+        provider: str | None = None,
+    ) -> Dict[str, Any]:
         """
-        Run selected web-search queries with Perplexity and store the results.
+        Run selected web-search queries and store the results.
 
-        Executes the provided queries using Perplexity's Sonar-Pro model and appends
-        the results to the perplexity_results field in the articles table.
+        Uses Perplexity Sonar Pro by default. Set provider to "tavily", or configure
+        WEB_SEARCH_PROVIDER=tavily, to use Tavily instead. Results
+        are stored in the legacy perplexity_results database field for compatibility.
 
         Args:
             article_guideline_id: UUID of the article guideline in the database
             queries: List of web-search queries to execute
+            provider: Optional provider override ("tavily" or "perplexity")
 
         Returns:
             Dict[str, Any]: Dictionary containing:
-                - status: Operation status ("success")
+                - status: "success", "partial_success", or "error"
+                - provider: Provider used for this research round
                 - queries_processed: Number of queries processed
+                - queries_succeeded: Queries completed successfully
+                - queries_failed: Failed queries and error messages
                 - sources_added: Number of sources added
                 - message: Human-readable success message with processing results
         """
 
         update_opik_thread_id(article_guideline_id)
 
-        result = await run_perplexity_research_tool(article_guideline_id, queries)
+        result = await run_web_research_tool(article_guideline_id, queries, provider)
         return result
+
+    @mcp.tool()
+    @opik.track(type="tool")
+    @rate_limited
+    async def run_perplexity_research(article_guideline_id: str, queries: list[str]) -> Dict[str, Any]:
+        """Run selected web-search queries explicitly with Perplexity Sonar Pro.
+
+        This compatibility tool preserves the original MCP API. New workflows should
+        call run_web_research, which uses Perplexity by default and can optionally use Tavily.
+        """
+        update_opik_thread_id(article_guideline_id)
+        return await run_perplexity_research_tool(article_guideline_id, queries)
 
     # ============================================================================
     # SOURCE SELECTION AND CURATION TOOLS
@@ -218,7 +240,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
     @rate_limited
     async def select_research_sources_to_keep(article_guideline_id: str) -> Dict[str, Any]:
         """
-        Automatically select high-quality sources from Perplexity results.
+        Automatically select high-quality sources from web research results.
 
         Uses an LLM to evaluate each source in the database for trustworthiness,
         authority, and relevance based on the article guidelines. Saves the
@@ -247,7 +269,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Select up to max_sources priority research sources to scrape in full.
 
-        Analyzes the filtered Perplexity results from the database together with
+        Analyzes the filtered web research results from the database together with
         the article guidelines and material already scraped, then chooses diverse,
         authoritative sources. The chosen URLs are saved to the database.
 
@@ -310,7 +332,7 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """
         Generate the final comprehensive research markdown.
 
-        Combines all research data from the database including filtered Perplexity results,
+        Combines all research data from the database including filtered web research results,
         scraped guideline sources, GitHub ingests, YouTube transcripts, and scraped research
         sources. The final markdown is saved to the database and a download link is provided.
 

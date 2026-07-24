@@ -36,7 +36,7 @@ async def create_research_file_tool(article_guideline_id: str) -> Dict[str, Any]
     """
     Generate comprehensive research markdown from database data.
 
-    Combines all research data from the database including filtered Perplexity results,
+    Combines all research data from the database including filtered web research results,
     scraped guideline sources, GitHub ingests, YouTube transcripts, and scraped research
     sources. The final markdown is saved to the database and a download link is provided.
 
@@ -77,7 +77,7 @@ async def create_research_file_tool(article_guideline_id: str) -> Dict[str, Any]
             chunks = extract_perplexity_chunks(perplexity_results)
             selected_ids = list(chunks.keys())
             if not chunks:
-                logger.warning(f"No Perplexity results found for article '{article_guideline_id}'")
+                logger.warning(f"No web research results found for article '{article_guideline_id}'")
 
         # Build Research Results section
         grouped = group_perplexity_by_query(chunks, selected_ids)

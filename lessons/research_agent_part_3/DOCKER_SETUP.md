@@ -31,10 +31,11 @@ cp .env.example .env
 
 Edit `.env` and add your required API keys:
 - `GOOGLE_API_KEY` - Required for Gemini models
-- `PPLX_API_KEY` - Required for Perplexity research
+- `PPLX_API_KEY` - Required for default Perplexity web research
 - `FIRECRAWL_API_KEY` - Required for web scraping
 
 Optional keys:
+- `TAVILY_API_KEY` - Required only when using the optional Tavily provider
 - `GITHUB_TOKEN` - For GitHub repository analysis
 - `OPENAI_API_KEY` - For GPT models
 - `OPIK_API_KEY` - For monitoring
@@ -183,6 +184,9 @@ export DATABASE_URL="postgresql+asyncpg://nova:nova_dev_password@localhost:5432/
 export GOOGLE_API_KEY="your-key"
 export PPLX_API_KEY="your-key"
 export FIRECRAWL_API_KEY="your-key"
+# Optional: switch web search to Tavily (free tier) instead of the default Perplexity
+# export WEB_SEARCH_PROVIDER="tavily"
+# export TAVILY_API_KEY="your-key"
 
 # Run migrations
 uv run alembic upgrade head
@@ -204,7 +208,9 @@ All configuration is done via environment variables in `.env`:
 | `POSTGRES_DB` | No (default: nova_research) | Database name |
 | `DATABASE_URL` | No (auto-generated) | Full database connection URL |
 | `GOOGLE_API_KEY` | Yes | Google Gemini API key |
-| `PPLX_API_KEY` | Yes | Perplexity API key |
+| `WEB_SEARCH_PROVIDER` | No (default: perplexity) | Web-search provider: `perplexity` or `tavily` |
+| `PPLX_API_KEY` | Yes (default provider) | Perplexity API key |
+| `TAVILY_API_KEY` | Only for Tavily | Tavily API key |
 | `FIRECRAWL_API_KEY` | Yes | Firecrawl API key |
 | `GITHUB_TOKEN` | No | GitHub personal access token |
 | `OPENAI_API_KEY` | No | OpenAI API key |
