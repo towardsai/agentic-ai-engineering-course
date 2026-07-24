@@ -9,6 +9,7 @@ from .extract_guidelines_urls_tool import extract_guidelines_urls_tool
 from .generate_next_queries_tool import generate_next_queries_tool
 from .process_github_urls_tool import process_github_urls_tool
 from .run_perplexity_research_tool import run_perplexity_research_tool
+from .run_web_research_tool import run_web_research_tool
 
 # Web scraping and content processing tools
 from .scrape_and_clean_other_urls_tool import scrape_and_clean_other_urls_tool
@@ -31,6 +32,7 @@ __all__ = [
     # Research query and analysis
     "generate_next_queries_tool",
     "run_perplexity_research_tool",
+    "run_web_research_tool",
     # Source selection and curation
     "select_research_sources_to_keep_tool",
     "select_research_sources_to_scrape_tool",

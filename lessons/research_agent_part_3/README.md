@@ -10,7 +10,8 @@ cp .env.example .env
 
 # Edit .env and add your API keys:
 # - GOOGLE_API_KEY (required)
-# - PPLX_API_KEY (required)  
+# - PPLX_API_KEY (required for the default web-search provider)
+# - TAVILY_API_KEY (optional Tavily alternative)
 # - FIRECRAWL_API_KEY (required)
 
 # Install dependencies (creates uv.lock)
@@ -57,6 +58,8 @@ cp .env.example .env
 # Or export variables directly
 export DATABASE_URL="postgresql+asyncpg://nova:nova_dev_password@localhost:5432/nova_research"
 export GOOGLE_API_KEY="your-key"
+export WEB_SEARCH_PROVIDER="tavily"
+export TAVILY_API_KEY="your-key"
 export PPLX_API_KEY="your-key"
 export FIRECRAWL_API_KEY="your-key"
 ```

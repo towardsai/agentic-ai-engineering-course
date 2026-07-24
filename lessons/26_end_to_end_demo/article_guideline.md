@@ -61,7 +61,7 @@ In previous lessons of the course, we introduced the following concepts:
 - **L15** — Presenting the project structure and design of the Nova deep research agent
 - **L16** — MCP foundations (server/client; **tools/resources/prompts**; server‑hosted prompt).
 - **L17** — Ingestion layer (guideline URL extraction; local/GitHub/YouTube ingest; Firecrawl scraping; file‑first design).
-- **L18** — Research loop (generate queries → **Perplexity** with **structured outputs** → optional HITL between steps).
+- **L18**: Research loop (generate queries → **Perplexity by default or Tavily optionally** → normalized source results → optional HITL between steps).
 - **L19** — Testing out the Nova deep research agent
 
 **Part 2C - Brown the Writing Workflow:**

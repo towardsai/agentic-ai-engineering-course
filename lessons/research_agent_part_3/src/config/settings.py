@@ -1,7 +1,7 @@
 """Server configuration settings."""
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,10 +26,37 @@ class Settings(BaseSettings):
     query_generation_model: str = Field(default="gemini-2.5-pro", description="Model for query generation")
     source_selection_model: str = Field(default="gemini-3.5-flash", description="Model for source selection")
 
+    # Web search configuration
+    web_search_provider: Literal["tavily", "perplexity"] = Field(
+        default="perplexity",
+        alias="WEB_SEARCH_PROVIDER",
+        description="Web search provider used by run_web_research",
+    )
+    tavily_search_depth: Literal["basic", "advanced"] = Field(
+        default="advanced",
+        alias="TAVILY_SEARCH_DEPTH",
+        description="Tavily search depth",
+    )
+    tavily_max_results: int = Field(
+        default=5,
+        ge=1,
+        le=20,
+        alias="TAVILY_MAX_RESULTS",
+        description="Maximum Tavily results returned for each query",
+    )
+    tavily_chunks_per_source: int = Field(
+        default=3,
+        ge=1,
+        le=3,
+        alias="TAVILY_CHUNKS_PER_SOURCE",
+        description="Relevant content chunks returned per source for advanced Tavily search",
+    )
+
     # API Keys
     google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API")
     openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API")
     perplexity_api_key: SecretStr | None = Field(default=None, alias="PPLX_API_KEY", description="The API key for the Perplexity API")
+    tavily_api_key: SecretStr | None = Field(default=None, alias="TAVILY_API_KEY", description="The API key for the Tavily Search API")
     firecrawl_api_key: SecretStr | None = Field(default=None, alias="FIRECRAWL_API_KEY", description="The API key for the Firecrawl API")
     github_token: SecretStr | None = Field(default=None, alias="GITHUB_TOKEN", description="The GitHub token")
 

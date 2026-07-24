@@ -49,7 +49,7 @@ def extract_selected_blocks_content(selected_ids: list[int], md_results: str) ->
 
 async def select_research_sources_to_keep_tool(research_directory: str) -> Dict[str, Any]:
     """
-    Automatically select high-quality sources from Perplexity results.
+    Automatically select high-quality sources from web research results.
 
     Uses LLM to evaluate each source in perplexity_results.md for trustworthiness,
     authority, and relevance based on the article guidelines. Writes the comma-separated

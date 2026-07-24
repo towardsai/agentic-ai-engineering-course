@@ -20,7 +20,7 @@ async def select_research_sources_to_scrape_tool(research_directory: str, max_so
     """
     Select up to max_sources priority research sources to scrape in full.
 
-    Analyzes the filtered Perplexity results together with the article guidelines and
+    Analyzes the filtered web research results together with the article guidelines and
     the material already scraped from guideline URLs, then chooses up to max_sources diverse,
     authoritative sources whose full content will add most value. The chosen URLs are
     written (one per line) to urls_to_scrape_from_research.md.
