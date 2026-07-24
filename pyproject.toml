@@ -42,6 +42,7 @@ dependencies = [
     "gitingest>=0.1.5",
     "firecrawl-py>=2.7.1",
     "langchain-perplexity>=0.1.2",
+    "tavily-python>=0.7.12",
     "langgraph-checkpoint-sqlite>=3.0.0",
     "aiosqlite>=0.21.0",
     "ipywidgets>=8.1.8",
