@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+
+_to_delete/
+
 # C extensions
 *.so
 
