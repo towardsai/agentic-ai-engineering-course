@@ -79,6 +79,9 @@ known-first-party = ["lessons"]
 # Teaching notebooks legitimately use long lines, intentional re-imports/re-defs,
 # and imports introduced mid-cell where they are first used.
 "*.ipynb" = ["E501", "F811", "F401", "E402"]
+# Exercise notebooks hollow out cell bodies on purpose, so scaffolding handed to the
+# student (prompts, configs) stays assigned but unused until they fill in the gap.
+"notebook_exercise.ipynb" = ["E501", "F811", "F401", "E402", "F841"]
 
 [dependency-groups]
 dev = [
