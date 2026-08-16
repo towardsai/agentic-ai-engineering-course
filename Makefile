@@ -21,8 +21,8 @@ RUFF := uv run ruff
 
 # QA groups mirror the CI jobs in .github/workflows/ci.yml.
 QA_WRITING  := lessons/writing_workflow/src lessons/writing_workflow/scripts lessons/writing_workflow/tests
-QA_RESEARCH := lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src
-QA_CORE     := lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils
+QA_RESEARCH := lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src lessons/research_agent_part_3/tests
+QA_CORE     := lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils scripts tests
 QA_FOLDERS  := $(QA_WRITING) $(QA_RESEARCH) $(QA_CORE)
 NOTEBOOKS   := $(shell git ls-files '*.ipynb' | grep -v '/inputs/')
 
@@ -44,7 +44,14 @@ notebooks-validate: # Verify every plain (tracked) lesson notebook conforms to t
 test: # Run the writing_workflow unit tests (offline, mocked config).
 	cd lessons/writing_workflow && CONFIG_FILE=configs/debug.yaml uv run pytest
 
-ci-local: format-check lint-check notebooks-validate test # Run the full CI suite locally.
+test-nova: # Run the Nova research agent unit tests (offline, mocked).
+	cd lessons/research_agent_part_2/mcp_server && uv run pytest
+	cd lessons/research_agent_part_3 && uv run pytest
+
+test-root: # Run the root-level tests (notebook env selector logic).
+	uv run --no-project --with pytest --with python-dotenv --with google-genai pytest tests/
+
+ci-local: format-check lint-check notebooks-validate test test-nova test-root # Run the full CI suite locally.
 
 
 # --- Course data archives (served raw from GitHub) ---

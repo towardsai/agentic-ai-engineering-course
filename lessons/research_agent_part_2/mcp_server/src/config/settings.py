@@ -54,6 +54,21 @@ class Settings(BaseSettings):
         description="Relevant content chunks returned per source for advanced Tavily search",
     )
 
+    # Gemini authentication. The Gemini Developer API (GOOGLE_API_KEY) is the default.
+    # Set GOOGLE_GENAI_USE_VERTEXAI=true to call Gemini through Vertex AI instead, using
+    # Application Default Credentials and GOOGLE_CLOUD_PROJECT.
+    google_genai_use_vertexai: bool = Field(
+        default=False,
+        alias="GOOGLE_GENAI_USE_VERTEXAI",
+        description="Call Gemini through Vertex AI instead of the Gemini Developer API",
+    )
+    google_cloud_project: str | None = Field(
+        default=None, alias="GOOGLE_CLOUD_PROJECT", description="Google Cloud project ID used for Vertex AI"
+    )
+    google_cloud_location: str = Field(
+        default="global", alias="GOOGLE_CLOUD_LOCATION", description="Vertex AI location for Gemini requests"
+    )
+
     # API Keys
     google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY", description="The API key for the Google API")
     openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY", description="The API key for the OpenAI API")
@@ -70,6 +85,33 @@ class Settings(BaseSettings):
         description="The Opik workspace name. If not set, the default workspace will be used.",
     )
     opik_project_name: str = Field(default="nova", alias="OPIK_PROJECT_NAME", description="Opik's project name")
+
+    @property
+    def google_client_kwargs(self) -> Dict[str, Any]:
+        """Keyword arguments for authenticating a Gemini client.
+
+        Validation is lazy on purpose: it only runs when a Gemini client is
+        actually constructed, so non-Gemini code paths never need Google credentials.
+        """
+        if self.google_genai_use_vertexai:
+            if not self.google_cloud_project:
+                raise RuntimeError(
+                    "GOOGLE_GENAI_USE_VERTEXAI is enabled but GOOGLE_CLOUD_PROJECT is not set. "
+                    "Set GOOGLE_CLOUD_PROJECT and authenticate with Application Default Credentials "
+                    "(for example, run `gcloud auth application-default login`)."
+                )
+            return {
+                "vertexai": True,
+                "project": self.google_cloud_project,
+                "location": self.google_cloud_location,
+            }
+
+        if not self.google_api_key:
+            raise RuntimeError(
+                "GOOGLE_API_KEY environment variable not set. Set it, or switch to Vertex AI by setting "
+                "GOOGLE_GENAI_USE_VERTEXAI=true and GOOGLE_CLOUD_PROJECT."
+            )
+        return {"api_key": self.google_api_key.get_secret_value()}
 
     @property
     def llm_configs(self) -> Dict[str, Dict[str, Any]]:

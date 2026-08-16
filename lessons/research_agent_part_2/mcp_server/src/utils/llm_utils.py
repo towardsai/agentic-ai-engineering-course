@@ -34,12 +34,14 @@ def get_chat_model(model_id: str, schema: Optional[Type[BaseModel]] = None) -> B
     if init_kwargs.get("thinking_budget") is not None and init_kwargs.get("thinking_level") is not None:
         raise ValueError(f"Model '{model_id}' sets both `thinking_budget` and `thinking_level`; they are mutually exclusive.")
 
-    if api_key_env_var:
+    if api_key_env_var == "GOOGLE_API_KEY":
+        # Gemini supports both the Gemini Developer API (API key) and Vertex AI
+        # (Application Default Credentials); the settings decide which one is active.
+        init_kwargs.update(settings.google_client_kwargs)
+    elif api_key_env_var:
         # Get the appropriate API key based on the environment variable name
         api_key = None
-        if api_key_env_var == "GOOGLE_API_KEY" and settings.google_api_key:
-            api_key = settings.google_api_key.get_secret_value()
-        elif api_key_env_var == "OPENAI_API_KEY" and settings.openai_api_key:
+        if api_key_env_var == "OPENAI_API_KEY" and settings.openai_api_key:
             api_key = settings.openai_api_key.get_secret_value()
         elif api_key_env_var == "PPLX_API_KEY" and settings.perplexity_api_key:
             api_key = settings.perplexity_api_key.get_secret_value()
