@@ -30,7 +30,10 @@ cp .env.example .env
 ```
 
 Edit `.env` and add your required API keys:
-- `GOOGLE_API_KEY` - Required for Gemini models
+- `GOOGLE_API_KEY` - Required for Gemini models (or use Vertex AI mode instead: uncomment
+  `GOOGLE_GENAI_USE_VERTEXAI=true` and `GOOGLE_CLOUD_PROJECT` in `.env`, run
+  `gcloud auth application-default login` on the host, and uncomment the gcloud
+  credentials volume mount in `docker-compose.yml`)
 - `PPLX_API_KEY` - Required for default Perplexity web research
 - `FIRECRAWL_API_KEY` - Required for web scraping
 
@@ -207,7 +210,10 @@ All configuration is done via environment variables in `.env`:
 | `POSTGRES_PASSWORD` | No (default: nova_dev_password) | PostgreSQL password |
 | `POSTGRES_DB` | No (default: nova_research) | Database name |
 | `DATABASE_URL` | No (auto-generated) | Full database connection URL |
-| `GOOGLE_API_KEY` | Yes | Google Gemini API key |
+| `GOOGLE_API_KEY` | Yes (default mode) | Google Gemini API key; not needed in Vertex AI mode |
+| `GOOGLE_GENAI_USE_VERTEXAI` | No (default: false) | Call Gemini through Vertex AI instead of an API key |
+| `GOOGLE_CLOUD_PROJECT` | Only for Vertex AI | Google Cloud project ID for Vertex AI |
+| `GOOGLE_CLOUD_LOCATION` | No (default: global) | Vertex AI location |
 | `WEB_SEARCH_PROVIDER` | No (default: perplexity) | Web-search provider: `perplexity` or `tavily` |
 | `PPLX_API_KEY` | Yes (default provider) | Perplexity API key |
 | `TAVILY_API_KEY` | Only for Tavily | Tavily API key |
