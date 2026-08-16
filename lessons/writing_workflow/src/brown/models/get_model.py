@@ -39,7 +39,11 @@ def get_model(model: SupportedModels, config: ModelConfig | None = None) -> Base
     }
 
     required_api_key = MODEL_TO_REQUIRED_API_KEY.get(model)
-    if required_api_key:
+    if required_api_key == "GOOGLE_API_KEY":
+        # Gemini supports both the Gemini Developer API (API key) and Vertex AI
+        # (Application Default Credentials); the settings decide which one is active.
+        model_kwargs.update(get_settings().google_client_kwargs)
+    elif required_api_key:
         settings = get_settings()
         if not getattr(settings, required_api_key):
             raise ValueError(f"Required environment variable `{required_api_key}` is not set")
