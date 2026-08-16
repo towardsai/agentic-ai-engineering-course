@@ -9,7 +9,7 @@
 cp .env.example .env
 
 # Edit .env and add your API keys:
-# - GOOGLE_API_KEY (required)
+# - GOOGLE_API_KEY (required, unless using Vertex AI mode: see .env.example)
 # - PPLX_API_KEY (required for the default web-search provider)
 # - TAVILY_API_KEY (optional Tavily alternative)
 # - FIRECRAWL_API_KEY (required)

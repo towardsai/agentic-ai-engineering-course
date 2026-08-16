@@ -91,7 +91,7 @@ class LLMClient:
         self.llm_config = llm_config
 
         # Initialize Gemini client with Opik tracking if configured
-        base_client = genai.Client(api_key=settings.google_api_key.get_secret_value())
+        base_client = genai.Client(**settings.google_client_kwargs)
         self.client = track_genai_client(base_client)
 
     async def generate_content(self, contents: List[types.Content]) -> types.GenerateContentResponse:

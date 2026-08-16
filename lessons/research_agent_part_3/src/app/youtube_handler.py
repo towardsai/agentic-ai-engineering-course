@@ -47,16 +47,16 @@ async def transcribe_youtube(
             - transcription (str): The transcription content or error message
     """
     # Create client internally using settings and track with Opik if configured
-    base_client = genai.Client(api_key=settings.google_api_key.get_secret_value())
+    base_client = genai.Client(**settings.google_client_kwargs)
     client = track_genai_client(base_client)
     model_name = settings.youtube_transcription_model
 
     prompt = PROMPT_YOUTUBE_TRANSCRIPTION.format(timestamp=timestamp)
 
     parts: list[types.Part] = [
-        types.Part(
-            file_data=types.FileData(file_uri=url)  # YouTube URL - no download needed
-        ),
+        # YouTube URL - no download needed. The explicit MIME type is required by Vertex AI
+        # and accepted by the Gemini Developer API, so it works with both backends.
+        types.Part.from_uri(file_uri=url, mime_type="video/mp4"),
         types.Part(text=prompt),
     ]
 
@@ -65,7 +65,8 @@ async def transcribe_youtube(
     try:
         response: types.GenerateContentResponse = await client.aio.models.generate_content(
             model=model_name,
-            contents=types.Content(parts=parts),
+            # The explicit role is required by Vertex AI and accepted by the Gemini Developer API.
+            contents=types.Content(role="user", parts=parts),
         )
     except errors.APIError as e:
         if isinstance(e, errors.ServerError):

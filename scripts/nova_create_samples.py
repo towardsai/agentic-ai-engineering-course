@@ -51,7 +51,15 @@ def parse_args() -> argparse.Namespace:
 
 
 def require_credentials() -> None:
-    required = ("GOOGLE_API_KEY", "PPLX_API_KEY", "FIRECRAWL_API_KEY")
+    required = ["FIRECRAWL_API_KEY"]
+    if (os.environ.get("GOOGLE_GENAI_USE_VERTEXAI") or "").strip().lower() in ("true", "1", "yes"):
+        required.append("GOOGLE_CLOUD_PROJECT")
+    else:
+        required.append("GOOGLE_API_KEY")
+    if (os.environ.get("WEB_SEARCH_PROVIDER") or "perplexity").strip().lower() == "tavily":
+        required.append("TAVILY_API_KEY")
+    else:
+        required.append("PPLX_API_KEY")
     missing = [name for name in required if not os.environ.get(name)]
     if missing:
         names = ", ".join(missing)
@@ -109,9 +117,7 @@ def verify_archive(archive_path: Path) -> None:
         "nova_samples/19_final_outputs/.nova/perplexity_results.md",
         "nova_samples/25_integrate_agents/article_guideline.md",
     }
-    required_directories = {
-        f"nova_samples/18_research_loop/.nova/{name}/" for name in EMPTY_NOVA_DIRECTORIES
-    }
+    required_directories = {f"nova_samples/18_research_loop/.nova/{name}/" for name in EMPTY_NOVA_DIRECTORIES}
 
     with zipfile.ZipFile(archive_path) as archive:
         names = set(archive.namelist())

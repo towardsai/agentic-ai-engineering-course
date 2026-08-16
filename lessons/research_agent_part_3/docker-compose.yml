@@ -54,6 +54,13 @@ services:
 
       # API Keys (pass through from host .env)
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+
+      # Optional: Gemini via Vertex AI instead of an API key. Requires local
+      # Application Default Credentials mounted below (run
+      # `gcloud auth application-default login` on the host first).
+      GOOGLE_GENAI_USE_VERTEXAI: ${GOOGLE_GENAI_USE_VERTEXAI:-false}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+      GOOGLE_CLOUD_LOCATION: ${GOOGLE_CLOUD_LOCATION:-global}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       WEB_SEARCH_PROVIDER: ${WEB_SEARCH_PROVIDER:-perplexity}
       TAVILY_API_KEY: ${TAVILY_API_KEY}
@@ -80,6 +87,12 @@ services:
       - ./src:/app/src:ro
       # Mount data folder for research files (from parent directory)
       - ../data:/app/data
+      # Optional: for Vertex AI mode, uncomment to expose the host's Application
+      # Default Credentials (created by `gcloud auth application-default login`).
+      # The container runs as the `nova` user, so the target must be nova's home.
+      # Keep it commented out in API-key mode: mounting a missing file would
+      # create an empty directory at that host path.
+      # - ${HOME}/.config/gcloud/application_default_credentials.json:/home/nova/.config/gcloud/application_default_credentials.json:ro
     restart: unless-stopped
 
 volumes:

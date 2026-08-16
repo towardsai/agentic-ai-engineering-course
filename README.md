@@ -47,6 +47,13 @@ The course notebooks use Google's Gemini models. To use them, you'll need to get
 1.  Copy the example environment file: `cp .env.example .env`
 2.  Open the new `.env` file and replace the placeholder text with your actual `GOOGLE_API_KEY`.
 
+Alternatively, you can call the same Gemini models through **Vertex AI** instead of an API key,
+which lets eligible new Google Cloud users run the course on the $300 free trial credits.
+Authenticate with `gcloud auth application-default login`, then uncomment
+`GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT`, and `GOOGLE_CLOUD_LOCATION` in your
+`.env` instead of setting `GOOGLE_API_KEY`. See the course admin lesson for the full comparison
+of both options and a cost overview of every service used in the course.
+
 #### 5. Launch Jupyter Notebooks
 
 The code exercises are in the form of Jupyter Notebooks (`.ipynb` files). You can run them using the classic browser interface or a modern code editor like VS Code.

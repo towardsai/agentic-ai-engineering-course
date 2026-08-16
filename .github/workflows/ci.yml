@@ -22,9 +22,9 @@ jobs:
           - group: writing_workflow
             folders: lessons/writing_workflow/src lessons/writing_workflow/scripts lessons/writing_workflow/tests
           - group: research_agents
-            folders: lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src
+            folders: lessons/research_agent_part_2/mcp_client lessons/research_agent_part_2/mcp_server lessons/research_agent_part_3/src lessons/research_agent_part_3/tests
           - group: core
-            folders: lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils
+            folders: lessons/agents_integration/mcp_client lessons/agents_integration/mcp_server lessons/utils scripts tests
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v4
@@ -48,7 +48,61 @@ jobs:
       - name: 🔎 Lint check
         run: uv run --no-sync ruff check ${{ matrix.folders }}
 
-  # Unit tests. Only writing_workflow has a suite today; runs offline (mocked config).
+  # Unit tests for the Nova research agent projects. Offline: auth-selection and
+  # web-search tests are fully mocked and need no API keys.
+  tests-nova:
+    name: Tests (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: research_agent_part_2
+            directory: lessons/research_agent_part_2/mcp_server
+          - project: research_agent_part_3
+            directory: lessons/research_agent_part_3
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ${{ matrix.directory }}/.python-version
+
+      - name: 🦾 Install project
+        run: uv sync --frozen
+
+      - name: 🧪 Run tests
+        run: uv run pytest
+
+  # Root-level tests (notebook env selector logic). Lightweight: no project sync needed.
+  tests-root:
+    name: Tests (env selectors)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: 🧪 Run tests
+        # google-genai is needed because importing utils.env executes
+        # lessons/utils/__init__.py, which imports google.genai.types.
+        run: uv run --no-project --with pytest --with python-dotenv --with google-genai pytest tests/
+
+  # Writing workflow unit tests; runs offline (mocked config).
   tests:
     name: Tests (writing_workflow)
     runs-on: ubuntu-latest

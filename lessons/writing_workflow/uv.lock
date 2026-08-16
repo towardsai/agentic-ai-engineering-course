@@ -212,7 +212,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain", specifier = ">=1.0.3" },
     { name = "langchain-community", specifier = ">=0.4.1" },
-    { name = "langchain-google-genai", specifier = ">=3.0.0" },
+    { name = "langchain-google-genai", specifier = ">=4.2.3" },
     { name = "langgraph", specifier = ">=1.0.3" },
     { name = "langgraph-checkpoint-sqlite", specifier = ">=3.0.0" },
     { name = "loguru", specifier = ">=0.7.3" },

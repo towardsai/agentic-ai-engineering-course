@@ -94,6 +94,12 @@ At minimum, you should set:
 ```bash
 GOOGLE_API_KEY=your-google-api-key-here     # used by Gemini models
 
+# Optional alternative: call Gemini through Vertex AI instead of an API key.
+# Authenticate first with `gcloud auth application-default login`, then set:
+# GOOGLE_GENAI_USE_VERTEXAI=true
+# GOOGLE_CLOUD_PROJECT=your-project-id
+# GOOGLE_CLOUD_LOCATION=global
+
 # Web research & scraping
 WEB_SEARCH_PROVIDER=perplexity              # default; set to tavily to switch providers
 PPLX_API_KEY=your-perplexity-api-key-here   # required for the default Perplexity search
@@ -111,12 +117,16 @@ OPIK_API_KEY=your-opik-api-key-here
 
 - **`GOOGLE_API_KEY` (Gemini)**: Create a key in Google AI Studio (`https://aistudio.google.com/app/apikey`).  
   Google offers a free tier suitable for experimentation and this course.
+  Alternatively, skip the API key entirely and call Gemini through **Vertex AI**: set
+  `GOOGLE_GENAI_USE_VERTEXAI=true` and `GOOGLE_CLOUD_PROJECT`, and authenticate with
+  Application Default Credentials (`gcloud auth application-default login`). Eligible new
+  Google Cloud users can run all Gemini calls on the $300 free trial credits.
 - **`PPLX_API_KEY` (Perplexity)**: Create a key from the Perplexity settings page
   (`https://www.perplexity.ai/settings/api`). Perplexity remains the default web-search provider used by the course.
 - **`TAVILY_API_KEY` (Tavily, optional)**: Create a key from the Tavily dashboard (`https://app.tavily.com/`) only if
   you set `WEB_SEARCH_PROVIDER=tavily` or explicitly select Tavily in a tool call.
 - **`FIRECRAWL_API_KEY`**: Create a key at `https://firecrawl.dev/`.  
-  Firecrawl has a free tier that allows you to scrape **around 500 pages**.
+  Firecrawl has a free tier that includes **1,000 scraping credits per month**.
 - **`GITHUB_TOKEN`**: Create a fine‑grained personal access token from your GitHub settings, with read‑only access to the repositories you want to analyze.
 - **`OPIK_API_KEY`**: Create a free account at `https://www.comet.com/site/products/opik/` and find the API KEY based on this [doc](https://www.comet.com/docs/opik/faq#where-can-i-find-my-opik-api-key-)
 
@@ -315,6 +325,11 @@ Add the following configuration to your `.cursor/mcp.json` or `claude_desktop_co
   }
 }
 ```
+
+If you authenticate to Gemini through Vertex AI instead of an API key, replace `GOOGLE_API_KEY`
+in the `env` block with `"GOOGLE_GENAI_USE_VERTEXAI": "true"` and
+`"GOOGLE_CLOUD_PROJECT": "your-project-id"`. The spawned server picks up your local
+Application Default Credentials (`gcloud auth application-default login`) automatically.
 
 You can also leverage the `.env` file directly:
 ```json

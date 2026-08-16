@@ -1225,7 +1225,7 @@ requires-dist = [
     { name = "greenlet", specifier = ">=3.1.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain", specifier = ">=0.3.0" },
-    { name = "langchain-google-genai", specifier = ">=2.1.8" },
+    { name = "langchain-google-genai", specifier = ">=4.2.3" },
     { name = "langchain-mcp-adapters", specifier = ">=0.1.9" },
     { name = "langchain-openai", specifier = ">=0.3.28" },
     { name = "langchain-perplexity", specifier = ">=0.1.1" },

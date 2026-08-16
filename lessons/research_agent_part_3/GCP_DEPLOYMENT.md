@@ -42,7 +42,7 @@ This guide walks you through deploying the Nova MCP Server to Google Cloud Run w
 - `gcloud` CLI installed and configured
 - GitHub repository with the Nova codebase
 - The following API keys ready:
-  - `GOOGLE_API_KEY` (Gemini)
+  - `GOOGLE_API_KEY` (Gemini), or Vertex AI mode instead (see the note below; no Gemini API key needed then)
   - `PPLX_API_KEY` (default Perplexity web search)
   - `FIRECRAWL_API_KEY` (Firecrawl)
   - Optional: `TAVILY_API_KEY` (Tavily alternative), `GITHUB_TOKEN`, `OPENAI_API_KEY`, `OPIK_API_KEY`
@@ -73,6 +73,12 @@ gcloud services enable \
   iam.googleapis.com \
   iamcredentials.googleapis.com \
   cloudresourcemanager.googleapis.com
+```
+
+If you call Gemini through Vertex AI instead of a `GOOGLE_API_KEY` (see the course admin lesson for the comparison), also enable the Vertex AI API:
+
+```bash
+gcloud services enable aiplatform.googleapis.com
 ```
 
 ## Step 2: Create Artifact Registry Repository
@@ -287,6 +293,28 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:$CLOUDRUN_SA" \
   --role="roles/secretmanager.secretAccessor"
 ```
+
+### 6.1 Optional: Gemini via Vertex AI on Cloud Run
+
+If you use Vertex AI mode instead of a `GOOGLE_API_KEY`:
+
+1. Grant the runtime service account access to Vertex AI:
+
+   ```bash
+   gcloud projects add-iam-policy-binding $PROJECT_ID \
+     --member="serviceAccount:$CLOUDRUN_SA" \
+     --role="roles/aiplatform.user"
+   ```
+
+2. Set these environment variables on the Cloud Run service (in your deploy command or workflow, they are plain env vars, not secrets):
+
+   ```
+   GOOGLE_GENAI_USE_VERTEXAI=true
+   GOOGLE_CLOUD_PROJECT=<your project ID>
+   GOOGLE_CLOUD_LOCATION=global
+   ```
+
+3. Skip creating the `google-api-key` secret in Step 4. On Cloud Run, authentication happens automatically through the runtime service account's Application Default Credentials. Never upload or mount a downloaded credentials file; that flow is only for local development (`gcloud auth application-default login`).
 
 ## Step 7: Configure GitHub Repository
 
