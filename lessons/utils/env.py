@@ -9,19 +9,37 @@ from dotenv import load_dotenv
 # (from the environment, the .env file, or Colab Secrets) and never prompted for.
 SELECTOR_ENV_VARS = ("GOOGLE_GENAI_USE_VERTEXAI", "WEB_SEARCH_PROVIDER")
 
+# Optional configuration resolved the same way: used when provided and skipped otherwise,
+# never prompted for because the course works without them.
+OPTIONAL_ENV_VARS = ("GOOGLE_CLOUD_LOCATION", "GITHUB_TOKEN")
+
+TRUTHY_VALUES = ("true", "1", "yes")
+DEFAULT_VERTEX_LOCATION = "global"
+
+ADC_MISSING_MESSAGE = (
+    "Vertex AI is enabled (GOOGLE_GENAI_USE_VERTEXAI=true) but no Application Default "
+    "Credentials were found.\n\n"
+    "Run this once in your terminal, then restart the notebook kernel:\n\n"
+    "    gcloud auth application-default login\n\n"
+    "Alternatively, switch back to the Gemini Developer API by removing "
+    "GOOGLE_GENAI_USE_VERTEXAI from your .env and setting GOOGLE_API_KEY instead."
+)
+
 
 def load(dotenv_path: Path | None = None, required_env_vars: list[str] | None = None) -> None:
     if dotenv_path is None:
         dotenv_path = Path().absolute().parent.parent / ".env"
 
+    # Detect Google Colab environment and prepare access to Colab Secrets
+    is_colab = ("COLAB_RELEASE_TAG" in os.environ) or ("COLAB_GPU" in os.environ)
+
     if dotenv_path.exists():
         load_dotenv(dotenv_path=dotenv_path)
         print(f"Environment variables loaded from `{dotenv_path}`")
-    else:
+    elif not is_colab:
+        # Colab has no .env file by design: credentials come from Colab Secrets instead.
         warnings.warn(f"Environment file `{dotenv_path}` not found.")
 
-    # Detect Google Colab environment and prepare access to Colab Secrets
-    is_colab = ("COLAB_RELEASE_TAG" in os.environ) or ("COLAB_GPU" in os.environ)
     colab_user_data = None
     if is_colab:
         try:
@@ -32,8 +50,9 @@ def load(dotenv_path: Path | None = None, required_env_vars: list[str] | None = 
         except Exception:
             colab_user_data = None
 
+    _resolve_selector_env_vars(colab_user_data)
+
     if required_env_vars is not None:
-        _resolve_selector_env_vars(colab_user_data)
         required_env_vars = _apply_credential_selectors(required_env_vars)
 
         for env_var in required_env_vars:
@@ -50,12 +69,14 @@ def load(dotenv_path: Path | None = None, required_env_vars: list[str] | None = 
                 # Final fallback: prompt user to input the variable
                 manually_set_envvar(env_var)
 
+    _setup_vertex_ai(is_colab)
+
     print("Environment variables loaded successfully.")
 
 
 def _resolve_selector_env_vars(colab_user_data) -> None:
-    """Load selector variables from Colab Secrets when absent, without ever prompting."""
-    for env_var in SELECTOR_ENV_VARS:
+    """Load selector and optional variables from Colab Secrets when absent, without ever prompting."""
+    for env_var in SELECTOR_ENV_VARS + OPTIONAL_ENV_VARS:
         if os.environ.get(env_var) or colab_user_data is None:
             continue
         try:
@@ -64,6 +85,50 @@ def _resolve_selector_env_vars(colab_user_data) -> None:
             secret_value = None
         if secret_value:
             os.environ[env_var] = secret_value
+
+
+def _is_vertex_ai_enabled() -> bool:
+    """Whether Gemini calls should go through Vertex AI instead of the Gemini Developer API."""
+    return (os.environ.get("GOOGLE_GENAI_USE_VERTEXAI") or "").strip().lower() in TRUTHY_VALUES
+
+
+def _setup_vertex_ai(is_colab: bool) -> None:
+    """Make Vertex AI authentication work without extra manual steps in the notebook.
+
+    Vertex AI uses Application Default Credentials rather than an API key, so there is
+    nothing to prompt for with getpass. On Colab this triggers the interactive Google
+    sign-in that creates those credentials; locally it verifies they already exist and,
+    if not, fails immediately with the exact command to run instead of letting a cryptic
+    DefaultCredentialsError surface later during the first model call.
+    """
+    if not _is_vertex_ai_enabled():
+        return
+
+    # Keep the location explicit so every client (notebooks, Nova, Brown) agrees on it.
+    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", DEFAULT_VERTEX_LOCATION)
+
+    if is_colab:
+        try:
+            from google.colab import auth as colab_auth
+
+            colab_auth.authenticate_user()
+        except Exception as error:
+            raise RuntimeError(
+                "Vertex AI is enabled (GOOGLE_GENAI_USE_VERTEXAI=true) but Colab authentication failed. "
+                "Re-run this cell and complete the Google sign-in prompt, or switch back to the Gemini "
+                "Developer API by setting GOOGLE_API_KEY instead."
+            ) from error
+        print("Vertex AI mode: authenticated with Google Cloud through Colab.")
+        return
+
+    try:
+        import google.auth
+
+        google.auth.default()
+    except Exception as error:
+        raise RuntimeError(ADC_MISSING_MESSAGE) from error
+
+    print("Vertex AI mode: using your local Application Default Credentials.")
 
 
 def _apply_credential_selectors(required_env_vars: list[str]) -> list[str]:
@@ -75,8 +140,7 @@ def _apply_credential_selectors(required_env_vars: list[str]) -> list[str]:
     """
     required = list(required_env_vars)
 
-    use_vertexai = (os.environ.get("GOOGLE_GENAI_USE_VERTEXAI") or "").strip().lower() in ("true", "1", "yes")
-    if use_vertexai and "GOOGLE_API_KEY" in required:
+    if _is_vertex_ai_enabled() and "GOOGLE_API_KEY" in required:
         print("Vertex AI mode detected (GOOGLE_GENAI_USE_VERTEXAI=true): requiring GOOGLE_CLOUD_PROJECT instead of GOOGLE_API_KEY.")
         required.remove("GOOGLE_API_KEY")
         if "GOOGLE_CLOUD_PROJECT" not in required:
