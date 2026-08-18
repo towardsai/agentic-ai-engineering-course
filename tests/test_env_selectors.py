@@ -69,6 +69,21 @@ class ResolveFromColabSecretsTests(unittest.TestCase):
             self.assertEqual(os.environ["WEB_SEARCH_PROVIDER"], "tavily")
             self.assertEqual(os.environ["GOOGLE_CLOUD_LOCATION"], "europe-west4")
 
+    def test_optional_github_token_comes_from_colab_secrets(self) -> None:
+        """The Colab setup cells used to load GITHUB_TOKEN by hand; env.load now does it."""
+        colab_user_data = MagicMock()
+        colab_user_data.get.side_effect = lambda name: {"GITHUB_TOKEN": "ghp_test"}.get(name)
+        with patch.dict("os.environ", {}, clear=True):
+            _resolve_selector_env_vars(colab_user_data)
+            self.assertEqual(os.environ["GITHUB_TOKEN"], "ghp_test")
+
+    def test_missing_optional_secret_is_not_fatal(self) -> None:
+        colab_user_data = MagicMock()
+        colab_user_data.get.side_effect = KeyError("no such secret")
+        with patch.dict("os.environ", {}, clear=True):
+            _resolve_selector_env_vars(colab_user_data)  # must not raise
+            self.assertNotIn("GITHUB_TOKEN", os.environ)
+
     def test_colab_location_survives_vertex_setup(self) -> None:
         colab_user_data = MagicMock()
         colab_user_data.get.side_effect = lambda name: {"GOOGLE_CLOUD_LOCATION": "europe-west4"}.get(name)

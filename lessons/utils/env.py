@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 # (from the environment, the .env file, or Colab Secrets) and never prompted for.
 SELECTOR_ENV_VARS = ("GOOGLE_GENAI_USE_VERTEXAI", "WEB_SEARCH_PROVIDER")
 
-# Optional configuration resolved the same way: used when provided, defaulted otherwise,
-# and never prompted for because every one of them has a sensible default.
-OPTIONAL_ENV_VARS = ("GOOGLE_CLOUD_LOCATION",)
+# Optional configuration resolved the same way: used when provided and skipped otherwise,
+# never prompted for because the course works without them.
+OPTIONAL_ENV_VARS = ("GOOGLE_CLOUD_LOCATION", "GITHUB_TOKEN")
 
 TRUTHY_VALUES = ("true", "1", "yes")
 DEFAULT_VERTEX_LOCATION = "global"
@@ -30,14 +30,16 @@ def load(dotenv_path: Path | None = None, required_env_vars: list[str] | None = 
     if dotenv_path is None:
         dotenv_path = Path().absolute().parent.parent / ".env"
 
+    # Detect Google Colab environment and prepare access to Colab Secrets
+    is_colab = ("COLAB_RELEASE_TAG" in os.environ) or ("COLAB_GPU" in os.environ)
+
     if dotenv_path.exists():
         load_dotenv(dotenv_path=dotenv_path)
         print(f"Environment variables loaded from `{dotenv_path}`")
-    else:
+    elif not is_colab:
+        # Colab has no .env file by design: credentials come from Colab Secrets instead.
         warnings.warn(f"Environment file `{dotenv_path}` not found.")
 
-    # Detect Google Colab environment and prepare access to Colab Secrets
-    is_colab = ("COLAB_RELEASE_TAG" in os.environ) or ("COLAB_GPU" in os.environ)
     colab_user_data = None
     if is_colab:
         try:
