@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lessons"))
 
-from utils.env import _apply_credential_selectors, _setup_vertex_ai  # noqa: E402
+from utils.env import _apply_credential_selectors, _resolve_selector_env_vars, _setup_vertex_ai  # noqa: E402
 
 NOTEBOOK_REQUIRED = ["GOOGLE_API_KEY", "PPLX_API_KEY", "FIRECRAWL_API_KEY"]
 VERTEX_ON = {"GOOGLE_GENAI_USE_VERTEXAI": "true", "GOOGLE_CLOUD_PROJECT": "my-project"}
@@ -50,6 +50,33 @@ class ApplyCredentialSelectorsTests(unittest.TestCase):
             required = _apply_credential_selectors(NOTEBOOK_REQUIRED)
         self.assertIn("GOOGLE_API_KEY", required)
         self.assertNotIn("GOOGLE_CLOUD_PROJECT", required)
+
+
+class ResolveFromColabSecretsTests(unittest.TestCase):
+    """Selector and optional Vertex config should come from Colab Secrets, never a prompt."""
+
+    def test_reads_selectors_and_optional_location_from_colab_secrets(self) -> None:
+        secrets = {
+            "GOOGLE_GENAI_USE_VERTEXAI": "true",
+            "WEB_SEARCH_PROVIDER": "tavily",
+            "GOOGLE_CLOUD_LOCATION": "europe-west4",
+        }
+        colab_user_data = MagicMock()
+        colab_user_data.get.side_effect = lambda name: secrets.get(name)
+        with patch.dict("os.environ", {}, clear=True):
+            _resolve_selector_env_vars(colab_user_data)
+            self.assertEqual(os.environ["GOOGLE_GENAI_USE_VERTEXAI"], "true")
+            self.assertEqual(os.environ["WEB_SEARCH_PROVIDER"], "tavily")
+            self.assertEqual(os.environ["GOOGLE_CLOUD_LOCATION"], "europe-west4")
+
+    def test_colab_location_survives_vertex_setup(self) -> None:
+        colab_user_data = MagicMock()
+        colab_user_data.get.side_effect = lambda name: {"GOOGLE_CLOUD_LOCATION": "europe-west4"}.get(name)
+        with patch.dict("os.environ", VERTEX_ON, clear=True), patch("google.auth.default") as auth_mock:
+            auth_mock.return_value = (MagicMock(), "my-project")
+            _resolve_selector_env_vars(colab_user_data)
+            _setup_vertex_ai(is_colab=False)
+            self.assertEqual(os.environ["GOOGLE_CLOUD_LOCATION"], "europe-west4")
 
 
 class SetupVertexAiTests(unittest.TestCase):

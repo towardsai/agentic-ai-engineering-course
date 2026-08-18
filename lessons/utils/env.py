@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 # (from the environment, the .env file, or Colab Secrets) and never prompted for.
 SELECTOR_ENV_VARS = ("GOOGLE_GENAI_USE_VERTEXAI", "WEB_SEARCH_PROVIDER")
 
+# Optional configuration resolved the same way: used when provided, defaulted otherwise,
+# and never prompted for because every one of them has a sensible default.
+OPTIONAL_ENV_VARS = ("GOOGLE_CLOUD_LOCATION",)
+
 TRUTHY_VALUES = ("true", "1", "yes")
 DEFAULT_VERTEX_LOCATION = "global"
 
@@ -69,8 +73,8 @@ def load(dotenv_path: Path | None = None, required_env_vars: list[str] | None = 
 
 
 def _resolve_selector_env_vars(colab_user_data) -> None:
-    """Load selector variables from Colab Secrets when absent, without ever prompting."""
-    for env_var in SELECTOR_ENV_VARS:
+    """Load selector and optional variables from Colab Secrets when absent, without ever prompting."""
+    for env_var in SELECTOR_ENV_VARS + OPTIONAL_ENV_VARS:
         if os.environ.get(env_var) or colab_user_data is None:
             continue
         try:
