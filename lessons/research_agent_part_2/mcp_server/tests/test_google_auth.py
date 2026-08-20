@@ -53,7 +53,7 @@ class GetChatModelKwargsTests(unittest.TestCase):
     def test_gemini_default_mode_passes_api_key(self) -> None:
         settings = make_settings(GOOGLE_API_KEY="test-key")
         with patch("src.utils.llm_utils.settings", settings), patch("src.utils.llm_utils.init_chat_model") as init_mock:
-            get_chat_model("gemini-2.5-pro")
+            get_chat_model("gemini-3.7-flash")
         _, kwargs = init_mock.call_args
         self.assertEqual(kwargs["api_key"], "test-key")
         self.assertNotIn("vertexai", kwargs)
@@ -61,7 +61,7 @@ class GetChatModelKwargsTests(unittest.TestCase):
     def test_gemini_vertex_mode_passes_vertex_kwargs_without_api_key(self) -> None:
         settings = make_settings(GOOGLE_GENAI_USE_VERTEXAI=True, GOOGLE_CLOUD_PROJECT="my-project")
         with patch("src.utils.llm_utils.settings", settings), patch("src.utils.llm_utils.init_chat_model") as init_mock:
-            get_chat_model("gemini-2.5-pro")
+            get_chat_model("gemini-3.7-flash")
         _, kwargs = init_mock.call_args
         self.assertTrue(kwargs["vertexai"])
         self.assertEqual(kwargs["project"], "my-project")
@@ -80,7 +80,7 @@ class GetChatModelKwargsTests(unittest.TestCase):
         settings = make_settings()
         with patch("src.utils.llm_utils.settings", settings):
             with self.assertRaisesRegex(RuntimeError, "GOOGLE_API_KEY"):
-                get_chat_model("gemini-2.5-pro")
+                get_chat_model("gemini-3.7-flash")
 
 
 class RawClientKwargsTests(unittest.IsolatedAsyncioTestCase):

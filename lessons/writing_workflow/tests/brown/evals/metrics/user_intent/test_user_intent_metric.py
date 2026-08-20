@@ -230,7 +230,7 @@ def test_user_intent_metric_init_default_model() -> None:
     Test that UserIntentMetric initializes with the default model if not specified.
     """
     metric = UserIntentMetricLLMJudge()
-    assert metric.model == SupportedModels.GOOGLE_GEMINI_25_FLASH
+    assert metric.model == SupportedModels.GOOGLE_GEMINI_37_FLASH
 
 
 def test_user_intent_metric_init_custom_name() -> None:

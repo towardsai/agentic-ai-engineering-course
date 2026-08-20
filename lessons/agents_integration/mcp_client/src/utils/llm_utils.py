@@ -78,7 +78,7 @@ class LLMClient:
         """Initialize LLM client with specified model and configuration.
 
         Args:
-            model_id: The model identifier (e.g., 'gemini-2.5-flash')
+            model_id: The model identifier (e.g., 'gemini-3.7-flash')
             llm_config: The configuration for content generation
 
         Raises:

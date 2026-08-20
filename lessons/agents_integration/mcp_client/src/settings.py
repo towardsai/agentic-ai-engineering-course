@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     )
 
     # LLM Configuration
-    orchestrator_key: str = Field(default="gemini-3.5-flash", description="Default orchestrator model key")
-    model_id: str = Field(default="gemini-3.5-flash", description="Default model ID for LLM operations")
+    orchestrator_key: str = Field(default="gemini-3.7-flash", description="Default orchestrator model key")
+    model_id: str = Field(default="gemini-3.7-flash", description="Default model ID for LLM operations")
     thinking_budget: int | None = Field(
         default=None, description="Thinking token budget for Gemini 2.5 models. Mutually exclusive with thinking_level."
     )
@@ -104,20 +104,43 @@ class Settings(BaseSettings):
     def orchestrator_configs(self) -> Dict[str, Dict[str, Any]]:
         """Get the orchestrator configurations."""
         return {
+            "gemini-3.7-flash": {
+                "identifier": "google_genai:gemini-3.7-flash",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "low",
+                    "include_thoughts": True,
+                    "max_retries": 3,
+                },
+            },
+            # Same model with more reasoning, for tasks that previously ran on gemini-2.5-pro.
+            "gemini-3.7-flash-high-thinking": {
+                "identifier": "google_genai:gemini-3.7-flash",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "high",
+                    "include_thoughts": True,
+                    "max_retries": 3,
+                },
+            },
+            # Latest Pro model (still in preview): swap it in if you prefer a Pro model over
+            # Flash with high thinking.
+            "gemini-3.1-pro-preview": {
+                "identifier": "google_genai:gemini-3.1-pro-preview",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "high",
+                    "include_thoughts": True,
+                    "max_retries": 3,
+                },
+            },
+            # Legacy Pro, kept for backward compatibility: still works on existing Google
+            # accounts, but is NOT available to new accounts.
             "gemini-2.5-pro": {
                 "identifier": "google_genai:gemini-2.5-pro",
                 "params": {
                     "temperature": 0.7,
                     "thinking_budget": 1000,
-                    "include_thoughts": True,
-                    "max_retries": 3,
-                },
-            },
-            "gemini-3.5-flash": {
-                "identifier": "google_genai:gemini-3.5-flash",
-                "params": {
-                    "temperature": 1,
-                    "thinking_level": "low",
                     "include_thoughts": True,
                     "max_retries": 3,
                 },

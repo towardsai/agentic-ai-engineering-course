@@ -276,7 +276,7 @@ class BrownBaseMetric(base_metric.BaseMetric, Generic[FewShotExamplesT, Structur
         ...         pass
         >>>
         >>> metric = MyMetric(
-        ...     model=SupportedModels.GOOGLE_GEMINI_25_FLASH,
+        ...     model=SupportedModels.GOOGLE_GEMINI_37_FLASH,
         ...     name="my_metric",
         ...     structured_output_type=MyResponse,
         ...     few_shot_examples=MyExamples(),

@@ -1,3 +1,9 @@
+# NOTE: this config used to run the writing nodes on gemini-2.5-pro. Gemini 2.5 Pro is no
+# longer supported for new Google accounts, so those nodes now run gemini-3.7-flash with
+# `thinking_level: high` instead (cheaper, faster, and works for everyone).
+# If you still want a Pro model, it is a one-line change per node below:
+#   model_id: "google_genai:gemini-3.1-pro-preview"   # latest Pro (preview, all accounts)
+#   model_id: "google_genai:gemini-2.5-pro"           # legacy Pro (existing accounts only)
 context:
   article_guideline_loader: "markdown"
   article_guideline_uri: "article_guideline.md"
@@ -17,45 +23,45 @@ num_reviews: 3
 max_reviews_per_iteration: 5
 nodes:
   generate_media_items:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
       thinking_level: low
     tools:
       mermaid_diagram_generator:
-        model_id: "google_genai:gemini-3.5-flash"
+        model_id: "google_genai:gemini-3.7-flash"
         config:
           temperature: 0.0
           include_thoughts: false
           thinking_level: low
   write_article:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.7
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high
   review_article:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high
   edit_article:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.1
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high
   review_selected_text:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high
   edit_selected_text:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.1
       include_thoughts: false
-      thinking_budget: null
+      thinking_level: high

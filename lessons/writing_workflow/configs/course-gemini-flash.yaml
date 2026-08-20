@@ -17,40 +17,40 @@ num_reviews: 3
 max_reviews_per_iteration: 5
 nodes:
   generate_media_items:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       include_thoughts: false
       thinking_level: low
     tools:
       mermaid_diagram_generator:
-        model_id: "google_genai:gemini-3.5-flash"
+        model_id: "google_genai:gemini-3.7-flash"
         config:
           include_thoughts: false
           thinking_level: low
   write_article:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       include_thoughts: false
       thinking_level: medium
   review_article:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
       thinking_level: high
   edit_article:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       include_thoughts: false
       thinking_level: low
   review_selected_text:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0
       include_thoughts: false
       thinking_level: high
   edit_selected_text:
-    model_id: "google_genai:gemini-3.5-flash"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       include_thoughts: false
       thinking_level: low
