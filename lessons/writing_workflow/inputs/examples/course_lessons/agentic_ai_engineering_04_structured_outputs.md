@@ -69,7 +69,7 @@ You can find the code of this lesson in the notebook of Lesson 4, in the GitHub 
 
 Our goal is to prompt the model to return a JSON object and then parse it into a Python dictionary. We will demonstrate this with a simple example where we extract key details, such as a summary, tags, keywords, and other statistics, from financial documents.
 
-1. We begin by setting up our environment. This involves initializing the Gemini client from the [google-genai](https://googleapis.github.io/python-genai/index.html) Python package, which defines the model we will use. Gemini offers two core types of models: `flash` and `pro`. For our simple examples, we will use `gemini-2.5-flash`, which is fast and cost-effective. While `pro` models are bigger and more costly, they are more useful for intensive reasoning tasks, such as for ReAct agents. More information on Gemini models [here](https://ai.google.dev/gemini-api/docs/models).
+1. We begin by setting up our environment. This involves initializing the Gemini client from the [google-genai](https://googleapis.github.io/python-genai/index.html) Python package, which defines the model we will use. Gemini offers two core types of models: `flash` and `pro`. Google's current lineup centers on the `flash` family, which scales from quick answers to deep reasoning through its configurable thinking levels. For our examples, we will use `gemini-3.7-flash`, which is fast and cost-effective. The `pro` models are bigger and more costly, and the latest one is only available in preview (`gemini-3.1-pro-preview`), so instead of switching models for intensive reasoning tasks, such as for ReAct agents, we simply raise the thinking level of `flash`. More information on Gemini models [here](https://ai.google.dev/gemini-api/docs/models).
     
     ```python
     import json
@@ -81,7 +81,7 @@ Our goal is to prompt the model to return a JSON object and then parse it into a
     
     client = genai.Client()
     
-    MODEL_ID = "gemini-2.5-flash"
+    MODEL_ID = "gemini-3.7-flash"
     ```
     
     <aside>
