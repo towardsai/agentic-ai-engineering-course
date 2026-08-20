@@ -246,29 +246,31 @@ This creates an evaluation dataset from the articles in `inputs/evals/dataset/` 
 
 Brown provides two evaluation commands for different model configurations:
 
-**1. Run evaluation with Gemini Flash:**
+> **Why we switched from Gemini Pro to Flash.** Gemini 2.5 Pro is no longer supported for new Google accounts, so it needed to be replaced no matter what. Gemini 3.7 Flash is also a lot cheaper than the previous Flash models, meaning you can run more of the course in the free tier and with your GCP credits, and Google now focuses on the Flash line rather than Pro. So both configurations run `gemini-3.7-flash`, differing only in the `thinking_level` of the writing/review nodes, and in our own article-generation work 3.7 Flash performs really well. If you still prefer a Pro model, it is a one-line change per node in the yaml config: set `model_id: "google_genai:gemini-3.1-pro-preview"` (latest Pro, works for all accounts) or `"google_genai:gemini-2.5-pro"` (existing accounts only).
+
+**1. Run evaluation with Gemini 3.7 Flash (low/medium thinking):**
 
 ```bash
 cd lessons/writing_workflow
 make brown-run-eval-flash
 ```
 
-This runs the evaluation using Gemini Flash model configuration:
-- **Config**: `configs/course-gemini-flash.yaml` (the default, all-Flash configuration)
+This runs the evaluation using the default Flash model configuration:
+- **Config**: `configs/course-gemini-flash.yaml` (the default configuration, low/medium `thinking_level`)
 - **Dataset**: `brown-course-lessons`
 - **Metrics**: `follows_gt` (evaluates adherence to ground truth articles) and `user_intent`
 - **Cache directory**: `outputs/evals-flash`
 - **Reads from cache**: Enabled for faster re-runs
 
-**2. Run evaluation with Gemini Pro:**
+**2. Run evaluation with Gemini 3.7 Flash on high thinking (formerly Gemini Pro):**
 
 ```bash
 cd lessons/writing_workflow
 make brown-run-eval-pro
 ```
 
-This runs the evaluation using Gemini Pro model configuration:
-- **Config**: `configs/course-gemini-pro.yaml`
+This runs the evaluation using the high-thinking model configuration:
+- **Config**: `configs/course-gemini-pro.yaml` (writing/review nodes use `thinking_level: high`)
 - **Dataset**: `brown-course-lessons`
 - **Metrics**: `follows_gt` (evaluates adherence to ground truth articles) and `user_intent`
 - **Cache directory**: `outputs/evals-pro`
@@ -328,14 +330,16 @@ max_reviews_per_iteration: 5  # Max reviews the reviewer node may emit per call 
 
 nodes:
   write_article:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.7  # Higher for creative writing
+      thinking_level: high  # More reasoning for the heavy writing task
   
   review_article:
-    model_id: "google_genai:gemini-2.5-pro"
+    model_id: "google_genai:gemini-3.7-flash"
     model_config:
       temperature: 0.0  # Lower for analytical review
+      thinking_level: high
 ```
 
 **Example Run:**

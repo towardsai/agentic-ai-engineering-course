@@ -108,8 +108,8 @@ def main(
         debug=debug,
     )
 
-    model = SupportedModels.GOOGLE_GEMINI_25_PRO
-    model_config = ModelConfig(temperature=0.0, thinking_budget=int(1024 * 0.5), include_thoughts=False, max_retries=3)
+    model = SupportedModels.GOOGLE_GEMINI_37_FLASH
+    model_config = ModelConfig(temperature=0.0, thinking_level="high", include_thoughts=False, max_retries=3)
     evaluation_metrics = build_evaluation_metrics(metrics, model, model_config)
 
     if split == "val":

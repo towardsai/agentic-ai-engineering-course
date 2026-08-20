@@ -335,7 +335,7 @@ Here is an good example of a block with one description, code and output turns:
               USER_PROMPT]
 
   response = client.generate_content(
-      model="gemini-2.5-flash",
+      model="gemini-3.7-flash",
       contents=messages,
   )
   ```
@@ -411,7 +411,7 @@ Here is a bad example where we split the code from a single group into multiple 
               USER_PROMPT]
 
   response = client.generate_content(
-      model="gemini-2.5-flash",
+      model="gemini-3.7-flash",
       contents=messages,
   )
   ```

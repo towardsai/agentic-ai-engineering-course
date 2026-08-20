@@ -157,7 +157,7 @@ def test_article_metric_init_default_model() -> None:
     Test that FollowsGTMetric initializes with the default model if not specified.
     """
     metric = FollowsGTMetricLLMJudge()
-    assert metric.model == SupportedModels.GOOGLE_GEMINI_25_FLASH
+    assert metric.model == SupportedModels.GOOGLE_GEMINI_37_FLASH
 
 
 def test_article_metric_init_custom_name() -> None:

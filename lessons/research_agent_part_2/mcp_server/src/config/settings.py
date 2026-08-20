@@ -23,10 +23,13 @@ class Settings(BaseSettings):
     )
 
     # LLM Configuration
-    youtube_transcription_model: str = Field(default="gemini-3.5-flash", description="Model for YouTube transcription")
-    scraping_model: str = Field(default="gemini-3.5-flash", description="Model for web scraping")
-    query_generation_model: str = Field(default="gemini-2.5-pro", description="Model for query generation")
-    source_selection_model: str = Field(default="gemini-3.5-flash", description="Model for source selection")
+    youtube_transcription_model: str = Field(default="gemini-3.7-flash", description="Model for YouTube transcription")
+    scraping_model: str = Field(default="gemini-3.7-flash", description="Model for web scraping")
+    # Query generation used to run on gemini-2.5-pro, which is no longer supported for new
+    # Google accounts. It now runs Gemini 3.7 Flash with a high thinking level instead; to use a
+    # Pro model, switch to "gemini-3.1-pro-preview" (or "gemini-2.5-pro" on existing accounts).
+    query_generation_model: str = Field(default="gemini-3.7-flash-high-thinking", description="Model for query generation")
+    source_selection_model: str = Field(default="gemini-3.7-flash", description="Model for source selection")
 
     # Web search configuration
     web_search_provider: Literal["tavily", "perplexity"] = Field(
@@ -117,22 +120,48 @@ class Settings(BaseSettings):
     def llm_configs(self) -> Dict[str, Dict[str, Any]]:
         """Get the LLM configurations."""
         return {
+            "gemini-3.7-flash": {
+                "identifier": "google_genai:gemini-3.7-flash",
+                "api_key_env_var": "GOOGLE_API_KEY",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "low",
+                    "include_thoughts": False,
+                    "max_retries": 3,
+                },
+            },
+            # Same model with more reasoning, used for the tasks that previously ran on
+            # gemini-2.5-pro (e.g. query generation).
+            "gemini-3.7-flash-high-thinking": {
+                "identifier": "google_genai:gemini-3.7-flash",
+                "api_key_env_var": "GOOGLE_API_KEY",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "high",
+                    "include_thoughts": False,
+                    "max_retries": 3,
+                },
+            },
+            # Latest Pro model (still in preview): swap it into any *_model setting if you
+            # prefer a Pro model over Flash with high thinking.
+            "gemini-3.1-pro-preview": {
+                "identifier": "google_genai:gemini-3.1-pro-preview",
+                "api_key_env_var": "GOOGLE_API_KEY",
+                "params": {
+                    "temperature": 1,
+                    "thinking_level": "high",
+                    "include_thoughts": False,
+                    "max_retries": 3,
+                },
+            },
+            # Legacy Pro, kept for backward compatibility: still works on existing Google
+            # accounts, but is NOT available to new accounts.
             "gemini-2.5-pro": {
                 "identifier": "google_genai:gemini-2.5-pro",
                 "api_key_env_var": "GOOGLE_API_KEY",
                 "params": {
                     "temperature": 0.7,
                     "thinking_budget": 1000,
-                    "include_thoughts": False,
-                    "max_retries": 3,
-                },
-            },
-            "gemini-3.5-flash": {
-                "identifier": "google_genai:gemini-3.5-flash",
-                "api_key_env_var": "GOOGLE_API_KEY",
-                "params": {
-                    "temperature": 1,
-                    "thinking_level": "low",
                     "include_thoughts": False,
                     "max_retries": 3,
                 },

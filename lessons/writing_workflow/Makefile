@@ -45,7 +45,7 @@ brown-create-eval-dataset: # Create the evaluation dataset for Brown.
 		--name brown-course-lessons \
 		--description "Evaluation dataset on course lessons format."
 
-brown-run-eval-flash: # Run the evaluation for Brown generating the articles with Gemini Flash.
+brown-run-eval-flash: # Run the evaluation for Brown generating the articles with Gemini 3.7 Flash (low/medium thinking).
 	CONFIG_FILE=./configs/course-gemini-flash.yaml uv run python -m scripts.brown_run_eval \
 		--dataset-name brown-course-lessons \
 		--metrics follows_gt \
@@ -55,7 +55,7 @@ brown-run-eval-flash: # Run the evaluation for Brown generating the articles wit
 		--workers 1 \
 		--read-from-cache
 
-brown-run-eval-pro: # Run the evaluation for Brown generating the articles with Gemini Pro.
+brown-run-eval-pro: # Run the evaluation for Brown generating the articles with Gemini 3.7 Flash on high thinking (formerly Gemini Pro).
 	CONFIG_FILE=./configs/course-gemini-pro.yaml uv run python -m scripts.brown_run_eval \
 		--dataset-name brown-course-lessons \
 		--metrics follows_gt \

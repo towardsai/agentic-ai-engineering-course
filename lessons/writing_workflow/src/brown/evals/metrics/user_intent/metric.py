@@ -30,11 +30,11 @@ class UserIntentMetricLLMJudge(BrownBaseMetric):
     reasoning for each dimension and section.
 
     Args:
-        model: The language model to use for evaluation. Defaults to GOOGLE_GEMINI_25_FLASH.
+        model: The language model to use for evaluation. Defaults to GOOGLE_GEMINI_37_FLASH.
         name: The name of the metric. Defaults to "user_intent".
         model_config: Configuration for the model including temperature, thinking budget,
             and retry settings. If None, uses default configuration with temperature=0.0,
-            thinking_budget=4096, include_thoughts=False, and max_retries=3.
+            thinking_level="medium", include_thoughts=False, and max_retries=3.
         track: Whether to track the metric in observability tools. Defaults to True.
         project_name: Optional project name to track the metric in for cases when there are
             no parent span/trace to inherit project name from.
@@ -60,7 +60,7 @@ class UserIntentMetricLLMJudge(BrownBaseMetric):
 
     def __init__(
         self,
-        model: SupportedModels = SupportedModels.GOOGLE_GEMINI_25_FLASH,
+        model: SupportedModels = SupportedModels.GOOGLE_GEMINI_37_FLASH,
         name: str = "user_intent",
         model_config: ModelConfig | None = None,
         track: bool = True,
@@ -69,7 +69,7 @@ class UserIntentMetricLLMJudge(BrownBaseMetric):
         """Initialize the UserIntentMetric instance.
 
         Args:
-            model: The language model to use for evaluation. Defaults to GOOGLE_GEMINI_25_FLASH.
+            model: The language model to use for evaluation. Defaults to GOOGLE_GEMINI_37_FLASH.
             name: The name of the metric. Defaults to "user_intent".
             model_config: Configuration for the model including temperature, thinking budget,
                 and retry settings. If None, uses default configuration.
@@ -78,7 +78,7 @@ class UserIntentMetricLLMJudge(BrownBaseMetric):
                 no parent span/trace to inherit project name from.
 
         """
-        model_config = model_config or ModelConfig(temperature=0.0, thinking_budget=1024 * 4, include_thoughts=False, max_retries=3)
+        model_config = model_config or ModelConfig(temperature=0.0, thinking_level="medium", include_thoughts=False, max_retries=3)
         super().__init__(
             model=model,
             name=name,

@@ -113,7 +113,7 @@ Our goal is to prompt a model to return a JSON object and then parse it into a P
 
     client = genai.Client()
 
-    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.7-flash", contents=prompt)
     ```
     It outputs:
     ```json
